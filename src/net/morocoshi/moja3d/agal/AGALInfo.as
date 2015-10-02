@@ -18,7 +18,6 @@ package net.morocoshi.moja3d.agal
 		{
 			this.profile = profile;
 			constantsLimit = { };
-			
 			switch(profile)
 			{
 				case "baseline":
@@ -30,8 +29,8 @@ package net.morocoshi.moja3d.agal
 					maxTokens = 200;
 					break;
 				case "standard":
-				case "standard_constrained":
-				case "standard_extended":
+				case "standardConstrained":
+				case "standardExtended":
 					version = 2;
 					constantsLimit[Context3DProgramType.VERTEX] = 250;
 					constantsLimit[Context3DProgramType.FRAGMENT] = 64;
