@@ -22,8 +22,8 @@ package net.morocoshi.moja3d.shaders.render
 		
 		/**
 		 * 
-		 * @param	power
-		 * @param	alpha	強度
+		 * @param	power	この値が大きいほど光沢は鋭くなる。10～100くらい
+		 * @param	alpha	光沢の強度
 		 * @param	fresnel	フレネル効果を適用するか
 		 * @param	protectTransparent	trueで元の透明度を変化させないようにする
 		 * @param	protectReverse
