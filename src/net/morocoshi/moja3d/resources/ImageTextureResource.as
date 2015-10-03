@@ -1,21 +1,18 @@
 package net.morocoshi.moja3d.resources 
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.StageQuality;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
 	import flash.display3D.textures.CubeTexture;
 	import flash.display3D.textures.Texture;
-	import flash.display3D.textures.TextureBase;
 	import flash.events.Event;
 	import flash.geom.Matrix;
-	import flash.geom.Point;
 	import flash.utils.ByteArray;
-	import net.morocoshi.common.graphics.BitmapUtil;
 	import net.morocoshi.moja3d.events.Event3D;
 	
 	/**
-	 * ...
+	 * イメージテクスチャ用リソース
 	 * 
 	 * @author tencho
 	 */
@@ -23,7 +20,6 @@ package net.morocoshi.moja3d.resources
 	{
 		static public const BITMAP:String = "bitmap";
 		static public const ATF:String = "atf";
-		//static public const CUBEMAP:String = "cubemap";
 		
 		protected var _bitmapData:BitmapData;
 		protected var _atf:ATFData;
@@ -39,7 +35,13 @@ package net.morocoshi.moja3d.resources
 		private var completeCallback:Function;
 		private var _mipmap:Boolean;
 		
-		public function ImageTextureResource(data:*)
+		/**
+		 * コンストラクタ
+		 * 
+		 * @param	data	渡せる形式は、Bitmp、BitmapData、ATFデータ(ByteArray)
+		 * @param	parseAlpha	半透明ピクセルの有無を調べる。完全不透明な画像はdrawCallが減ってくれるが、画像の大きさに比例してチェックが重くなる。
+		 */
+		public function ImageTextureResource(data:*, parseAlpha:Boolean = false)
 		{
 			super();
 			
@@ -48,11 +50,20 @@ package net.morocoshi.moja3d.resources
 			_mipmap = true;
 			_width = 0;
 			_height = 0;
-			if (data is BitmapData)
+			
+			if (data is uint)
+			{
+				setBitmapResource(new BitmapData(1, 1, false, data), true);
+			}
+			else if (data is Bitmap)
+			{
+				setBitmapResource(Bitmap(data).bitmapData, true);
+			}
+			else if (data is BitmapData)
 			{
 				setBitmapResource(data as BitmapData, true);
 			}
-			if (data is ByteArray)
+			else if (data is ByteArray)
 			{
 				setATFResource(data as ByteArray);
 			}
@@ -74,6 +85,11 @@ package net.morocoshi.moja3d.resources
 			notifyParsed();
 		}
 		
+		/**
+		 * BitmapDataからリソースを生成する
+		 * @param	bitmapData	画像データ
+		 * @param	parseAlpha	半透明ピクセルの有無を調べる。完全不透明な画像はdrawCallが減ってくれるが、画像の大きさに比例してチェックが重くなる。
+		 */
 		public function setBitmapResource(bitmapData:BitmapData, parseAlpha:Boolean):void 
 		{
 			_atf = null;
