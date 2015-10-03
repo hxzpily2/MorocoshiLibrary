@@ -525,13 +525,13 @@ package net.morocoshi.moja3d.view
 		/**
 		 * マウスクリック時の処理
 		 */
-		public function mouseClick():void 
+		public function mouseClick(mouseX:Number, mouseY:Number):void 
 		{
 			var fov:Number = camera.getVerticalFOV();
 			var asp:Number = camera.getScreenAspect();
 			var h:Number = Math.tan(fov / 2);
-			var tx:Number = ((view.mouseX - view.x) / view.width - 0.5) * 2 * h * asp;
-			var ty:Number = ((view.mouseY - view.y) / view.height - 0.5) * 2 * -h;
+			var tx:Number = ((mouseX - view.x) / view.width - 0.5) * 2 * h * asp;
+			var ty:Number = ((mouseY - view.y) / view.height - 0.5) * 2 * -h;
 			
 			var start:Vector3D = camera.getPosition();
 			var end:Vector3D = start.clone();

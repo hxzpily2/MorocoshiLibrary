@@ -1,55 +1,57 @@
 package net.morocoshi.moja3d.view 
 {
-	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.events.Event;
-	import flash.geom.Point;
+	import net.morocoshi.moja3d.moja3d;
 	
 	/**
-	 * ...
+	 * シーンを描画するビューポート
+	 * 
 	 * @author tencho
 	 */
-	public class Viewport extends Sprite 
+	public class Viewport 
 	{
 		private var _stage:Stage;
 		private var _stage3D:Stage3D;
+		
 		private var _backgroundColor:uint;
 		private var _backgroundAlpha:Number;
 		private var _backgroundData:Vector.<Number>;
+		
+		private var _visible:Boolean;
+		private var _x:Number;
+		private var _y:Number;
 		private var _width:Number;
 		private var _height:Number;
 		private var _antiAlias:int;
-		private var _updateBackBuffer:Boolean;
-		private var isOnStage:Boolean;
-		private var point:Point;
 		
+		private var _updateBackBuffer:Boolean;
+		
+		/**
+		 * コンストラクタ
+		 */
 		public function Viewport() 
 		{
 			super();
 			
-			isOnStage = false;
+			_x = 0;
+			_y = 0;
+			_width = 640;
+			_height = 480;
+			_visible = true;
+			
 			_updateBackBuffer = true;
 			_backgroundData = new Vector.<Number>;
 			_backgroundAlpha = 1;
 			_antiAlias = 2;
 			backgroundColor = 0x000000;
-			point = new Point();
-			
-			enterFrameHandler(null);
-			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
-			addEventListener(Event.ADDED_TO_STAGE, addedStageHandler);
-			addEventListener(Event.REMOVED_FROM_STAGE, removedStageHandler);
 		}
 		
-		public function stopAutoResize():void
-		{
-			if (_stage)
-			{
-				_stage.removeEventListener(Event.RESIZE, stage_resizeHandler);
-			}
-		}
-		
+		/**
+		 * stageがリサイズされた時にビューポートのサイズをstageに合わせるようにします。
+		 * @param	stage
+		 */
 		public function startAutoResize(stage:Stage):void 
 		{
 			stopAutoResize();
@@ -58,61 +60,39 @@ package net.morocoshi.moja3d.view
 			stage_resizeHandler(null);
 		}
 		
-		private function stage_resizeHandler(e:Event):void 
+		/**
+		 * ビューポートの自動リサイズを停止します。
+		 */
+		public function stopAutoResize():void
 		{
-			setSize(_stage.stageWidth, _stage.stageHeight);
+			if (_stage)
+			{
+				_stage.removeEventListener(Event.RESIZE, stage_resizeHandler);
+			}
 		}
 		
+		/**
+		 * ビューポートのサイズを設定します
+		 * @param	w
+		 * @param	h
+		 */
 		public function setSize(w:int, h:int):void 
 		{
 			width = w;
 			height = h;
 		}
 		
-		public function setStage3D(stage3D:Stage3D):void 
+		private function stage_resizeHandler(e:Event):void 
+		{
+			setSize(_stage.stageWidth, _stage.stageHeight);
+		}
+		
+		moja3d function setStage3D(stage3D:Stage3D):void 
 		{
 			_stage3D = stage3D;
-			_stage3D.visible = isOnStage;
-		}
-		
-		private function removedStageHandler(e:Event):void 
-		{
-			isOnStage = false;
-			
-			if (_stage3D == null) return;
-			
-			_stage3D.visible = false;
-		}
-		
-		private function addedStageHandler(e:Event):void 
-		{
-			isOnStage = true;
-			
-			if (_stage3D == null) return;
-			
-			_stage3D.visible = true;
-		}
-		
-		override public function get x():Number 
-		{
-			return super.x;
-		}
-		
-		override public function set x(value:Number):void 
-		{
-			super.x = value;
-		}
-		
-		private function enterFrameHandler(e:Event):void 
-		{
-			if (_stage3D == null) return;
-			
-			point.x = x;
-			point.y = y;
-			var worldPoint:Point = localToGlobal(point);
-			
-			if (_stage3D.x != worldPoint.x) _stage3D.x = worldPoint.x;
-			if (_stage3D.y != worldPoint.y) _stage3D.y = worldPoint.y;
+			_stage3D.x = _x;
+			_stage3D.y = _y;
+			_stage3D.visible = _visible;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -121,12 +101,58 @@ package net.morocoshi.moja3d.view
 		//
 		//--------------------------------------------------------------------------
 		
-		override public function get width():Number 
+		/**
+		 * ビューポートの表示状態
+		 */
+		public function get visible():Boolean 
+		{
+			return _visible;
+		}
+		
+		public function set visible(value:Boolean):void 
+		{
+			_visible = value;
+			
+			if (_stage3D) _stage3D.visible = _visible;
+		}
+		
+		/**
+		 * ビューポートの左端位置
+		 */
+		public function get x():Number 
+		{
+			return _x;
+		}
+		
+		public function set x(value:Number):void 
+		{
+			_x = value;
+			if (_stage3D) _stage3D.x = _x;
+		}
+		
+		/**
+		 * ビューポートの上端位置
+		 */
+		public function get y():Number 
+		{
+			return _y;
+		}
+		
+		public function set y(value:Number):void 
+		{
+			_y = value;
+			if (_stage3D) _stage3D.y = _y;
+		}
+		
+		/**
+		 * ビューポートの幅。この値はレンダリング時に反映されます。
+		 */
+		public function get width():Number 
 		{
 			return _width;
 		}
 		
-		override public function set width(value:Number):void 
+		public function set width(value:Number):void 
 		{
 			if (value < 100) value = 100;
 			if (_width == value) return;
@@ -135,12 +161,15 @@ package net.morocoshi.moja3d.view
 			_updateBackBuffer = true;
 		}
 		
-		override public function get height():Number 
+		/**
+		 * ビューポートの高さ。この値はレンダリング時に反映されます。
+		 */
+		public function get height():Number 
 		{
 			return _height;
 		}
 		
-		override public function set height(value:Number):void 
+		public function set height(value:Number):void 
 		{
 			if (value < 100) value = 100;
 			if (_height == value) return;
@@ -149,6 +178,9 @@ package net.morocoshi.moja3d.view
 			_updateBackBuffer = true;
 		}
 		
+		/**
+		 * アンチエイリアス設定。この値はレンダリング時に反映されます。
+		 */
 		public function get antiAlias():int 
 		{
 			return _antiAlias;
@@ -162,6 +194,9 @@ package net.morocoshi.moja3d.view
 			_updateBackBuffer = true;
 		}
 		
+		/**
+		 * ビューポートの背景色。この値はレンダリング時に反映されます。
+		 */
 		public function get backgroundColor():uint 
 		{
 			return _backgroundColor;
@@ -175,6 +210,9 @@ package net.morocoshi.moja3d.view
 			_backgroundData[2] = (_backgroundColor & 0xFF) / 0xFF;
 		}
 		
+		/**
+		 * ビューポートの背景の不透明度。この値はレンダリング時に反映されます。
+		 */
 		public function get backgroundAlpha():Number 
 		{
 			return _backgroundAlpha;
@@ -185,17 +223,17 @@ package net.morocoshi.moja3d.view
 			_backgroundAlpha = value;
 		}
 		
-		public function get backgroundData():Vector.<Number> 
+		moja3d function get backgroundData():Vector.<Number> 
 		{
 			return _backgroundData;
 		}
 		
-		public function get updateBackBuffer():Boolean 
+		moja3d function get updateBackBuffer():Boolean 
 		{
 			return _updateBackBuffer;
 		}
 		
-		public function set updateBackBuffer(value:Boolean):void 
+		moja3d function set updateBackBuffer(value:Boolean):void 
 		{
 			_updateBackBuffer = value;
 		}

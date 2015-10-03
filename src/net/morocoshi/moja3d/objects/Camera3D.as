@@ -9,6 +9,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.materials.TriangleFace;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.primitives.Sphere;
+	import net.morocoshi.moja3d.view.FOVMode;
 	import net.morocoshi.moja3d.view.Viewport;
 	
 	use namespace moja3d;
@@ -54,12 +55,7 @@ package net.morocoshi.moja3d.objects
 		private var screenHeight:Number;
 		protected var _debug:Boolean;
 		private var initializedDebugPoint:Boolean;
-		private var _fovMode:String = FOVMODE_VERTICAL;
-		
-		static public const FOVMODE_CIRCUMSCRIBED:String = "circumscribed";
-		static public const FOVMODE_INSCRIBED:String = "inscribed";
-		static public const FOVMODE_VERTICAL:String = "vertical";
-		static public const FOVMODE_HOLIZONTAL:String = "horizontal";
+		private var _fovMode:String = FOVMode.VERTICAL;
 		
 		public function Camera3D() 
 		{
@@ -292,17 +288,17 @@ package net.morocoshi.moja3d.objects
 		public function getVerticalFOV():Number 
 		{
 			var screenAsp:Number = screenWidth / screenHeight;
-			var fovAsp:Number = _fovX / _fovY;
+			var fovAsp:Number = Math.tan(_fovX / 2) / Math.tan(_fovY / 2);
 			switch(_fovMode)
 			{
-				case FOVMODE_VERTICAL:
+				case FOVMode.VERTICAL:
 					return _fovY;
-				case FOVMODE_HOLIZONTAL:
-					return _fovX / screenAsp;
-				case FOVMODE_INSCRIBED:
-					return screenAsp > fovAsp? _fovY : _fovX / screenAsp;
-				case FOVMODE_CIRCUMSCRIBED:
-					return screenAsp < fovAsp? _fovY : _fovX / screenAsp;
+				case FOVMode.HOLIZONTAL:
+					return Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+				case FOVMode.INSCRIBED:
+					return screenAsp > fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+				case FOVMode.CIRCUMSCRIBED:
+					return screenAsp < fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
 			}
 			return _fovY;
 		}
