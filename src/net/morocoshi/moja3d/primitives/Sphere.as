@@ -36,7 +36,7 @@ package net.morocoshi.moja3d.primitives
 				var pz:Number = Math.sin(rotateH);
 				vertices.push(px * radius, py * radius, pz * radius);
 				colors.push(1, 1, 1, 1);
-				uvs.push(ix / segmentsW, iy / segmentsH);
+				uvs.push(ix / segmentsW, 1 - iy / segmentsH);
 				normals.push(px, py, pz);
 				tangent4.push(1, 0, 0, 1);
 				
