@@ -18,7 +18,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var images:Vector.<ColladaImageNode>;
 		public var materials:Vector.<ColladaMaterialNode>;
 		public var controllers:Vector.<ColladaControllerNode>;
-		public var animation:ColladaAnimationNode;
+		public var animations:Vector.<ColladaAnimationNode>;
 		
 		public function ColladaScene() 
 		{
@@ -30,6 +30,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			images = new Vector.<ColladaImageNode>;
 			materials = new Vector.<ColladaMaterialNode>;
 			controllers = new Vector.<ColladaControllerNode>;
+			animations = new Vector.<ColladaAnimationNode>;
 		}
 		
 		public function parse(xml:XML, collector:ColladaCollector):void
@@ -53,7 +54,16 @@ package net.morocoshi.common.loaders.collada.nodes
 			
 			if (xml.library_animations[0] && collector.option.exportAnimation)
 			{
-				collector.animation.parse(xml.library_animations[0].animation[0], collector);
+				
+				for each(node in xml.library_animations[0].animation)
+				{
+					var animation:ColladaAnimationNode = new ColladaAnimationNode();
+					animation.parse(node, collector);
+					animations.push(animation);
+					
+					collector.collectAnimation(animation);
+				}
+				//___collector.animation.parse(xml.library_animations[0].animation[0], collector);
 			}
 			
 			if (xml.library_visual_scenes[0])
@@ -67,6 +77,7 @@ package net.morocoshi.common.loaders.collada.nodes
 						object.matrix = getControllerByID(object.instanceLink).shapeMatrix;
 					}
 					root.addChild(object);
+					collector.linkObjectAnimation(object);
 				}
 			}
 			
@@ -125,6 +136,7 @@ package net.morocoshi.common.loaders.collada.nodes
 					var effect:ColladaEffectNode = new ColladaEffectNode();
 					effect.parse(node, collector);
 					effects.push(effect);
+					collector.linkObjectAnimation(effect);
 				}
 			}
 			

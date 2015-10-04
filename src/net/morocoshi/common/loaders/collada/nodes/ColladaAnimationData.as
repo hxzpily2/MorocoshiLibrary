@@ -11,9 +11,13 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var times:Array;
 		/**キーフレーム値*/
 		public var values:Array;
+		/**ベジェ用ハンドルデータ*/
+		public var inTangent:Array;
+		/**ベジェ用ハンドルデータ*/
+		public var outTangent:Array;
 		/**補完タイプ。まだLINEARにしか対応してない*/
 		public var tangents:Array;
-		/**まだmatrixにしか対応してない*/
+		/**matrixとか*/
 		public var type:String;
 		
 		public function ColladaAnimationData() 

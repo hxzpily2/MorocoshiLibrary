@@ -13,6 +13,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var ambientColor:uint = 0x808080;
 		public var diffuseColor:uint = 0x808080;
 		public var diffuseTexture:String = "";
+		public var normalTexture:String = "";
 		public var transparentTexture:String = "";
 		
 		public function ColladaEffectNode() 
@@ -41,16 +42,28 @@ package net.morocoshi.common.loaders.collada.nodes
 			if (!technique) return;
 			
 			var shader:XML = technique.blinn[0] || technique.phong[0];
-			if (!shader) return;
+			if (shader)
+			{
+				ambientColor = ColladaUtil.toARGB(shader.ambient.color[0], 0x808080) & 0xffffff;
+				diffuseColor = ColladaUtil.toARGB(shader.diffuse.color[0], 0x808080) & 0xffffff;
+				var diffuseSID:String = XMLUtil.getAttrString(shader.diffuse.texture[0], "texture", "");
+				diffuseTexture = sourceLink[diffuseSID] && pathLink[sourceLink[diffuseSID]];
+				var transparentSID:String = XMLUtil.getAttrString(shader.transparent.texture[0], "texture", "");
+				transparentTexture = sourceLink[transparentSID] && pathLink[sourceLink[transparentSID]];
+				alpha = XMLUtil.getNodeNumber(shader.transparency.float[0], 1);
+			}
 			
+			var extra:XML = technique.extra[0];
+			if (extra)
+			{
+				var bump:XML = extra..bump[0];
+				if (bump)
+				{
+					var normalID:String = XMLUtil.getAttrString(bump.texture, "texture", "");
+					normalTexture = sourceLink[normalID] && pathLink[sourceLink[normalID]];
+				}
+			}
 			
-			ambientColor = ColladaUtil.toARGB(shader.ambient.color[0], 0x808080) & 0xffffff;
-			diffuseColor = ColladaUtil.toARGB(shader.diffuse.color[0], 0x808080) & 0xffffff;
-			var diffuseSID:String = XMLUtil.getAttrString(shader.diffuse.texture[0], "texture", "");
-			diffuseTexture = sourceLink[diffuseSID] && pathLink[sourceLink[diffuseSID]];
-			var transparentSID:String = XMLUtil.getAttrString(shader.transparent.texture[0], "texture", "");
-			transparentTexture = sourceLink[transparentSID] && pathLink[sourceLink[transparentSID]];
-			alpha = XMLUtil.getNodeNumber(shader.transparency.float[0], 1);
 		}
 		
 	}

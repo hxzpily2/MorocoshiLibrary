@@ -1,6 +1,9 @@
 package net.morocoshi.common.loaders.collada 
 {
 	import net.morocoshi.common.loaders.collada.nodes.ColladaAnimationNode;
+	import net.morocoshi.common.loaders.collada.nodes.ColladaEffectNode;
+	import net.morocoshi.common.loaders.collada.nodes.ColladaNode;
+	import net.morocoshi.common.loaders.collada.nodes.ColladaObjectNode;
 	/**
 	 * パース時の各種情報を集めるクラス
 	 * 
@@ -14,13 +17,13 @@ package net.morocoshi.common.loaders.collada
 		private var jointCount:int = -1;
 		public var jointIndexMap:Object = { };
 		public var jointMatrixMap:Object = { };
-		public var animation:ColladaAnimationNode;
+		//public var animation:ColladaAnimationNode;
 		public var option:ColladaParseOption;
 		
 		public function ColladaCollector() 
 		{
 			clearLog();
-			animation = new ColladaAnimationNode();
+			//animation = new ColladaAnimationNode();
 		}
 		
 		private function clearLog():void 
@@ -63,6 +66,28 @@ package net.morocoshi.common.loaders.collada
 		public function mapJointID(jointID:String, jointIndex:int):void 
 		{
 			jointIndexMap[jointID] = jointIndex;
+		}
+		
+		private var allAnimationData:Object = { };
+		
+		public function collectAnimation(animation:ColladaAnimationNode):void 
+		{
+			for (var key:String in animation.animationData)
+			{
+				allAnimationData[key] = animation.animationData[key];
+			}
+		}
+		
+		public function linkObjectAnimation(object:ColladaNode):void 
+		{
+			var animationData:Object = allAnimationData[object.id];
+			if (animationData)
+			{
+				for (var key:String in animationData)
+				{
+					object.addAnimationData(animationData[key]);
+				}
+			}
 		}
 		
 	}

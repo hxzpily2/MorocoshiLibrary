@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			environmentTexture = fragmentCode.addTexture("&sphere", _sphereMap);
+			environmentTexture = fragmentCode.addTexture("&sphere", _sphereMap, this);
 		}
 		
 		override protected function updateConstants():void 

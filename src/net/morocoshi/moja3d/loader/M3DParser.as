@@ -17,16 +17,18 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.moja3d.animation.AnimationCurveNode;
 	import net.morocoshi.moja3d.animation.AnimationCurveTrack;
+	import net.morocoshi.moja3d.animation.AnimationMaterialNode;
 	import net.morocoshi.moja3d.animation.AnimationMatrixTrack;
 	import net.morocoshi.moja3d.animation.AnimationPlayer;
 	import net.morocoshi.moja3d.animation.CurveKey;
 	import net.morocoshi.moja3d.animation.KeyframeAnimation;
 	import net.morocoshi.moja3d.animation.MotionData;
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
-	import net.morocoshi.moja3d.loader.animation.M3DCurveAnimation;
 	import net.morocoshi.moja3d.loader.animation.M3DCurveTrack;
 	import net.morocoshi.moja3d.loader.animation.M3DKeyframe;
 	import net.morocoshi.moja3d.loader.animation.M3DMatrixTrack;
+	import net.morocoshi.moja3d.loader.animation.M3DTrackUV;
+	import net.morocoshi.moja3d.loader.animation.M3DTrackXYZ;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DLineGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DLineSegment;
@@ -44,9 +46,11 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.Mipmap;
+	import net.morocoshi.moja3d.materials.ParserMaterial;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.materials.TriangleFace;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.AmbientLight;
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Camera3D;
@@ -88,17 +92,42 @@ package net.morocoshi.moja3d.loader
 		
 		public var animationPlayer:AnimationPlayer;
 		public var keyAnimations:Vector.<KeyframeAnimation>;
-		public var curveSegments:Number = 1000 / 15;
+		/**
+		 * ベジェ曲線カーブを分割する際の間隔を秒単位で指定。分割数を決める際の参考値なので、必ずしもこの間隔になるわけではない。
+		 */
+		public var curveSegments:Number = 1.0 / 15;
+		/**
+		 * 階層構造を保ったObject3Dが格納されている
+		 */
 		public var hierarchy:Vector.<Object3D>;
+		/**
+		 * 階層を無視した全てのObject3Dのリスト
+		 */
 		public var objects:Vector.<Object3D>;
+		/**
+		 * 全てのCamera3Dのリスト
+		 */
 		public var cameras:Vector.<Camera3D>;
-		public var materials:Vector.<Material>;
+		/**
+		 * 全てのマテリアルのリスト
+		 */
+		public var materials:Vector.<ParserMaterial>;
+		/**
+		 * 全てのジオメトリのリスト
+		 */
 		public var geometries:Vector.<Geometry>;
+		/**
+		 * M3Dをモーションデータとして書き出していた場合にアクセス可能
+		 */
 		public var motion:MotionData;
+		/**
+		 * 画像リソースのセット
+		 */
 		public var resourcePack:ResourcePack;
-		
-		/**引数にM3DMaterialが渡されるのでMaterialインスタンスを返すようにする*/
-		public var onConvertMaterial:Function;
+		/**
+		 * 引数にM3DMaterialが渡されるのでMaterialインスタンスを返すようにする
+		 */
+		//public var onConvertMaterial:Function;
 		
 		private var _userData:Dictionary;
 		private var materialA3DLink:Dictionary;
@@ -120,7 +149,7 @@ package net.morocoshi.moja3d.loader
 		
 		public function M3DParser() 
 		{
-			onConvertMaterial = toMaterial;
+			//onConvertMaterial = toMaterial;
 			animationPlayer = new AnimationPlayer();
 		}
 		
@@ -228,7 +257,7 @@ package net.morocoshi.moja3d.loader
 			hierarchy = new Vector.<Object3D>;
 			objects = new Vector.<Object3D>;
 			cameras = new Vector.<Camera3D>;
-			materials = new Vector.<Material>;
+			materials = new Vector.<ParserMaterial>;
 			geometries = new Vector.<Geometry>;
 			keyAnimations = new Vector.<KeyframeAnimation>;
 		}
@@ -284,7 +313,7 @@ package net.morocoshi.moja3d.loader
 			parseM3DScene(data.readObject());
 		}
 		
-		public function parseScene(scene:M3DScene, includeTo:Object3D = null):void
+		moja3d function parseScene(scene:M3DScene, includeTo:Object3D = null):void
 		{
 			init();
 			this.includeTo = includeTo;
@@ -335,7 +364,18 @@ package net.morocoshi.moja3d.loader
 			for (i = 0; i < n; i++) 
 			{
 				var materialM3D:M3DMaterial = scene.materialList[i];
-				var materialA3D:Material = onConvertMaterial(materialM3D);
+				
+				//アニメーション
+				var materialAnimation:KeyframeAnimation;
+				if (materialM3D.animation)
+				{
+					materialAnimation = toKeyAnimation(materialM3D.animation);
+					materialAnimation.initMaterial();
+					keyAnimations.push(materialAnimation);
+					animationPlayer.keyAnimations.push(materialAnimation);
+				}
+				
+				var materialA3D:ParserMaterial = new ParserMaterial(materialM3D, materialAnimation);
 				materialA3DLink[materialM3D.id] = materialA3D;
 				materialM3DLink[materialA3D] = materialM3D;
 				materials.push(materialA3D);
@@ -488,6 +528,7 @@ package net.morocoshi.moja3d.loader
 		private function toKeyAnimation(data:M3DAnimation):KeyframeAnimation 
 		{
 			var anm:KeyframeAnimation = new KeyframeAnimation(data.type);
+			if (data.material) anm.material = toMaterialNode(data.material);
 			if (data.position) anm.position = toCurveNode(data.position);
 			if (data.rotation) anm.rotation = toCurveNode(data.rotation);
 			if (data.scale) anm.scale = toCurveNode(data.scale);
@@ -510,7 +551,15 @@ package net.morocoshi.moja3d.loader
 			return result;
 		}
 		
-		private function toCurveNode(data:M3DCurveAnimation):AnimationCurveNode 
+		private function toMaterialNode(data:M3DTrackUV):AnimationMaterialNode 
+		{
+			var node:AnimationMaterialNode = new AnimationMaterialNode();
+			if (data.offsetU) node.offsetU = toCurveTrack(data.offsetU);
+			if (data.offsetV) node.offsetV = toCurveTrack(data.offsetV);
+			return node;
+		}
+		
+		private function toCurveNode(data:M3DTrackXYZ):AnimationCurveNode 
 		{
 			var node:AnimationCurveNode = new AnimationCurveNode();
 			if (data.x) node.x = toCurveTrack(data.x);
@@ -544,48 +593,6 @@ package net.morocoshi.moja3d.loader
 			track.parse(curveList, curveSegments);
 			track.loop = data.loop;
 			return track;
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  マテリアル化
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * デフォルトのマテリアル生成関数。onConvertMaterialに新しい関数を渡すことで変更できる。
-		 * @param	m3d
-		 * @return
-		 */
-		private function toMaterial(material:M3DMaterial):Material 
-		{
-			var m:Material = new Material();
-			m.name = material.name;
-			m.culling = material.doubleSided? TriangleFace.BOTH : TriangleFace.FRONT;
-			m.blendMode = material.blendMode;
-			var opacity:ExternalTextureResource = material.opacityPath? new ExternalTextureResource(material.opacityPath) : null;
-			if (material.diffusePath)
-			{
-				var diffuse:ExternalTextureResource = new ExternalTextureResource(material.diffusePath);
-				m.shaderList.addShader(new TextureShader(diffuse, opacity, material.mipmap, material.smoothing? Smoothing.LINEAR : Smoothing.NEAREST, material.tiling));
-				if (material.alpha < 1)
-				{
-					m.shaderList..addShader(new AlphaShader(material.alpha));
-				}
-			}
-			else
-			{
-				m.shaderList.addShader(new FillShader(material.diffuseColor, material.alpha));
-				if (opacity)
-				{
-					m.shaderList.addShader(new OpacityShader(opacity, Mipmap.MIPLINEAR, Smoothing.LINEAR, Tiling.WRAP));
-				}
-			}
-			
-			//m.shaderList.addShader(new VertexColorShader());
-			m.shaderList.addShader(new LambertShader());
-			
-			return m;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -682,14 +689,6 @@ package net.morocoshi.moja3d.loader
 			
 			return light;
 		}
-		/*
-		private function toSprite3D(m3d:M3DBillboard):Sprite3D
-		{
-			var sprite:Sprite3D = new Sprite3D(m3d.width, m3d.height);
-			sprite.material = materialA3DLink[m3d.material];
-			return sprite;
-		}
-		*/
 		
 		private function toGeometry(m3d:M3DMeshGeometry):Geometry 
 		{
@@ -753,7 +752,8 @@ package net.morocoshi.moja3d.loader
 			ClassAliasUtil.register(Vector3D);
 			ClassAliasUtil.register(M3DBone);
 			ClassAliasUtil.register(M3DAnimation);
-			ClassAliasUtil.register(M3DCurveAnimation);
+			ClassAliasUtil.register(M3DTrackUV);
+			ClassAliasUtil.register(M3DTrackXYZ);
 			ClassAliasUtil.register(M3DCurveTrack);
 			ClassAliasUtil.register(M3DMatrixTrack);
 			ClassAliasUtil.register(M3DKeyframe);

@@ -137,7 +137,7 @@ package net.morocoshi.common.loaders.collada
 			var list:Array = toNumberArray(xml);
 			if (list.length != 4) return def;
 			
-			return int(list[3] * 0xff) << 24 | int(list[0] * 0xff) << 16 | int(list[1] * 0xff) << 8 | int(list[0] * 0xff);
+			return int(list[3] * 0xff) << 24 | int(list[0] * 0xff) << 16 | int(list[1] * 0xff) << 8 | int(list[2] * 0xff);
 		}
 		
 		static public function ArrayToMatrix3D(a:Array):Matrix3D

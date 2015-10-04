@@ -22,7 +22,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		/**
 		 * 
-		 * @param	resouce
+		 * @param	resource
 		 * @param	reflection
 		 * @param	blendMode
 		 */
@@ -30,7 +30,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super();
 			
-			_resource = resource;
+			this.resource = resource;
 			
 			updateTexture();
 			updateAlphaMode();

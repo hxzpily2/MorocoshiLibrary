@@ -2,28 +2,46 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
+	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
 	/**
 	 * ...
-	 * @author ...
+	 * 
+	 * @author tencho
 	 */
 	public class UVOffsetShader extends MaterialShader 
 	{
-		private var _offsetX:Number;
-		private var _offsetY:Number;
-		private var _scaleX:Number;
-		private var _scaleY:Number;
+		private var _offsetU:Number;
+		private var _offsetV:Number;
+		private var _scaleU:Number;
+		private var _scaleV:Number;
 		private var offsetConst:AGALConstant;
 		
-		public function UVOffsetShader(offsetX:Number, offsetY:Number, scaleX:Number, scaleY:Number)
+		//　　V
+		//　　↑
+		//　　|　　UV方向
+		//　　|
+		//　　+―――――――> U
+		
+		/**
+		 * 
+		 * @param	offsetX
+		 * @param	offsetY
+		 * @param	scaleX
+		 * @param	scaleY
+		 */
+		public function UVOffsetShader(offsetU:Number, offsetV:Number, scaleU:Number, scaleV:Number)
 		{
 			super();
 			
-			_offsetX = offsetX;
-			_offsetY = offsetY;
-			_scaleX = scaleX;
-			_scaleY = scaleY;
+			requiredAttribute.push(VertexAttribute.UV);
+			
+			_offsetU = offsetU;
+			_offsetV = offsetV;
+			_scaleU = scaleU;
+			_scaleV = scaleV;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -51,7 +69,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateConstants();
 			
-			offsetConst = vertexCode.addConstantsFromArray("@offset", [_offsetX, _offsetY, _scaleX, _scaleY]);
+			offsetConst = vertexCode.addConstantsFromArray("@offsetUV", [_offsetU, -_offsetV, _scaleU, _scaleV]);
 			
 		}
 		
@@ -60,59 +78,59 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			vertexCode.addCode(
-				"$uv.xy += @offset.xy",
-				"$uv.xy *= @offset.zw",
+				"$uv.xy += @offsetUV.xy",
+				"$uv.xy *= @offsetUV.zw",
 				"#uv = $uv"//UV
 			);
 		}
 		
-		public function get offsetX():Number 
+		public function get offsetU():Number 
 		{
-			return _offsetX;
+			return _offsetU;
 		}
 		
-		public function set offsetX(value:Number):void 
+		public function set offsetU(value:Number):void 
 		{
-			_offsetX = value;
-			offsetConst.x = _offsetX;
+			_offsetU = value;
+			offsetConst.x = _offsetU;
 		}
 		
-		public function get offsetY():Number 
+		public function get offsetV():Number 
 		{
-			return _offsetY;
+			return _offsetV;
 		}
 		
-		public function set offsetY(value:Number):void 
+		public function set offsetV(value:Number):void 
 		{
-			_offsetY = value;
-			offsetConst.y = _offsetY;
+			_offsetV = value;
+			offsetConst.y = -_offsetV;
 		}
 		
-		public function get scaleX():Number 
+		public function get scaleU():Number 
 		{
-			return _scaleX;
+			return _scaleU;
 		}
 		
-		public function set scaleX(value:Number):void 
+		public function set scaleU(value:Number):void 
 		{
-			_scaleX = value;
-			offsetConst.z = _scaleX;
+			_scaleU = value;
+			offsetConst.z = _scaleU;
 		}
 		
-		public function get scaleY():Number 
+		public function get scaleV():Number 
 		{
-			return _scaleY;
+			return _scaleV;
 		}
 		
-		public function set scaleY(value:Number):void 
+		public function set scaleV(value:Number):void 
 		{
-			_scaleY = value;
-			offsetConst.w = _offsetY;
+			_scaleV = value;
+			offsetConst.w = _offsetV;
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:UVOffsetShader = new UVOffsetShader(_offsetX, _offsetY, _scaleX, _scaleY);
+			var shader:UVOffsetShader = new UVOffsetShader(_offsetU, _offsetV, _scaleU, _scaleV);
 			return shader;
 		}
 		

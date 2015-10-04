@@ -9,17 +9,20 @@ package net.morocoshi.moja3d.loader.animation
 	 */
 	public class M3DAnimation 
 	{
+		static public const TYPE_MATERIAL:String = "material";
 		static public const TYPE_CURVE:String = "curve";
 		static public const TYPE_MATRIX:String = "matrix";
 		/***/
 		public var type:String;
 		
+		/**[type=TYPE_MATERIAL時使用]UVオフセットデータ*/
+		public var material:M3DTrackUV;
 		/**[type=TYPE_CURVE時使用]位置カーブデータ*/
-		public var position:M3DCurveAnimation;
+		public var position:M3DTrackXYZ;
 		/**[type=TYPE_CURVE時使用]回転カーブデータ*/
-		public var rotation:M3DCurveAnimation;
+		public var rotation:M3DTrackXYZ;
 		/**[type=TYPE_CURVE時使用]スケールカーブデータ*/
-		public var scale:M3DCurveAnimation;
+		public var scale:M3DTrackXYZ;
 		/**[type=TYPE_MATRIX時使用]Matrix3Dデータ*/
 		public var matrix:M3DMatrixTrack;
 		/**[type=TYPE_CURVE時使用]足りない要素をここから使う*/

@@ -10,6 +10,7 @@ package net.morocoshi.common.loaders.collada.nodes
 	{
 		public var name:String;
 		public var id:String;
+		public var animation:Object;
 		
 		public function ColladaNode() 
 		{
@@ -20,6 +21,12 @@ package net.morocoshi.common.loaders.collada.nodes
 		{
 			name = XMLUtil.getAttrString(xml, "name", "");
 			id = XMLUtil.getAttrString(xml, "id", "");
+		}
+		
+		public function addAnimationData(data:ColladaAnimationData):void
+		{
+			if (animation == null) animation = { };
+			animation[data.type] = data;
 		}
 		
 	}

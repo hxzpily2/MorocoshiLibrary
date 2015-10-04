@@ -19,7 +19,7 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class EnvironmentShader extends MaterialShader 
 	{
-		private var _resouce:TextureResource;
+		private var _resource:TextureResource;
 		private var _reflection:Number;
 		private var _blendMode:String;
 		private var _fresnel:Boolean;
@@ -28,19 +28,19 @@ package net.morocoshi.moja3d.shaders.render
 		
 		/**
 		 * コンストラクタ
-		 * @param	resouce	キューブマップリソース
+		 * @param	resource	キューブマップリソース
 		 * @param	reflection	基本反射率
 		 * @param	fresnel	フレネル効果を適用するか。フレネル反射率が基本反射率に乗算される。事前にFresnelShaderを適用している必要がある。
 		 * @param	blendMode	合成モード。通常反射の場合はBlendMode.NORMAL。
 		 */
-		public function EnvironmentShader(resouce:TextureResource, reflection:Number, fresnel:Boolean, blendMode:String = BlendMode.NORMAL) 
+		public function EnvironmentShader(resource:TextureResource, reflection:Number, fresnel:Boolean, blendMode:String = BlendMode.NORMAL) 
 		{
 			super();
 			
 			requiredAttribute.push(VertexAttribute.NORMAL);
 			
 			_fresnel = fresnel;
-			_resouce = resouce;
+			this.resource = resource;
 			_blendMode = blendMode;
 			_reflection = reflection;
 			
@@ -65,7 +65,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			texture = fragmentCode.addTexture("&cube", resouce, this);
+			texture = fragmentCode.addTexture("&cube", resource, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -79,7 +79,7 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			fragmentConstants.number = true;
 			fragmentConstants.cameraPosition = true;
-			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resouce.getSamplingOption());
+			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resource.getSamplingOption());
 			fragmentCode.addCode(
 				"var $temp",
 				"var $eye",
@@ -158,29 +158,29 @@ package net.morocoshi.moja3d.shaders.render
 		override public function clone():MaterialShader 
 		{
 			var shader:EnvironmentShader = new EnvironmentShader(null, _reflection, _fresnel, _blendMode);
-			shader.resouce = _resouce? _resouce.clone() as TextureResource : null;
+			shader.resource = _resource? _resource.clone() as TextureResource : null;
 			return shader;
 		}
 		
 		/**
 		 * キューブマップリソース
 		 */
-		public function get resouce():TextureResource 
+		public function get resource():TextureResource 
 		{
-			return _resouce;
+			return _resource;
 		}
 		
-		public function set resouce(value:TextureResource):void 
+		public function set resource(value:TextureResource):void 
 		{
 			//関連付けられていたパースイベントを解除しておく
-			if (_resouce) _resouce.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			if (_resource) _resource.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
 			//テクスチャリソースの差し替え
-			_resouce = value;
-			if (texture) texture.texture = _resouce;
+			_resource = value;
+			if (texture) texture.texture = _resource;
 			
 			//新しいパースイベントを関連付ける
-			if (_resouce) _resouce.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			if (_resource) _resource.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
 			updateAlphaMode();
 		}

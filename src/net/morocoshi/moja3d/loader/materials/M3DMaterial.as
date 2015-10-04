@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.loader.materials 
 {
 	import flash.display.BlendMode;
+	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
@@ -20,6 +21,7 @@ package net.morocoshi.moja3d.loader.materials
 	{
 		public var name:String = "";
 		public var id:int = 0;
+		public var animationID:String = "";
 		public var diffusePath:String = "";
 		public var opacityPath:String = "";
 		public var normalPath:String = "";
@@ -33,6 +35,8 @@ package net.morocoshi.moja3d.loader.materials
 		public var tiling:String = Tiling.WRAP;
 		public var smoothing:Boolean = true;
 		public var mipmap:String = Mipmap.MIPLINEAR;
+		/**マテリアルアニメーション*/
+		public var animation:M3DAnimation;
 		
 		public function M3DMaterial() 
 		{

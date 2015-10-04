@@ -38,7 +38,7 @@ package net.morocoshi.moja3d.resources
 		/**
 		 * コンストラクタ
 		 * 
-		 * @param	data	渡せる形式は、Bitmp、BitmapData、ATFデータ(ByteArray)
+		 * @param	data	渡せる形式は、Bitmp、BitmapData、ATFデータ(ByteArray)、uint（0xRRGGBB）
 		 * @param	parseAlpha	半透明ピクセルの有無を調べる。完全不透明な画像はdrawCallが減ってくれるが、画像の大きさに比例してチェックが重くなる。
 		 */
 		public function ImageTextureResource(data:*, parseAlpha:Boolean = false)

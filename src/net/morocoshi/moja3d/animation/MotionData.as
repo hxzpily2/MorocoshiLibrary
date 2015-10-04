@@ -86,12 +86,16 @@ package net.morocoshi.moja3d.animation
 			}
 		}
 		
-		public function setForceTangent(tangent:int):void 
+		/**
+		 * キーフレーム間の線形補完の有無を設定
+		 * @param	enabled
+		 */
+		public function setInterpolationEnabled(enabled:Boolean):void 
 		{
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];
-				anm.setForceTangent(tangent);
+				anm.setInterpolationEnabled(enabled);
 			}
 		}
 		

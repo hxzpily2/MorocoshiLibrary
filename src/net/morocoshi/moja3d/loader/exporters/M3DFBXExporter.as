@@ -28,9 +28,9 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.common.loaders.fbx.objects.FBXMesh;
 	import net.morocoshi.common.loaders.fbx.objects.FBXObject;
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
-	import net.morocoshi.moja3d.loader.animation.M3DCurveAnimation;
 	import net.morocoshi.moja3d.loader.animation.M3DCurveTrack;
 	import net.morocoshi.moja3d.loader.animation.M3DKeyframe;
+	import net.morocoshi.moja3d.loader.animation.M3DTrackXYZ;
 	import net.morocoshi.moja3d.loader.animation.TangentType;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DLineGeometry;
@@ -1066,11 +1066,11 @@ package net.morocoshi.moja3d.loader.exporters
 			return result;
 		}
 		
-		private function toCurveAnimation(node:FBXAnimationNode):M3DCurveAnimation 
+		private function toCurveAnimation(node:FBXAnimationNode):M3DTrackXYZ 
 		{
 			if (node == null) return null;
 			
-			var result:M3DCurveAnimation = new M3DCurveAnimation();
+			var result:M3DTrackXYZ = new M3DTrackXYZ();
 			if (node.x) result.x = toAnimationTrack(node.x);
 			if (node.y) result.y = toAnimationTrack(node.y);
 			if (node.z) result.z = toAnimationTrack(node.z);

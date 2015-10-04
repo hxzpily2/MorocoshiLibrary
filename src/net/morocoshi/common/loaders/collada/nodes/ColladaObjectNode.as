@@ -23,7 +23,6 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var type:String;
 		public var instanceLink:String;
 		public var parent:ColladaObjectNode;
-		public var animation:ColladaAnimationData;
 		
 		public var visible:Boolean;
 		public var castShadow:Boolean;
@@ -49,11 +48,6 @@ package net.morocoshi.common.loaders.collada.nodes
 		override public function parse(xml:XML, collector:ColladaCollector):void
 		{
 			super.parse(xml, collector);
-			
-			if (collector.animation.animationData[id])
-			{
-				animation = collector.animation.animationData[id];
-			}
 			
 			var i:int;
 			var n:int;

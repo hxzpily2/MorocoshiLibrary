@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.animation
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.math.transform.AngleUtil;
 	import net.morocoshi.moja3d.objects.Object3D;
+	import net.morocoshi.moja3d.shaders.render.UVOffsetShader;
 	
 	/**
 	 * ...
@@ -18,6 +19,8 @@ package net.morocoshi.moja3d.animation
 		static public const TYPE_CURVE:String = "curve";
 		/**姿勢をMatrix3Dで決定するタイプ*/
 		static public const TYPE_MATRIX:String = "matrix";
+		/**マテリアルのUVオフセットを動かすタイプ*/
+		static public const TYPE_MATERIAL:String = "material";
 		
 		static private var DEGREE:Number = 180 / Math.PI;
 		
@@ -27,6 +30,8 @@ package net.morocoshi.moja3d.animation
 			
 		public var type:String;
 		
+		public var uvOffsetShader:UVOffsetShader;
+		public var material:AnimationMaterialNode;
 		public var position:AnimationCurveNode;
 		public var rotation:AnimationCurveNode;
 		public var scale:AnimationCurveNode;
@@ -45,11 +50,20 @@ package net.morocoshi.moja3d.animation
 		public function clone():KeyframeAnimation
 		{
 			var result:KeyframeAnimation = new KeyframeAnimation(type);
+			result.material = material? material.clone() : null;
 			result.position = position? position.clone() : null;
 			result.rotation = rotation? rotation.clone() : null;
 			result.scale = scale? scale.clone() : null;
 			result.matrix = matrix? matrix.clone() : null;
 			return result;
+		}
+		
+		/**
+		 * 
+		 */
+		public function initMaterial():void
+		{
+			uvOffsetShader = new UVOffsetShader(0, 0, 1, 1);
 		}
 		
 		/**
@@ -81,15 +95,16 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * 強制補完タイプを設定。TangentType.NONEで無効化。
-		 * @param	tangent
+		 * キーフレーム間の線形補完の有無を設定
+		 * @param	enabled
 		 */
-		public function setForceTangent(tangent:int):void
+		public function setInterpolationEnabled(enabled:Boolean):void 
 		{
-			if (position) position.setForceTangent(tangent);
-			if (rotation) rotation.setForceTangent(tangent);
-			if (scale) scale.setForceTangent(tangent);
-			if (matrix) matrix.forceTangent = tangent;
+			if (material) material.setInterpolationEnabled(enabled);
+			if (position) position.setInterpolationEnabled(enabled);
+			if (rotation) rotation.setInterpolationEnabled(enabled);
+			if (scale) scale.setInterpolationEnabled(enabled);
+			if (matrix) matrix.interpolationEnabled = enabled;
 		}
 		
 		/**
@@ -98,8 +113,23 @@ package net.morocoshi.moja3d.animation
 		 */
 		public function setTime(time:Number):void
 		{
+			var ratio:Number = 1 - fadeRatio;
 			switch(type)
 			{
+				case TYPE_MATERIAL:
+					var u:Number = (material.offsetU)? material.offsetU.getValue(time) : 0;
+					var v:Number = (material.offsetV)? material.offsetV.getValue(time) : 0;
+					if (fadeRatio == 1)
+					{
+						uvOffsetShader.offsetU = u;
+						uvOffsetShader.offsetV = v;
+					}
+					else
+					{
+						uvOffsetShader.offsetU = capturedTransform.offsetU * ratio + u * fadeRatio;
+						uvOffsetShader.offsetV = capturedTransform.offsetV * ratio + v * fadeRatio;
+					}
+					break;
 				case TYPE_CURVE:
 					setCurveMatrix(time);
 					break;
@@ -121,6 +151,7 @@ package net.morocoshi.moja3d.animation
 		
 		public function reset():void 
 		{
+			if (material) material.reset();
 			if (position) position.reset();
 			if (rotation) rotation.reset();
 			if (scale) scale.reset();
@@ -132,6 +163,11 @@ package net.morocoshi.moja3d.animation
 		{
 			if (target == null) return;
 			
+			if (material)
+			{
+				capturedTransform.offsetU = uvOffsetShader.offsetU;
+				capturedTransform.offsetV = uvOffsetShader.offsetV;
+			}
 			if (position)
 			{
 				capturedTransform.x = target.x;

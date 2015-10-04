@@ -46,14 +46,14 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * 強制補完タイプを設定。TangentType.NONEで無効化。
-		 * @param	tangent
+		 * キーフレーム間の線形補完の有無を設定
+		 * @param	enabled
 		 */
-		public function setForceTangent(tangent:int):void 
+		public function setInterpolationEnabled(enabled:Boolean):void 
 		{
-			if (x) x.forceTangent = tangent;
-			if (y) y.forceTangent = tangent;
-			if (z) z.forceTangent = tangent;
+			if (x) x.interpolationEnabled = enabled;
+			if (y) y.interpolationEnabled = enabled;
+			if (z) z.interpolationEnabled = enabled;			
 		}
 		
 	}

@@ -46,9 +46,9 @@ package net.morocoshi.moja3d.loader.animation
 		
 		private function drawCurve(curve:AnimationCurveNode):void 
 		{
-			if (curve.x) curve.x.drawAnimation(sprite.graphics, 1, 0xff0000, 0.1, 1);
-			if (curve.y) curve.y.drawAnimation(sprite.graphics, 1, 0x00ff00, 0.1, 1);
-			if (curve.z) curve.z.drawAnimation(sprite.graphics, 1, 0x0000ff, 0.1, 1);
+			if (curve.x) curve.x.drawAnimation(sprite.graphics, 1, 0xff0000, 100, 1);
+			if (curve.y) curve.y.drawAnimation(sprite.graphics, 1, 0x00ff00, 100, 1);
+			if (curve.z) curve.z.drawAnimation(sprite.graphics, 1, 0x0000ff, 100, 1);
 		}
 		
 	}

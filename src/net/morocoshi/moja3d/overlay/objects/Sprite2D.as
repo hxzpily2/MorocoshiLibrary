@@ -151,8 +151,8 @@ package net.morocoshi.moja3d.overlay.objects
 				if (material)
 				{
 					var resources:Vector.<Resource> = material.getResources();
-					var numResouces:int = resources.length;
-					for (var j:int = 0; j < numResouces; j++)
+					var numResources:int = resources.length;
+					for (var j:int = 0; j < numResources; j++)
 					{
 						var resource:Resource = resources[j];
 						if (classObject == null || resource is classObject)

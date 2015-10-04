@@ -96,9 +96,9 @@ package net.morocoshi.common.loaders.collada.nodes
 			
 			var types:Array = [];
 			if (option.exportPosition) types.push(VERTEX);
-			if (option.exportNormal) types.push(NORMAL);
-			if (option.exportUV) types.push(TEXCOORD);
-			if (option.exportTangent4) types.push(TANGENT4);
+			if (option.exportNormal && getList(NORMAL).length > 0) types.push(NORMAL);
+			if (option.exportUV && getList(TEXCOORD).length > 0) types.push(TEXCOORD);
+			if (option.exportTangent4 && getList(TANGENT4).length > 0) types.push(TANGENT4);
 			if (jointList.length)
 			{
 				types.push(JOINT);

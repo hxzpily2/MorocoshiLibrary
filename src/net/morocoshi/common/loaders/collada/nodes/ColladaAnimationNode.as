@@ -3,8 +3,10 @@ package net.morocoshi.common.loaders.collada.nodes
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
 	import net.morocoshi.common.text.XMLUtil;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ColladaAnimationNode extends ColladaNode 
@@ -41,6 +43,8 @@ package net.morocoshi.common.loaders.collada.nodes
 						case "INPUT": animation.times = sourceData[sourceID]; break;
 						case "OUTPUT": animation.values = sourceData[sourceID]; break;
 						case "INTERPOLATION": animation.tangents = sourceData[sourceID]; break;
+						case "IN_TANGENT": animation.inTangent = sourceData[sourceID]; break;
+						case "OUT_TANGENT": animation.outTangent = sourceData[sourceID]; break;
 					}
 				}
 			}
@@ -50,8 +54,14 @@ package net.morocoshi.common.loaders.collada.nodes
 				var targetPath:String = XMLUtil.getAttrString(channel, "target", "");
 				var targetData:Array = targetPath.split("/");
 				var anm:ColladaAnimationData = samplerData[String(channel.@source).substr(1)];
-				anm.type = targetData[1];
-				animationData[targetData[0]] = anm;
+				//MAYAのUVアニメでtarget="xxxxx/common/offsetV"とかある。commonはいらない？
+				var type:String = targetData[targetData.length - 1];
+				if (animationData[targetData[0]] == null)
+				{
+					animationData[targetData[0]] = { };
+				}
+				anm.type = type;
+				animationData[targetData[0]][type] = anm;
 			}
 		}
 		

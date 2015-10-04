@@ -18,7 +18,8 @@ package net.morocoshi.moja3d.animation
 		public var timeList:Vector.<Number>;
 		public var valueList:Vector.<Number>;
 		public var tangentList:Vector.<int>;
-		public var forceTangent:int = -1;
+		/**キーフレーム間の線形補完を行うかどうか。そもそも補完しない設定のフレームには意味がない*/
+		public var interpolationEnabled:Boolean = true;
 		
 		/**アニメーションが終端を超えた場合ループさせるか*/
 		public var loop:Boolean;
@@ -138,8 +139,8 @@ package net.morocoshi.moja3d.animation
 				
 				if (time > timeList[lastIndex] && time < timeList[lastIndex + 1])
 				{
-					var tangent:int = forceTangent == TangentType.NONE? tangentList[lastIndex] : forceTangent;
-					if(tangent == TangentType.STEP)
+					var tangent:int = tangentList[lastIndex];
+					if(tangent == TangentType.STEP || interpolationEnabled == false)
 					{
 						return valueList[lastIndex];
 					}
@@ -248,7 +249,7 @@ package net.morocoshi.moja3d.animation
 			result.timeList = timeList.concat();
 			result.valueList = valueList.concat();
 			result.tangentList = tangentList.concat();
-			result.forceTangent = forceTangent;
+			result.interpolationEnabled = interpolationEnabled;
 			result.loop = loop;
 			result.rawData = rawData;
 			result.lastIndex = lastIndex;

@@ -19,12 +19,12 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class NormalMapShader extends MaterialShader 
 	{
-		private var _resouce:TextureResource;
+		private var _resource:TextureResource;
 		private var _scale:Number;
 		private var texture:AGALTexture;
 		private var scaleConst:AGALConstant;
 		
-		public function NormalMapShader(resouce:TextureResource, scale:Number) 
+		public function NormalMapShader(resource:TextureResource, scale:Number) 
 		{
 			super();
 			
@@ -32,7 +32,7 @@ package net.morocoshi.moja3d.shaders.render
 			requiredAttribute.push(VertexAttribute.TANGENT4);
 			
 			_scale = scale;
-			this.resouce = resouce;
+			this.resource = resource;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -54,7 +54,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			texture = fragmentCode.addTexture("&normal", _resouce, this);
+			texture = fragmentCode.addTexture("&normal", _resource, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -69,7 +69,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.WRAP, texture.getSamplingOption());
+			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.WRAP, texture.getSamplingOption());
 			fragmentCode.addCode(
 				"var $tangent4",
 				"$tangent4.xyz = nrm(#tangent4.xyz)",
@@ -101,22 +101,22 @@ package net.morocoshi.moja3d.shaders.render
 			);
 		}
 		
-		public function get resouce():TextureResource 
+		public function get resource():TextureResource 
 		{
-			return _resouce;
+			return _resource;
 		}
 		
-		public function set resouce(value:TextureResource):void 
+		public function set resource(value:TextureResource):void 
 		{
 			//関連付けられていたパースイベントを解除しておく
-			if (_resouce) _resouce.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			if (_resource) _resource.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
 			//テクスチャリソースの差し替え
-			_resouce = value;
-			if (texture) texture.texture = _resouce;
+			_resource = value;
+			if (texture) texture.texture = _resource;
 			
 			//新しいパースイベントを関連付ける
-			if (_resouce) _resouce.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			if (_resource) _resource.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
 			updateAlphaMode();
 		}
@@ -139,7 +139,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:NormalMapShader = new NormalMapShader(_resouce, _scale);
+			var shader:NormalMapShader = new NormalMapShader(_resource, _scale);
 			return shader;
 		}
 		

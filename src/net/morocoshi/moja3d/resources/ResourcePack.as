@@ -70,8 +70,17 @@ package net.morocoshi.moja3d.resources
 			return items.join(".");
 		}
 		
-		public function attachTo(resources:Vector.<Resource>, upload:Boolean, context3D:Context3D = null, async:Boolean = false, complete:Function = null):void 
+		/**
+		 * 各種リソースにこのリソースパック内のファイルIDが一致するデータを渡す。
+		 * @param	resources	Resourceの配列もしくはResource単体
+		 * @param	upload	アップロードしたい場合はtrue。falseにした場合以降の引数は省略可能。
+		 * @param	context3D
+		 * @param	async
+		 * @param	complete
+		 */
+		public function attachTo(resources:*, upload:Boolean, context3D:Context3D = null, async:Boolean = false, complete:Function = null):void 
 		{
+			if (resources is Resource) resources = [resources];
 			var n:int = resources.length;
 			for (var i:int = 0; i < n; i++)
 			{
