@@ -1,27 +1,30 @@
 package net.morocoshi.moja3d.animation 
 {
 	import net.morocoshi.moja3d.objects.Object3D;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class MotionData 
 	{
-		public var name:String;
+		public var id:String;
 		public var animation:Object;
-		public var timeScale:Number;
+		public var speedScale:Number;
+		
 		public function MotionData() 
 		{
-			name = "";
-			timeScale = 1;
+			id = "";
+			speedScale = 1;
 			animation = { };
 		}
 		
 		public function clone():MotionData 
 		{
 			var result:MotionData = new MotionData();
-			result.name = name;
-			result.timeScale = timeScale;
+			result.id = id;
+			result.speedScale = speedScale;
 			for (var key:String in animation) 
 			{
 				result.animation[key] = animation[key].clone();
@@ -30,17 +33,22 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * 親を含む全ての子オブジェクトをチェックし、名前が一致するものをそれぞれのアニメーションデータに関連付ける。
+		 * 親を含む全ての子オブジェクトをチェックし、アニメーションIDが一致するものをそれぞれのアニメーションデータに関連付ける。
 		 * @param	object	チェックするルートオブジェクト。このオブジェクトが持つ全ての子をチェックする。
 		 */
 		public function setObject(object:Object3D):void 
 		{
 			for (var key:String in animation) 
 			{
+				var anm:KeyframeAnimation = animation[key];
+				if (object.animationID == key)
+				{
+					anm.setObject(object);
+					continue;
+				}
 				var child:Object3D = object.getChildByAnimationID(key, true);
 				if (child)
 				{
-					var anm:KeyframeAnimation = animation[key];
 					anm.setObject(child);
 				}
 			}
@@ -64,16 +72,16 @@ package net.morocoshi.moja3d.animation
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];
-				anm.setTime(time * timeScale);
+				anm.setTime(time * speedScale);
 			}
 		}
 		
-		public function setFadeRatio(ratio:Number):void
+		public function setBlendRatio(ratio:Number):void
 		{
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];
-				anm.fadeRatio = ratio;
+				anm.blendRatio = ratio;
 			}
 		}
 		

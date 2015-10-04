@@ -48,7 +48,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		override public function parse(xml:XML, collector:ColladaCollector):void
 		{
 			super.parse(xml, collector);
-			
+			collector.linkObjectAnimation(this);
 			var i:int;
 			var n:int;
 			

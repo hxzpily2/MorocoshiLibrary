@@ -77,7 +77,6 @@ package net.morocoshi.common.loaders.collada.nodes
 						object.matrix = getControllerByID(object.instanceLink).shapeMatrix;
 					}
 					root.addChild(object);
-					collector.linkObjectAnimation(object);
 				}
 			}
 			

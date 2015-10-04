@@ -39,9 +39,9 @@ package net.morocoshi.moja3d.animation
 		/**
 		 * スプラインカーブ用のキーフレームリストを渡して曲線上にキーフレームを生成させる。
 		 * @param	curveList
-		 * @param	segment	曲線の分割数。0で分割無し。
+		 * @param	bezierCurveInterval	曲線の分割数。0で分割無し。
 		 */
-		public function parse(curveList:Vector.<CurveKey>, segment:Number):void
+		public function parse(curveList:Vector.<CurveKey>, bezierCurveInterval:Number):void
 		{
 			timeList.length = 0;
 			valueList.length = 0;
@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.animation
 			{
 				var c0:CurveKey = curveList[i];
 				var c1:CurveKey = curveList[i + 1];
-				var seg:int = (c1.time - c0.time) / segment;
+				var seg:int = (c1.time - c0.time) / bezierCurveInterval;
 				switch(c0.tangent)
 				{
 					case TangentType.STEP:
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.animation
 						addKey(c1.time, c1.value, TangentType.LINER);
 						break;
 					case TangentType.HERMITE:
-						//[@@@]コントロールポイントが直線状の場合も考慮したい
+						//___コントロールポイントが直線状の場合も考慮したい
 						if (!c0.isCurvePointNext && !c1.isCurvePointPrev) seg = 0;
 						for (j = 0; j <= seg; j++) 
 						{
@@ -77,7 +77,7 @@ package net.morocoshi.moja3d.animation
 						}
 						break;
 					case TangentType.BEZIER:
-						//[@@@]コントロールポイントが直線状の場合も考慮したい
+						//___コントロールポイントが直線状の場合も考慮したい
 						if (!c0.isCurvePointNext && !c1.isCurvePointPrev) seg = 0;
 						for (j = 0; j <= seg; j++) 
 						{

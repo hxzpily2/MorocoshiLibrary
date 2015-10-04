@@ -1,7 +1,5 @@
 package net.morocoshi.moja3d.animation 
 {
-	import flash.utils.getTimer;
-	import flash.utils.Timer;
 	import net.morocoshi.common.timers.Stopwatch;
 	import net.morocoshi.moja3d.objects.Object3D;
 	
@@ -17,13 +15,15 @@ package net.morocoshi.moja3d.animation
 		private var _time:Number;
 		private var _capturedTime:Number;
 		private var timer:Stopwatch;
-		private var fade:Number;
+		private var blendTime:Number;
+		private var _interpolationEnabled:Boolean;
 		public var object:Object3D;
 		public var motions:Object;
 		public var timeScale:Number;
 		
 		public function MotionController() 
 		{
+			_interpolationEnabled = true;
 			_isPlaying = false;
 			_time = 0;
 			timeScale = 1;
@@ -56,40 +56,49 @@ package net.morocoshi.moja3d.animation
 		
 		/**
 		 * モーションを追加する。追加する際に内部でcloneされる。
-		 * @param	name
-		 * @param	motion
+		 * @param	motionID
+		 * @param	data
 		 */
-		public function addMotion(name:String, motion:MotionData):void
+		public function addMotion(motionID:String, data:MotionData):void
 		{
-			var cloned:MotionData = motion.clone();
-			cloned.name = name;
-			motions[name] = cloned;
+			var motionData:MotionData = data.clone();
+			motionData.id = motionID;
+			motionData.setInterpolationEnabled(_interpolationEnabled);
+			motions[motionID] = motionData;
 			if (object)
 			{
-				cloned.setObject(object);
+				motionData.setObject(object);
 			}
 		}
 		
 		/**
 		 * モーションを再生
-		 * @param	name
+		 * @param	motionID	再生するモーションID
+		 * @param	blendTime	モーションブレンドにかける時間（秒）
+		 * @param	speedScale	モーションの速度の倍率
 		 */
-		public function play(name:String, fade:Number, scale:Number = 1):void 
+		public function play(motionID:String, blendTime:Number, speedScale:Number = 1):void 
 		{
-			var motion:MotionData = motions[name];
+			var motion:MotionData = motions[motionID];
 			if (motion == null)
 			{
 				stop();
 				return;
 			}
 			
-			this.fade = fade;
+			if (current == null)
+			{
+				blendTime = 0;
+			}
+			
+			this.blendTime = blendTime;
 			timer.reset();
+			
 			current = motion;
-			current.timeScale = scale;
+			current.speedScale = speedScale;
 			current.capture();
 			current.reset();
-			current.setFadeRatio(0);
+			current.setBlendRatio(0);
 			setTime(_time);
 			_capturedTime = _time;
 			_time = 0;
@@ -124,19 +133,29 @@ package net.morocoshi.moja3d.animation
 			var diff:Number = _time - _capturedTime;
 			if (_isPlaying)
 			{
-				var ratio:Number = timer.time / 1000 / fade;
+				var ratio:Number = timer.time / 1000 / blendTime;
 				if (ratio > 1) ratio = 1;
-				current.setFadeRatio(ratio);
+				current.setBlendRatio(ratio);
 				current.setTime(diff * timeScale);
 			}
 		}
 		
-		public function setForceTangent(tangent:int):void 
+		/**
+		 * キーフレーム間を線形補完するかどうか
+		 * @param	enabled
+		 */
+		public function get interpolationEnabled():Boolean 
 		{
+			return _interpolationEnabled;
+		}
+		
+		public function set interpolationEnabled(value:Boolean):void 
+		{
+			_interpolationEnabled = value;
 			for (var key:String in motions) 
 			{
 				var motion:MotionData = motions[key];
-				motion.setForceTangent(tangent);
+				motion.setInterpolationEnabled(_interpolationEnabled);
 			}
 		}
 		

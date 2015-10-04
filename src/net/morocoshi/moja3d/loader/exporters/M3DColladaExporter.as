@@ -444,8 +444,10 @@ package net.morocoshi.moja3d.loader.exporters
 			var result:M3DAnimation = new M3DAnimation();
 			result.type = M3DAnimation.TYPE_MATERIAL;
 			result.material = new M3DTrackUV();
+			var noData:Boolean = true;
 			for (var key:String in data)
 			{
+				noData = false;
 				var animation:ColladaAnimationData = data[key];
 				if (animation.type == "offsetU")
 				{
@@ -455,7 +457,9 @@ package net.morocoshi.moja3d.loader.exporters
 				{
 					result.material.offsetV = toM3DCurveAnimation(animation);
 				}
-			}			
+			}
+			
+			if (noData) result = null;
 			return result;
 		}
 		

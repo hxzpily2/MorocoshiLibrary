@@ -95,7 +95,7 @@ package net.morocoshi.moja3d.loader
 		/**
 		 * ベジェ曲線カーブを分割する際の間隔を秒単位で指定。分割数を決める際の参考値なので、必ずしもこの間隔になるわけではない。
 		 */
-		public var curveSegments:Number = 1.0 / 15;
+		public var bezierCurveInterval:Number = 1.0 / 15;
 		/**
 		 * 階層構造を保ったObject3Dが格納されている
 		 */
@@ -248,6 +248,20 @@ package net.morocoshi.moja3d.loader
 			loader.loadFromByteArray(data);
 			
 			return this;
+		}
+		
+		/**
+		 * MotionDataをパースする
+		 * @param	data	M3Dデータ
+		 * @param	bezierCurveInterval	ベジェ曲線カーブを分割する際の間隔を秒単位で指定。分割数を決める際の参考値なので、必ずしもこの間隔になるわけではない。
+		 * @return
+		 */
+		static public function parseMotion(data:ByteArray, bezierCurveInterval:Number):MotionData 
+		{
+			var parser:M3DParser = new M3DParser();
+			parser.bezierCurveInterval = bezierCurveInterval;
+			parser.parse(data);
+			return parser.motion;
 		}
 		
 		private function init():void 
@@ -590,7 +604,7 @@ package net.morocoshi.moja3d.loader
 				key.nextCtrlValue = keyFrame.nextValue;
 				curveList.push(key);
 			}
-			track.parse(curveList, curveSegments);
+			track.parse(curveList, bezierCurveInterval);
 			track.loop = data.loop;
 			return track;
 		}

@@ -7,10 +7,12 @@ package net.morocoshi.moja3d.animation
 	public class AnimationPlayer 
 	{
 		public var keyAnimations:Vector.<KeyframeAnimation>;
+		private var _interpolationEnabled:Boolean;
 		
 		public function AnimationPlayer() 
 		{
 			keyAnimations = new Vector.<KeyframeAnimation>;
+			_interpolationEnabled = true;
 		}
 		
 		public function setTime(time:Number):void
@@ -23,15 +25,21 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * キーフレーム間の線形補完の有無を設定
+		 * キーフレーム間を線形補完するかどうか
 		 * @param	enabled
 		 */
-		public function setInterpolationEnabled(enabled:Boolean):void 
+		public function get interpolationEnabled():Boolean 
 		{
+			return _interpolationEnabled;
+		}
+		
+		public function set interpolationEnabled(value:Boolean):void 
+		{
+			_interpolationEnabled = value;
 			var n:int = keyAnimations.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				keyAnimations[i].setInterpolationEnabled(enabled);
+				keyAnimations[i].setInterpolationEnabled(_interpolationEnabled);
 			}
 		}
 		

@@ -543,7 +543,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * Camera3Dクラスのstaticプロパティを参照
+		 * FOVModeクラスを参照
 		 */
 		public function get fovMode():String 
 		{
