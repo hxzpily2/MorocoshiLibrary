@@ -13,6 +13,8 @@ package net.morocoshi.moja3d.agal
 		public var profile:String;
 		public var constantsLimit:Object;
 		public var maxTokens:int;
+		public var varyingLimit:int;
+		public var temporaryLimit:int;
 		
 		public function AGALInfo(profile:String) 
 		{
@@ -27,6 +29,8 @@ package net.morocoshi.moja3d.agal
 					constantsLimit[Context3DProgramType.VERTEX] = 128;
 					constantsLimit[Context3DProgramType.FRAGMENT] = 28;
 					maxTokens = 200;
+					varyingLimit = 8;
+					temporaryLimit = 8;
 					break;
 				case "standard":
 				case "standardConstrained":
@@ -35,6 +39,8 @@ package net.morocoshi.moja3d.agal
 					constantsLimit[Context3DProgramType.VERTEX] = 250;
 					constantsLimit[Context3DProgramType.FRAGMENT] = 64;
 					maxTokens = 1024;
+					varyingLimit = 8;
+					temporaryLimit = 26
 					break;
 			}
 			

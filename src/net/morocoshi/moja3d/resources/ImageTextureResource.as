@@ -287,11 +287,11 @@ package net.morocoshi.moja3d.resources
 			
 			if (isCubeMap == false)
 			{
-				texture = context3D.createTexture(width, height, _format, false);
+				texture = context3D.createTexture(width, height, _format, false, 0);
 			}
 			else
 			{
-				texture = context3D.createCubeTexture(width, _format, false);
+				texture = context3D.createCubeTexture(width, _format, false, 0);
 			}
 		}
 		

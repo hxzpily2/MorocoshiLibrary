@@ -322,7 +322,7 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function checkPerspectiveUpdate():void 
 		{
-			///@@@ここは？
+			///___ここは？
 			//if (_orthographic) trace(this, worldMatrix.rawData);
 			//if (transformDirty == false && calculateMatrixOrder == false) return;
 			

@@ -435,6 +435,11 @@ package net.morocoshi.moja3d.agal
 				sectionCode[currentSectionIndex] += line + "\n";
 			}
 			
+			if (varyingCount > info.varyingLimit)
+			{
+				throw new Error("Varyingレジスタの数が" + info.varyingLimit + "を超えています！(" + varyingCount + ")");
+			}
+			
 			//一時レジスタ収集
 			var varCount:int = globalCount;
 			var sectionVariable:Vector.<Object> = new Vector.<Object>;
@@ -462,6 +467,11 @@ package net.morocoshi.moja3d.agal
 					currentVariable = sectionVariable[sectionVariableIndex] = { };
 					varCount = globalCount;
 				}
+			}
+			
+			if (varCount > info.temporaryLimit)
+			{
+				throw new Error("Temporaryレジスタの数が" + info.temporaryLimit + "を超えています！(" + varCount + ")");
 			}
 			
 			//レジスタの置換

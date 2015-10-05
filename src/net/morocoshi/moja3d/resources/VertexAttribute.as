@@ -13,6 +13,8 @@ package net.morocoshi.moja3d.resources
 		static public const TANGENT4:int = 4;
 		static public const BONEINDEX:int = 5;
 		static public const BONEWEIGHT:int = 6;
+		static public const BONEINDEX2:int = 7;
+		static public const BONEWEIGHT2:int = 8;
 		
 		public function VertexAttribute() 
 		{

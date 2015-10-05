@@ -7,6 +7,8 @@ package net.morocoshi.moja3d.view
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProfile;
+	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -178,10 +180,12 @@ package net.morocoshi.moja3d.view
 			
 			if (stage3D.context3D == null)
 			{
+				stage3D.addEventListener(ErrorEvent.ERROR, stage3D_errorHandler);
 				stage3D.addEventListener(IOErrorEvent.IO_ERROR, stage3D_errorHandler);
 				stage3D.addEventListener(Event.CONTEXT3D_CREATE, stage3D_contextCreateHandler);
 				var args:Array = [renderMode, profile];
 				args.length = Math.min(args.length, stage3D.requestContext3D.length);
+				//stage3D.requestContext3DMatchingProfiles(Vector.<String>([profile, Context3DProfile.BASELINE_EXTENDED, Context3DProfile.BASELINE]));
 				stage3D.requestContext3D.apply(null, args);
 			}
 			else
@@ -190,7 +194,7 @@ package net.morocoshi.moja3d.view
 			}
 		}
 		
-		private function stage3D_errorHandler(e:IOErrorEvent):void 
+		private function stage3D_errorHandler(e:ErrorEvent):void 
 		{
 			trace(e.text);
 		}
