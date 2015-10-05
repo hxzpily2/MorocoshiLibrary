@@ -108,7 +108,33 @@ package net.morocoshi.common.loaders.collada.nodes
 				}
 				dataList["WEIGHT"] = tempWeight;
 				dataList["JOINT"] = tempJoint;
-				//throw new Error("ウェイトが" + vcount[i] + "個設定されています！4個が限界です！");
+				
+				if (tempWeight.length > 4)
+				{
+					var swap:Array = [];
+					var iw:int;
+					for (iw = 0; iw < tempWeight.length; iw++) 
+					{
+						swap.push( { weight:tempWeight[iw], joint:tempJoint[iw] } );
+					}
+					swap.sortOn("weight", Array.NUMERIC | Array.DESCENDING);
+					swap.length = 4;
+					tempWeight.length = 0;
+					tempJoint.length = 0;
+					var totalWeight:Number = 0;
+					for (iw = 0; iw < 4; iw++)
+					{
+						totalWeight += swap[iw].weight;
+						tempWeight.push(swap[iw].weight);
+						tempJoint.push(swap[iw].joint);
+					}
+					var scale:Number = 1 / totalWeight;
+					for (iw = 0; iw < 4; iw++) 
+					{
+						tempWeight[iw] = tempWeight[iw] * scale;
+					}
+					collector.addMiscLog("weight" + vcount[i], "ウェイトが" + vcount[i] + "個設定されています！応急処置で4個に丸め込みました！");
+				}
 				
 				var zero:int = 4 - dataList["WEIGHT"].length;
 				for (k = 0; k < zero; k++) 
