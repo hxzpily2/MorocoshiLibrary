@@ -131,7 +131,7 @@ package net.morocoshi.moja3d.loader.exporters
 			if (animationData)
 			{
 				animation = new M3DParser();
-				animation.curveSegments = 1;
+				animation.bezierCurveInterval = 1.0 / 15;
 				animation.parse(animationData);
 			}
 			
