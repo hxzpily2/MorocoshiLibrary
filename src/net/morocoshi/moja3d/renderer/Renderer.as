@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.renderer
 	import flash.geom.Matrix3D;
 	import flash.utils.getTimer;
 	import net.morocoshi.moja3d.agal.AGALTexture;
+	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.Shadow;
@@ -128,6 +129,11 @@ package net.morocoshi.moja3d.renderer
 			var g:Number = (rgb >> 8 & 0xff) / 0xff;
 			var b:Number = (rgb & 0xff) / 0xff;
 			context3D.clear(r, g, b, alpha);
+			
+			if (target == null)
+			{
+				scene.dispatchEvent(new Event3D(Event3D.CONTEXT_POST_CLEAR));
+			}
 			
 			//最背面要素のレンダリング
 			if (collector.renderElementList[RenderLayer.BACKGROUND])

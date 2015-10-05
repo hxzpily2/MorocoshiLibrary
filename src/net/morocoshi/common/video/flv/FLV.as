@@ -10,6 +10,7 @@ package net.morocoshi.common.video.flv
 	import flash.media.Video;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * FLVビデオ
@@ -18,7 +19,7 @@ package net.morocoshi.common.video.flv
 	 */
 	public class FLV extends EventDispatcher
 	{
-		private var _stream:NetStream;
+		private var _netStream:NetStream;
 		private var _video:Video;
 		private var _loop:Boolean = false;
 		private var _sp:Sprite = new Sprite();
@@ -57,14 +58,14 @@ package net.morocoshi.common.video.flv
 			var connection:NetConnection = new NetConnection();
 			connection.connect(null);
 			
-			_stream = new NetStream(connection);
-			_stream.bufferTime = 5.0;
-			_stream.addEventListener(IOErrorEvent.IO_ERROR, stream_errorHandler);
-			_stream.addEventListener(NetStatusEvent.NET_STATUS, stream_statusHandler);
+			_netStream = new NetStream(connection);
+			_netStream.bufferTime = 5.0;
+			_netStream.addEventListener(IOErrorEvent.IO_ERROR, stream_errorHandler);
+			_netStream.addEventListener(NetStatusEvent.NET_STATUS, stream_statusHandler);
 			
 			var client:Object = { };
 			client.onMetaData = onMetaData;
-			_stream.client = client;
+			_netStream.client = client;
 		}
 		
 		/**
@@ -72,11 +73,11 @@ package net.morocoshi.common.video.flv
 		 */
 		public function disconnect():void
 		{
-			_stream.client = { };
+			_netStream.client = { };
 			_sp.removeEventListener(Event.ENTER_FRAME, onTick);
-			_stream.removeEventListener(IOErrorEvent.IO_ERROR, stream_errorHandler);
-			_stream.removeEventListener(NetStatusEvent.NET_STATUS, stream_statusHandler);
-			_stream = null;
+			_netStream.removeEventListener(IOErrorEvent.IO_ERROR, stream_errorHandler);
+			_netStream.removeEventListener(NetStatusEvent.NET_STATUS, stream_statusHandler);
+			_netStream = null;
 		}
 		
 		private function stream_errorHandler(e:IOErrorEvent):void
@@ -113,8 +114,8 @@ package net.morocoshi.common.video.flv
 			}
 			if (code == STATUS_PLAY_START && !_isPlaying)
 			{
-				_stream.pause();
-				_stream.seek(_stream.time);
+				_netStream.pause();
+				_netStream.seek(_netStream.time);
 			}
 		}
 		
@@ -138,19 +139,39 @@ package net.morocoshi.common.video.flv
 		}
 		
 		/**
-		 * FLVファイル読み込み開始
-		 * @param	src	FLVパス
+		 * FLV/MP4ファイルを外部パスから読み込み開始
+		 * @param	src	ファイルパス
 		 * @param	isPlay	ロード後再生するか
 		 */
 		public function load(src:String, isPlay:Boolean = true):void
 		{
-			_stream.close();
+			_netStream.close();
 			_sp.addEventListener(Event.ENTER_FRAME, onTick);
 			_sp.addEventListener(Event.ENTER_FRAME, displatchTime);
 			_isPlaying = isPlay;
 			_isGetMeta = false;
 			_lastProgress = -1;
-			_stream.play(src);
+			_netStream.play(src);
+			
+			dispatchEvent(new FLVEvent(FLVEvent.PLAYSTOP));
+			displatchTime();
+		}
+		
+		/**
+		 * FLV/MP4ファイルをByteArrayで再生
+		 * @param	bytes	ファイルデータ
+		 * @param	isPlay	ロード後再生するか
+		 */
+		public function loadByteArray(bytes:ByteArray, isPlay:Boolean = true):void
+		{
+			_netStream.close();
+			_sp.addEventListener(Event.ENTER_FRAME, onTick);
+			_sp.addEventListener(Event.ENTER_FRAME, displatchTime);
+			_isPlaying = isPlay;
+			_isGetMeta = false;
+			_lastProgress = -1;
+			_netStream.play(null);
+			_netStream.appendBytes(bytes);
 			
 			dispatchEvent(new FLVEvent(FLVEvent.PLAYSTOP));
 			displatchTime();
@@ -162,13 +183,13 @@ package net.morocoshi.common.video.flv
 		 */
 		public function seek(time:Number):void
 		{
-			_stream.seek(time);
+			_netStream.seek(time);
 			displatchTime();
 		}
 		
 		private function displatchTime(e:Event = null):void
 		{
-			var time:Number = _stream? _stream.time : 0;
+			var time:Number = _netStream? _netStream.time : 0;
 			if (lastTime == time) return;
 			
 			lastTime = time;
@@ -189,7 +210,7 @@ package net.morocoshi.common.video.flv
 		public function stop():void
 		{
 			_isPlaying = false;
-			_stream.pause();
+			_netStream.pause();
 			dispatchEvent(new FLVEvent(FLVEvent.PLAYSTOP));
 			displatchTime();
 		}
@@ -211,7 +232,7 @@ package net.morocoshi.common.video.flv
 		public function play():void
 		{
 			_isPlaying = true;
-			_stream.resume();
+			_netStream.resume();
 			
 			dispatchEvent(new FLVEvent(FLVEvent.PLAYSTOP));
 			displatchTime();
@@ -220,25 +241,25 @@ package net.morocoshi.common.video.flv
 		public function close():void 
 		{
 			stop();
-			_stream.close();
+			_netStream.close();
 		}
 		
 		private function applySoundTransform():void 
 		{
 			var st:SoundTransform = new SoundTransform(_volume, _panning);
-			_stream.soundTransform = st;
+			_netStream.soundTransform = st;
 		}
 		
 		private function onTick(e:Event):void
 		{
-			var per:Number = (_stream.bytesTotal)? _stream.bytesLoaded / _stream.bytesTotal : 0;
+			var per:Number = (_netStream.bytesTotal)? _netStream.bytesLoaded / _netStream.bytesTotal : 0;
 			if (_lastProgress != per)
 			{
 				_lastProgress = per;
 				var evt:FLVEvent = new FLVEvent(FLVEvent.LOAD_PROGRESS);
 				evt.progress = per;
-				evt.bytesLoaded = _stream.bytesLoaded;
-				evt.bytesTotal = _stream.bytesTotal;
+				evt.bytesLoaded = _netStream.bytesLoaded;
+				evt.bytesTotal = _netStream.bytesTotal;
 				dispatchEvent(evt);
 				if (per == 1) dispatchEvent(new FLVEvent(FLVEvent.LOAD_COMPLETE));
 			}
@@ -251,9 +272,9 @@ package net.morocoshi.common.video.flv
 		/**
 		 * NetStream。これをVideoやStageVideoに関連付けて表示する。
 		 */
-		public function get stream():NetStream
+		public function get netStream():NetStream
 		{
-			return _stream;
+			return _netStream;
 		}
 		
 		/**

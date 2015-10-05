@@ -37,6 +37,8 @@ package net.morocoshi.moja3d.shaders.skin
 			
 			requiredAttribute.push(VertexAttribute.BONEINDEX);
 			requiredAttribute.push(VertexAttribute.BONEWEIGHT);
+			//requiredAttribute.push(VertexAttribute.BONEINDEX2);
+			//requiredAttribute.push(VertexAttribute.BONEWEIGHT2);
 			
 			boneList = new Vector.<Bone>;
 			
