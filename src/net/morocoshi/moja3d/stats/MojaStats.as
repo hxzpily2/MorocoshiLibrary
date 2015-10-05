@@ -40,14 +40,13 @@ package net.morocoshi.moja3d.stats
 		private var ty:Number = 2;
 		private var cy:Number = 2;
 		
-		[Embed(source = "Inconsolata.otf", fontName="Inconsolata", embedAsCFF="false")] private var Font:Class;
+		//[Embed(source = "Inconsolata.otf", fontName="Inconsolata", embedAsCFF="false")] private var Font:Class;
 		//[Embed(source = "DroidSansMono.ttf", fontName="DroidSansMono", embedAsCFF="false")]
-		
 		
 		public function MojaStats() 
 		{
 			super();
-			defaultFormat = new TextFormat("Inconsolata", 14, 0xffffff, true);
+			defaultFormat = new TextFormat("Arial", 12, 0xffffff, false);
 			
 			count = 0;
 			maxFps = 0;
@@ -214,7 +213,7 @@ package net.morocoshi.moja3d.stats
 			result.autoSize = TextFieldAutoSize.LEFT;
 			result.selectable = false;
 			result.defaultTextFormat = defaultFormat;
-			result.embedFonts = true;
+			//result.embedFonts = true;
 			result.y = ty;
 			textContainer.addChild(result);
 			ty += 16;
