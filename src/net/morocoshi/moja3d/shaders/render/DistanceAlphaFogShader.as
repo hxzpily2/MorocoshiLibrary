@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.shaders.render 
 {
-	import flash.display.BlendMode;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -10,28 +9,23 @@ package net.morocoshi.moja3d.shaders.render
 	 * 
 	 * @author tencho
 	 */
-	public class DistanceFogShader extends MaterialShader 
+	public class DistanceAlphaFogShader extends MaterialShader 
 	{
-		private var _color:uint;
 		private var _distanceNear:Number;
 		private var _distanceFar:Number;
-		private var _densityNear:Number;
-		private var _densityFar:Number;
-		private var _blendMode:String;
+		private var _alphaNear:Number;
+		private var _alphaFar:Number;
 		
 		private var distanceConst:AGALConstant;
-		private var colorConst:AGALConstant;
 			
-		public function DistanceFogShader(color:uint, distanceNear:Number, distanceFar:Number, densityNear:Number, densityFar:Number, blendMode:String = null) 
+		public function DistanceAlphaFogShader(distanceNear:Number, distanceFar:Number, alphaNear:Number, alphaFar:Number) 
 		{
 			super();
 			
-			_color = color;
 			_distanceNear = distanceNear;
 			_distanceFar = distanceFar;
-			_densityNear = densityNear;
-			_densityFar = densityFar;
-			_blendMode = blendMode || BlendMode.NORMAL;
+			_alphaNear = alphaNear;
+			_alphaFar = alphaFar;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -41,13 +35,13 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "DistanceFogShader:";
+			return "DistanceAlphaFogShader:";
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.MIX;
 		}
 		
 		override protected function updateTexture():void 
@@ -60,7 +54,6 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateConstants();
 			
 			distanceConst = fragmentCode.addConstantsFromArray("@dFogData", [0, 0, 0, 0]);
-			colorConst = fragmentCode.addConstantsFromArray("@dFogColor", [0, 0, 0, 0]);
 			calcFogConst();
 		}
 		
@@ -68,9 +61,8 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			distanceConst.x = _distanceNear;
 			distanceConst.y = _distanceFar - _distanceNear;
-			distanceConst.z = _densityFar - _densityNear;
-			distanceConst.w = _densityFar;
-			colorConst.setRGBA(_color, _densityNear);
+			distanceConst.z = _alphaNear;
+			distanceConst.w = _alphaFar - _alphaNear;
 		}
 		
 		override protected function updateShaderCode():void 
@@ -86,28 +78,11 @@ package net.morocoshi.moja3d.shaders.render
 				"$temp.x /= @dFogData.y",
 				"$temp.x = sat($temp.x)",//r=0～1
 				
-				"$temp.x *= @dFogData.z",
-				"$temp.x += @dFogColor.w",//r=近濃～遠濃
+				"$temp.x *= @dFogData.w",
+				"$temp.x += @dFogData.z",//r=近濃～遠濃
 				
-				"$temp.w = @1 - $temp.x",
-				"$temp.xyz = @dFogColor.xyz * $temp.x",
-				
-				"$output.xyz *= $temp.www",
-				"$output.xyz += $temp.xyz"
+				"$output.w *= $temp.x"
 			);
-		}
-		
-		public function get color():uint 
-		{
-			return _color;
-		}
-		
-		public function set color(value:uint):void 
-		{
-			if (_color == value) return;
-			
-			_color = value;
-			calcFogConst();
 		}
 		
 		public function get distanceNear():Number 
@@ -136,49 +111,35 @@ package net.morocoshi.moja3d.shaders.render
 			calcFogConst();
 		}
 		
-		public function get densityNear():Number 
+		public function get alphaNear():Number 
 		{
-			return _densityNear;
+			return _alphaNear;
 		}
 		
-		public function set densityNear(value:Number):void 
+		public function set alphaNear(value:Number):void 
 		{
-			if (_densityNear == value) return;
+			if (_alphaNear == value) return;
 			
-			_densityNear = value;
+			_alphaNear = value;
 			calcFogConst();
 		}
 		
-		public function get densityFar():Number 
+		public function get alphaFar():Number 
 		{
-			return _densityFar;
+			return _alphaFar;
 		}
 		
-		public function set densityFar(value:Number):void 
+		public function set alphaFar(value:Number):void 
 		{
-			if (_densityFar == value) return;
+			if (_alphaFar == value) return;
 			
-			_densityFar = value;
+			_alphaFar = value;
 			calcFogConst();
-		}
-		
-		public function get blendMode():String 
-		{
-			return _blendMode;
-		}
-		
-		public function set blendMode(value:String):void 
-		{
-			if (_blendMode == value) return;
-			
-			_blendMode = value;
-			updateShaderCode();
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DistanceFogShader = new DistanceFogShader(_color, _distanceNear, _distanceFar, _densityNear, _densityFar);
-			shader.blendMode = _blendMode;
+			var shader:DistanceAlphaFogShader = new DistanceAlphaFogShader(_distanceNear, _distanceFar, _alphaNear, _alphaFar);
 			return shader;
 		}
 		

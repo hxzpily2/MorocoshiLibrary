@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.stats
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.system.System;
+	import flash.text.AntiAliasType;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -46,7 +47,7 @@ package net.morocoshi.moja3d.stats
 		public function MojaStats() 
 		{
 			super();
-			defaultFormat = new TextFormat("Arial", 12, 0xffffff, false);
+			defaultFormat = new TextFormat("Consolas", 14, 0xffffff, false);
 			
 			count = 0;
 			maxFps = 0;
@@ -210,6 +211,7 @@ package net.morocoshi.moja3d.stats
 		private function createTextField():TextField 
 		{
 			var result:TextField = new TextField();
+			result.antiAliasType = AntiAliasType.ADVANCED;
 			result.autoSize = TextFieldAutoSize.LEFT;
 			result.selectable = false;
 			result.defaultTextFormat = defaultFormat;

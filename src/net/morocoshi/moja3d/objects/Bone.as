@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Matrix3D;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	
 	use namespace moja3d;
@@ -105,7 +106,7 @@ package net.morocoshi.moja3d.objects
 		 * 姿勢変化時の計算
 		 * @param	e
 		 */
-		override protected function calculate():void 
+		override protected function calculate(collector:RenderCollector):void 
 		{
 			if (invertSkinMatrix == null) return;
 			

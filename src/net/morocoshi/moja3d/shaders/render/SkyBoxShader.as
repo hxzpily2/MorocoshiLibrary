@@ -53,7 +53,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			texture = fragmentCode.addTexture("&cube", _resource);
+			texture = fragmentCode.addTexture("&cube", _resource, this);
 		}
 		
 		override protected function updateConstants():void 

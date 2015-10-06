@@ -35,7 +35,7 @@ package net.morocoshi.moja3d.primitives
 				colors.push(0.8, 1, 0.8, 1);
 				uvs.push(1 - ix / segmentsW, iy / segmentsH);
 				normals.push(0, 0, g == 0? 1 : -1);
-				tangent4.push(1, 1, 1, -00000001);
+				tangent4.push(1, 0, 0, 1);
 				if (ix < segmentsW && iy < segmentsH)
 				{
 					var wnum:int = segmentsW + 1;

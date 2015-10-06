@@ -2,18 +2,23 @@ package net.morocoshi.moja3d.primitives
 {
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.TriangleFace;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.objects.Surface;
+	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.CubeTextureResource;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.render.CubeMapShader;
 	import net.morocoshi.moja3d.shaders.render.FillShader;
 	import net.morocoshi.moja3d.shaders.render.SkyBoxShader;
 	import net.morocoshi.moja3d.shaders.render.TextureShader;
+	
+	use namespace moja3d;
+	
 	/**
 	 * ...
-	 * @author ...
+	 * 
+	 * @author tencho
 	 */
 	public class SkyBox extends Mesh 
 	{
@@ -21,6 +26,8 @@ package net.morocoshi.moja3d.primitives
 		public function SkyBox(size:Number, texture:ImageTextureResource) 
 		{
 			super();
+			
+			castShadow = false;
 			
 			var vertices:Vector.<Number> = new Vector.<Number>;
 			var uvs:Vector.<Number> = new Vector.<Number>;
@@ -129,7 +136,12 @@ package net.morocoshi.moja3d.primitives
 			material.shaderList.addShader(new SkyBoxShader(texture));
 			setMaterialToAllSurfaces(material);
 			
-			calculateBounds();
+			//calculateBounds();
+		}
+		
+		override protected function collecting(collector:RenderCollector):void 
+		{
+			_worldMatrix.copyFrom(collector.camera.worldMatrix);
 		}
 		
 	}

@@ -41,7 +41,7 @@ package net.morocoshi.moja3d.objects
 		public var sortPriority:Number;
 		//public var boundingSphere:BoundingSphere;
 		public var boundingBox:BoundingBox;
-		private var _fitOnCamera:Boolean;
+		private var _inCameraView:Boolean;
 		
 		private var _colorTransform:ColorTransform;
 		moja3d var worldColorTransform:ColorTransform;
@@ -805,7 +805,7 @@ package net.morocoshi.moja3d.objects
 				{
 					boundingBox.transformByMatrix(_worldMatrix, calcBounds);
 				}
-				calculate();
+				calculate(collector);
 				calculateMatrixOrder = false;
 				
 				//XYZスケールがマイナスかどうかチェックし、最終スケールがマイナスなら表示を反転する
@@ -848,6 +848,12 @@ package net.morocoshi.moja3d.objects
 				calculateColorOrder = false;
 			}
 			
+			//SkyBoxなどで常にカメラ位置に動かした場合などに使う
+			if (phase != RenderPhase.CHECK)
+			{
+				collecting(collector);
+			}
+			
 			//子を再帰的に収集する
 			for (var current:Object3D = _children; current; current = current._next)
 			{
@@ -861,14 +867,24 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			//境界球で除外
-			_fitOnCamera = !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);
-			return _fitOnCamera;
+			_inCameraView = !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);
+			return _inCameraView;
+		}
+		
+		/**
+		 * レンダリング要素収集時に毎回に何かを再計算する場合に使用
+		 * @param	collector
+		 */
+		protected function collecting(collector:RenderCollector):void 
+		{
+			
 		}
 		
 		/**
 		 * 移動や回転をした時に何かを再計算する場合に使用（ボーンとスキンでも使う）
+		 * @param	collector
 		 */
-		protected function calculate():void 
+		protected function calculate(collector:RenderCollector):void 
 		{
 			
 		}
@@ -966,9 +982,9 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * 前回の描画時にオブジェクトの境界球がカメラの視野内に収まっていたかどうか
 		 */
-		public function get fitOnCamera():Boolean 
+		public function get inCameraView():Boolean 
 		{
-			return _fitOnCamera;
+			return _inCameraView;
 		}
 		
 		/**

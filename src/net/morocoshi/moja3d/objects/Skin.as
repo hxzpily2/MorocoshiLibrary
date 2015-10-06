@@ -112,7 +112,7 @@ package net.morocoshi.moja3d.objects
 			return super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
 		}
 		
-		override protected function calculate():void 
+		override protected function calculate(collector:RenderCollector):void 
 		{
 			//ボーンの計算
 			skinShader.updateBoneConstants();
