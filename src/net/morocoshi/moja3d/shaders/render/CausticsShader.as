@@ -15,7 +15,7 @@ package net.morocoshi.moja3d.shaders.render
 	/**
 	 * ...
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class CausticsShader extends MaterialShader 
 	{
@@ -92,7 +92,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			patternTexture = fragmentCode.addTexture("&causticsMap", _texture);
+			patternTexture = fragmentCode.addTexture("&causticsMap", _texture, this);
 		}
 		
 		override protected function updateConstants():void 

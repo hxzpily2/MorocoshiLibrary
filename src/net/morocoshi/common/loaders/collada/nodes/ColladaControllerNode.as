@@ -4,8 +4,10 @@ package net.morocoshi.common.loaders.collada.nodes
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
 	import net.morocoshi.common.text.XMLUtil;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ColladaControllerNode extends ColladaNode 
@@ -13,6 +15,8 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var shapeMatrix:Matrix3D;
 		public var skinLink:String;
 		public var weightData:ColladaGeometryData;
+		//1頂点にもてるウェイトの限界（8にしたい）
+		public var weightLimit:int = 4;
 		
 		public function ColladaControllerNode() 
 		{
@@ -109,40 +113,45 @@ package net.morocoshi.common.loaders.collada.nodes
 				dataList["WEIGHT"] = tempWeight;
 				dataList["JOINT"] = tempJoint;
 				
-				if (tempWeight.length > 4)
+				//重みソート
+				var swap:Array = [];
+				var iw:int;
+				for (iw = 0; iw < tempWeight.length; iw++) 
 				{
-					var swap:Array = [];
-					var iw:int;
-					for (iw = 0; iw < tempWeight.length; iw++) 
-					{
-						swap.push( { weight:tempWeight[iw], joint:tempJoint[iw] } );
-					}
-					swap.sortOn("weight", Array.NUMERIC | Array.DESCENDING);
-					swap.length = 4;
-					tempWeight.length = 0;
-					tempJoint.length = 0;
-					var totalWeight:Number = 0;
-					for (iw = 0; iw < 4; iw++)
-					{
-						totalWeight += swap[iw].weight;
-						tempWeight.push(swap[iw].weight);
-						tempJoint.push(swap[iw].joint);
-					}
-					var scale:Number = 1 / totalWeight;
-					for (iw = 0; iw < 4; iw++) 
-					{
-						tempWeight[iw] = tempWeight[iw] * scale;
-					}
-					collector.addMiscLog("weight" + vcount[i], "ウェイトが" + vcount[i] + "個設定されています！応急処置で4個に丸め込みました！");
+					swap.push( { weight:tempWeight[iw], joint:tempJoint[iw] } );
+				}
+				swap.sortOn("weight", Array.NUMERIC | Array.DESCENDING);
+				
+				//ウェイトが4つを超えていたら
+				if (swap.length > weightLimit)
+				{
+					collector.addMiscLog("weight" + swap.length, "ウェイトが" + swap.length + "個設定されています！応急処置で4個に丸め込みました！");
+					swap.length = weightLimit;
 				}
 				
-				var zero:int = 4 - dataList["WEIGHT"].length;
+				//ノーマライズ
+				tempWeight.length = 0;
+				tempJoint.length = 0;
+				var totalWeight:Number = 0;
+				for (iw = 0; iw < swap.length; iw++)
+				{
+					totalWeight += swap[iw].weight;
+					tempWeight.push(swap[iw].weight);
+					tempJoint.push(swap[iw].joint);
+				}
+				var scale:Number = 1 / totalWeight;
+				for (iw = 0; iw < tempWeight.length; iw++) 
+				{
+					tempWeight[iw] = tempWeight[iw] * scale;
+				}
+				
+				//4つに足りない枠は一番ウェイトが重いジョイントを重み0で埋める
+				var zero:int = weightLimit - dataList["WEIGHT"].length;
 				for (k = 0; k < zero; k++) 
 				{
+					dataList["JOINT"].push(swap[0].joint);
 					dataList["WEIGHT"].push(0);
-					dataList["JOINT"].push(0);
 				}
-				
 				weightData.getList("JOINT").push(dataList["JOINT"]);
 				weightData.getList("WEIGHT").push(dataList["WEIGHT"]);
 			}

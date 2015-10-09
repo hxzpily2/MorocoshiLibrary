@@ -1,5 +1,5 @@
-package net.morocoshi.moja3d.shaders.shadow {
-	import flash.geom.Vector3D;
+package net.morocoshi.moja3d.shaders.shadow
+{
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.moja3d.agal.AGALConstant;
@@ -14,7 +14,8 @@ package net.morocoshi.moja3d.shaders.shadow {
 	
 	/**
 	 * ...
-	 * @author ...
+	 * 
+	 * @author tencho
 	 */
 	public class CircleShadowShader extends MaterialShader 
 	{
@@ -107,7 +108,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			agalTexture = fragmentCode.addTexture("&circleShadow", _texture);
+			agalTexture = fragmentCode.addTexture("&circleShadow", _texture, this);
 		}
 		
 		override protected function updateConstants():void 

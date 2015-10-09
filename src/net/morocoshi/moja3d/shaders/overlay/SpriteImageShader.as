@@ -9,7 +9,8 @@ package net.morocoshi.moja3d.shaders.overlay
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 2Dレイヤー用画像表示シェーダー
+	 * 
 	 * @author tencho
 	 */
 	public class SpriteImageShader extends MaterialShader 
@@ -50,7 +51,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			diffuseMap = fragmentCode.addTexture("&diffuse", _texture);
+			diffuseMap = fragmentCode.addTexture("&diffuse", _texture, this);
 		}
 		
 		override protected function updateConstants():void 

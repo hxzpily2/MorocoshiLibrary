@@ -104,7 +104,7 @@ package net.morocoshi.common.math.list
 			}
 		}
 		
-		static public function shuffleMT(list:*, seed:int):void 
+		static public function shuffleSeed(list:*, seed:int):void 
 		{
 			var mt:MT = new MT();
 			mt.initialize(seed);

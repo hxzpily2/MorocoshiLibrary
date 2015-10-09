@@ -1,11 +1,7 @@
 package net.morocoshi.moja3d.loader.exporters 
 {
-	import a24.tween.core.plugins.PluginTween24Property;
-	import adobe.utils.CustomActions;
 	import flash.display.BlendMode;
-	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
-	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaAnimationData;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaControllerNode;
@@ -25,6 +21,7 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.moja3d.loader.animation.TangentType;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.M3DParser;
 	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
@@ -35,9 +32,10 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.resources.Geometry;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class M3DColladaExporter 
@@ -177,6 +175,9 @@ package net.morocoshi.moja3d.loader.exporters
 			//全ての終了時間をそれに統一する
 			for each(track in tracks) track.endTime = endTime;
 			for each(matrix in matrixes) matrix.endTime = endTime;
+			
+			scene.splitAllSkin(option.boneLimit);
+			scene.prepare();
 			
 			return scene;
 		}
@@ -514,14 +515,27 @@ package net.morocoshi.moja3d.loader.exporters
 			var geometryData:ColladaGeometryData = geometry.data;
 			var data:ColladaGeometryData = geometryData.getFixedData(option.toColladaOption());
 			
-			var result:M3DMeshGeometry = new M3DMeshGeometry();
+			var result:M3DMeshGeometry;
+			
+			if (data.jointList1.length > 0 && data.weightList1.length > 0)
+			{
+				var skin:M3DSkinGeometry = new M3DSkinGeometry();
+				skin.boneIndices1 = Vector.<Number>(data.jointList1);
+				skin.weights1 = Vector.<Number>(data.weightList1);
+				if (data.jointList2) skin.boneIndices2 = Vector.<Number>(data.jointList2);
+				if (data.weightList2) skin.weights2 = Vector.<Number>(data.weightList2);
+				result = skin;
+			}
+			else
+			{
+				result = new M3DMeshGeometry();
+			}
+			
 			if (data.vertexIndices.length > 0) result.vertexIndices = Vector.<uint>(data.vertexIndices);
 			if (data.normalList.length > 0) result.normals = Vector.<Number>(data.normalList);
 			if (data.positionList.length > 0) result.vertices = Vector.<Number>(data.positionList);
 			if (data.tangent4List.length > 0) result.tangents = Vector.<Number>(data.tangent4List);
 			if (data.uvList.length > 0) result.uvs = Vector.<Number>(data.uvList);
-			if (data.jointList.length > 0) result.boneIndices = Vector.<Number>(data.jointList);
-			if (data.weightList.length > 0) result.weights = Vector.<Number>(data.weightList);
 			return result;
 		}
 		
@@ -532,15 +546,15 @@ package net.morocoshi.moja3d.loader.exporters
 			result.name = material.name;
 			result.alpha = effect.alpha;
 			result.diffusePath = effect.diffuseTexture? collada.getImageByID(effect.diffuseTexture).path : "";
-			result.normalPath = effect.normalTexture? collada.getImageByID(effect.normalTexture).path : "";
-			result.opacityPath = effect.transparentTexture? collada.getImageByID(effect.transparentTexture).path : "";
+			result.normalPath = (option.exportNormal == false)? "" : effect.normalTexture? collada.getImageByID(effect.normalTexture).path : "";
+			result.opacityPath = (option.exportTransparent == false)? "" : effect.transparentTexture? collada.getImageByID(effect.transparentTexture).path : "";
 			result.diffuseColor = effect.diffuseColor;
 			result.smoothing = true;
 			result.mipmap = Mipmap.MIPLINEAR;
 			result.tiling = Tiling.WRAP;
 			result.doubleSided = false;
 			result.blendMode = BlendMode.NORMAL;
-			result.animation = toM3DMaerialAnimation(effect.animation);
+			result.animation = (option.exportAnimation == false)? null : toM3DMaerialAnimation(effect.animation);
 			
 			return result;
 		}

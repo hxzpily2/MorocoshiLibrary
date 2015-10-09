@@ -14,7 +14,8 @@ package net.morocoshi.moja3d.overlay.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 2Dレイヤー用スプライト
+	 * 
 	 * @author tencho
 	 */
 	public class Sprite2D extends Object2D 
@@ -95,7 +96,7 @@ package net.morocoshi.moja3d.overlay.objects
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var surface:Surface = new Surface(surfaces[i].material);
+				var surface:Surface = new Surface(surfaces[i]._material);
 				surface.numTriangles = surfaces[i].numTriangles;
 				surface.firstIndex = surfaces[i].firstIndex;
 				sprite.surfaces.push(surface);
@@ -111,7 +112,7 @@ package net.morocoshi.moja3d.overlay.objects
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var surface:Surface = new Surface(surfaces[i].material);
+				var surface:Surface = new Surface(surfaces[i]._material);
 				surface.numTriangles = surfaces[i].numTriangles;
 				surface.firstIndex = surfaces[i].firstIndex;
 				sprite.surfaces.push(surface);
@@ -128,9 +129,9 @@ package net.morocoshi.moja3d.overlay.objects
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				if (surfaces[i].material)
+				if (surfaces[i]._material)
 				{
-					surfaces[i].material.dispose();
+					surfaces[i]._material.dispose();
 				}
 			}
 		}
@@ -147,7 +148,7 @@ package net.morocoshi.moja3d.overlay.objects
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var material:Material = surfaces[i].material;
+				var material:Material = surfaces[i]._material;
 				if (material)
 				{
 					var resources:Vector.<Resource> = material.getResources();
@@ -177,7 +178,7 @@ package net.morocoshi.moja3d.overlay.objects
 			for (var i:int = 0; i < n; i++) 
 			{
 				var surface:Surface = surfaces[i];
-				var material:Material = surface.material;
+				var material:Material = surface._material;
 				if (material == null) continue;
 				
 				var shaderList:ShaderList = material.getSpriteShaderList(collector, this);
@@ -193,8 +194,8 @@ package net.morocoshi.moja3d.overlay.objects
 				element.vertexBufferFormatList = _geometry.vertexBufferFormatList;
 				element.vertexBufferList = _geometry.vertexBufferList;
 				element.indexBuffer = _geometry.indexBuffer;
-				element.sourceFactor = surface.material.sourceFactor;
-				element.destinationFactor = surface.material.destinationFactor;
+				element.sourceFactor = surface._material.sourceFactor;
+				element.destinationFactor = surface._material.destinationFactor;
 				//マイナススケールでフリップしていた場合は表示を反転する
 				element.culling = (worldFlip * flip == -1)? TriangleFace.BACK : TriangleFace.FRONT;//material.culling;
 				element.shaderList = shaderList;

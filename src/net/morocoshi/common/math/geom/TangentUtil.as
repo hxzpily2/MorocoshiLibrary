@@ -12,7 +12,7 @@ package net.morocoshi.common.math.geom
 	public class TangentUtil 
 	{
 		/**
-		 * F3DジオメトリのTANGENT4を再計算
+		 * M3DジオメトリのTANGENT4を再計算
 		 * @param	geom
 		 */
 		static public function calcMeshTangentM3DGeometry(geom:M3DMeshGeometry):void

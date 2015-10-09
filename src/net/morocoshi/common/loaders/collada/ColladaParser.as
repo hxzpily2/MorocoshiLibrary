@@ -10,8 +10,7 @@ package net.morocoshi.common.loaders.collada
 	 */
 	public class ColladaParser 
 	{
-		//private var scene:ColladaScene;
-		private var collector:ColladaCollector;
+		public var collector:ColladaCollector;
 		
 		public function ColladaParser() 
 		{

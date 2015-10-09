@@ -17,8 +17,6 @@ package net.morocoshi.moja3d.loader.geometries
 		public var uvs:Vector.<Number>;
 		public var tangents:Vector.<Number>;
 		public var colors:Vector.<Number>;
-		public var boneIndices:Vector.<Number>;
-		public var weights:Vector.<Number>;
 		
 		public function M3DMeshGeometry() 
 		{
@@ -33,8 +31,6 @@ package net.morocoshi.moja3d.loader.geometries
 			if (uvs)			key.push("4:" + uvs.join(","));
 			if (tangents)		key.push("5:" + tangents.join(","));
 			if (colors)			key.push("6:" + colors.join(","));
-			if (boneIndices)	key.push("7:" + boneIndices.join(","));
-			if (weights)		key.push("8:" + weights.join(","));
 			return "mesh_" + key.join("|");
 		}
 		

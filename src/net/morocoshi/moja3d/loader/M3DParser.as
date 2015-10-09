@@ -29,10 +29,12 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.animation.M3DMatrixTrack;
 	import net.morocoshi.moja3d.loader.animation.M3DTrackUV;
 	import net.morocoshi.moja3d.loader.animation.M3DTrackXYZ;
+	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DLineGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DLineSegment;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
@@ -45,34 +47,30 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
 	import net.morocoshi.moja3d.materials.Material;
-	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.ParserMaterial;
-	import net.morocoshi.moja3d.materials.Smoothing;
-	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.materials.TriangleFace;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.AmbientLight;
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.DirectionalLight;
 	import net.morocoshi.moja3d.objects.Light3D;
+	import net.morocoshi.moja3d.objects.Line3D;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.objects.Skin;
 	import net.morocoshi.moja3d.objects.Surface;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
+	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.ExternalTextureResource;
 	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.resources.LineGeometry;
+	import net.morocoshi.moja3d.resources.LineSegment;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourcePack;
+	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.render.AlphaShader;
-	import net.morocoshi.moja3d.shaders.render.FillShader;
-	import net.morocoshi.moja3d.shaders.render.HalfLambertShader;
-	import net.morocoshi.moja3d.shaders.render.LambertShader;
-	import net.morocoshi.moja3d.shaders.render.OpacityShader;
-	import net.morocoshi.moja3d.shaders.render.TextureShader;
-	import net.morocoshi.moja3d.shaders.render.VertexColorShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * M3DデータをパースしてMoja3Dオブジェクトを生成する
@@ -364,11 +362,22 @@ package net.morocoshi.moja3d.loader
 			var objectA3D:Object3D;
 			
 			//Geometryパース
+			var geomM3D:M3DGeometry;
+			var geomA3D:Geometry;
+			var combineRequest:Vector.<M3DCombinedGeometry> = new Vector.<M3DCombinedGeometry>;
+			//単体のジオメトリをパース
 			n = scene.geometryList.length;
+			
 			for (i = 0; i < n; i++) 
 			{
-				var geomM3D:M3DGeometry = scene.geometryList[i];
-				var geomA3D:Geometry = toGeometry(geomM3D as M3DMeshGeometry);
+				geomM3D = scene.geometryList[i];
+				//もしジオメトリが集合体だった場合
+				if (geomM3D is M3DCombinedGeometry)
+				{
+					combineRequest.push(geomM3D);
+					continue;
+				}
+				geomA3D = toGeometry(geomM3D as M3DMeshGeometry);
 				geometryA3DLink[geomM3D.id] = geomA3D;
 				geometries.push(geomA3D);
 			}
@@ -393,6 +402,16 @@ package net.morocoshi.moja3d.loader
 				materialA3DLink[materialM3D.id] = materialA3D;
 				materialM3DLink[materialA3D] = materialM3D;
 				materials.push(materialA3D);
+			}
+			
+			//集合体のジオメトリをパース
+			n = combineRequest.length;
+			for (i = 0; i < n; i++) 
+			{
+				geomM3D = combineRequest[i];
+				geomA3D = toCombinedGeometry(geomM3D as M3DCombinedGeometry);
+				geometryA3DLink[geomM3D.id] = geomA3D;
+				geometries.push(geomA3D);
 			}
 			
 			//Objectパース
@@ -625,7 +644,7 @@ package net.morocoshi.moja3d.loader
 				case m3d is M3DMesh: result = toMesh(m3d as M3DMesh); break;
 				case m3d is M3DBone: result = toBone(m3d as M3DBone); break;
 				case m3d is M3DLight: result = toLight(m3d as M3DLight); break;
-				///case m3d is M3DLine: result = toLine(m3d as M3DLine); break;
+				case m3d is M3DLine: result = toLine(m3d as M3DLine); break;
 				default: result = new Object3D();
 			}
 			if (result == null)
@@ -646,22 +665,13 @@ package net.morocoshi.moja3d.loader
 			return result;
 		}
 		
-		/*
 		private function toLine(m3d:M3DLine):Line3D 
 		{
 			var line:Line3D = new Line3D();
-			var geom:M3DLineGeometry = scene.geometryList[m3d.geometryIndex] as M3DLineGeometry;
-			var n:int = geom.segmentList.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var segment:LineSegment = new LineSegment();
-				segment.instance = line;
-				segment.pointList = geom.segmentList[i].pointList.concat();
-				line.segmentList.push(segment);
-			}
+			var geomM3D:M3DGeometry = geometryM3DLink[m3d.geometryID];
+			line.geometry = geometryA3DLink[geomM3D.id];
 			return line;
 		}
-		*/
 		
 		private function toCamera(m3d:M3DCamera):Camera3D 
 		{
@@ -704,12 +714,58 @@ package net.morocoshi.moja3d.loader
 			return light;
 		}
 		
+		private function toCombinedGeometry(m3d:M3DCombinedGeometry):CombinedGeometry
+		{
+			var combined:CombinedGeometry = new CombinedGeometry();
+			var idList:Vector.<int> = m3d.geometryIDList;
+			
+			var n:int = idList.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				combined.geometries.push(geometryA3DLink[idList[i]]);
+			}
+			return combined;
+		}
+		
 		private function toGeometry(m3d:M3DMeshGeometry):Geometry 
 		{
-			var geom:Geometry = new Geometry();
 			if (m3d == null)
 			{
-				return geom;
+				return new Geometry();
+			}
+			
+			var geom:Geometry;
+			
+			if (m3d is M3DLineGeometry)
+			{
+				var m3dLineGeom:M3DLineGeometry = m3d as M3DLineGeometry;
+				var lineGeom:LineGeometry = new LineGeometry();
+				var n:int = m3dLineGeom.segmentList.length;
+				for (var i:int = 0; i < n; i++) 
+				{
+					var m3dSegment:M3DLineSegment = m3dLineGeom.segmentList[i];
+					var segment:LineSegment = new LineSegment();
+					segment.pointList = m3dSegment.pointList.concat();
+					lineGeom.segmentList.push(segment);
+				} 
+				return lineGeom;
+			}
+			
+			if (m3d is M3DSkinGeometry)
+			{
+				var m3dSkinGeom:M3DSkinGeometry = m3d as M3DSkinGeometry;
+				var skinGeom:SkinGeometry = new SkinGeometry();
+				if (m3dSkinGeom.boneIndices1)	skinGeom.addVertices(VertexAttribute.BONEINDEX1, 4, m3dSkinGeom.boneIndices1);
+				if (m3dSkinGeom.boneIndices2)	skinGeom.addVertices(VertexAttribute.BONEINDEX2, 4, m3dSkinGeom.boneIndices2);
+				if (m3dSkinGeom.weights1)		skinGeom.addVertices(VertexAttribute.BONEWEIGHT1, 4, m3dSkinGeom.weights1);
+				if (m3dSkinGeom.weights2)		skinGeom.addVertices(VertexAttribute.BONEWEIGHT2, 4, m3dSkinGeom.weights2);
+				
+				skinGeom.boneIDList = m3dSkinGeom.boneIDList;
+				geom = skinGeom;
+			}
+			else
+			{
+				geom = new Geometry();
 			}
 			
 			if (m3d.vertices)		geom.addVertices(VertexAttribute.POSITION, 3, m3d.vertices);
@@ -717,8 +773,7 @@ package net.morocoshi.moja3d.loader
 			if (m3d.normals)		geom.addVertices(VertexAttribute.NORMAL, 3, m3d.normals);
 			if (m3d.colors)			geom.addVertices(VertexAttribute.VERTEX_COLOR, 4, m3d.colors);
 			if (m3d.tangents)		geom.addVertices(VertexAttribute.TANGENT4, 4, m3d.tangents);
-			if (m3d.boneIndices)	geom.addVertices(VertexAttribute.BONEINDEX, 4, m3d.boneIndices);
-			if (m3d.weights)		geom.addVertices(VertexAttribute.BONEWEIGHT, 4, m3d.weights);
+			
 			geom.vertexIndices = m3d.vertexIndices;
 			
 			return geom;
@@ -748,6 +803,26 @@ package net.morocoshi.moja3d.loader
 				surface.layer = sf.hasTransparentVertex? RenderLayer.TRANSPARENT : RenderLayer.OPAQUE;
 				mesh.surfaces.push(surface);
 			}
+			//ジオメトリが集合体だった場合のサーフェイスリスト
+			if (m3d.surfacesList)
+			{
+				mesh.combinedSurfacesList = new Vector.<Vector.<Surface>>;
+				
+				n = m3d.surfacesList.length;
+				for (i = 0; i < n; i++)
+				{
+					var surfaces:Vector.<Surface> = new Vector.<Surface>;
+					mesh.combinedSurfacesList.push(surfaces);
+					var m:int = m3d.surfacesList[i].length;
+					for (var j:int = 0; j < m; j++) 
+					{
+						var sf2:M3DSurface = m3d.surfacesList[i][j];
+						var mt2:Material = materialA3DLink[sf2.material];
+						var surface2:Surface = new Surface(mt2, sf2.indexBegin, sf2.numTriangle);
+						surfaces.push(surface2);
+					}
+				}
+			}
 			return mesh;
 		}
 		
@@ -773,6 +848,8 @@ package net.morocoshi.moja3d.loader
 			ClassAliasUtil.register(M3DKeyframe);
 			ClassAliasUtil.register(M3DScene);
 			ClassAliasUtil.register(M3DGeometry);
+			ClassAliasUtil.register(M3DCombinedGeometry);
+			ClassAliasUtil.register(M3DSkinGeometry);
 			ClassAliasUtil.register(M3DMeshGeometry);
 			ClassAliasUtil.register(M3DLineGeometry);
 			ClassAliasUtil.register(M3DLineSegment);

@@ -6,7 +6,7 @@ package net.morocoshi.moja3d.shaders.skin
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Skin;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
-	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.depth.DepthSkinShader;
@@ -16,7 +16,7 @@ package net.morocoshi.moja3d.shaders.skin
 	use namespace moja3d;
 	
 	/**
-	 * スキンシェーダー
+	 * スキンメッシュ用シェーダー
 	 * 
 	 * @author tencho
 	 */
@@ -29,14 +29,14 @@ package net.morocoshi.moja3d.shaders.skin
 		private var depthSkinShader:DepthSkinShader;
 		private var reflectSkinShader:SkinShader;
 		private var maskSkinShader:SkinShader;
-		private var geometry:Geometry;
+		private var geometry:SkinGeometry;
 		
 		public function SkinShader() 
 		{
 			super();
 			
-			requiredAttribute.push(VertexAttribute.BONEINDEX);
-			requiredAttribute.push(VertexAttribute.BONEWEIGHT);
+			requiredAttribute.push(VertexAttribute.BONEINDEX1);
+			requiredAttribute.push(VertexAttribute.BONEWEIGHT1);
 			//requiredAttribute.push(VertexAttribute.BONEINDEX2);
 			//requiredAttribute.push(VertexAttribute.BONEWEIGHT2);
 			
@@ -48,7 +48,7 @@ package net.morocoshi.moja3d.shaders.skin
 			updateShaderCode();
 		}
 		
-		public function setGeometry(geometry:Geometry):void
+		public function setSkinGeometry(geometry:SkinGeometry):void
 		{
 			this.geometry = geometry;
 			updateShaderCode();
@@ -56,12 +56,14 @@ package net.morocoshi.moja3d.shaders.skin
 		
 		override public function afterCreateProgram(shaderList:ShaderList):void 
 		{
+			//ボーン姿勢用レジスタの開始インデックスを取得しておく
 			skinConst.x = shaderList.getVertexConstantIndex("@boneMatrix0:");
 		}
 		
 		override public function getKey():String 
 		{
-			return "SkinShader:" + numBones;
+			//キャッシュはジオメトリ依存
+			return "SkinShader:" + geometry.seed;
 		}
 		
 		override protected function updateAlphaMode():void
@@ -83,14 +85,36 @@ package net.morocoshi.moja3d.shaders.skin
 		{
 			this.skin = skin;
 			boneList.length = 0;
-			numBones = bones.length;
+			
+			if (geometry.boneIDList == null)
+			{
+				throw new Error("SkinGeometryにボーンIDリストがありません！");
+			}
+			
+			var i:int;
+			var n:int;
+			
+			var boneLink:Object = { };
+			var bone:Bone;
+			for each(bone in bones)
+			{
+				boneLink[bone.index] = bone;
+			}
+			
+			n = geometry.boneIDList.length;
+			for (i = 0; i < n; i++)
+			{
+				var boneIndex:int = geometry.boneIDList[i];
+				boneList.push(boneLink[boneIndex]);
+			}
+			
+			numBones = boneList.length;
 			
 			super.updateConstants();
-			for (var i:int = 0; i < numBones; i++) 
+			for (i = 0; i < numBones; i++) 
 			{
-				var bone:Bone = bones[i];
-				bone.setConstant(vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true), phase);
-				boneList.push(bone);
+				bone = boneList[i];
+				bone.addConstant(vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true), phase);
 			}
 			//[0]スキンMatrix定数の開始インデックス
 			//[1]4
@@ -101,21 +125,19 @@ package net.morocoshi.moja3d.shaders.skin
 		/**
 		 * ボーン姿勢から定数を更新する。描画毎に実行
 		 */
-		public function updateBoneConstants():void
+		public function updateBoneConstants(matrix:Matrix3D):void
 		{
-			var invertSkin:Matrix3D = skin._worldMatrix.clone();
-			invertSkin.invert();
-			
 			var n:int = boneList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				boneList[i].invertSkinMatrix = invertSkin;
+				boneList[i].invertSkinMatrix = matrix;
 			}
 		}
 		
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
+			
 			if (numBones == 0 || geometry == null) return;
 			
 			vertexConstants.number = true;
@@ -133,8 +155,8 @@ package net.morocoshi.moja3d.shaders.skin
 				vertexCode.addCode("$tempNormal.xyzw = @0_0_0_1");
 			}
 			
-			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX);
-			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT);
+			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
+			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
 			for (var i:int = 0; i < 4; i++) 
 			{
 				var xyzw:String = ["x", "y", "z", "w"][i];
@@ -171,7 +193,7 @@ package net.morocoshi.moja3d.shaders.skin
 		override public function clone():MaterialShader 
 		{
 			var shader:SkinShader = new SkinShader();
-			shader.setGeometry(geometry);
+			shader.setSkinGeometry(geometry);
 			return shader;
 		}
 		
@@ -182,7 +204,7 @@ package net.morocoshi.moja3d.shaders.skin
 				if (depthSkinShader == null)
 				{
 					depthSkinShader = new DepthSkinShader();
-					depthSkinShader.setGeometry(geometry);
+					depthSkinShader.setSkinGeometry(geometry);
 					depthSkinShader.initializeBones(boneList, skin);
 				}
 				return depthSkinShader;
@@ -192,7 +214,7 @@ package net.morocoshi.moja3d.shaders.skin
 				if (reflectSkinShader == null)
 				{
 					reflectSkinShader = new SkinShader();
-					reflectSkinShader.setGeometry(geometry);
+					reflectSkinShader.setSkinGeometry(geometry);
 					reflectSkinShader.initializeBones(boneList, skin, RenderPhase.REFLECT);
 				}
 				return reflectSkinShader;
@@ -202,7 +224,7 @@ package net.morocoshi.moja3d.shaders.skin
 				if (maskSkinShader == null)
 				{
 					maskSkinShader = new SkinShader();
-					maskSkinShader.setGeometry(geometry);
+					maskSkinShader.setSkinGeometry(geometry);
 					maskSkinShader.initializeBones(boneList, skin, RenderPhase.MASK);
 				}
 				return maskSkinShader;

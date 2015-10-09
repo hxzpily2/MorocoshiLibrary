@@ -21,9 +21,14 @@ package net.morocoshi.moja3d.resources
 			isReady = false;
 		}
 		
+		public function cloneProperties(target:Resource):void 
+		{
+		}
+		
 		public function clone():Resource
 		{
 			var resource:Resource = new Resource();
+			cloneProperties(resource);
 			return resource;
 		}
 		

@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.bounds 
 {
 	import flash.geom.Matrix3D;
+	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.collision.solid.bounds.AABB3D;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
@@ -126,12 +127,42 @@ package net.morocoshi.moja3d.bounds
 			return bb;
 		}
 		
+		static public function getUniondBoundingBox(items:Vector.<BoundingBox>):BoundingBox
+		{
+			var n:int = items.length;
+			if (n == 0)
+			{
+				return null;
+			}
+			
+			var result:BoundingBox = new BoundingBox();
+			result.minX = Number.MAX_VALUE;
+			result.minY = Number.MAX_VALUE;
+			result.minZ = Number.MAX_VALUE;
+			result.maxX = -Number.MAX_VALUE;
+			result.maxY = -Number.MAX_VALUE;
+			result.maxZ = -Number.MAX_VALUE;
+			
+			for (var i:int = 0; i < n; i++) 
+			{
+				var b:BoundingBox = items[i];
+				if (b.minX < result.minX) result.minX = b.minX;
+				if (b.minY < result.minY) result.minY = b.minY;
+				if (b.minZ < result.minZ) result.minZ = b.minZ;
+				if (b.maxX > result.maxX) result.maxX = b.maxX;
+				if (b.maxY > result.maxY) result.maxY = b.maxY;
+				if (b.maxZ > result.maxZ) result.maxZ = b.maxZ;
+			}
+			
+			return result;
+		}
+		
 		/**
 		 * 複数のBoundingBoxの境界球を全て包む境界ボックスサイズを求める。
 		 * @param	items
 		 * @return
 		 */
-		static public function union(items:Vector.<BoundingBox>):BoundingBox
+		static public function getUniondSphereBox(items:Vector.<BoundingBox>):BoundingBox
 		{
 			var n:int = items.length;
 			if (n == 0)
@@ -166,6 +197,11 @@ package net.morocoshi.moja3d.bounds
 			return result;
 		}
 		
+		/**
+		 * 指定のObject3Dが内包している自分を含めた全てのメッシュを包む境界球のBoundingBoxを取得
+		 * @param	object
+		 * @return
+		 */
 		static public function getBoundingBox(object:Object3D):BoundingBox
 		{
 			var objectList:Vector.<Object3D> = object.getChildren(true, true, Mesh);
@@ -179,7 +215,7 @@ package net.morocoshi.moja3d.bounds
 				boundsList.push(mesh.boundingBox);
 			}
 			
-			return BoundingBox.union(boundsList);
+			return BoundingBox.getUniondSphereBox(boundsList);
 		}
 		
 		public function toAABB3D():AABB3D 
@@ -206,6 +242,28 @@ package net.morocoshi.moja3d.bounds
 			maxY = radius;
 			maxZ = radius;
 			radius2 = radius * radius;
+		}
+		
+		public function copyFrom(from:BoundingBox):void 
+		{
+			minX = from.minX;
+			minY = from.minY;
+			minZ = from.minZ;
+			maxX = from.maxX;
+			maxY = from.maxY;
+			maxZ = from.maxZ;
+			localX = from.localX;
+			localY = from.localY;
+			localZ = from.localZ;
+			worldX = from.worldX;
+			worldY = from.worldY;
+			worldZ = from.worldZ;
+			radius2 = from.radius2;
+		}
+		
+		public function toString():String 
+		{
+			return "[" + getQualifiedClassName(this).split("::")[1] + " min(" + minX + "," + minY + "," + minZ + ") max(" + maxX + "," + maxY + "," + maxZ + ")]";
 		}
 		
 	}

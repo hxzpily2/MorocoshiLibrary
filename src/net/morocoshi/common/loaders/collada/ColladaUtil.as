@@ -1,8 +1,8 @@
 package net.morocoshi.common.loaders.collada 
 {
 	import flash.geom.Matrix3D;
-	import mx.utils.StringUtil;
 	import net.morocoshi.common.text.XMLUtil;
+	
 	/**
 	 * ColladaParserで使うなんやかんや
 	 * 
@@ -48,7 +48,7 @@ package net.morocoshi.common.loaders.collada
 		}
 		
 		/**
-		 * ＜source id="xxx"＞～をパースして[[0,0,0],[0,0,0]]形式で返す
+		 * ＜source id=”xxx”＞～をパースして[[0,0,0],[0,0,0]]形式で返す
 		 * @param	xml
 		 * @return
 		 */

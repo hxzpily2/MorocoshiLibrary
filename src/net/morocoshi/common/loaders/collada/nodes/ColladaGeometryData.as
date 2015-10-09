@@ -1,13 +1,13 @@
 package net.morocoshi.common.loaders.collada.nodes 
 {
-	import adobe.utils.CustomActions;
-	import flash.geom.Matrix3D;
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaParseOption;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
 	import net.morocoshi.common.text.XMLUtil;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ColladaGeometryData 
@@ -22,8 +22,10 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var binormalList:Array;
 		public var tangent4List:Array;
 		
-		public var jointList:Array;
-		public var weightList:Array;
+		public var jointList1:Array;
+		public var weightList1:Array;
+		public var jointList2:Array;
+		public var weightList2:Array;
 		
 		private var sourceData:Object;
 		private var inputData:Object = {};
@@ -51,8 +53,8 @@ package net.morocoshi.common.loaders.collada.nodes
 			
 			tangent4List = [];
 			
-			jointList = [];
-			weightList = [];
+			jointList1 = [];
+			weightList1 = [];
 		}
 		
 		public function getList(semantic:String):Array 
@@ -66,8 +68,8 @@ package net.morocoshi.common.loaders.collada.nodes
 				case TEXTANGENT: target = tangentList; break;
 				case TEXBINORMAL: target = binormalList; break;
 				case TANGENT4: target = tangent4List; break;
-				case JOINT: target = jointList; break;
-				case WEIGHT: target = weightList; break;
+				case JOINT: target = jointList1; break;
+				case WEIGHT: target = weightList1; break;
 			}
 			return target;
 		}
@@ -99,7 +101,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			if (option.exportNormal && getList(NORMAL).length > 0) types.push(NORMAL);
 			if (option.exportUV && getList(TEXCOORD).length > 0) types.push(TEXCOORD);
 			if (option.exportTangent4 && getList(TANGENT4).length > 0) types.push(TANGENT4);
-			if (jointList.length)
+			if (jointList1.length)
 			{
 				types.push(JOINT);
 				types.push(WEIGHT);
@@ -212,14 +214,14 @@ package net.morocoshi.common.loaders.collada.nodes
 		
 		public function attachSkinData(data:ColladaGeometryData):void 
 		{
-			jointList = [];
-			weightList = [];
+			jointList1 = [];
+			weightList1 = [];
 			var n:int = vertexPositionList.length;	
 			for (var i:int = 0; i < n; i++)
 			{
 				var index:int = vertexPositionList[i];
-				jointList.push(data.jointList[index]);
-				weightList.push(data.weightList[index]);
+				jointList1.push(data.jointList1[index]);
+				weightList1.push(data.weightList1[index]);
 			}
 		}
 		

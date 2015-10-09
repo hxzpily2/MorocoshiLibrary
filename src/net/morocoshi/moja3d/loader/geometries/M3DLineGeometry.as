@@ -5,7 +5,7 @@ package net.morocoshi.moja3d.loader.geometries
 	 * 
 	 * @author tencho
 	 */
-	public class M3DLineGeometry extends M3DGeometry 
+	public class M3DLineGeometry extends M3DMeshGeometry 
 	{
 		public var segmentList:Vector.<M3DLineSegment>;
 		

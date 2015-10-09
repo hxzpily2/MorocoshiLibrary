@@ -37,7 +37,7 @@ package net.morocoshi.moja3d.objects
 		public var castLight:Boolean;
 		/**これが0以外だと自分以下の子オブジェクトをマスクレンダリングする。MaskColorクラス参照。*/
 		public var renderMask:uint;
-		/**正の値ほど後ろにまわる*/
+		/**負の値ほど後ろにまわる*/
 		public var sortPriority:Number;
 		//public var boundingSphere:BoundingSphere;
 		public var boundingBox:BoundingBox;

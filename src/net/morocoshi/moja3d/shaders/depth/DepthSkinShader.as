@@ -4,7 +4,8 @@ package net.morocoshi.moja3d.shaders.depth
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Skin;
-	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -23,14 +24,14 @@ package net.morocoshi.moja3d.shaders.depth
 		private var skin:Skin;
 		private var skinConst:AGALConstant;
 		private var depthSkinShader:DepthSkinShader;
-		private var geometry:Geometry;
+		private var geometry:SkinGeometry;
 		
 		public function DepthSkinShader() 
 		{
 			super();
 			
-			requiredAttribute.push(VertexAttribute.BONEINDEX);
-			requiredAttribute.push(VertexAttribute.BONEWEIGHT);
+			requiredAttribute.push(VertexAttribute.BONEINDEX1);
+			requiredAttribute.push(VertexAttribute.BONEWEIGHT1);
 			
 			boneList = new Vector.<Bone>;
 			
@@ -40,7 +41,7 @@ package net.morocoshi.moja3d.shaders.depth
 			updateShaderCode();
 		}
 		
-		public function setGeometry(geometry:Geometry):void
+		public function setSkinGeometry(geometry:SkinGeometry):void
 		{
 			this.geometry = geometry;
 			updateShaderCode();
@@ -61,7 +62,7 @@ package net.morocoshi.moja3d.shaders.depth
 			for (var i:int = 0; i < numBones; i++) 
 			{
 				var bone:Bone = bones[i];
-				bone.shadowConstant = vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true);
+				bone.addConstant(vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true), RenderPhase.DEPTH);
 				boneList.push(bone);
 			}
 			//[0]スキンMatrix定数の開始インデックス
@@ -77,7 +78,7 @@ package net.morocoshi.moja3d.shaders.depth
 		
 		override public function getKey():String 
 		{
-			return "DepthSkinShader:" + numBones;
+			return "DepthSkinShader:" + geometry.seed;
 		}
 		
 		override protected function updateAlphaMode():void
@@ -109,8 +110,8 @@ package net.morocoshi.moja3d.shaders.depth
 				"$tempPosition = @0_0_0"
 			);
 			
-			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX);
-			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT);
+			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
+			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
 			
 			for (var i:int = 0; i < 4; i++) 
 			{
@@ -133,7 +134,7 @@ package net.morocoshi.moja3d.shaders.depth
 		override public function clone():MaterialShader 
 		{
 			var shader:DepthSkinShader = new DepthSkinShader();
-			shader.setGeometry(geometry);
+			shader.setSkinGeometry(geometry);
 			return shader;
 		}
 		

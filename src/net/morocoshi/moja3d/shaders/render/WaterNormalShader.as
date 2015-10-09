@@ -12,7 +12,7 @@ package net.morocoshi.moja3d.shaders.render
 	/**
 	 * ...
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class WaterNormalShader extends MaterialShader 
 	{
@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			normalTexture = fragmentCode.addTexture("&waterNormalMap", _normalMap);
+			normalTexture = fragmentCode.addTexture("&waterNormalMap", _normalMap, this);
 		}
 		
 		override protected function updateConstants():void 

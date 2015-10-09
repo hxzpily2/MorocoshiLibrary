@@ -7,7 +7,6 @@ package net.morocoshi.moja3d.view
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProfile;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -236,6 +235,27 @@ package net.morocoshi.moja3d.view
 		public function render():void
 		{
 			renderSceneTo(null, root, overlay, camera, view, filters);
+		}
+		
+		/**
+		 * 現在のレンダリング設定で画面をキャプチャする
+		 * @param	transparent	背景を透過するか
+		 * @param	hasOverlay	2Dレイヤーもキャプチャするか
+		 * @return
+		 */
+		public function capture(transparent:Boolean, hasOverlay:Boolean):BitmapData
+		{
+			var bitmapData:BitmapData = new BitmapData(view.width, view.height, transparent, 0x0);
+			collector.captureDestination = bitmapData;
+			var backgroundColor:Number = view.backgroundColor;
+			var backgroundAlpha:Number = view.backgroundAlpha;
+			if (transparent) view.backgroundColor = 0;
+			view.backgroundAlpha = 0;
+			renderSceneTo(null, root, hasOverlay? overlay : null, camera, view, filters);
+			collector.captureDestination = null;
+			view.backgroundAlpha = backgroundAlpha;
+			view.backgroundColor = backgroundColor;
+			return bitmapData;
 		}
 		
 		/**
@@ -473,6 +493,10 @@ package net.morocoshi.moja3d.view
 			{
 				_stats.apply(collector);
 				dispatchEvent(new Event3D(Event3D.CONTEXT_PRE_PRESENT));
+				if (collector.captureDestination)
+				{
+					context3D.drawToBitmapData(collector.captureDestination);
+				}
 				context3D.present();
 				collector.resetStats();
 			}

@@ -36,7 +36,10 @@ package net.morocoshi.moja3d.shaders.base
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.NORMAL));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.VERTEX_COLOR));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.TANGENT4));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX));
+			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX1));
+			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX2));
+			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEWEIGHT1));
+			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEWEIGHT2));
 			return key;
 		}
 		

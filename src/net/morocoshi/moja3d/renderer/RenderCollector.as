@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.renderer 
 {
+	import flash.display.BitmapData;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTriangleFace;
@@ -32,7 +33,7 @@ package net.morocoshi.moja3d.renderer
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * レンダリング要素を収集したりする
 	 * 
 	 * @author tencho
 	 */
@@ -82,6 +83,8 @@ package net.morocoshi.moja3d.renderer
 		/**Object3Dのカラー設定の有効設定。有効にすると自動的にカラーシェーダーが追加される。*/
 		public var useObjectColorTransform:Boolean = true;
 		public var info:AGALInfo;
+		/**これにBitmapDataが指定されていればここにキャプチャする*/
+		public var captureDestination:BitmapData;
 		
 		/**
 		 * レンダリング時にシーン内のものを色々と収集する

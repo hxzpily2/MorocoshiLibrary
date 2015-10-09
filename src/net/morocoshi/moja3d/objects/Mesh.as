@@ -9,8 +9,10 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.renderer.RenderElement;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
+	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.render.ZBiasShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
@@ -25,6 +27,7 @@ package net.morocoshi.moja3d.objects
 	{
 		public var layer:uint;
 		public var surfaces:Vector.<Surface>;
+		moja3d var combinedSurfacesList:Vector.<Vector.<Surface>>;
 		public var startShaderList:ShaderList;
 		public var endShaderList:ShaderList;
 		public var zBiasShader:ZBiasShader;
@@ -37,6 +40,7 @@ package net.morocoshi.moja3d.objects
 		
 		static moja3d var globalSeed:int;
 		private var seed:String;
+		private var elementCount:int;
 		
 		public function Mesh() 
 		{
@@ -132,41 +136,11 @@ package net.morocoshi.moja3d.objects
 				boundingBox = new BoundingBox();
 			}
 			
-			var minX:Number = Number.MAX_VALUE;
-			var minY:Number = Number.MAX_VALUE;
-			var minZ:Number = Number.MAX_VALUE;
-			var maxX:Number = -Number.MAX_VALUE;
-			var maxY:Number = -Number.MAX_VALUE;
-			var maxZ:Number = -Number.MAX_VALUE;
+			geometry.calculateBounds(boundingBox);
 			
-			var items:Vector.<Number> = geometry.verticesList[0];
-			
-			var i:int;
-			var n:int = items.length;
-			
-			for (i = 0; i < n; i += 3)
-			{
-				var px:Number = items[i];
-				var py:Number = items[i + 1];
-				var pz:Number = items[i + 2];
-				
-				if (minX > px) minX = px;
-				if (minY > py) minY = py;
-				if (minZ > pz) minZ = pz;
-				if (maxX < px) maxX = px;
-				if (maxY < py) maxY = py;
-				if (maxZ < pz) maxZ = pz;
-			}
-			boundingBox.minX = minX;
-			boundingBox.minY = minY;
-			boundingBox.minZ = minZ;
-			boundingBox.maxX = maxX;
-			boundingBox.maxY = maxY;
-			boundingBox.maxZ = maxZ;
-			
-			boundingBox.localX = (minX + maxX) / 2;
-			boundingBox.localY = (minY + maxY) / 2;
-			boundingBox.localZ = (minZ + maxZ) / 2;
+			boundingBox.localX = (boundingBox.minX + boundingBox.maxX) / 2;
+			boundingBox.localY = (boundingBox.minY + boundingBox.maxY) / 2;
+			boundingBox.localZ = (boundingBox.minZ + boundingBox.maxZ) / 2;
 		}
 		
 		/**
@@ -198,20 +172,55 @@ package net.morocoshi.moja3d.objects
 			return mesh;
 		}
 		
+		/**
+		 * サーフェイス情報と、集合ジオメトリ用のサーフェイス情報を参照コピー（階層は複製）
+		 * @param	mesh
+		 */
+		private function referenceSurfaces(mesh:Mesh):void
+		{
+			var i:int;
+			var j:int;
+			var n:int;
+			var m:int;
+			var surface:Surface;
+			
+			n = surfaces.length;
+			for (i = 0; i < n; i++) 
+			{
+				surface = new Surface(surfaces[i]._material);
+				surface.numTriangles = surfaces[i].numTriangles;
+				surface.firstIndex = surfaces[i].firstIndex;
+				mesh.surfaces.push(surface);
+			}
+			
+			if (combinedSurfacesList == null) return;
+			
+			mesh.combinedSurfacesList = new Vector.<Vector.<Surface>>;
+			n = combinedSurfacesList.length;		
+			for (i = 0; i < n; i++) 
+			{
+				var combinedSurfaces:Vector.<Surface> = new Vector.<Surface>;
+				mesh.combinedSurfacesList.push(combinedSurfaces);
+				m = combinedSurfacesList[i].length;
+				for (j = 0; j < m; j++)
+				{
+					surface = new Surface(combinedSurfacesList[i][j]._material);
+					surface.numTriangles = combinedSurfacesList[i][j].numTriangles;
+					surface.firstIndex = combinedSurfacesList[i][j].firstIndex;
+					combinedSurfaces.push(surface);
+				}
+			}
+		}
+		
 		override public function referenceProperties(target:Object3D):void
 		{
 			super.referenceProperties(target);
 			
 			var mesh:Mesh = target as Mesh;
+			mesh._zbias = _zbias;
 			mesh.geometry = geometry;
-			var n:int = surfaces.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var surface:Surface = new Surface(surfaces[i].material);
-				surface.numTriangles = surfaces[i].numTriangles;
-				surface.firstIndex = surfaces[i].firstIndex;
-				mesh.surfaces.push(surface);
-			}
+			
+			referenceSurfaces(mesh);
 		}
 		
 		override public function cloneProperties(target:Object3D):void 
@@ -221,14 +230,8 @@ package net.morocoshi.moja3d.objects
 			var mesh:Mesh = target as Mesh;
 			mesh._zbias = _zbias;
 			mesh.geometry = geometry.clone() as Geometry;
-			var n:int = surfaces.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var surface:Surface = new Surface(surfaces[i].material);
-				surface.numTriangles = surfaces[i].numTriangles;
-				surface.firstIndex = surfaces[i].firstIndex;
-				mesh.surfaces.push(surface);
-			}
+			
+			referenceSurfaces(mesh);
 		}
 		
 		override public function dispose(hierarchy:Boolean):void
@@ -241,9 +244,9 @@ package net.morocoshi.moja3d.objects
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				if (surfaces[i].material)
+				if (surfaces[i]._material)
 				{
-					surfaces[i].material.dispose();
+					surfaces[i]._material.dispose();
 				}
 			}
 		}
@@ -256,15 +259,24 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			var result:Vector.<Resource> = super.getResources(hierarchy, filter);
-			if (_geometry && (_geometry is filter))
+			if (_geometry)
 			{
-				result.push(_geometry);
+				if (_geometry is CombinedGeometry)
+				{
+					for each(var geometryItem:Geometry in CombinedGeometry(_geometry).geometries)
+					{
+						if (geometryItem is filter) result.push(geometryItem);
+					}
+				}
+				else if (_geometry is filter)
+				{
+					result.push(_geometry);
+				}
 			}
-			
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var material:Material = surfaces[i].material;
+				var material:Material = surfaces[i]._material;
 				if (material)
 				{
 					var resourceList:Vector.<Resource> = material.getResources();
@@ -285,29 +297,73 @@ package net.morocoshi.moja3d.objects
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:uint):Boolean 
 		{
 			var success:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
-			if (success == false || _geometry.isUploaded == false)
+			
+			if (success == false)
 			{
 				return false;
+			}
+			
+			var combined:CombinedGeometry = _geometry as CombinedGeometry;
+			
+			//単体ジオメトリで、未ロードの場合
+			if (combined == null && _geometry.isUploaded == false) return false;
+			//混合ジオメトリで、どれか1つでも未ロードだった場合
+			if (combined)
+			{
+				var nn:int = combined.geometries.length;
+				for (var ii:int = 0; ii < nn; ii++) 
+				{
+					if (combined.geometries[ii].isUploaded == false) return false;
+				}
 			}
 			
 			if (_renderable == false) return true;
 			
 			mask |= renderMask;
-			var count:int = -1;
-			var n:int = surfaces.length;
+			
+			elementCount = -1;
+			
+			var skin:Skin = this as Skin;
+			var skinShader:MaterialShader;
+			if (combined)
+			{
+				var n:int = combined.geometries.length;
+				for (var i:int = 0; i < n; i++) 
+				{
+					skinShader = skin? skin.skinShaderList[i] : null;
+					if (!collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader)) return false;
+				}
+			}
+			else
+			{
+				skinShader = skin? skin.skinShaderList[0] : null;
+				if (!collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader)) return false;
+			}
+			
+			return true;
+		}
+		
+		private function collectSurfaces(collector:RenderCollector, surfaceList:Vector.<Surface>, geom:Geometry, mask:uint, worldFlip:int, skinShader:MaterialShader):Boolean 
+		{
+			//サーフェイスの数繰り返す
+			var n:int = surfaceList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var surface:Surface = surfaces[i];
-				var material:Material = surface.material;
+				var surface:Surface = surfaceList[i];
+				var material:Material = surface._material;
+				//マテリアルが貼られていなければスキップ
 				if (material == null) continue;
 				
-				material.collectShaderList(collector, this);
+				//シェーダー情報の収集
+				material.collectShaderList(collector, this, geom, skinShader);
+				
+				//反射フェーズの場合にマテリアルに反射シェーダーがあれば終了？continueでない理由は？
 				if (collector.renderPhase == RenderPhase.REFLECT && material.shaderList.reflectShader)
 				{
 					return false;
 				}
 				
-				//反射要素チェックフェーズの場合に反射や影などのシェーダーをチェックする。レンダリング要素はマスク以外追加しないで終了
+				//チェックフェーズの場合に反射や影などのシェーダーをチェックする。レンダリング要素はマスク以外追加しないで終了
 				var checkMode:Boolean = (collector.renderPhase == RenderPhase.CHECK);
 				if (checkMode)
 				{
@@ -339,7 +395,7 @@ package net.morocoshi.moja3d.objects
 					if (mask)
 					{
 						collector.hasMaskElement = true;
-						material.getMaskShaderList(collector, this, mask);
+						material.getMaskShaderList(collector, this, geom, mask, skinShader);
 					}
 					else
 					{
@@ -347,25 +403,26 @@ package net.morocoshi.moja3d.objects
 					}
 				}
 				
+				//不透明要素＆半透明要素をそれぞれレンダリング要素として収集する
 				for (var j:int = 0; j < 2; j++) 
 				{
 					var shaderList:ShaderList = (j == 0)? collector.opaquePassShaderList : collector.alphaPassShaderList;
 					if (shaderList == null) continue;
 					
-					count++;
+					elementCount++;
 					var shaderLayer:uint = (j == 0)? RenderLayer.OPAQUE : RenderLayer.TRANSPARENT;
-					var element:RenderElement = (renderElements.length > count)? renderElements[count] : null;
+					var element:RenderElement = (renderElements.length > elementCount)? renderElements[elementCount] : null;
 					if (element == null)
 					{
-						element = renderElements[count] = new RenderElement();
+						element = renderElements[elementCount] = new RenderElement();
 					}
-					element.name = String(this) + _geometry.indexBuffer;
+					element.name = String(this) + geom.indexBuffer;
 					element.firstIndex = surface.firstIndex;
 					element.numTriangles = surface.numTriangles;
 					element.matrix = _worldMatrix;
-					element.vertexBufferFormatList = _geometry.vertexBufferFormatList;
-					element.vertexBufferList = _geometry.vertexBufferList;
-					element.indexBuffer = _geometry.indexBuffer;
+					element.vertexBufferFormatList = geom.vertexBufferFormatList;
+					element.vertexBufferList = geom.vertexBufferList;
+					element.indexBuffer = geom.indexBuffer;
 					element.culling = material.culling;
 					element.sourceFactor = material.sourceFactor;
 					element.destinationFactor = material.destinationFactor;

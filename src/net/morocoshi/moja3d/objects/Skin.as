@@ -1,11 +1,12 @@
 package net.morocoshi.moja3d.objects 
 {
 	import flash.display3D.Context3D;
+	import flash.geom.Matrix3D;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
-	import net.morocoshi.moja3d.resources.Geometry;
-	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.resources.CombinedGeometry;
+	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.shaders.skin.SkinShader;
 	
 	use namespace moja3d;
@@ -17,27 +18,28 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Skin extends Mesh 
 	{
+		/**
+		 * このスキン内にあるボーンオブジェクトのリスト
+		 */
 		private var bones:Vector.<Bone>;
-		private var skinShader:SkinShader;
+		
+		public var skinShaderList:Vector.<SkinShader>;
 		
 		public function Skin() 
 		{
-			skinShader = new SkinShader();
-			
 			super();
 			
 			updateSeed();
 			bones = new Vector.<Bone>;
-			startShaderList = new ShaderList();
-			startShaderList.addShader(skinShader);
+			skinShaderList = new Vector.<SkinShader>;
 		}
-		
+		/*
 		override public function set geometry(value:Geometry):void 
 		{
 			super.geometry = value;
 			skinShader.setGeometry(value);
 		}
-		
+		*/
 		override public function upload(context3D:Context3D, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
 		{
 			super.upload(context3D, hierarchy, async, complete);
@@ -89,22 +91,44 @@ package net.morocoshi.moja3d.objects
 					var bone:Bone = current as Bone;
 					if (bone && bone.hasWeight)
 					{
-						if (bones.length <= bone.index)
-						{
-							bones.length = bone.index + 1;
-						}
-						if (bones.length < bone.index)
-						{
-							bones.length = bone.index;
-						}
-						bones[bone.index] = bone;
+						bones.push(bone);
 					}
 					task.push(current);
 					current = current._next;
 				}
 			}
-			skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
-			startShaderList.updateConstantList();
+			
+			var skinShader:SkinShader;
+			if (_geometry is CombinedGeometry)
+			{
+				for each(var geom:SkinGeometry in CombinedGeometry(_geometry).geometries)
+				{
+					skinShader = new SkinShader();
+					skinShader.setSkinGeometry(geom);
+					skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+					skinShaderList.push(skinShader);
+					//skinGeom.shaderList.updateConstantList();
+				}
+			}
+			else
+			{
+				skinShader = new SkinShader();
+				skinShader.setSkinGeometry(_geometry as SkinGeometry);
+				skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+				skinShaderList.push(skinShader);
+				//SkinGeometry(_geometry).skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+				//SkinGeometry(_geometry).shaderList.updateConstantList();
+			}
+			//skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+			//startShaderList.updateConstantList();
+			var combinedGeom:CombinedGeometry = geometry as CombinedGeometry;
+			if (combinedGeom)
+			{
+				for each(var surface:Surface in surfaces)
+				{
+					surface.linkSurfaces(combinedSurfacesList);
+				}
+			}
 		}
 		
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:uint):Boolean 
@@ -114,8 +138,13 @@ package net.morocoshi.moja3d.objects
 		
 		override protected function calculate(collector:RenderCollector):void 
 		{
-			//ボーンの計算
-			skinShader.updateBoneConstants();
+			//スキン姿勢の逆行列の計算
+			var invertSkin:Matrix3D = _worldMatrix.clone();
+			invertSkin.invert();
+			for each (var item:SkinShader in skinShaderList) 
+			{
+				item.updateBoneConstants(invertSkin);
+			}
 		}
 		
 	}

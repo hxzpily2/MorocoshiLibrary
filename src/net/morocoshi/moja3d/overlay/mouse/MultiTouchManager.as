@@ -1,10 +1,7 @@
 package net.morocoshi.moja3d.overlay.mouse 
 {
-	import flash.display.Stage;
-	import flash.events.EventDispatcher;
 	import flash.events.TouchEvent;
 	import net.morocoshi.moja3d.overlay.objects.Object2D;
-	import net.morocoshi.moja3d.overlay.objects.Screen2D;
 	
 	/**
 	 * ...

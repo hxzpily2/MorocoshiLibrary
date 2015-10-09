@@ -176,6 +176,16 @@ package net.morocoshi.common.graphics
 			bmd.unlock();
 		}
 		
+		/**
+		 * 透明ピクセルが存在するかチェック
+		 * @param	image
+		 * @return
+		 */
+		static public function isTransparent(image:BitmapData):Boolean 
+		{
+			return (image.transparent && image.getColorBoundsRect(0xff000000, 0xff000000, false).width > 0);
+		}
+		
 	}
 	
 }

@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.objects 
 {
 	import flash.geom.Matrix3D;
+	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -15,21 +16,27 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Bone extends Object3D 
 	{
+		private var tempMatrix:Matrix3D;
 		/**ボーンのワールド初期姿勢(___計算簡略化のためにinvertしておきたいけど、今はデバッグで使うのでこのままで)*/
 		public var initialMatrix:Matrix3D;
 		public var invertSkinMatrix:Matrix3D;
 		public var hasWeight:Boolean;
 		public var index:int;
-		public var renderConstant:AGALConstant;
-		public var shadowConstant:AGALConstant;
-		public var reflectConstant:AGALConstant;
-		public var maskConstant:AGALConstant;
+		public var renderConstants:Vector.<AGALConstant>;
+		public var shadowConstants:Vector.<AGALConstant>;
+		public var reflectConstants:Vector.<AGALConstant>;
+		public var maskConstants:Vector.<AGALConstant>;
 		
 		public function Bone() 
 		{
 			super();
 			hasWeight = false;
+			tempMatrix = new Matrix3D();
 			initialMatrix = new Matrix3D();
+			renderConstants = new Vector.<AGALConstant>;
+			shadowConstants = new Vector.<AGALConstant>;
+			reflectConstants = new Vector.<AGALConstant>;
+			maskConstants = new Vector.<AGALConstant>;
 		}
 		
 		override public function reference():Object3D 
@@ -82,23 +89,23 @@ package net.morocoshi.moja3d.objects
 			bone.initialMatrix = initialMatrix.clone();
 		}
 		
-		public function setConstant(constant:AGALConstant, phase:String):void 
+		public function addConstant(constant:AGALConstant, phase:String):void 
 		{
 			if (phase == RenderPhase.NORMAL)
 			{
-				renderConstant = constant;
+				renderConstants.push(constant);
 			}
 			if (phase == RenderPhase.MASK)
 			{
-				maskConstant = constant;
+				maskConstants.push(constant);
 			}
 			if (phase == RenderPhase.DEPTH)
 			{
-				shadowConstant = constant;
+				shadowConstants.push(constant);
 			}
 			if (phase == RenderPhase.REFLECT)
 			{
-				reflectConstant = constant;
+				reflectConstants.push(constant);
 			}
 		}
 		
@@ -110,22 +117,23 @@ package net.morocoshi.moja3d.objects
 		{
 			if (invertSkinMatrix == null) return;
 			
-			var matrix:Matrix3D = renderConstant.matrix;
-			matrix.copyFrom(_worldMatrix);
-			matrix.prepend(initialMatrix);
-			matrix.prepend(invertSkinMatrix);
-			if (shadowConstant)
+			tempMatrix.copyFrom(_worldMatrix);
+			tempMatrix.prepend(initialMatrix);
+			tempMatrix.prepend(invertSkinMatrix);
+			
+			var constant:AGALConstant;
+			for each (constant in renderConstants)
 			{
-				shadowConstant.matrix = matrix;
+				constant.matrix = tempMatrix;
 			}
-			if (maskConstant)
-			{
-				maskConstant.matrix = matrix;
-			}
-			if (reflectConstant)
-			{
-				reflectConstant.matrix = matrix;
-			}
+			for each (constant in shadowConstants) constant.matrix = tempMatrix;
+			for each (constant in maskConstants) constant.matrix = tempMatrix;
+			for each (constant in reflectConstants) constant.matrix = tempMatrix;
+		}
+		
+		override public function toString():String 
+		{
+			return "[" + getQualifiedClassName(this).split("::")[1] + " index=" + index + ", " + name + "]";
 		}
 		
 	}

@@ -10,6 +10,7 @@ package net.morocoshi.moja3d.loader.objects
 	public class M3DMesh extends M3DObject
 	{
 		public var surfaceList:Vector.<M3DSurface>;
+		public var surfacesList:Array;
 		
 		public function M3DMesh() 
 		{

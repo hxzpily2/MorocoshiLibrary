@@ -5,9 +5,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
-	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -50,7 +48,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			toonTexture = fragmentCode.addTexture("&toon", toonResource);
+			toonTexture = fragmentCode.addTexture("&toon", toonResource, this);
 		}
 		
 		override protected function updateConstants():void 

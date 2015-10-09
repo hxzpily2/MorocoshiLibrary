@@ -44,10 +44,6 @@ package net.morocoshi.moja3d.loader.exporters
 		public var deleteEmptyObject:Boolean = true;
 		/***/
 		public var lockUserPropertyObject:Boolean = true;
-		/**小数点の精度を下げる*/
-		public var lowVertices:Boolean = false;
-		/**小数精度を下げる場合小数点第何位まで使うか*/
-		public var lowNumber:int = 4;
 		/**マテリアルパスのフォルダを削るか*/
 		public var removeDirectory:Boolean = false;
 		/**基点をオブジェクトのAABBの中心に動かす*/
@@ -62,19 +58,18 @@ package net.morocoshi.moja3d.loader.exporters
 		public var moveToRoot:Boolean = true;
 		/**同一マテリアルのサーフェイスを統合して最適化する*/
 		public var optimizeSurface:Boolean = true;
+		/**1つのスキンメッシュが持てるボーン数の限界数（これを超えた部分は分割される）*/
+		public var boneLimit:int = 20;
 		/***/
 		public var ignoreUserDaraList:Array = [];
 		
-		/**TANGENT4の情報を削減する*/
-		//public var deleteTangent4:Boolean = false;
-		//public var deleteNormal:Boolean = false;
-		//public var deleteUV:Boolean = false;
-		//public var deleteVertexColor:Boolean = false;
 		
+		/**小数点の精度を下げる*/
+		public var lowVertices:Boolean = false;
+		/**小数精度を下げる場合小数点第何位まで使うか*/
+		public var lowNumber:int = 4;
 		/**同一頂点でTangent4が違っても新しく頂点を生成しない。サイズがかなり減るが、色々と表示がおかしくなる可能性*/
 		//public var simpleTangent4:Boolean = false;
-		/**不透明マップの設定を書き出さない*/
-		///public var ignoreTransparent:Boolean = false;
 		
 		public function M3DExportOption() 
 		{

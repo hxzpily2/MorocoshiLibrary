@@ -11,11 +11,13 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.overlay.objects.Sprite2D;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.base.BasicShader;
 	import net.morocoshi.moja3d.shaders.base.EndShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
+	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	use namespace moja3d;
@@ -37,9 +39,9 @@ package net.morocoshi.moja3d.materials
 		
 		public var sourceFactor:String;
 		public var destinationFactor:String;
+		
 		private var _alphaPassEnabled:Boolean;
 		private var _opaquePassEnabled:Boolean;
-		
 		private var _alphaThreshold:Number;
 		private var _shadowThreshold:Number;
 		private var depthEndShader:DepthEndShader;
@@ -200,7 +202,7 @@ package net.morocoshi.moja3d.materials
 		 * @param	collector
 		 * @param	mesh
 		 */
-		moja3d function collectShaderList(collector:RenderCollector, mesh:Mesh):void 
+		moja3d function collectShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, skinShader:MaterialShader):void 
 		{
 			collector.opaquePassShaderList = null;
 			collector.alphaPassShaderList = null;
@@ -210,27 +212,29 @@ package net.morocoshi.moja3d.materials
 			
 			var phase:String = collector.renderPhase;
 			var colorKey:String = collector.useObjectColorTransform? "c" : "C";
+			var skinKey:String = skinShader? skinShader.getKey() : "none";
 			
 			//通常レンダリング用
 			if (phase != RenderPhase.REFLECT)
 			{
-				var normalKey:String = seed + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
+				var normalKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
 				shaderData = AGALCache.shader[normalKey];
 				if (shaderData == null)
 				{
 					shaderData = { };
 					var renderShader:ShaderList = new ShaderList();
 					renderShader.name = mesh.name;
-					renderShader.addShader(new BasicShader(mesh._geometry));
+					renderShader.addShader(new BasicShader(geometry));
 					if (mesh.startShaderList) renderShader.attach(mesh.startShaderList);
-					renderShader.attach(shaderList, mesh.geometry);
+					if (skinShader) renderShader.addShader(skinShader);
+					renderShader.attach(shaderList, geometry);
 					if (mesh.endShaderList) renderShader.attach(mesh.endShaderList);
 					renderShader.addShader(AGALCache.viewShaderList);
 					if (mesh.zbias != 0) renderShader.addShader(mesh.zBiasShader);
 					if (collector.useObjectColorTransform) renderShader.addShader(mesh.colorTransformShader);
-					renderShader.addShader(new EndShader(mesh._geometry));
+					renderShader.addShader(new EndShader(geometry));
 					
-					renderShader.updateFromGeometry(mesh._geometry);
+					renderShader.updateFromGeometry(geometry);
 					/*
 					var removed:Vector.<MaterialShader> = 
 					if (removed.length > 0)
@@ -253,12 +257,12 @@ package net.morocoshi.moja3d.materials
 			//デプスマップ用
 			if (phase == RenderPhase.DEPTH || phase == RenderPhase.LIGHT)
 			{
-				var depthKey:String = seed + "/" + shaderList.key + "/" + colorKey + mesh.key + "/depth";
+				var depthKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/depth";
 				shaderData = AGALCache.shader[depthKey];
 				if (shaderData == null)
 				{
 					shaderData = { };
-					var renderKey:String = seed + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
+					var renderKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
 					var renderData:Object = AGALCache.shader[renderKey];
 					if (renderData.opaque)
 					{
@@ -282,22 +286,23 @@ package net.morocoshi.moja3d.materials
 			//鏡面反射用
 			if (phase == RenderPhase.REFLECT)
 			{
-				var reflectKey:String = seed + "/" + shaderList.key + "/" + colorKey + mesh.key + "/reflect";
+				var reflectKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/reflect";
 				shaderData = AGALCache.shader[reflectKey];
 				if (shaderData == null)
 				{
 					shaderData = { };
 					
 					var reflectShader:ShaderList = new ShaderList();
-					reflectShader.addShader(new BasicShader(mesh._geometry));
+					reflectShader.addShader(new BasicShader(geometry));
 					reflectShader.addShader(collector.reflectiveWater.killShader);
 					if (mesh.startShaderList) reflectShader.attachExtra(mesh.startShaderList, phase);
+					if (skinShader) reflectShader.addShader(skinShader);
 					reflectShader.attach(reflectShaderList || shaderList);
 					if (mesh.endShaderList) reflectShader.attachExtra(mesh.endShaderList, phase);
 					reflectShader.addShader(AGALCache.viewShaderList);
 					if (mesh.zbias != 0) reflectShader.addShader(mesh.zBiasShader);
 					if (collector.useObjectColorTransform) reflectShader.addShader(mesh.colorTransformShader);
-					reflectShader.addShader(new EndShader(mesh._geometry));
+					reflectShader.addShader(new EndShader(geometry));
 					
 					AGALCache.shader[reflectKey] = shaderData;
 					
@@ -313,9 +318,10 @@ package net.morocoshi.moja3d.materials
 			collector.alphaPassShaderList = (_alphaPassEnabled && shaderData)? shaderData.alpha : null;
 		}
 		
-		public function getMaskShaderList(collector:RenderCollector, mesh:Mesh, mask:uint):void
+		public function getMaskShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, mask:uint, skinShader:MaterialShader):void
 		{
-			var key:String = seed + "/" + mesh.key + "/mask";
+			var skinKey:String = skinShader? skinShader.getKey() : "none";
+			var key:String = seed + "/" + skinKey + "/" + mesh.key + "/mask";
 			
 			collector.opaquePassShaderList = null;
 			collector.alphaPassShaderList = null;
@@ -323,20 +329,21 @@ package net.morocoshi.moja3d.materials
 			if (result == null)
 			{
 				result = AGALCache.shader[key] = new ShaderList();
-				result.addShader(new BasicShader(mesh._geometry));
+				result.addShader(new BasicShader(geometry));
 				if (mesh.startShaderList)
 				{
 					result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
 				}
+				if (skinShader) result.addShader(skinShader);
 				result.attach(collector.getMaskShaderList(mask));
 				if (mesh.endShaderList)
 				{
 					result.attachExtra(mesh.endShaderList, RenderPhase.MASK);
 				}
 				result.addShader(AGALCache.viewShaderList);
-				result.addShader(new EndShader(mesh._geometry));
+				result.addShader(new EndShader(geometry));
 				//%%%ここは？
-				result.updateFromGeometry(mesh._geometry);
+				result.updateFromGeometry(geometry);
 			}
 			collector.opaquePassShaderList = result;
 		}

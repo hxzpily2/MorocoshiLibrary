@@ -1,13 +1,11 @@
 package net.morocoshi.moja3d.loader 
 {
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
-	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
-	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DBone;
 	import net.morocoshi.moja3d.loader.objects.M3DCamera;
 	import net.morocoshi.moja3d.loader.objects.M3DLayer;
@@ -15,7 +13,10 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DLine;
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
-	import net.morocoshi.moja3d.loader.optimize.OptimizedGeometry;
+	import net.morocoshi.moja3d.loader.objects.M3DSkin;
+	import net.morocoshi.moja3d.loader.optimize.M3DFaseSet;
+	import net.morocoshi.moja3d.loader.optimize.SkinSplitter;
+	import net.morocoshi.moja3d.loader.optimize.SurfaceOptimizer;
 	
 	/**
 	 * M3Dシーンデータ
@@ -168,104 +169,27 @@ package net.morocoshi.moja3d.loader
 		 */
 		public function optimize():void 
 		{
-			var i:int;
-			var n:int;
-			
-			//使用しているジオメトリリスト（最適化スキップしたもの+最適化した新しいジオメトリになる）
-			var usedGeomList:Vector.<M3DGeometry> = new Vector.<M3DGeometry>;
-			var deleteGeomList:Vector.<M3DGeometry> = new Vector.<M3DGeometry>;
-			var deleteObjectList:Vector.<M3DGeometry> = new Vector.<M3DGeometry>;
-			var geometryLink:Object = getGeometryLink();
-			var materialLink:Object = getMaterialLink();
-			var objectLink:Object = getObjectLink();
-			var optimizedGeometryLink:Dictionary = new Dictionary();
-			
-			var geomCount:int = geometryList.length + 1;
-			var objectCount:int = objectList.length + 1;
-			
-			n = objectList.length;
-			for (i = 0; i < n; i++) 
+			new SurfaceOptimizer().optimize(this);
+		}
+		
+		public function getGeometryLastID():int
+		{
+			var result:int = -1;
+			for each(var item:M3DGeometry in geometryList)
 			{
-				var obj:M3DObject = objectList[i];
-				var mesh:M3DMesh = obj as M3DMesh;
-				
-				//メッシュでない場合スキップ
-				if (mesh == null) continue;
-				
-				//アニメーションがある場合スキップ
-				var skip:Boolean = false;
-				var current:M3DObject = obj;
-				while (current)
-				{
-					if (current.animation || current.userData.lock || current.userData.billboard)
-					{
-						skip = true;
-						break;
-					}
-					current = objectLink[current.parent];
-				}
-				
-				var geom:M3DMeshGeometry = geometryLink[mesh.geometryID] as M3DMeshGeometry;
-				if (skip)
-				{
-					//スキップしたジオメトリはリストに入れておく
-					VectorUtil.attachItemDiff(usedGeomList, geom);
-					continue;
-				}
-				
-				//メッシュを統合していく
-				var matrix:Matrix3D = getWorldMatrix(obj, objectLink);
-				obj.matrix = matrix.rawData;
-				obj.parent = -1;
-				
-				VectorUtil.deleteItem(objectList, obj);
-				i--;
-				n--;
-				
-				var numSurface:int = mesh.surfaceList.length;
-				for (var s:int = 0; s < numSurface; s++) 
-				{
-					var surface:M3DSurface = mesh.surfaceList[s];
-					var material:M3DMaterial = materialLink[surface.material];
-					var optimizedGeom:OptimizedGeometry = getOptimizedGeometry(optimizedGeometryLink, material, mesh, surface);
-					optimizedGeom.attach(geom, matrix, surface.indexBegin, surface.numTriangle);
-				}
+				if (item.id > result) result = item.id;
 			}
-			
-			for each(var item:OptimizedGeometry in optimizedGeometryLink) 
+			return result;
+		}
+		
+		public function getObjectLastID():int 
+		{
+			var result:int = -1;
+			for each(var item:M3DObject in objectList)
 			{
-				geomCount++;
-				objectCount++;
-				
-				var meshGeom:M3DMeshGeometry = item.toGeometry();
-				meshGeom.id = geomCount;
-				var position:Vector3D = meshGeom.fixBasePoint();
-				usedGeomList.push(meshGeom);
-				var mesh3d:M3DMesh = new M3DMesh();
-				mesh3d.geometryID = meshGeom.id;
-				mesh3d.id = objectCount;
-				mesh3d.matrix = new <Number>[1,0,0,0,0,1,0,0,0,0,1,0,position.x,position.y,position.z,1];
-				mesh3d.name = item.baseMesh.name;
-				mesh3d.visible = item.baseMesh.visible;
-				mesh3d.userData = item.baseMesh.userData;
-				mesh3d.parent = -1;
-				mesh3d.animationID = mesh3d.name;
-				mesh3d.userData = item.userData;
-				mesh3d.surfaceList = new Vector.<M3DSurface>;
-				
-				var meshSurface:M3DSurface = new M3DSurface();
-				meshSurface.indexBegin = 0;
-				meshSurface.numTriangle = item.numTriangle;
-				meshSurface.material = item.material.id;
-				meshSurface.hasTransparentVertex = item.surface.hasTransparentVertex;
-				mesh3d.surfaceList.push(meshSurface);
-				
-				objectList.push(mesh3d);
+				if (item.id > result) result = item.id;
 			}
-			
-			//geometryListを使ったものだけにする
-			geometryList.length = 0;
-			VectorUtil.attachList(geometryList, usedGeomList);
+			return result;
 		}
 		
 		/**
@@ -339,38 +263,71 @@ package net.morocoshi.moja3d.loader
 		}
 		
 		/**
-		 * 
-		 * @param	material
-		 * @return
+		 * 全てのスキンジオメトリをボーン数限界に収まるように分割する
+		 * @param	boneLimit　1ジオメトリが持てるボーンの数
 		 */
-		private function getOptimizedGeometry(link:Dictionary, material:M3DMaterial, mesh:M3DMesh, surface:M3DSurface):OptimizedGeometry 
+		public function splitAllSkin(boneLimit:int):void 
 		{
-			var key:String = material.getKey() + "/" + mesh.getKey() + "/" + surface.getKey();
-			if (link[key] == undefined)
+			for each(var obj:M3DObject in objectList)
 			{
-				var geom:OptimizedGeometry = link[key] = new OptimizedGeometry();
-				geom.material = material;
-				geom.baseMesh = mesh;
-				geom.surface = surface;
-				geom.userData = mesh.userData;
+				var skin:M3DSkin = obj as M3DSkin;
+				if (skin == null) continue;
+				var rawGeometry:M3DSkinGeometry = getGeometryLink()[skin.geometryID];
+				
+				//スキンメッシュの分割
+				var splitted:Vector.<M3DFaseSet> = new SkinSplitter().getSplittedGeometries(rawGeometry, skin, boneLimit);
+				//分割数1なら分割する必要なし
+				if (splitted.length == 1)
+				{
+					continue;
+				}
+				
+				var combined:M3DCombinedGeometry = new M3DCombinedGeometry();
+				var n:int = splitted.length;
+				skin.surfacesList = [];
+				for (var i:int = 0; i < n; i++) 
+				{
+					var faseSet:M3DFaseSet = splitted[i];
+					var geometryID:int = addGeometry(faseSet.geometry);
+					combined.geometryIDList.push(geometryID);
+					skin.surfacesList.push(faseSet.surfaces);
+				}
+				
+				removeGeometry(rawGeometry);
+				skin.geometryID = addGeometry(combined);
 			}
-			return link[key];
 		}
 		
-		private function getWorldMatrix(obj:M3DObject, objectLink:Object):Matrix3D 
+		public function removeGeometry(value:M3DGeometry):Boolean 
 		{
-			var current:M3DObject = obj;
-			var matrix:Matrix3D = new Matrix3D();
-			while (current)
+			var index:int = geometryList.indexOf(value);
+			if (index == -1) return false;
+			geometryList.splice(index, 1);
+			return true;
+		}
+		
+		public function addGeometry(value:M3DGeometry):int 
+		{
+			if (geometryList.indexOf(value) != -1) return value.id;
+			
+			value.id = getGeometryLastID() + 1;
+			geometryList.push(value);
+			return value.id;
+		}
+		
+		/**
+		 * 最後にデータをまとめる
+		 */
+		public function prepare():void 
+		{
+			for each(var geom:M3DGeometry in geometryList)
 			{
-				matrix.append(new Matrix3D(current.matrix));
-				if (current.parent == -1)
+				var skinGeom:M3DSkinGeometry = geom as M3DSkinGeometry;
+				if (skinGeom)
 				{
-					break;
+					skinGeom.fixJointIndex();
 				}
-				current = objectLink[current.parent];
 			}
-			return matrix;
 		}
 		
 	}

@@ -339,7 +339,6 @@ package net.morocoshi.moja3d.loader.exporters
 							if (boneDeformersLink[skin].indexOf(def) != -1)
 							{
 								addChildToSkin(skin, objM3D as M3DBone);
-								trace("addChildToSkin:", skin, objM3D);
 							}
 						}
 					}

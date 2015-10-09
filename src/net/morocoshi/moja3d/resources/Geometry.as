@@ -5,9 +5,11 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Vector3D;
+	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.moja3d.bounds.BoundingBox;
 	
 	/**
-	 * ...
+	 * メッシュジオメトリ
 	 * 
 	 * @author tencho
 	 */
@@ -20,13 +22,16 @@ package net.morocoshi.moja3d.resources
 		public var vertexBufferFormatList:Vector.<String>;
 		public var vertexBufferList:Vector.<VertexBuffer3D>;
 		public var indexBuffer:IndexBuffer3D;
+		public var seed:int;
 		private var attributeIndex:Object;
+		static private var seedCount:int = 0;
 		
 		public function Geometry() 
 		{
 			super();
 			
-			name = String(Math.random() * 10000 | 0);
+			seed = ++seedCount;
+			name = "";
 			attributeIndex = { };
 			verticesList = new Vector.<Vector.<Number>>;
 			numAttributeList = new Vector.<int>;
@@ -34,6 +39,11 @@ package net.morocoshi.moja3d.resources
 			
 			vertexBufferFormatList = new Vector.<String>;
 			vertexBufferList = new Vector.<VertexBuffer3D>;
+		}
+		
+		override public function toString():String 
+		{
+			return "[" + getQualifiedClassName(this).split("::")[1] + " tri=" + numTriangles + "," + isUploaded + "]";
 		}
 		
 		public function hasAttribute(kind:int):Boolean
@@ -182,9 +192,18 @@ package net.morocoshi.moja3d.resources
 			vertexBufferFormatList.length = 0;
 		}
 		
-		override public function clone():Resource 
+		override public function cloneProperties(target:Resource):void 
 		{
-			var geometry:Geometry = new Geometry();
+			super.cloneProperties(target);
+			
+			var geometry:Geometry = target as Geometry;
+			geometry.attributeIndex = { };
+			
+			for (var key:String in attributeIndex)
+			{
+				geometry.attributeIndex[key] = attributeIndex[key];
+			}
+			
 			geometry.vertexIndices = vertexIndices.concat();
 			geometry.numAttributeList = numAttributeList.concat();
 			geometry.vertexBufferFormatList = vertexBufferFormatList.concat();
@@ -194,6 +213,12 @@ package net.morocoshi.moja3d.resources
 			{
 				geometry.verticesList.push(verticesList[i].concat());
 			}
+		}
+		
+		override public function clone():Resource 
+		{
+			var geometry:Geometry = new Geometry();
+			cloneProperties(geometry);
 			return geometry;
 		}
 		
@@ -211,6 +236,42 @@ package net.morocoshi.moja3d.resources
 				result.push(new Vector3D(points[i], points[i + 1], points[i + 2]));
 			}
 			return result;
+		}
+		
+		public function calculateBounds(boundingBox:BoundingBox):void 
+		{
+			var items:Vector.<Number> = getVertices(VertexAttribute.POSITION);
+			var i:int;
+			var n:int = items.length;
+			
+			
+			var minX:Number = Number.MAX_VALUE;
+			var minY:Number = Number.MAX_VALUE;
+			var minZ:Number = Number.MAX_VALUE;
+			var maxX:Number = -Number.MAX_VALUE;
+			var maxY:Number = -Number.MAX_VALUE;
+			var maxZ:Number = -Number.MAX_VALUE;
+			
+			for (i = 0; i < n; i += 3)
+			{
+				var px:Number = items[i];
+				var py:Number = items[i + 1];
+				var pz:Number = items[i + 2];
+				
+				if (minX > px) minX = px;
+				if (minY > py) minY = py;
+				if (minZ > pz) minZ = pz;
+				if (maxX < px) maxX = px;
+				if (maxY < py) maxY = py;
+				if (maxZ < pz) maxZ = pz;
+			}
+			
+			boundingBox.minX = minX;
+			boundingBox.minY = minY;
+			boundingBox.minZ = minZ;
+			boundingBox.maxX = maxX;
+			boundingBox.maxY = maxY;
+			boundingBox.maxZ = maxZ;
 		}
 		
 		private function getVertexFormat(num:int):String 
