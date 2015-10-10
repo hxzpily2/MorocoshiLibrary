@@ -321,31 +321,36 @@ package net.morocoshi.moja3d.materials
 		public function getMaskShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, mask:uint, skinShader:MaterialShader):void
 		{
 			var skinKey:String = skinShader? skinShader.getKey() : "none";
-			var key:String = seed + "/" + skinKey + "/" + mesh.key + "/mask";
+			var maskKey:String = seed + "/" + skinKey + "/" + mesh.key + "/mask";
 			
 			collector.opaquePassShaderList = null;
 			collector.alphaPassShaderList = null;
-			var result:ShaderList = AGALCache.shader[key];
-			if (result == null)
+			
+			//var result:ShaderList = AGALCache.shader[key];
+			var shaderData:Object = AGALCache.shader[maskKey];
+			if (shaderData == null)
 			{
-				result = AGALCache.shader[key] = new ShaderList();
+				shaderData = { };
+				AGALCache.shader[maskKey] = shaderData;
+				var result:ShaderList = new ShaderList();
 				result.addShader(new BasicShader(geometry));
-				if (mesh.startShaderList)
-				{
-					result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
-				}
+				if (mesh.startShaderList) result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
 				if (skinShader) result.addShader(skinShader);
 				result.attach(collector.getMaskShaderList(mask));
-				if (mesh.endShaderList)
-				{
-					result.attachExtra(mesh.endShaderList, RenderPhase.MASK);
-				}
+				result.attachExtra(shaderList, RenderPhase.MASK);
+				if (mesh.endShaderList) result.attachExtra(mesh.endShaderList, RenderPhase.MASK);
 				result.addShader(AGALCache.viewShaderList);
 				result.addShader(new EndShader(geometry));
 				//%%%ここは？
 				result.updateFromGeometry(geometry);
+				
+				var mode:uint = result.alphaMode;
+				shaderData.opaque = (mode == AlphaMode.NONE)? result : (mode == AlphaMode.MIX)? result.cloneWithOpaque(this) : null;
+				shaderData.alpha = (mode == AlphaMode.ALL)? result : (mode == AlphaMode.MIX)? result.cloneWithAlpha(this) : null;
 			}
-			collector.opaquePassShaderList = result;
+			//collector.opaquePassShaderList = result.cloneWithOpaque(this);
+			collector.opaquePassShaderList = (_opaquePassEnabled && shaderData)? shaderData.opaque : null;
+			collector.alphaPassShaderList = (_alphaPassEnabled && shaderData)? shaderData.alpha : null;
 		}
 		
 		/**

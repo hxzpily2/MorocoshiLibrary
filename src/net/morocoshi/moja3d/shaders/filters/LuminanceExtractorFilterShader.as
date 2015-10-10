@@ -1,6 +1,9 @@
 package net.morocoshi.moja3d.shaders.filters 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
+	import net.morocoshi.moja3d.materials.Mipmap;
+	import net.morocoshi.moja3d.materials.Smoothing;
+	import net.morocoshi.moja3d.materials.Tiling;
+	import net.morocoshi.moja3d.renderer.MaskColor;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -13,11 +16,13 @@ package net.morocoshi.moja3d.shaders.filters
 	{
 		private var _min:Number;
 		private var _max:Number;
+		private var _mask:int;
 		
-		public function LuminanceExtractorFilterShader(min:Number, max:Number) 
+		public function LuminanceExtractorFilterShader(min:Number, max:Number, mask:int = -1) 
 		{
 			_min = min;
 			_max = max;
+			_mask = mask;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -50,6 +55,7 @@ package net.morocoshi.moja3d.shaders.filters
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
+			
 			fragmentCode.addCode(
 				"var $color",
 				"$color.x = $output.x",
@@ -58,8 +64,28 @@ package net.morocoshi.moja3d.shaders.filters
 				"$color.x /= @extValues.x",
 				"$color.x -= @extValues.y",
 				"$color.x /= @extValues.z",
-				"$color.x = sat($color.x)",
-				"$output.xyz *= $color.x"
+				"$color.x = sat($color.x)"
+			);
+			if (_mask != -1)
+			{
+				var xyz:String;
+				switch(_mask)
+				{
+					case MaskColor.RED	: xyz = "x"; break;
+					case MaskColor.GREEN: xyz = "y"; break;
+					case MaskColor.BLUE	: xyz = "z"; break;
+					default: throw new Error("maskの値が有効ではありません。MaskColor.RED/BLUE/GREENのどれかを指定してください。");
+				}
+				var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+				fragmentCode.addCode(
+					"var $maskImage",
+					"$maskImage = tex(#uv.xy, fs1, " + tag + ")",
+					"$color.x *= $maskImage." + xyz
+				);
+			}
+			
+			fragmentCode.addCode(
+				"$output.xyz *= $color.xxx"
 			);
 		}
 		

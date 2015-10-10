@@ -294,7 +294,7 @@ package net.morocoshi.moja3d.objects
 			return result;
 		}
 		
-		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:uint):Boolean 
+		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
 		{
 			var success:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
 			
@@ -319,8 +319,6 @@ package net.morocoshi.moja3d.objects
 			
 			if (_renderable == false) return true;
 			
-			mask |= renderMask;
-			
 			elementCount = -1;
 			
 			var skin:Skin = this as Skin;
@@ -343,7 +341,7 @@ package net.morocoshi.moja3d.objects
 			return true;
 		}
 		
-		private function collectSurfaces(collector:RenderCollector, surfaceList:Vector.<Surface>, geom:Geometry, mask:uint, worldFlip:int, skinShader:MaterialShader):Boolean 
+		private function collectSurfaces(collector:RenderCollector, surfaceList:Vector.<Surface>, geom:Geometry, mask:int, worldFlip:int, skinShader:MaterialShader):Boolean 
 		{
 			//サーフェイスの数繰り返す
 			var n:int = surfaceList.length;
@@ -392,10 +390,11 @@ package net.morocoshi.moja3d.objects
 						collector.hasLightElement = true;
 					}
 					//マスクがあれば追加する
-					if (mask)
+					if (mask != -1 || renderMask != -1)
 					{
+						var maskColor:uint = ((mask == -1)? 0 : mask) | ((renderMask == -1)? 0 : renderMask);
 						collector.hasMaskElement = true;
-						material.getMaskShaderList(collector, this, geom, mask, skinShader);
+						material.getMaskShaderList(collector, this, geom, maskColor, skinShader);
 					}
 					else
 					{

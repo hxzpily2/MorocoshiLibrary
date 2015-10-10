@@ -25,8 +25,8 @@ package net.morocoshi.moja3d.shaders.shadow {
 		private var _mainBlur:Number;
 		private var _wideBlur:Number;
 		
-		private var _near:Number;
-		private var _far:Number;
+		private var _mainNear:Number;
+		private var _mainFar:Number;
 		
 		private var _useWideShadow:Boolean;
 		private var _wideNear:Number;
@@ -50,15 +50,15 @@ package net.morocoshi.moja3d.shaders.shadow {
 		{
 			super();
 			
+			_syncLight = syncLight;
 			_mainSamples = mainSamples;
 			_wideSamples = wideSamples;
 			_mainBlur = mainBlur;
 			_wideBlur = wideBlur;
 			checkSample();
-			_syncLight = syncLight;
 			_intensity = 1;
-			_wideNear = _near = 0;
-			_wideFar = _far = 1000;
+			_wideNear = _mainNear = 10000;
+			_wideFar = _mainFar = 10000;
 			
 			_depthBias = _wideDepthBias = 0.005;
 			_useWideShadow = false;
@@ -111,7 +111,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 			distanceConst = fragmentCode.addConstantsFromArray("@S256", [256, 256 * 256, 0, _intensity]);
 			numConst = fragmentCode.addConstantsFromArray("@shadowBlurNum", [_mainSamples, _wideSamples, 0.5, -0.5]);
 			depthBlurConst = fragmentCode.addConstantsFromArray("@depthBlur", [_depthBias, _mainBlur, _wideDepthBias, _wideBlur]);
-			fadeConst = fragmentCode.addConstantsFromArray("@shadowFade", [_near, _far - _near, _wideNear, _wideFar - _wideNear]);
+			fadeConst = fragmentCode.addConstantsFromArray("@shadowFade", [_mainNear, _mainFar - _mainNear, _wideNear, _wideFar - _wideNear]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -223,21 +223,50 @@ package net.morocoshi.moja3d.shaders.shadow {
 					"$power.x = $power.w - @shadowFade.x",
 					"$power.x /= @shadowFade.y",
 					"$power.x = sat($power.x)",
-					"$power.y = @1 - $power.x",
-					//遠い距離の割合0～1
-					"$power.z = $power.w - @shadowFade.z",
-					"$power.z /= @shadowFade.w",
-					"$power.z = sat($power.z)",
-					"$power.w = @1 - $power.z",
-					
-					"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
-					"$result.xy *= $power.yx",
-					"$result.x += $result.y",//近遠クロスフェード
-					"$result.x *= $power.w",//遠景フェード
+					"$power.y = @1 - $power.x"
+				);
+				
+				if (_useWideShadow)
+				{
+					//遠景の影がある場合
+					fragmentCode.addCode(
+						//遠い距離の割合0～1
+						"$power.z = $power.w - @shadowFade.z",
+						"$power.z /= @shadowFade.w",
+						"$power.z = sat($power.z)",
+						"$power.w = @1 - $power.z",
+						
+						"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
+						"$result.xy *= $power.yx",
+						"$result.x += $result.y",//近遠クロスフェード
+						"$result.x *= $power.w"//遠景フェードを乗算
+					);
+				}
+				else
+				{
+					//近景の影のみの場合
+					fragmentCode.addCode(
+						"$result.x /= @shadowBlurNum.x",//ぼかし加算分割る
+						"$result.x *= $power.y"//近景フェードを乗算
+					);
+				}
+				
+				fragmentCode.addCode(
 					"$result.x *= @S256.w",//影の強度
 					"$common." + xyz + " = @1 - $result.x"
 				);
 			}
+		}
+		
+		/**
+		 * 近景シャドウのフェード範囲用レジスタの更新
+		 */
+		private function calcConstants():void 
+		{
+			fadeConst.x = _mainNear;
+			fadeConst.y = _mainFar - _mainNear;
+			fadeConst.z = _wideNear;
+			fadeConst.w = _wideFar - _wideNear;
 		}
 		
 		override public function clone():MaterialShader 
@@ -272,12 +301,6 @@ package net.morocoshi.moja3d.shaders.shadow {
 			depthBlurConst.x = _depthBias;
 		}
 		
-		private function calcConstants():void 
-		{
-			fadeConst.x = _near;
-			fadeConst.y = _far - _near;
-		}
-		
 		public function get mainBlur():Number 
 		{
 			return _mainBlur;
@@ -292,29 +315,29 @@ package net.morocoshi.moja3d.shaders.shadow {
 			updateShaderCode();
 		}
 		
-		public function get near():Number 
+		public function get mainNear():Number 
 		{
-			return _near;
+			return _mainNear;
 		}
 		
-		public function set near(value:Number):void 
+		public function set mainNear(value:Number):void 
 		{
-			if (_near == value) return;
+			if (_mainNear == value) return;
 			
-			_near = value;
+			_mainNear = value;
 			calcConstants();
 		}
 		
-		public function get far():Number 
+		public function get mainFar():Number 
 		{
-			return _far;
+			return _mainFar;
 		}
 		
-		public function set far(value:Number):void 
+		public function set mainFar(value:Number):void 
 		{
-			if (_far == value) return;
+			if (_mainFar == value) return;
 			
-			_far = value;
+			_mainFar = value;
 			calcConstants();
 		}
 		
@@ -328,8 +351,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 			if (_wideNear == value) return;
 			
 			_wideNear = value;
-			fadeConst.z = _wideNear;
-			fadeConst.w = _wideFar - _wideNear;
+			calcConstants();
 		}
 		
 		public function get wideFar():Number 
@@ -342,7 +364,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 			if (_wideFar == value) return;
 			
 			_wideFar = value;
-			fadeConst.w = _wideFar - _wideNear;
+			calcConstants();
 		}
 		
 		public function get wideDepthBias():Number 

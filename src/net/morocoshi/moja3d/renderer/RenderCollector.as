@@ -167,7 +167,7 @@ package net.morocoshi.moja3d.renderer
 			clear();
 			
 			setBasicContext();
-			root.collectRenderElements(this, false, false, false, 1, 0);
+			root.collectRenderElements(this, false, false, false, 1, root.containerRenderMask);
 			
 			complete();
 		}
@@ -219,9 +219,9 @@ package net.morocoshi.moja3d.renderer
 						}
 					}
 					shader.depthBias = mainShadow.depthBias / (mainShadow.zFar - mainShadow.zNear);
-					shader.near = mainShadow.radiusNear;
-					shader.far = mainShadow.radiusFar;
-					shader.intensity = mainShadow.intensity;					
+					shader.mainNear = mainShadow.radiusNear;
+					shader.mainFar = mainShadow.radiusFar;
+					shader.intensity = mainShadow.intensity;
 					shader.useWideShadow = wideShadow != null;
 					
 					if (wideShadow)

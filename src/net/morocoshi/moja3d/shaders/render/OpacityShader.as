@@ -86,6 +86,10 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
+			if (phase == RenderPhase.MASK)
+			{
+				return new OpacityShader(_opacity, _mipmap, _smoothing, _tiling);
+			}
 			if (phase == RenderPhase.DEPTH)
 			{
 				return new DepthOpacityShader(_opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);

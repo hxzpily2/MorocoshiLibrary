@@ -68,6 +68,7 @@ package net.morocoshi.moja3d.view
 		private var dispatchedComplete:Boolean;
 		private var validFilters:Vector.<Filter3D>;
 		private var viewRect:Rectangle;
+		private var fillMaskTextureOrder:Boolean;
 		
 		public var tpv:MouseDrag3D;
 		public var fpv:FPVController;
@@ -86,6 +87,7 @@ package net.morocoshi.moja3d.view
 		public function Scene3D() 
 		{
 			dispatchedComplete = false;
+			fillMaskTextureOrder = true;
 			viewRect = new Rectangle(0, 0, 0, 0);
 			renderer = new Renderer();
 			renderer.scene = this;
@@ -382,7 +384,13 @@ package net.morocoshi.moja3d.view
 			//マスク画像のレンダリング
 			if (collector.hasMaskElement)
 			{
+				fillMaskTextureOrder = true;
 				renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias);
+			}
+			else if (fillMaskTextureOrder == true)
+			{
+				fillMaskTextureOrder = false;
+				postEffect.maskTexture.fillColor(context3D, 0x0);
 			}
 			
 			//光の投影

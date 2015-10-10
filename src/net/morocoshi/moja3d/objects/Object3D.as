@@ -35,8 +35,10 @@ package net.morocoshi.moja3d.objects
 		/**このオブジェクトが影を落とすか*/
 		public var castShadow:Boolean;
 		public var castLight:Boolean;
-		/**これが0以外だと自分以下の子オブジェクトをマスクレンダリングする。MaskColorクラス参照。*/
-		public var renderMask:uint;
+		/**これが-1以外だと自分をマスクレンダリングの対象にします。MaskColorクラス参照。*/
+		public var renderMask:int;
+		/**これが-1以外だと自分を含む子全てをマスクレンダリングの対象にします。MaskColorクラス参照。*/
+		public var containerRenderMask:int;
 		/**負の値ほど後ろにまわる*/
 		public var sortPriority:Number;
 		//public var boundingSphere:BoundingSphere;
@@ -104,7 +106,8 @@ package net.morocoshi.moja3d.objects
 			castShadow = true;
 			castLight = true;
 			ignoreReflect = false;
-			renderMask = 0x0;
+			renderMask = -1;
+			containerRenderMask = -1;
 			calculateMatrixOrder = true;
 			calculateColorOrder = true;
 			calculateBoundsOrder = true;
@@ -758,7 +761,7 @@ package net.morocoshi.moja3d.objects
 		 * @param	mask
 		 * @return
 		 */
-		moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:uint):Boolean
+		moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean
 		{
 			var phase:String = collector.renderPhase;
 			
@@ -785,7 +788,10 @@ package net.morocoshi.moja3d.objects
 			var calcBounds:Boolean = calculateBoundsOrder || forceCalcBounds;
 			
 			//マスクが設定されていれば全ての子をマスク扱いにする
-			mask |= renderMask;
+			if (containerRenderMask != -1)
+			{
+				mask = (mask == -1)? containerRenderMask : mask | containerRenderMask;
+			}
 			
 			//座標計算
 			if (calcMatrix)

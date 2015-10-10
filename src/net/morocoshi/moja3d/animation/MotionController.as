@@ -37,6 +37,11 @@ package net.morocoshi.moja3d.animation
 		 */
 		public function setObject(object:Object3D):void
 		{
+			if (object == null)
+			{
+				throw new Error("MotionController.setObject()にnullを渡す事はできません！");
+			}
+			
 			this.object = object;
 			for (var key:String in motions) 
 			{

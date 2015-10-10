@@ -8,23 +8,25 @@ package net.morocoshi.moja3d.filters
 	import net.morocoshi.moja3d.shaders.filters.GaussianFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.LuminanceExtractorFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class BloomFilter3D extends Filter3D 
 	{
+		private var _blur:int;
+		private var _dispersion:Number;
+		private var _scale:Number;
+		private var _mask:int;
+		private var luminanceShader:LuminanceExtractorFilterShader;
+		private var gaussianHShader:GaussianFilterShader;
+		private var gaussianVShader:GaussianFilterShader;
 		private var shaderList0:ShaderList;
 		private var shaderList1:ShaderList;
 		private var shaderList2:ShaderList;
 		private var shaderList3:ShaderList;
-		private var _blur:int;
-		private var _dispersion:Number;
-		private var _scale:Number;
-		
-		private var luminanceShader:LuminanceExtractorFilterShader;
-		private var gaussianHShader:GaussianFilterShader;
-		private var gaussianVShader:GaussianFilterShader;
 		
 		/**
 		 * 
@@ -34,12 +36,14 @@ package net.morocoshi.moja3d.filters
 		 * @param	scale
 		 * @param	segments	ぼかしの分割数
 		 * @param	dispersion	ガウシアン係数
+		 * @param	mask	発光をマスク範囲内にしたい場合-1以外を指定する
 		 */
-		public function BloomFilter3D(min:Number, max:Number, alpha:Number, scale:Number, segments:int, dispersion:Number = 50) 
+		public function BloomFilter3D(min:Number, max:Number, alpha:Number, scale:Number, segments:int, dispersion:Number = 50, mask:int = -1) 
 		{
 			super();
+			_mask = mask;
 			
-			luminanceShader = new LuminanceExtractorFilterShader(min, max);
+			luminanceShader = new LuminanceExtractorFilterShader(min, max, mask);
 			gaussianHShader = new GaussianFilterShader(true, scale, segments, dispersion);
 			gaussianVShader = new GaussianFilterShader(false, scale, segments, dispersion);
 			
@@ -66,7 +70,8 @@ package net.morocoshi.moja3d.filters
 		
 		override public function render(manager:PostEffectManager):void 
 		{
-			manager.renderProcess(shaderList0, 2);
+			var sources:Array = (_mask == -1)? null : [manager.renderTexture, manager.maskTexture];
+			manager.renderProcess(shaderList0, 2, sources);
 			manager.renderProcess(shaderList1, 2);
 			var blurTexture:TextureResource = manager.renderProcess(shaderList2, 2);
 			manager.renderFinal(shaderList3, 0, [manager.renderTexture, blurTexture]);

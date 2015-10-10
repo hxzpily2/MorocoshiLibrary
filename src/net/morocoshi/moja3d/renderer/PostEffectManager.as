@@ -23,7 +23,6 @@ package net.morocoshi.moja3d.renderer
 		public var processTexture2:RenderTextureResource;
 		public var maskTexture:RenderTextureResource;
 		public var currentTexture:RenderTextureResource;
-		//public var baseTexture:RenderTextureResource;
 		private var isEnd:Boolean;
 		public var captureShader:ShaderList;
 		private var processTextures:Array;
@@ -33,13 +32,16 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function PostEffectManager() 
 		{
-			antiAlias = 2;
-			renderTexture = new RenderTextureResource();
-		//	baseTexture = new RenderTextureResource();
-			maskTexture = new RenderTextureResource();
+			antiAlias = 0;
+			renderTexture = new RenderTextureResource(1024, 1024, 0);
+			renderTexture.name = "renderTexture";
+			maskTexture = new RenderTextureResource(1024, 1024, 2);
+			maskTexture.name = "maskTexture";
 			processTextures = [];
-			processTexture1 = new RenderTextureResource();
-			processTexture2 = new RenderTextureResource();
+			processTexture1 = new RenderTextureResource(1024, 1024, 3);
+			processTexture1.name = "processTexture1";
+			processTexture2 = new RenderTextureResource(1024, 1024, 3);
+			processTexture2.name = "processTexture2";
 			captureShader = new ShaderList();
 			captureShader.addShader(new BasicFilterShader());
 			captureShader.addShader(new EndFilterShader());
@@ -51,7 +53,6 @@ package net.morocoshi.moja3d.renderer
 		public function start():void
 		{
 			currentTexture = null;
-			//baseTexture = renderTexture;
 			isEnd = false;
 			getNextTexture(0);
 		}
@@ -72,20 +73,7 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function setViewSize(context3D:Context3D, w:int, h:int):void
 		{
-			/*
-			var n:int = processTextures.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var m:int = processTextures[i].length;
-				for (var j:int = 0; j < m; j++) 
-				{
-					var texture:TextureResource = processTextures[i][j];
-					texture.createTexture(context3D, w, h);
-				}
-			}
-			*/
 			renderTexture.createTexture(context3D, w, h);
-			//baseTexture.createTexture(context3D, w, h);
 			maskTexture.createTexture(context3D, w, h);
 			processTexture1.createTexture(context3D, w, h);
 			processTexture2.createTexture(context3D, w, h);
