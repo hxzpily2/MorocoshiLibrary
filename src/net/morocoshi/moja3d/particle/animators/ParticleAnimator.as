@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.particle.animators
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
-	import net.morocoshi.moja3d.particle.cells.Particle3D;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleSystem;
 	
 	/**
@@ -19,8 +19,8 @@ package net.morocoshi.moja3d.particle.animators
 		public var scaleMax:Number = 1;
 		public var velocityMin:Vector3D = new Vector3D(0, 0, 0);
 		public var velocityMax:Vector3D = new Vector3D(0, 0, 0);
-		public var lifeMin:Number = 1000;
-		public var lifeMax:Number = 1000;
+		public var lifeMin:Number = 1;
+		public var lifeMax:Number = 1;
 		public var alphaKeyList:Vector.<AlphaKey> = new Vector.<AlphaKey>;
 		public var rotationMin:Number = 0;
 		public var rotationMax:Number = 0;
@@ -51,7 +51,7 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function emitParticle(particle:Particle3D):void 
+		public function emitParticle(particle:ParticleCell):void 
 		{
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
@@ -179,14 +179,14 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function getCurrentScale(particle:Particle3D):Number
+		public function getCurrentScale(particle:ParticleCell):Number
 		{
-			var scale:Number = particle.initialScale + (particle.time / 1000) * particle.scaleSpeed;
+			var scale:Number = particle.initialScale + (particle.time) * particle.scaleSpeed;
 			if (scale < 0) scale = 0;
 			return scale;
 		}
 		
-		public function getCurrentAlpha(particle:Particle3D):Number 
+		public function getCurrentAlpha(particle:ParticleCell):Number 
 		{
 			if (!alphaKeyList.length) return 1;
 			if (alphaKeyList.length == 1)
@@ -218,9 +218,9 @@ package net.morocoshi.moja3d.particle.animators
 			return alphaMax.value;// particle.initialAlpha * (1 - particle.progress);
 		}
 		
-		public function getCurrentRotation(particle:Particle3D):Number 
+		public function getCurrentRotation(particle:ParticleCell):Number 
 		{
-			return particle.initialRotation + (particle.time / 1000) * particle.spinSpeed;
+			return particle.initialRotation + (particle.time) * particle.spinSpeed;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -229,7 +229,7 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function updateParticle(particle:Particle3D):void 
+		public function updateParticle(particle:ParticleCell):void 
 		{
 			particle.velocity.incrementBy(gravity);
 			particle.velocity.x *= friction;
@@ -238,9 +238,11 @@ package net.morocoshi.moja3d.particle.animators
 			particle.x += particle.velocity.x;
 			particle.y += particle.velocity.y;
 			particle.z += particle.velocity.z;
-			particle.scaleX = particle.scaleY = particle.scaleZ = getCurrentScale(particle);
+			var scale:Number = getCurrentScale(particle);
+			particle.width = 100 * scale;
+			particle.height = 100 * scale;
 			particle.alpha = getCurrentAlpha(particle);
-			//particle.rotation = getCurrentRotation(particle);
+			particle.rotation = getCurrentRotation(particle);
 			
 			if (onUpdate != null) onUpdate(particle);
 		}

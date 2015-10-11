@@ -25,22 +25,31 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Mesh extends Object3D
 	{
+		/***/
 		public var layer:uint;
+		/**サーフェイスリスト*/
 		public var surfaces:Vector.<Surface>;
 		moja3d var combinedSurfacesList:Vector.<Vector.<Surface>>;
 		public var startShaderList:ShaderList;
 		public var endShaderList:ShaderList;
 		public var zBiasShader:ZBiasShader;
-		private var _key:String;
+		public var afterViewShaderList:ShaderList;
 		
+		private var _key:String;
 		private var _zbias:Number;
 		private var _renderable:Boolean;
 		moja3d var _geometry:Geometry;
+		
+		/**RenderElementインスタンスのキャッシュ（new回数を抑える用）*/
 		private var renderElements:Vector.<RenderElement>;
+		private var elementCount:int;
+		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
+		public var passCompareMode:String;
+		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
+		public var depthMask:Boolean;
 		
 		static moja3d var globalSeed:int;
 		private var seed:String;
-		private var elementCount:int;
 		
 		public function Mesh() 
 		{
@@ -51,6 +60,8 @@ package net.morocoshi.moja3d.objects
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;
+			depthMask = true;
+			passCompareMode = "";
 			layer = RenderLayer.OPAQUE;
 			geometry = new Geometry();
 			surfaces = new Vector.<Surface>;
@@ -349,8 +360,8 @@ package net.morocoshi.moja3d.objects
 			{
 				var surface:Surface = surfaceList[i];
 				var material:Material = surface._material;
-				//マテリアルが貼られていなければスキップ
-				if (material == null) continue;
+				//マテリアルが貼られていない、もしくはポリゴンが無ければスキップ
+				if (material == null || surface.numTriangles == 0) continue;
 				
 				//シェーダー情報の収集
 				material.collectShaderList(collector, this, geom, skinShader);
@@ -423,6 +434,8 @@ package net.morocoshi.moja3d.objects
 					element.vertexBufferList = geom.vertexBufferList;
 					element.indexBuffer = geom.indexBuffer;
 					element.culling = material.culling;
+					element.depthMask = depthMask;
+					element.passCompareMode = passCompareMode;
 					element.sourceFactor = material.sourceFactor;
 					element.destinationFactor = material.destinationFactor;
 					//マイナススケールでフリップしていた場合は表示を反転する

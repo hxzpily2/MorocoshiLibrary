@@ -10,33 +10,33 @@ package net.morocoshi.moja3d.particle.emitters
 	 */
 	public class CubeEmitter extends ParticleEmitter
 	{
-		public var x:Number;
-		public var y:Number;
-		public var z:Number;
+		public var sizeX:Number;
+		public var sizeY:Number;
+		public var sizeZ:Number;
 		
 		/**
 		 * 
-		 * @param	x	X軸方向の幅
-		 * @param	y	Y軸方向の幅
-		 * @param	z	Z軸方向の幅
+		 * @param	sizeX	X軸方向の幅
+		 * @param	sizeY	Y軸方向の幅
+		 * @param	sizeZ	Z軸方向の幅
 		 */
-		public function CubeEmitter(x:Number = 0, y:Number = 0, z:Number = 0) 
+		public function CubeEmitter(sizeX:Number = 0, sizeY:Number = 0, sizeZ:Number = 0) 
 		{
 			super();
 			type = ParticleEmitterType.CUBE;
 			
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			this.sizeX = sizeX;
+			this.sizeY = sizeY;
+			this.sizeZ = sizeZ;
 		}
 		
 		override public function getRandomPosition():Vector3D 
 		{
 			var v:Vector3D = super.getRandomPosition();
 			
-			var tx:Number = random(-x / 2, x / 2);
-			var ty:Number = random(-y / 2, y / 2);
-			var tz:Number = random(-z / 2, z / 2);
+			var tx:Number = random(-sizeX / 2, sizeX / 2);
+			var ty:Number = random(-sizeY / 2, sizeY / 2);
+			var tz:Number = random(-sizeZ / 2, sizeZ / 2);
 			v.x += xAxis.x * tx + yAxis.x * ty + zAxis.x * tz;
 			v.y += xAxis.y * tx + yAxis.y * ty + zAxis.y * tz;
 			v.z += xAxis.z * tx + yAxis.z * ty + zAxis.z * tz;

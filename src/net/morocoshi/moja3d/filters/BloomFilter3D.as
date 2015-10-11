@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.filters 
 {
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
+	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.filters.AddFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
@@ -70,11 +71,12 @@ package net.morocoshi.moja3d.filters
 		
 		override public function render(manager:PostEffectManager):void 
 		{
-			var sources:Array = (_mask == -1)? null : [manager.renderTexture, manager.maskTexture];
+			var inputTexture:RenderTextureResource = manager.currentTexture;
+			var sources:Array = (_mask == -1)? [null] : [null, manager.maskTexture];
 			manager.renderProcess(shaderList0, 2, sources);
 			manager.renderProcess(shaderList1, 2);
-			var blurTexture:TextureResource = manager.renderProcess(shaderList2, 2);
-			manager.renderFinal(shaderList3, 0, [manager.renderTexture, blurTexture]);
+			manager.renderProcess(shaderList2, 2);
+			manager.renderFinal(shaderList3, 0, [inputTexture, null]);
 		}
 		
 		public function get min():Number 

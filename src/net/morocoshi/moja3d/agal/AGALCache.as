@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.agal
 {
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
-	import net.morocoshi.moja3d.shaders.base.ViewTransformShader;
+	import net.morocoshi.moja3d.shaders.core.ViewTransformShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteBasicShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteEndShader;
 	

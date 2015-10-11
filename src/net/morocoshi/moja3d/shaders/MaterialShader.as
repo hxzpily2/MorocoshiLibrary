@@ -40,9 +40,11 @@ package net.morocoshi.moja3d.shaders
 		/**シェーダーに必須の頂点アトリビュートのタイプ*/
 		public var requiredAttribute:Vector.<uint>;
 		
-		moja3d var tickEnabled:Boolean;
-		moja3d var lastFrame:int;
 		moja3d var owners:Vector.<ShaderList>;
+		//描画毎にtick()を呼び出す対象かどうか
+		moja3d var tickEnabled:Boolean;
+		//描画毎tick用
+		moja3d var lastFrame:int;
 		
 		public function MaterialShader() 
 		{
@@ -191,16 +193,6 @@ package net.morocoshi.moja3d.shaders
 		{
 		}
 		
-		public function calculate():void 
-		{
-			
-		}
-		
-		public function draw():void 
-		{
-			
-		}
-		
 		/**
 		 * テクスチャ（ATF）の種類が更新された時などに呼び出す
 		 */
@@ -210,6 +202,10 @@ package net.morocoshi.moja3d.shaders
 			updateAlphaMode();
 		}
 		
+		/**
+		 * シェーダーが有効かどうか。これを弄るとこのシェーダーの有無を反映した新しいProgram3Dが再生成されるので負荷に注意。
+		 * ___一部のシェーダーで切り替え時におかしくなるバグがあるので要対応。
+		 */
 		public function get enabled():Boolean 
 		{
 			return _enabled;
@@ -221,6 +217,9 @@ package net.morocoshi.moja3d.shaders
 			updateShaderCode();
 		}
 		
+		/**
+		 * シェーダーのインスタンスごとに違うシード値
+		 */
 		public function get seed():uint 
 		{
 			return _seed;

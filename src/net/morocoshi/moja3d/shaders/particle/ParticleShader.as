@@ -1,26 +1,23 @@
-package net.morocoshi.moja3d.shaders.base 
+package net.morocoshi.moja3d.shaders.particle 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * 最後に追加するシェーダー
-	 * 
+	 * ...
 	 * @author tencho
 	 */
-	public class EndShader extends MaterialShader 
+	public class ParticleShader extends MaterialShader 
 	{
-		private var depthShader:DepthEndShader;
 		private var geometry:Geometry;
 		
-		public function EndShader(geometry:Geometry) 
+		public function ParticleShader(geometry:Geometry) 
 		{
 			super();
+			
 			this.geometry = geometry;
 			
 			updateTexture();
@@ -31,13 +28,13 @@ package net.morocoshi.moja3d.shaders.base
 		
 		override public function getKey():String 
 		{
-			return "EndShader:";
+			return "ParticleShader:";
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.MIX;
 		}
 		
 		override protected function updateTexture():void 
@@ -54,29 +51,32 @@ package net.morocoshi.moja3d.shaders.base
 		{
 			super.updateShaderCode();
 			
-			vertexConstants.projMatrix = true;
-			
+			var va:String = "va" + geometry.getAttributeIndex(VertexAttribute.SIZE);
 			vertexCode.addCode(
-				"op = $pos.xyzw"//スクリーン座標
+				"$pos.xy += " + va + ".xy"
 			);
-			
-			//ワールド法線
-			if (geometry.hasAttribute(VertexAttribute.NORMAL))
+		}
+		
+		override public function getExtraShader(phase:String):MaterialShader 
+		{
+			if (phase == RenderPhase.DEPTH)
 			{
-				vertexCode.addCode(
-					"$normal.xyz = nrm($normal.xyz)",
-					"#normal = $normal.xyz"
-				);
+				return new ParticleShader(geometry);
 			}
-			
-			fragmentCode.addCode(
-				"oc = $output"
-			);
+			if (phase == RenderPhase.REFLECT)
+			{
+				return new ParticleShader(geometry);
+			}
+			if (phase == RenderPhase.MASK)
+			{
+				return new ParticleShader(geometry);
+			}
+			return null;
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:EndShader = new EndShader(geometry);
+			var shader:ParticleShader = new ParticleShader(geometry);
 			return shader;
 		}
 		

@@ -42,7 +42,7 @@ package net.morocoshi.air.application
 		 */
 		public function getTitleAndVersion():String 
 		{
-			return name + " " + version;
+			return name + " - " + version;
 		}
 		
 	}

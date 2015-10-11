@@ -80,6 +80,7 @@ package net.morocoshi.air.files
 			if (autoSave)
 			{
 				NativeApplication.nativeApplication.addEventListener(Event.EXITING, window_closingHandler);
+				_window.addEventListener(Event.CLOSING, window_closingHandler);
 				_window.addEventListener(NativeWindowBoundsEvent.RESIZE, window_resizeHandler);
 				_window.addEventListener(NativeWindowBoundsEvent.MOVE, window_resizeHandler);
 				_window.addEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE, window_resizeHandler);
@@ -87,6 +88,7 @@ package net.morocoshi.air.files
 			else
 			{
 				NativeApplication.nativeApplication.removeEventListener(Event.EXITING, window_closingHandler);
+				_window.removeEventListener(Event.CLOSING, window_closingHandler);
 				_window.removeEventListener(NativeWindowBoundsEvent.RESIZE, window_resizeHandler);
 				_window.removeEventListener(NativeWindowBoundsEvent.MOVE, window_resizeHandler);
 				_window.removeEventListener(NativeWindowDisplayStateEvent.DISPLAY_STATE_CHANGE, window_resizeHandler);

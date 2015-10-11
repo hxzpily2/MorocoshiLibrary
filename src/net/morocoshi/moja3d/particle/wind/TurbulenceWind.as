@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.particle.wind
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
-	import net.morocoshi.moja3d.particle.cells.Particle3D;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	
 	/**
 	 * 乱気流の風
@@ -36,7 +36,7 @@ package net.morocoshi.moja3d.particle.wind
 			noise.setSize(size, size, size);
 		}
 		
-		override public function getVelocity(particle:Particle3D):Vector3D 
+		override public function getVelocity(particle:ParticleCell):Vector3D 
 		{
 			var v:Vector3D = noise.noize(particle.x, particle.y, particle.z);
 			v.x *= (intensityXMax - intensityXMin);

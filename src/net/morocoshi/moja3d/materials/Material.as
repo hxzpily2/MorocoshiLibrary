@@ -14,8 +14,8 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.base.BasicShader;
-	import net.morocoshi.moja3d.shaders.base.EndShader;
+	import net.morocoshi.moja3d.shaders.core.BasicShader;
+	import net.morocoshi.moja3d.shaders.core.EndShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
@@ -230,6 +230,7 @@ package net.morocoshi.moja3d.materials
 					renderShader.attach(shaderList, geometry);
 					if (mesh.endShaderList) renderShader.attach(mesh.endShaderList);
 					renderShader.addShader(AGALCache.viewShaderList);
+					if (mesh.afterViewShaderList) renderShader.attach(mesh.afterViewShaderList);
 					if (mesh.zbias != 0) renderShader.addShader(mesh.zBiasShader);
 					if (collector.useObjectColorTransform) renderShader.addShader(mesh.colorTransformShader);
 					renderShader.addShader(new EndShader(geometry));
@@ -300,6 +301,7 @@ package net.morocoshi.moja3d.materials
 					reflectShader.attach(reflectShaderList || shaderList);
 					if (mesh.endShaderList) reflectShader.attachExtra(mesh.endShaderList, phase);
 					reflectShader.addShader(AGALCache.viewShaderList);
+					if (mesh.afterViewShaderList) reflectShader.attach(mesh.afterViewShaderList);
 					if (mesh.zbias != 0) reflectShader.addShader(mesh.zBiasShader);
 					if (collector.useObjectColorTransform) reflectShader.addShader(mesh.colorTransformShader);
 					reflectShader.addShader(new EndShader(geometry));
@@ -340,6 +342,7 @@ package net.morocoshi.moja3d.materials
 				result.attachExtra(shaderList, RenderPhase.MASK);
 				if (mesh.endShaderList) result.attachExtra(mesh.endShaderList, RenderPhase.MASK);
 				result.addShader(AGALCache.viewShaderList);
+				if (mesh.afterViewShaderList) result.attach(mesh.afterViewShaderList);
 				result.addShader(new EndShader(geometry));
 				//%%%ここは？
 				result.updateFromGeometry(geometry);

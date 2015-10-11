@@ -138,21 +138,21 @@ package net.morocoshi.moja3d.renderer
 			//最背面要素のレンダリング
 			if (collector.renderElementList[RenderLayer.BACKGROUND])
 			{
-				context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.BACKGROUND, collector, camera, drawTextures);
 			}
 			
 			//不透明要素のレンダリング
 			if (collector.renderElementList[RenderLayer.OPAQUE])
 			{
-				context3D.setDepthTest(true, Context3DCompareMode.LESS);
+				setDepthTest(context3D, true, Context3DCompareMode.LESS);
 				renderLayer(RenderLayer.OPAQUE, collector, camera, drawTextures);
 			}
 			
 			//半透明要素のレンダリング
 			if (collector.renderElementList[RenderLayer.TRANSPARENT])
 			{
-				context3D.setDepthTest(true, Context3DCompareMode.LESS);
+				setDepthTest(context3D, true, Context3DCompareMode.LESS);
 				sortItem(RenderLayer.TRANSPARENT, collector, camera);//カメラからの距離でソート
 				renderLayer(RenderLayer.TRANSPARENT, collector, camera, drawTextures);
 			}
@@ -160,17 +160,24 @@ package net.morocoshi.moja3d.renderer
 			//最前面要素のレンダリング
 			if (collector.renderElementList[RenderLayer.FOREFRONT])
 			{
-				context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.FOREFRONT, collector, camera, drawTextures);
 			}
 			
 			//2Dオーバーレイのレンダリング
 			if (collector.renderElementList[RenderLayer.OVERLAY])
 			{
-				context3D.setDepthTest(false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.OVERLAY, collector, camera, drawTextures);
 			}
 			
+		}
+		
+		private function setDepthTest(context3D:Context3D, depthMask:Boolean, passCompareMode:String):void 
+		{
+			defaltPassCompareMode = passCompareMode;
+			defaltDepthMask = depthMask;
+			context3D.setDepthTest(depthMask, passCompareMode);
 		}
 		
 		/**
@@ -194,6 +201,11 @@ package net.morocoshi.moja3d.renderer
 			collector.renderElementList[layer] = elementSort.sort(collector.renderElementList[layer]);
 		}
 		
+		private var defaltPassCompareMode:String;
+		private var defaltDepthMask:Boolean;
+		private var tempPassCompareMode:String;
+		private var tempDepthMask:Boolean;
+		
 		/**
 		 * 
 		 * @param	layer
@@ -211,7 +223,6 @@ package net.morocoshi.moja3d.renderer
 			{
 				var i:int;
 				var n:int;
-				
 				//転送する定数をシェーダーリストから判別
 				if (item.shaderList.updateConstantOrder)
 				{
@@ -270,11 +281,26 @@ package net.morocoshi.moja3d.renderer
 				var vertexIndex:int = collector.vertexCode.applyProgramConstants(context3D, 0);
 				var fragmentIndex:int = collector.fragmentCode.applyProgramConstants(context3D, 0);
 				
-				item.shaderList.tick(frame, timer);
+				//描画毎に処理を実行するタイプのシェーダーがあるなら
+				if (item.shaderList.existTickShader)
+				{
+					item.shaderList.tick(frame, timer);
+				}
 				item.shaderList.vertexCode.applyProgramConstants(context3D, vertexIndex);
 				item.shaderList.fragmentCode.applyProgramConstants(context3D, fragmentIndex);
 				
 				//描画
+				if (item.passCompareMode)
+				{
+					tempPassCompareMode = defaltPassCompareMode;
+					tempDepthMask = defaltDepthMask;
+					context3D.setDepthTest(item.depthMask, item.passCompareMode);
+				}
+				else if (tempPassCompareMode)
+				{
+					context3D.setDepthTest(tempDepthMask, tempPassCompareMode);
+					tempPassCompareMode = "";
+				}
 				context3D.drawTriangles(item.indexBuffer, item.firstIndex, item.numTriangles);
 				
 				//バッファをクリアする

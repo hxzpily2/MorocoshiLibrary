@@ -1,4 +1,4 @@
-package net.morocoshi.moja3d.shaders.base 
+package net.morocoshi.moja3d.shaders.core 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderLayer;

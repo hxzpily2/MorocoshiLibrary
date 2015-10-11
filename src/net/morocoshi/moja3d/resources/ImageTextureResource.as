@@ -51,7 +51,10 @@ package net.morocoshi.moja3d.resources
 			_width = 0;
 			_height = 0;
 			
-			if (data is uint)
+			if (data == null)
+			{
+			}
+			else if (data is uint)
 			{
 				setBitmapResource(new BitmapData(1, 1, false, data), true);
 			}
@@ -66,6 +69,10 @@ package net.morocoshi.moja3d.resources
 			else if (data is ByteArray)
 			{
 				setATFResource(data as ByteArray);
+			}
+			else
+			{
+				throw new Error("イメージリソースに渡されたデータ型 [" + typeof(data) + "] が不正です！");
 			}
 		}
 		

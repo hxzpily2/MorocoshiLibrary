@@ -1,20 +1,27 @@
-package net.morocoshi.moja3d.shaders.base 
+package net.morocoshi.moja3d.shaders.core 
 {
 	import net.morocoshi.moja3d.renderer.RenderLayer;
+	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * 途中に追加する基本シェーダー
+	 * 最後に追加するシェーダー
 	 * 
 	 * @author tencho
 	 */
-	public class ViewTransformShader extends MaterialShader 
+	public class EndShader extends MaterialShader 
 	{
+		private var depthShader:DepthEndShader;
+		private var geometry:Geometry;
 		
-		public function ViewTransformShader() 
+		public function EndShader(geometry:Geometry) 
 		{
 			super();
+			this.geometry = geometry;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -24,7 +31,7 @@ package net.morocoshi.moja3d.shaders.base
 		
 		override public function getKey():String 
 		{
-			return "ViewTransformShader:";
+			return "EndShader:";
 		}
 		
 		override protected function updateAlphaMode():void
@@ -47,20 +54,32 @@ package net.morocoshi.moja3d.shaders.base
 		{
 			super.updateShaderCode();
 			
-			vertexConstants.viewMatrix = true;
+			vertexConstants.projMatrix = true;
+			
 			vertexCode.addCode(
-				//position
-				"#wpos = $wpos",
-				"$pos.xyz = m34($pos, @viewMatrix)",//ビュー行列で変換
 				"#vpos = $pos",
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
-				"#spos = $pos"//スクリーン座標
+				"#spos = $pos",//スクリーン座標
+				"op = $pos.xyzw"//スクリーン座標
+			);
+			
+			//ワールド法線
+			if (geometry.hasAttribute(VertexAttribute.NORMAL))
+			{
+				vertexCode.addCode(
+					"$normal.xyz = nrm($normal.xyz)",
+					"#normal = $normal.xyz"
+				);
+			}
+			
+			fragmentCode.addCode(
+				"oc = $output"
 			);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ViewTransformShader = new ViewTransformShader();
+			var shader:EndShader = new EndShader(geometry);
 			return shader;
 		}
 		

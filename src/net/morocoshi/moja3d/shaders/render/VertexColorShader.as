@@ -24,7 +24,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super();
 			
-			requiredAttribute.push(VertexAttribute.VERTEX_COLOR);
+			requiredAttribute.push(VertexAttribute.VERTEXCOLOR);
 			
 			_colorBlend = colorBlend;
 			_alphaBlend = alphaBlend;

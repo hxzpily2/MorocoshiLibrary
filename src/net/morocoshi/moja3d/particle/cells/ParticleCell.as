@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.particle.cells
 	 * 
 	 * @author tencho
 	 */
-	public class Particle3D extends Object3D 
+	public class ParticleCell extends ParticleData 
 	{
 		/**経過時間*/
 		public var time:Number = 0;
@@ -17,7 +17,7 @@ package net.morocoshi.moja3d.particle.cells
 		public var life:Number = 0;
 		/**初期スケール*/
 		public var initialScale:Number = 1;
-		/**初期回転角*/
+		/**初期角度*/
 		public var initialRotation:Number = 0;
 		/**回転速度*/
 		public var spinSpeed:Number = 0;
@@ -26,23 +26,12 @@ package net.morocoshi.moja3d.particle.cells
 		/**加速度*/
 		public var velocity:Vector3D = new Vector3D();
 		
-		public var materialID:int;
-		
-		private var _alpha:Number;
-		
 		/**最後にチェックしたアルファキー用インデックス*/
 		public var latestIndex:int = 0;
 		
-		public function Particle3D(width:Number, height:Number, material:Material, alpha:Number = 1)
+		public function ParticleCell()
 		{
 			super();
-			_alpha = alpha;
-			setParticleMaterial(material);
-		}
-		
-		public function setParticleMaterial(material:Material):void
-		{
-			//this.material = material;
 		}
 		
 		/**

@@ -124,7 +124,7 @@ package net.morocoshi.moja3d.primitives
 			}
 			
 			geometry.addVertices(VertexAttribute.POSITION, 3, vertices);
-			geometry.addVertices(VertexAttribute.VERTEX_COLOR, 4, colors);
+			geometry.addVertices(VertexAttribute.VERTEXCOLOR, 4, colors);
 			geometry.addVertices(VertexAttribute.UV, 2, uvs);
 			geometry.addVertices(VertexAttribute.NORMAL, 3, normals);
 			geometry.addVertices(VertexAttribute.TANGENT4, 4, tangent4);

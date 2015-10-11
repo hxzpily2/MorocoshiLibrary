@@ -771,7 +771,7 @@ package net.morocoshi.moja3d.loader
 			if (m3d.vertices)		geom.addVertices(VertexAttribute.POSITION, 3, m3d.vertices);
 			if (m3d.uvs)			geom.addVertices(VertexAttribute.UV, 2, m3d.uvs);
 			if (m3d.normals)		geom.addVertices(VertexAttribute.NORMAL, 3, m3d.normals);
-			if (m3d.colors)			geom.addVertices(VertexAttribute.VERTEX_COLOR, 4, m3d.colors);
+			if (m3d.colors)			geom.addVertices(VertexAttribute.VERTEXCOLOR, 4, m3d.colors);
 			if (m3d.tangents)		geom.addVertices(VertexAttribute.TANGENT4, 4, m3d.tangents);
 			
 			geom.vertexIndices = m3d.vertexIndices;

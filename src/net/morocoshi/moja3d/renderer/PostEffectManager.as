@@ -88,6 +88,11 @@ package net.morocoshi.moja3d.renderer
 		{
 			collector.collectFilter(shaderList);
 			var source:Array = textures || [currentTexture];
+			var n:int = source.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				if (source[i] == null) source[i] = currentTexture;
+			}
 			var target:RenderTextureResource = isEnd? null : getNextTexture(lowLV);
 			renderer.renderFilter(collector, source, target, antiAlias);
 		}
@@ -103,6 +108,11 @@ package net.morocoshi.moja3d.renderer
 		{
 			collector.collectFilter(shaderList);
 			var source:Array = textures || [currentTexture];
+			var n:int = source.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				if (source[i] == null) source[i] = currentTexture;
+			}
 			var target:RenderTextureResource = destination || getNextTexture(lowLV);
 			renderer.renderFilter(collector, source, target, antiAlias);
 			currentTexture = target;

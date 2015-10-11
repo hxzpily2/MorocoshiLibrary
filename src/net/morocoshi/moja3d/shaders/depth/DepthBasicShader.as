@@ -31,7 +31,7 @@ package net.morocoshi.moja3d.shaders.depth
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.POSITION));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.UV));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.NORMAL));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.VERTEX_COLOR));
+			key += "_" + int(geometry.hasAttribute(VertexAttribute.VERTEXCOLOR));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.TANGENT4));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX1));
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX2));
@@ -93,11 +93,11 @@ package net.morocoshi.moja3d.shaders.depth
 			}
 			
 			//VertexColor
-			if (geometry.hasAttribute(VertexAttribute.VERTEX_COLOR))
+			if (geometry.hasAttribute(VertexAttribute.VERTEXCOLOR))
 			{
 				vertexCode.addCode(
 					"var $vcolor",
-					"$vcolor = va" + geometry.getAttributeIndex(VertexAttribute.VERTEX_COLOR),
+					"$vcolor = va" + geometry.getAttributeIndex(VertexAttribute.VERTEXCOLOR),
 					"#vcolor = $vcolor"
 				);
 			}

@@ -1,51 +1,46 @@
 package net.morocoshi.moja3d.particle 
 {
 	import flash.display.Sprite;
+	import flash.display3D.Context3D;
 	import flash.events.Event;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
 	import net.morocoshi.moja3d.materials.Material;
-	import net.morocoshi.moja3d.objects.Object3D;
+	import net.morocoshi.moja3d.objects.Particle3D;
 	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
 	import net.morocoshi.moja3d.particle.animators.ParticleAnimatorType;
-	import net.morocoshi.moja3d.particle.cells.Particle3D;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.emitters.ParticleEmitter;
 	import net.morocoshi.moja3d.particle.emitters.ParticleEmitterType;
 	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	import net.morocoshi.moja3d.particle.wind.ParticleWindType;
 	
 	/**
-	 * パーティクル
+	 * パーティクルを管理するクラス。パーティクルが表示されるコンテナの役割も果たす。
 	 * 
 	 * @author tencho
 	 */
-	public class ParticleSystem extends Object3D
+	public class ParticleSystem extends Particle3D
 	{
-		/**生成したパーティクルを配置するコンテナ*/
-		public var container:Object3D;
-		/**パーティクルオブジェクトリスト*/
-		public var particleList:Vector.<Particle3D> = new Vector.<Particle3D>;
 		/**エミッタが稼働しているか*/
 		public var enabled:Boolean = true;
 		/**パーティクルの幅*/
 		public var particleWidth:Number = 10;
 		/**パーティクルの高さ*/
 		public var particleHeight:Number = 10;
-		/**パーティクルマテリアル*/
-		private var _material:Material;
 		/**パーティクルの同時発生限界数（-1で無制限）*/
 		public var limit:int = -1;
 		
-		private var particleCache:Vector.<Particle3D> = new Vector.<Particle3D>;
+		private var particleCache:Vector.<ParticleCell> = new Vector.<ParticleCell>;
 		private var _animator:ParticleAnimator;
 		private var _emitter:ParticleEmitter;
 		private var _wind:ParticleWind;
 		private var _birthRate:Number = 1;
 		private var totalTime:Number = 0;
-		private var birthTime:Number = 1000;
+		private var birthTime:Number = 1;
 		private var lastBirth:int;
 		private var sprite:Sprite = new Sprite();
-		private var materialID:int = 0;
+		private var context3D:Context3D;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -53,12 +48,9 @@ package net.morocoshi.moja3d.particle
 		//
 		//--------------------------------------------------------------------------
 		
-		public function ParticleSystem(emitter:ParticleEmitter = null, animator:ParticleAnimator = null, wind:ParticleWind = null) 
+		public function ParticleSystem(material:Material = null) 
 		{
-			super();
-			if (emitter) this.emitter = emitter;
-			if (animator) this.animator = animator;
-			if (wind) this.wind = wind;
+			super(material);
 		}
 		
 		//--------------------------------------------------------------------------
@@ -102,6 +94,10 @@ package net.morocoshi.moja3d.particle
 			}
 			_emitter = value;
 			_emitter.system = this;
+			if (_emitter.parent == null)
+			{
+				addChild(_emitter);
+			}
 		}
 		
 		/**
@@ -117,25 +113,7 @@ package net.morocoshi.moja3d.particle
 			_birthRate = value;
 			totalTime = 0;
 			lastBirth = 0;
-			birthTime = 1000 / _birthRate;
-		}
-		
-		/**
-		 * パーティクル用マテリアル
-		 */
-		public function get material():Material 
-		{
-			return _material;
-		}
-		
-		public function set material(value:Material):void 
-		{
-			if (_material == value)
-			{
-				return;
-			}
-			_material = value;
-			updateMaterial();
+			birthTime = 1 / _birthRate;
 		}
 		
 		public function get wind():ParticleWind 
@@ -146,11 +124,6 @@ package net.morocoshi.moja3d.particle
 		public function set wind(value:ParticleWind):void 
 		{
 			_wind = value;
-		}
-		
-		public function updateMaterial():void 
-		{
-			materialID++;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -164,13 +137,16 @@ package net.morocoshi.moja3d.particle
 		 * @param	width
 		 * @param	height
 		 * @param	material
-		 * @param	animator
 		 */
-		public function setParticle(width:Number, height:Number, material:Material):void
+		public function setParticle(width:Number, height:Number):void
 		{
 			particleWidth = width;
 			particleHeight = height;
-			this.material = material;
+		}
+		
+		public function setContetx3D(context3D:Context3D):void
+		{
+			this.context3D = context3D;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -198,47 +174,38 @@ package net.morocoshi.moja3d.particle
 		
 		private function enterFrameHandler(e:Event):void 
 		{
-			update();
+			if (context3D)
+			{
+				update(context3D);
+			}
 		}
 		
 		/**
 		 * パーティクルを1個生成する
 		 * @return
 		 */
-		public function emit():Particle3D
+		public function emit():ParticleCell
 		{
-			if (limit != -1 && particleList.length >= limit)
+			if (limit != -1 && particles.length >= limit)
 			{
 				return null;
 			}
 			
-			var particle:Particle3D;
+			var particle:ParticleCell;
 			//もしキャッシュにパーティクルがあればそれを再利用する
 			if (particleCache.length)
 			{
 				particle = particleCache.pop();
 				///particle.width = particleWidth;
 				///particle.height = particleHeight;
-				//前回からマテリアルが変わっていれば貼り直す
-				if (particle.materialID != materialID)
-				{
-					var nextMaterial:Material = _material.clone();
-					particle.setParticleMaterial(nextMaterial);
-				}
 			}
 			else
 			{
 				//キャッシュにない場合は新しく生成する
-				var newMaterial:Material = (!_material)? null : _material.clone();
-				particle = new Particle3D(particleWidth, particleHeight, newMaterial);
+				particle = new ParticleCell();
 			}
-			particle.materialID = materialID;
 			particle.latestIndex = 0;
-			particleList.push(particle);
-			if (container)
-			{
-				container.addChild(particle);
-			}
+			particles.push(particle);
 				
 			var position:Vector3D = emitter.getRandomPosition();
 			particle.x = position.x;
@@ -270,12 +237,12 @@ package net.morocoshi.moja3d.particle
 		 */
 		public function removeAllParticles():void 
 		{
-			while (particleList.length) 
+			var n:int = particles.length;
+			for (var i:int = 0; i < n; i++) 
 			{
-				var p:Particle3D = particleList.pop()
-				p.remove();
-				particleCache.push(p);
+				particleCache.push(particles[i]);
 			}
+			particles.length = 0;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -284,9 +251,9 @@ package net.morocoshi.moja3d.particle
 		//
 		//--------------------------------------------------------------------------
 		
-		public function update():void
+		override public function update(context3D:Context3D):void
 		{
-			var step:int = 33;
+			var step:Number = 33 / 1000;
 			
 			if (enabled)
 			{
@@ -304,10 +271,10 @@ package net.morocoshi.moja3d.particle
 				}
 			}
 			
-			var n:int = particleList.length;
+			var n:int = particles.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var particle:Particle3D = particleList[i];
+				var particle:ParticleCell = particles[i] as ParticleCell;
 				//風
 				if (_wind)
 				{
@@ -318,9 +285,8 @@ package net.morocoshi.moja3d.particle
 				
 				if (particle.time >= particle.life)
 				{
-					var p:Particle3D = particleList.splice(i, 1)[0];
+					var p:ParticleCell = particles.splice(i, 1)[0];
 					particleCache.push(p);
-					particle.remove();
 					i--;
 					n--;
 					continue;
@@ -328,6 +294,8 @@ package net.morocoshi.moja3d.particle
 				
 				particle.time += step;
 			}
+			
+			super.update(context3D);
 		}
 		
 		public function parse(xml:XML):void

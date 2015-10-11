@@ -10,25 +10,25 @@ package net.morocoshi.moja3d.particle.emitters
 	 */
 	public class EllipsoidEmitter extends ParticleEmitter 
 	{
-		public var x:Number;
-		public var y:Number;
-		public var z:Number;
+		public var radiusX:Number;
+		public var radiusY:Number;
+		public var radiusZ:Number;
 		public var equally:Boolean;
 		
 		/**
-		 * @param	x	X軸の半径
-		 * @param	y	Y軸の半径
-		 * @param	z	Z軸の半径
+		 * @param	radiusX	X軸の半径
+		 * @param	radiusY	Y軸の半径
+		 * @param	radiusZ	Z軸の半径
 		 * @param	equally	trueで均等に分布するようになりますが若干処理が重くなります。
 		 */
-		public function EllipsoidEmitter(x:Number = 0, y:Number = 0, z:Number = 0, equally:Boolean = true) 
+		public function EllipsoidEmitter(radiusX:Number = 0, radiusY:Number = 0, radiusZ:Number = 0, equally:Boolean = true) 
 		{
 			super();
 			type = ParticleEmitterType.ELLIPSOID;
 			
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			this.radiusX = radiusX;
+			this.radiusY = radiusY;
+			this.radiusZ = radiusZ;
 			this.equally = equally;
 		}
 		
@@ -39,9 +39,9 @@ package net.morocoshi.moja3d.particle.emitters
 			var angle:Number = Math.acos(Math.random() * 2 - 1);
 			var unit:Number = Math.sin(angle);
 			var rotation:Number = Math.random() * Math.PI * 2;
-			var tx:Number = Math.cos(rotation) * unit * x;
-			var ty:Number = Math.sin(rotation) * unit * y;
-			var tz:Number = Math.cos(angle) * z;
+			var tx:Number = Math.cos(rotation) * unit * radiusX;
+			var ty:Number = Math.sin(rotation) * unit * radiusY;
+			var tz:Number = Math.cos(angle) * radiusZ;
 			var intensity:Number = Math.random();
 			if (equally) intensity = Math.sqrt(intensity);
 			v.x += (xAxis.x * tx + yAxis.x * ty + zAxis.x * tz) * intensity;
@@ -53,18 +53,18 @@ package net.morocoshi.moja3d.particle.emitters
 		override public function parse(xml:XML):void 
 		{
 			super.parse(xml);
-			x = XMLUtil.getAttrNumber(xml.size, "x", 0);
-			y = XMLUtil.getAttrNumber(xml.size, "y", 0);
-			z = XMLUtil.getAttrNumber(xml.size, "z", 0);
+			radiusX = XMLUtil.getAttrNumber(xml.size, "x", 0);
+			radiusY = XMLUtil.getAttrNumber(xml.size, "y", 0);
+			radiusZ = XMLUtil.getAttrNumber(xml.size, "z", 0);
 			equally = XMLUtil.getNodeBoolean(xml.equally, true);
 		}
 		
 		override public function toXML():XML 
 		{
 			var xml:XML = super.toXML();
-			xml.size.@x = x;
-			xml.size.@y = y;
-			xml.size.@z = z;
+			xml.size.@x = radiusX;
+			xml.size.@y = radiusY;
+			xml.size.@z = radiusZ;
 			xml.equally = equally;
 			return xml;
 		}

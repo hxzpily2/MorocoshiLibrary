@@ -13,8 +13,8 @@ package net.morocoshi.moja3d.shaders
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.Geometry;
-	import net.morocoshi.moja3d.shaders.base.AlphaPassShader;
-	import net.morocoshi.moja3d.shaders.base.OpaquePassShader;
+	import net.morocoshi.moja3d.shaders.core.AlphaPassShader;
+	import net.morocoshi.moja3d.shaders.core.OpaquePassShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.render.KillShader;
 	import net.morocoshi.moja3d.shaders.render.LightShader;
@@ -47,6 +47,8 @@ package net.morocoshi.moja3d.shaders
 		public var vertexUsingConstants:UsingConstants;
 		public var fragmentUsingConstants:UsingConstants;
 		
+		moja3d var existTickShader:Boolean;
+		
 		moja3d var updateKeyOrder:Boolean;
 		moja3d var updateConstantOrder:Boolean;
 		moja3d var updateAlphaModeOrder:Boolean;
@@ -69,6 +71,7 @@ package net.morocoshi.moja3d.shaders
 			
 			initialized = false;
 			
+			existTickShader = false;
 			updateKeyOrder = true;
 			updateAlphaModeOrder = true;
 			updateConstantOrder = true;
@@ -404,7 +407,7 @@ package net.morocoshi.moja3d.shaders
 		 * 全てのシェーダーのtick()を実行する。
 		 * @param	frame
 		 * @param	timer
-		 */ 
+		 */
 		public function tick(frame:int, timer:int):void 
 		{
 			var n:int = tickShaderList.length;
@@ -541,6 +544,7 @@ package net.morocoshi.moja3d.shaders
 			//_key = "";
 			
 			tickShaderList.length = 0;
+			existTickShader = false;
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 
 			{
@@ -550,6 +554,7 @@ package net.morocoshi.moja3d.shaders
 				if (shader.tickEnabled)
 				{
 					tickShaderList.push(shader);
+					existTickShader = true;
 				}
 				_vertexCode.attachConstant(shader.vertexCode);
 				_fragmentCode.attachConstant(shader.fragmentCode);

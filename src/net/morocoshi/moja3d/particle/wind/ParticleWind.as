@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.particle.wind 
 {
 	import flash.geom.Vector3D;
-	import net.morocoshi.moja3d.particle.cells.Particle3D;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	
 	/**
 	 * ...
@@ -17,12 +17,12 @@ package net.morocoshi.moja3d.particle.wind
 			type = ParticleWindType.NONE;
 		}
 		
-		public function getVelocity(particle:Particle3D):Vector3D
+		public function getVelocity(particle:ParticleCell):Vector3D
 		{
 			return new Vector3D();
 		}
 		
-		public function updateParticle(particle:Particle3D):void 
+		public function updateParticle(particle:ParticleCell):void 
 		{
 			particle.velocity.incrementBy(getVelocity(particle));
 		}

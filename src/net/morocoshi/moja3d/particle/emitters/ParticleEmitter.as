@@ -2,14 +2,18 @@ package net.morocoshi.moja3d.particle.emitters
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.particle.ParticleSystem;
 	
+	use namespace moja3d;
+	
 	/**
-	 * パーティクルを基点位置に発生させる
+	 * パーティクルの発生位置を決める
 	 * 
 	 * @author tencho
 	 */
-	public class ParticleEmitter 
+	public class ParticleEmitter extends Object3D
 	{
 		public var type:String;
 		public var system:ParticleSystem;
@@ -20,6 +24,7 @@ package net.morocoshi.moja3d.particle.emitters
 		
 		public function ParticleEmitter() 
 		{
+			super();
 			type = ParticleEmitterType.POINT;
 		}
 		
@@ -43,13 +48,11 @@ package net.morocoshi.moja3d.particle.emitters
 		 */
 		public function updateMatrix():void 
 		{
-			if (!system.container) return;
-			
-			var containerMatrix:Matrix3D = system.container.worldMatrix;
-			var systemMatrix:Matrix3D = system.worldMatrix;
-			containerMatrix.invert();
-			systemMatrix.append(containerMatrix);
-			var rawData:Vector.<Number> = systemMatrix.rawData;
+			var systemMatrix:Matrix3D = system.worldMatrix.clone();
+			var emitterMatrix:Matrix3D = _worldMatrix.clone();
+			systemMatrix.invert();
+			emitterMatrix.append(systemMatrix);
+			var rawData:Vector.<Number> = emitterMatrix.rawData;
 			xAxis.x = rawData[0];
 			xAxis.y = rawData[1];
 			xAxis.z = rawData[2];
