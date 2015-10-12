@@ -11,16 +11,16 @@ package net.morocoshi.moja3d.animation
 	{
 		public var id:String;
 		public var animation:Object;
-		public var speedScale:Number;
 		public var startTime:Number;
 		public var endTime:Number;
+		private var _loop:Boolean;
 		
 		public function MotionData() 
 		{
 			id = "";
-			speedScale = 1;
 			startTime = 0;
 			endTime = 0;
+			_loop = true;
 			animation = { };
 		}
 		
@@ -28,7 +28,6 @@ package net.morocoshi.moja3d.animation
 		{
 			var result:MotionData = new MotionData();
 			result.id = id;
-			result.speedScale = speedScale;
 			result.startTime = startTime;
 			result.endTime = endTime;
 			for (var key:String in animation) 
@@ -97,7 +96,7 @@ package net.morocoshi.moja3d.animation
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];
-				anm.setTime(time * speedScale);
+				anm.setTime(time);
 			}
 		}
 		
@@ -152,8 +151,14 @@ package net.morocoshi.moja3d.animation
 			}
 		}
 		
-		public function setLoop(value:Boolean):void 
+		public function get loop():Boolean 
 		{
+			return _loop;
+		}
+		
+		public function set loop(value:Boolean):void 
+		{
+			_loop = value;
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];

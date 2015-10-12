@@ -80,7 +80,7 @@ package net.morocoshi.moja3d.animation
 			}
 			motionData.id = motionID;
 			motionData.setInterpolationEnabled(_interpolationEnabled);
-			motionData.setLoop(false);
+			motionData.loop = false;
 			motions[motionID] = motionData;
 			if (object)
 			{
@@ -114,14 +114,14 @@ package net.morocoshi.moja3d.animation
 			timer.reset();
 			
 			current = motion;
-			current.speedScale = speedScale;
 			current.capture();
 			current.reset();
 			current.setBlendRatio(0);
-			setTime(_time);
-			_capturedTime = _time;
-			_time = 0;
+			
+			timeScale = speedScale;
+			firstTime = true;
 			resume();
+			setTime(_time);
 		}
 		
 		/**
@@ -158,12 +158,11 @@ package net.morocoshi.moja3d.animation
 					_capturedTime = _time;
 					diff = 0;
 				}
-				var ratio:Number = timer.time / 1000 / blendTime;
+				var ratio:Number = (blendTime == 0)? 1 : timer.time / 1000 / blendTime;
 				if (ratio > 1) ratio = 1;
 				current.setBlendRatio(ratio);
 				var sec:Number = diff * timeScale;
-				var motionlength:Number = current.endTime - current.startTime;
-				
+				var motionlength:Number = (current.endTime - current.startTime);
 				if (numLoop > 0 && sec / motionlength >= numLoop)
 				{
 					current.setTime(current.endTime);
@@ -172,11 +171,8 @@ package net.morocoshi.moja3d.animation
 				}
 				else
 				{
-					if (sec >= motionlength)
-					{
-						dispatchEvent(new MotionEvent(MotionEvent.MOTION_LOOP));
-						sec %= motionlength;
-					}
+					//dispatchEvent(new MotionEvent(MotionEvent.MOTION_LOOP));
+					sec %= motionlength;
 					current.setTime(sec);
 				}
 			}
