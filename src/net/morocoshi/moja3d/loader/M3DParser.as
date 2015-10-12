@@ -448,6 +448,7 @@ package net.morocoshi.moja3d.loader
 				var keyAnimation:KeyframeAnimation = toKeyAnimation(scene.animation[key]);
 				motion.animation[key] = keyAnimation;
 			}
+			motion.checkTime();
 			
 			//親子リンク
 			for (i = 0; i < n; i++) 

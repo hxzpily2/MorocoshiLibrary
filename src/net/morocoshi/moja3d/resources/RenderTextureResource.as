@@ -14,10 +14,11 @@ package net.morocoshi.moja3d.resources
 		public var limitW:int;
 		public var limitH:int;
 		
-		public function RenderTextureResource(limitW:int = 1024, limitH:int = 1024, lowLV:int = 0) 
+		public function RenderTextureResource(limitW:int = 1024, limitH:int = 1024, lowLV:int = 0, name:String = "") 
 		{
 			super();
 			_lowLV = lowLV;
+			this.name = name;
 			this.limitW = limitW;
 			this.limitH = limitH;
 			isReady = true;

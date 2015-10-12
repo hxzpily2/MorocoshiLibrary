@@ -14,15 +14,20 @@ package net.morocoshi.moja3d.resources
 		public var name:String;
 		public var isUploaded:Boolean;
 		public var isReady:Boolean;
+		/**Object3D.dispose()を実行した時などの一括disposeの対象にするかどうか。*/
+		public var autoDispose:Boolean;
 		
 		public function Resource() 
 		{
 			isUploaded = false;
 			isReady = false;
+			autoDispose = true;
 		}
 		
 		public function cloneProperties(target:Resource):void 
 		{
+			target.name = name;
+			target.autoDispose = autoDispose;
 		}
 		
 		public function clone():Resource

@@ -12,11 +12,15 @@ package net.morocoshi.moja3d.animation
 		public var id:String;
 		public var animation:Object;
 		public var speedScale:Number;
+		public var startTime:Number;
+		public var endTime:Number;
 		
 		public function MotionData() 
 		{
 			id = "";
 			speedScale = 1;
+			startTime = 0;
+			endTime = 0;
 			animation = { };
 		}
 		
@@ -25,6 +29,8 @@ package net.morocoshi.moja3d.animation
 			var result:MotionData = new MotionData();
 			result.id = id;
 			result.speedScale = speedScale;
+			result.startTime = startTime;
+			result.endTime = endTime;
 			for (var key:String in animation) 
 			{
 				result.animation[key] = animation[key].clone();
@@ -51,6 +57,25 @@ package net.morocoshi.moja3d.animation
 				{
 					anm.setObject(child);
 				}
+			}
+		}
+		
+		public function checkTime():void
+		{
+			startTime = Number.MAX_VALUE;
+			endTime = 0;
+			for (var key:String in animation) 
+			{
+				var anm:KeyframeAnimation = animation[key];
+				var startEnd:Array = anm.getStartEndTime();
+				var start:Number = startEnd[0];
+				var end:Number = startEnd[1];
+				if (startTime > start) startTime = start;
+				if (endTime < end) endTime = end;
+			}
+			if (startTime > endTime)
+			{
+				startTime = endTime;
 			}
 		}
 		
@@ -104,6 +129,35 @@ package net.morocoshi.moja3d.animation
 			{
 				var anm:KeyframeAnimation = animation[key];
 				anm.setInterpolationEnabled(enabled);
+			}
+		}
+		
+		public function setStartTime(time:Number):void 
+		{
+			startTime = time;
+			for (var key:String in animation) 
+			{
+				var anm:KeyframeAnimation = animation[key];
+				anm.setStartTime(time);
+			}
+		}
+		
+		public function setEndTime(time:Number):void 
+		{
+			endTime = time;
+			for (var key:String in animation) 
+			{
+				var anm:KeyframeAnimation = animation[key];
+				anm.setEndTime(time);
+			}
+		}
+		
+		public function setLoop(value:Boolean):void 
+		{
+			for (var key:String in animation) 
+			{
+				var anm:KeyframeAnimation = animation[key];
+				anm.setLoop(value);
 			}
 		}
 		

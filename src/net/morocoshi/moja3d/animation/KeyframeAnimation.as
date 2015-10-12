@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.animation 
 {
+	import adobe.utils.CustomActions;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.math.transform.AngleUtil;
@@ -43,6 +44,22 @@ package net.morocoshi.moja3d.animation
 			this.type = type;
 			blendRatio = 1;
 			capturedTransform = { };
+		}
+		
+		public function setStartTime(time:Number):void 
+		{
+			if (rotation) rotation.setStartTime(time);
+			if (scale) scale.setStartTime(time);
+			if (position) position.setStartTime(time);
+			if (matrix) matrix.startTime = time;
+		}
+		
+		public function setEndTime(time:Number):void 
+		{
+			if (rotation) rotation.setEndTime(time);
+			if (scale) scale.setEndTime(time);
+			if (position) position.setEndTime(time);
+			if (matrix) matrix.endTime = time;
 		}
 		
 		public function clone():KeyframeAnimation
@@ -191,6 +208,85 @@ package net.morocoshi.moja3d.animation
 			}
 			
 			fixRotation = true;
+		}
+		
+		public function getStartEndTime():Array 
+		{
+			var curves:Vector.<AnimationCurveTrack> = new Vector.<AnimationCurveTrack>;
+			if (material)
+			{
+				if (material.offsetU) curves.push(material.offsetU);
+				if (material.offsetV) curves.push(material.offsetV);
+			}
+			if (position)
+			{
+				if (position.x) curves.push(position.x);
+				if (position.y) curves.push(position.y);
+				if (position.z) curves.push(position.z);
+			}
+			if (rotation)
+			{
+				if (rotation.x) curves.push(rotation.x);
+				if (rotation.y) curves.push(rotation.y);
+				if (rotation.z) curves.push(rotation.z);
+			}
+			if (scale)
+			{
+				if (scale.x) curves.push(scale.x);
+				if (scale.y) curves.push(scale.y);
+				if (scale.z) curves.push(scale.z);
+				
+			}
+			
+			var start:Number = Number.MAX_VALUE;
+			var end:Number = 0;
+			for each (var curve:AnimationCurveTrack in curves) 
+			{
+				if (start > curve.startTime) start = curve.startTime;
+				if (end < curve.endTime) end = curve.endTime;
+			}
+			if (matrix)
+			{
+				if (start > matrix.startTime) start = matrix.startTime;
+				if (end < matrix.endTime) end = matrix.endTime;
+			}
+			if (start > end)
+			{
+				start = end;
+			}
+			return [start, end];
+		}
+		
+		public function setLoop(value:Boolean):void 
+		{
+			if (material)
+			{
+				if (material.offsetU) material.offsetU.loop = value;
+				if (material.offsetV) material.offsetV.loop = value;
+			}
+			if (position)
+			{
+				if (position.x) position.x.loop = value;
+				if (position.y) position.y.loop = value;
+				if (position.z) position.z.loop = value;
+			}
+			if (rotation)
+			{
+				if (rotation.x) rotation.x.loop = value;
+				if (rotation.y) rotation.y.loop = value;
+				if (rotation.z) rotation.z.loop = value;
+			}
+			if (scale)
+			{
+				if (scale.x) scale.x.loop = value;
+				if (scale.y) scale.y.loop = value;
+				if (scale.z) scale.z.loop = value;
+				
+			}
+			if (matrix)
+			{
+				matrix.loop = value;
+			}
 		}
 		
 		private function setCurveMatrix(time:Number):void

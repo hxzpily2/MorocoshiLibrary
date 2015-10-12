@@ -15,8 +15,6 @@ package net.morocoshi.moja3d.resources
 		protected var prevSize:Point;
 		/***/
 		public var texture:TextureBase;
-		/***/
-		public var autoDispose:Boolean;
 		
 		public function TextureResource() 
 		{

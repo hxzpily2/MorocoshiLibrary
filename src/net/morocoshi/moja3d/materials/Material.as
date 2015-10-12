@@ -145,23 +145,11 @@ package net.morocoshi.moja3d.materials
 		
 		public function dispose():void 
 		{
-			var textureList:Vector.<AGALTexture> = new Vector.<AGALTexture>;
-			
-			VectorUtil.attachListDiff(textureList, shaderList.vertexCode.textureList);
-			VectorUtil.attachListDiff(textureList, shaderList.fragmentCode.textureList);
-			if (reflectShaderList)
+			for each(var resource:Resource in getResources())
 			{
-				VectorUtil.attachListDiff(textureList, reflectShaderList.vertexCode.textureList);
-				VectorUtil.attachListDiff(textureList, reflectShaderList.fragmentCode.textureList);
-			}
-			
-			var n:int = textureList.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var texture:AGALTexture = textureList[i];
-				if (texture.texture && texture.texture.autoDispose)
+				if (resource.autoDispose)
 				{
-					texture.texture.dispose();
+					resource.dispose();
 				}
 			}
 		}

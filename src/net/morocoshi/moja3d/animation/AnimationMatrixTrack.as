@@ -11,9 +11,9 @@ package net.morocoshi.moja3d.animation
 	public class AnimationMatrixTrack 
 	{
 		/**開始時間（秒）*/
-		public var startTime:Number;
+		private var _startTime:Number;
 		/**終了時間（秒）*/
-		public var endTime:Number;
+		private var _endTime:Number;
 		/**各キーフレームの位置（秒）*/
 		public var timeList:Vector.<Number>;
 		/**各キーフレームでの姿勢*/
@@ -43,7 +43,12 @@ package net.morocoshi.moja3d.animation
 			timeList.push(time);
 			matrixList.push(matrix);
 			tangentList.push(tangent);
-			timeLength = endTime - startTime;
+			updateTimeLength();
+		}
+		
+		private function updateTimeLength():void 
+		{
+			timeLength = _endTime - _startTime;
 		}
 		
 		public function getMatrix3D(time:Number):Matrix3D 
@@ -53,12 +58,12 @@ package net.morocoshi.moja3d.animation
 			//範囲外をループする場合はstart～end内に収める
 			if (loop)
 			{
-				time = ((time - startTime) % timeLength + timeLength) % timeLength + startTime;
+				time = ((time - _startTime) % timeLength + timeLength) % timeLength + _startTime;
 			}
 			else
 			{
-				if (time < startTime) time = startTime;
-				if (time > endTime) time = endTime;
+				if (time < _startTime) time = _startTime;
+				if (time > _endTime) time = _endTime;
 			}
 			var max:int = timeList.length - 1;
 			
@@ -97,8 +102,8 @@ package net.morocoshi.moja3d.animation
 		public function clone():AnimationMatrixTrack 
 		{
 			var result:AnimationMatrixTrack = new AnimationMatrixTrack();
-			result.startTime = startTime;
-			result.endTime = endTime;
+			result.startTime = _startTime;
+			result.endTime = _endTime;
 			result.timeList = timeList.concat();
 			result.matrixList = matrixList.concat();
 			result.tangentList = tangentList.concat();
@@ -112,6 +117,28 @@ package net.morocoshi.moja3d.animation
 		public function reset():void 
 		{
 			lastIndex = 0;
+		}
+		
+		public function get startTime():Number 
+		{
+			return _startTime;
+		}
+		
+		public function set startTime(value:Number):void 
+		{
+			_startTime = value;
+			updateTimeLength();
+		}
+		
+		public function get endTime():Number 
+		{
+			return _endTime;
+		}
+		
+		public function set endTime(value:Number):void 
+		{
+			_endTime = value;
+			updateTimeLength();
 		}
 		
 	}

@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.animation 
 {
+	import flash.events.EventDispatcher;
 	import net.morocoshi.common.timers.Stopwatch;
 	import net.morocoshi.moja3d.objects.Object3D;
 	
@@ -8,7 +9,7 @@ package net.morocoshi.moja3d.animation
 	 * 
 	 * @author tencho
 	 */
-	public class MotionController 
+	public class MotionController extends EventDispatcher
 	{
 		private var current:MotionData;
 		private var _isPlaying:Boolean;
@@ -17,6 +18,8 @@ package net.morocoshi.moja3d.animation
 		private var timer:Stopwatch;
 		private var blendTime:Number;
 		private var _interpolationEnabled:Boolean;
+		private var numLoop:int;
+		private var firstTime:Boolean;
 		public var object:Object3D;
 		public var motions:Object;
 		public var timeScale:Number;
@@ -24,6 +27,7 @@ package net.morocoshi.moja3d.animation
 		public function MotionController() 
 		{
 			_interpolationEnabled = true;
+			firstTime = true;
 			_isPlaying = false;
 			_time = 0;
 			timeScale = 1;
@@ -61,14 +65,22 @@ package net.morocoshi.moja3d.animation
 		
 		/**
 		 * モーションを追加する。追加する際に内部でcloneされる。
-		 * @param	motionID
-		 * @param	data
+		 * @param	motionID	登録名。再生時に使用するID。
+		 * @param	data	モーションデータ
+		 * @param	trimStart	モーションデータをトリミングする場合の開始時間（秒）
+		 * @param	trimEnd	モーションデータをトリミングする場合の終了時間（秒）
 		 */
-		public function addMotion(motionID:String, data:MotionData):void
+		public function addMotion(motionID:String, data:MotionData, trimStart:Number = 0, trimEnd:Number = 0):void
 		{
 			var motionData:MotionData = data.clone();
+			if (trimEnd != 0)
+			{
+				motionData.setStartTime(trimStart);
+				motionData.setEndTime(trimEnd);
+			}
 			motionData.id = motionID;
 			motionData.setInterpolationEnabled(_interpolationEnabled);
+			motionData.setLoop(false);
 			motions[motionID] = motionData;
 			if (object)
 			{
@@ -80,9 +92,10 @@ package net.morocoshi.moja3d.animation
 		 * モーションを再生
 		 * @param	motionID	再生するモーションID
 		 * @param	blendTime	モーションブレンドにかける時間（秒）
+		 * @param	numLoop		ループ回数。0で無限ループ
 		 * @param	speedScale	モーションの速度の倍率
 		 */
-		public function play(motionID:String, blendTime:Number, speedScale:Number = 1):void 
+		public function play(motionID:String, blendTime:Number, numLoop:int = 0, speedScale:Number = 1):void 
 		{
 			var motion:MotionData = motions[motionID];
 			if (motion == null)
@@ -97,6 +110,7 @@ package net.morocoshi.moja3d.animation
 			}
 			
 			this.blendTime = blendTime;
+			this.numLoop = numLoop;
 			timer.reset();
 			
 			current = motion;
@@ -129,7 +143,7 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * 時間を指定して描画する
+		 * 時間（秒）を指定して描画する
 		 * @param	time
 		 */
 		public function setTime(time:Number):void 
@@ -138,10 +152,33 @@ package net.morocoshi.moja3d.animation
 			var diff:Number = _time - _capturedTime;
 			if (_isPlaying)
 			{
+				if (firstTime)
+				{
+					firstTime = false;
+					_capturedTime = _time;
+					diff = 0;
+				}
 				var ratio:Number = timer.time / 1000 / blendTime;
 				if (ratio > 1) ratio = 1;
 				current.setBlendRatio(ratio);
-				current.setTime(diff * timeScale);
+				var sec:Number = diff * timeScale;
+				var motionlength:Number = current.endTime - current.startTime;
+				
+				if (numLoop > 0 && sec / motionlength >= numLoop)
+				{
+					current.setTime(current.endTime);
+					stop();
+					dispatchEvent(new MotionEvent(MotionEvent.MOTION_COMPLETE));
+				}
+				else
+				{
+					if (sec >= motionlength)
+					{
+						dispatchEvent(new MotionEvent(MotionEvent.MOTION_LOOP));
+						sec %= motionlength;
+					}
+					current.setTime(sec);
+				}
 			}
 		}
 		

@@ -21,6 +21,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var tangentList:Array;
 		public var binormalList:Array;
 		public var tangent4List:Array;
+		public var vertexColorList:Array;
 		
 		public var jointList1:Array;
 		public var weightList1:Array;
@@ -37,6 +38,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		static public const TEXTANGENT:String = "TEXTANGENT";
 		static public const TEXBINORMAL:String = "TEXBINORMAL";
 		static public const TANGENT4:String = "TANGENT4";
+		static public const COLOR:String = "COLOR";
 		static public const JOINT:String = "JOINT";
 		static public const WEIGHT:String = "WEIGHT";
 		static public const INV_BIND_MATRIX:String = "INV_BIND_MATRIX";
@@ -52,6 +54,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			uvList = [];
 			
 			tangent4List = [];
+			vertexColorList = [];
 			
 			jointList1 = [];
 			weightList1 = [];
@@ -70,6 +73,7 @@ package net.morocoshi.common.loaders.collada.nodes
 				case TANGENT4: target = tangent4List; break;
 				case JOINT: target = jointList1; break;
 				case WEIGHT: target = weightList1; break;
+				case COLOR : target = vertexColorList; break;
 			}
 			return target;
 		}
@@ -101,6 +105,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			if (option.exportNormal && getList(NORMAL).length > 0) types.push(NORMAL);
 			if (option.exportUV && getList(TEXCOORD).length > 0) types.push(TEXCOORD);
 			if (option.exportTangent4 && getList(TANGENT4).length > 0) types.push(TANGENT4);
+			if (option.exportVertexColor && getList(COLOR).length > 0) types.push(COLOR);
 			if (jointList1.length)
 			{
 				types.push(JOINT);

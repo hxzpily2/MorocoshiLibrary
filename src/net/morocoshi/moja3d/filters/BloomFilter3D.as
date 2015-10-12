@@ -73,9 +73,9 @@ package net.morocoshi.moja3d.filters
 		{
 			var inputTexture:RenderTextureResource = manager.currentTexture;
 			var sources:Array = (_mask == -1)? [null] : [null, manager.maskTexture];
-			manager.renderProcess(shaderList0, 2, sources);
-			manager.renderProcess(shaderList1, 2);
-			manager.renderProcess(shaderList2, 2);
+			manager.renderProcess(shaderList0, 4, sources);
+			manager.renderProcess(shaderList1, 4);
+			manager.renderProcess(shaderList2, 4);
 			manager.renderFinal(shaderList3, 0, [inputTexture, null]);
 		}
 		

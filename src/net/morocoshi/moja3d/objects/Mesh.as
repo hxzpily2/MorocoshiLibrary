@@ -245,23 +245,6 @@ package net.morocoshi.moja3d.objects
 			referenceSurfaces(mesh);
 		}
 		
-		override public function dispose(hierarchy:Boolean):void
-		{
-			super.dispose(hierarchy);
-			if (_geometry)
-			{
-				_geometry.dispose();
-			}
-			var n:int = surfaces.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				if (surfaces[i]._material)
-				{
-					surfaces[i]._material.dispose();
-				}
-			}
-		}
-		
 		override public function getResources(hierarchy:Boolean, filter:Class = null):Vector.<Resource> 
 		{
 			if (filter == null)

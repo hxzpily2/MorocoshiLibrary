@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.renderer 
 {
+	import adobe.utils.CustomActions;
 	import flash.display3D.Context3D;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
@@ -19,13 +20,12 @@ package net.morocoshi.moja3d.renderer
 		public var renderer:Renderer;
 		public var collector:RenderCollector;
 		public var renderTexture:RenderTextureResource;
-		public var processTexture1:RenderTextureResource;
-		public var processTexture2:RenderTextureResource;
+		public var processTexture1:Vector.<RenderTextureResource>;
+		public var processTexture2:Vector.<RenderTextureResource>;
 		public var maskTexture:RenderTextureResource;
 		public var currentTexture:RenderTextureResource;
 		private var isEnd:Boolean;
 		public var captureShader:ShaderList;
-		private var processTextures:Array;
 		
 		/**
 		 * 
@@ -33,15 +33,16 @@ package net.morocoshi.moja3d.renderer
 		public function PostEffectManager() 
 		{
 			antiAlias = 0;
-			renderTexture = new RenderTextureResource(1024, 1024, 0);
-			renderTexture.name = "renderTexture";
-			maskTexture = new RenderTextureResource(1024, 1024, 2);
-			maskTexture.name = "maskTexture";
-			processTextures = [];
-			processTexture1 = new RenderTextureResource(1024, 1024, 3);
-			processTexture1.name = "processTexture1";
-			processTexture2 = new RenderTextureResource(1024, 1024, 3);
-			processTexture2.name = "processTexture2";
+			renderTexture = new RenderTextureResource(1024, 1024, 0, "renderTexture");
+			maskTexture = new RenderTextureResource(1024, 1024, 3, "maskTexture");
+			processTexture1 = new Vector.<RenderTextureResource>;
+			processTexture2 = new Vector.<RenderTextureResource>;
+			var lv:int;
+			for (lv = 0; lv <= 4; lv++) 
+			{
+				processTexture1.push(new RenderTextureResource(1024, 1024, lv, "processTexture1"));
+				processTexture2.push(new RenderTextureResource(1024, 1024, lv, "processTexture2"));
+			}
 			captureShader = new ShaderList();
 			captureShader.addShader(new BasicFilterShader());
 			captureShader.addShader(new EndFilterShader());
@@ -75,8 +76,12 @@ package net.morocoshi.moja3d.renderer
 		{
 			renderTexture.createTexture(context3D, w, h);
 			maskTexture.createTexture(context3D, w, h);
-			processTexture1.createTexture(context3D, w, h);
-			processTexture2.createTexture(context3D, w, h);
+			var lv:int;
+			for (lv = 0; lv <= 4; lv++) 
+			{
+				processTexture1[lv].createTexture(context3D, w, h);
+				processTexture2[lv].createTexture(context3D, w, h);
+			}
 		}
 		
 		/**
@@ -127,15 +132,15 @@ package net.morocoshi.moja3d.renderer
 			}
 			else if (currentTexture == renderTexture)
 			{
-				currentTexture = processTexture1;
+				currentTexture = processTexture1[lowLV];
 			}
-			else if (currentTexture == processTexture1)
+			else if (currentTexture.name == processTexture1[lowLV].name)
 			{
-				currentTexture = processTexture2;
+				currentTexture = processTexture2[lowLV];
 			}
 			else
 			{
-				currentTexture = processTexture1;
+				currentTexture = processTexture1[lowLV];
 			}
 			return currentTexture;
 		}

@@ -56,6 +56,20 @@ package net.morocoshi.moja3d.animation
 			if (z) z.interpolationEnabled = enabled;			
 		}
 		
+		public function setStartTime(time:Number):void 
+		{
+			if (x) x.startTime = time;
+			if (y) y.startTime = time;
+			if (z) z.startTime = time;
+		}
+		
+		public function setEndTime(time:Number):void 
+		{
+			if (x) x.endTime = time;
+			if (y) y.endTime = time;
+			if (z) z.endTime = time;
+		}
+		
 	}
 
 }

@@ -601,18 +601,30 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * アップロードした素材をすべて破棄する
-		 * @param	hierarchy
+		 * このオブジェクトが使用しているリソースを収集し、autoDispose=trueのものをすべて破棄する。
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に収集するかどうか
 		 */
 		public function dispose(hierarchy:Boolean):void 
 		{
-			if (hierarchy)
+			for each(var resource:Resource in getResources(hierarchy))
 			{
-				//子を再帰的に
-				for (var current:Object3D = _children; current; current = current._next)
+				if (resource.autoDispose)
 				{
-					current.dispose(hierarchy);
+					resource.dispose();
 				}
+			}
+		}
+		
+		/**
+		 * このオブジェクトが使用しているリソースを収集し、autoDisposeの値を一括で変更する。
+		 * @param	value	一括設定したいautoDisposeの値
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に適用するかどうか
+		 */
+		public function setAutoResourceDispose(autoDispose:Boolean, hierarchy:Boolean):void
+		{
+			for each(var resource:Resource in getResources(hierarchy))
+			{
+				resource.autoDispose = autoDispose;
 			}
 		}
 		
