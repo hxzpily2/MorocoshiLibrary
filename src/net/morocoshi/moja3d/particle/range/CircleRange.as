@@ -1,14 +1,15 @@
-package net.morocoshi.moja3d.particle.emitters 
+package net.morocoshi.moja3d.particle.range 
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.particle.ParticleEmitter;
 	
 	/**
 	 * 楕円（XY平面）の領域にパーティクルを発生させる
 	 * 
 	 * @author tencho
 	 */
-	public class CircleEmitter extends ParticleEmitter 
+	public class CircleRange extends ParticleRange 
 	{
 		public var radiusX:Number;
 		public var radiusY:Number;
@@ -19,26 +20,26 @@ package net.morocoshi.moja3d.particle.emitters
 		 * @param	radiusY	Y軸の半径
 		 * @param	equally	trueで均等に分布するようになりますが若干処理が重くなります。
 		 */
-		public function CircleEmitter(radiusX:Number = 0, radiusY:Number = 0, equally:Boolean = true)
+		public function CircleRange(radiusX:Number = 0, radiusY:Number = 0, equally:Boolean = true)
 		{
 			super();
 			this.radiusX = radiusX;
 			this.radiusY = radiusY;
 			this.equally = equally;
-			type = ParticleEmitterType.CIRCLE;
+			type = ParticleRangeType.CIRCLE;
 		}
 		
-		override public function getRandomPosition():Vector3D 
+		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
 		{
-			var v:Vector3D = super.getRandomPosition();
+			var v:Vector3D = super.getRandomPosition(emitter);
 			var angle:Number = Math.random() * Math.PI * 2;
 			var intensity:Number = Math.random();
 			if (equally) intensity = Math.sqrt(intensity);
 			var tx:Number = Math.cos(angle) * radiusX * intensity;
 			var ty:Number = Math.sin(angle) * radiusY * intensity;
-			v.x += xAxis.x * tx + yAxis.x * ty;
-			v.y += xAxis.y * tx + yAxis.y * ty;
-			v.z += xAxis.z * tx + yAxis.z * ty;
+			v.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty;
+			v.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty;
+			v.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty;
 			return v;
 		}
 		

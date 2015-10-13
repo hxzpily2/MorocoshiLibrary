@@ -1,14 +1,15 @@
-package net.morocoshi.moja3d.particle.emitters 
+package net.morocoshi.moja3d.particle.range 
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.particle.ParticleEmitter;
 	
 	/**
 	 * 直方体の領域にパーティクルを発生させる
 	 * 
 	 * @author tencho
 	 */
-	public class CubeEmitter extends ParticleEmitter
+	public class CubeRange extends ParticleRange
 	{
 		public var sizeX:Number;
 		public var sizeY:Number;
@@ -20,26 +21,26 @@ package net.morocoshi.moja3d.particle.emitters
 		 * @param	sizeY	Y軸方向の幅
 		 * @param	sizeZ	Z軸方向の幅
 		 */
-		public function CubeEmitter(sizeX:Number = 0, sizeY:Number = 0, sizeZ:Number = 0) 
+		public function CubeRange(sizeX:Number = 0, sizeY:Number = 0, sizeZ:Number = 0) 
 		{
 			super();
-			type = ParticleEmitterType.CUBE;
+			type = ParticleRangeType.CUBE;
 			
 			this.sizeX = sizeX;
 			this.sizeY = sizeY;
 			this.sizeZ = sizeZ;
 		}
 		
-		override public function getRandomPosition():Vector3D 
+		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
 		{
-			var v:Vector3D = super.getRandomPosition();
+			var v:Vector3D = super.getRandomPosition(emitter);
 			
 			var tx:Number = random(-sizeX / 2, sizeX / 2);
 			var ty:Number = random(-sizeY / 2, sizeY / 2);
 			var tz:Number = random(-sizeZ / 2, sizeZ / 2);
-			v.x += xAxis.x * tx + yAxis.x * ty + zAxis.x * tz;
-			v.y += xAxis.y * tx + yAxis.y * ty + zAxis.y * tz;
-			v.z += xAxis.z * tx + yAxis.z * ty + zAxis.z * tz;
+			v.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz;
+			v.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz;
+			v.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz;
 			
 			return v;
 		}

@@ -1,11 +1,11 @@
-package net.morocoshi.moja3d.particle.emitters 
+package net.morocoshi.moja3d.particle.range 
 {
 	/**
 	 * ...
 	 * 
 	 * @author tencho
 	 */
-	public class ParticleEmitterType 
+	public class ParticleRangeType 
 	{
 		static public const POINT:String = "point";
 		static public const CUBE:String = "cube";
@@ -17,10 +17,10 @@ package net.morocoshi.moja3d.particle.emitters
 			var EmitterClass:Class;
 			switch(type)
 			{
-				case POINT		: EmitterClass = ParticleEmitter; break;
-				case CUBE		: EmitterClass = CubeEmitter; break;
-				case ELLIPSOID	: EmitterClass = EllipsoidEmitter; break;
-				case CIRCLE		: EmitterClass = CircleEmitter; break;
+				case POINT		: EmitterClass = ParticleRange; break;
+				case CUBE		: EmitterClass = CubeRange; break;
+				case ELLIPSOID	: EmitterClass = EllipsoidRange; break;
+				case CIRCLE		: EmitterClass = CircleRange; break;
 			}
 			return EmitterClass;
 		}

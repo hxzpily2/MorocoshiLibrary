@@ -2,7 +2,8 @@ package net.morocoshi.moja3d.particle.animators
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
-	import net.morocoshi.moja3d.particle.emitters.ParticleEmitter;
+	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	import net.morocoshi.moja3d.particle.range.ParticleRange;
 	
 	/**
 	 * エミッターのZ軸方向に初速を加えます。Z軸を中心にした広がりを指定可能。（例：噴水やスプレー等）
@@ -23,16 +24,15 @@ package net.morocoshi.moja3d.particle.animators
 			type = ParticleAnimatorType.SPRAY;
 		}
 		
-		override public function getEmitVelocity():Vector3D 
+		override public function getEmitVelocity(emitter:ParticleEmitter):Vector3D 
 		{
 			var v:Vector3D = new Vector3D();
 			var intensity:Number = random(sprayIntensityMin, sprayIntensityMax);
-			var em:ParticleEmitter = system.emitter;
 			if (!sprayRangeMin && !sprayRangeMax)
 			{
-				v.x = em.zAxis.x * intensity;
-				v.y = em.zAxis.y * intensity;
-				v.z = em.zAxis.z * intensity;
+				v.x = emitter.zAxis.x * intensity;
+				v.y = emitter.zAxis.y * intensity;
+				v.z = emitter.zAxis.z * intensity;
 			}
 			else
 			{
@@ -58,9 +58,9 @@ package net.morocoshi.moja3d.particle.animators
 				var rotation:Number = Math.random() * Math.PI * 2;
 				var tx:Number = Math.cos(rotation) * unit;
 				var ty:Number = Math.sin(rotation) * unit;
-				v.x = (em.xAxis.x * tx + em.yAxis.x * ty + em.zAxis.x * tz) * intensity;
-				v.y = (em.xAxis.y * tx + em.yAxis.y * ty + em.zAxis.y * tz) * intensity;
-				v.z = (em.xAxis.z * tx + em.yAxis.z * ty + em.zAxis.z * tz) * intensity;
+				v.x = (emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz) * intensity;
+				v.y = (emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz) * intensity;
+				v.z = (emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz) * intensity;
 			}
 			return v;
 		}

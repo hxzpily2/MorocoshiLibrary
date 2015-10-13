@@ -1,14 +1,15 @@
-package net.morocoshi.moja3d.particle.emitters 
+package net.morocoshi.moja3d.particle.range 
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.particle.ParticleEmitter;
 	
 	/**
 	 * 楕円体の領域に発生させる
 	 * 
 	 * @author tencho
 	 */
-	public class EllipsoidEmitter extends ParticleEmitter 
+	public class EllipsoidRange extends ParticleRange 
 	{
 		public var radiusX:Number;
 		public var radiusY:Number;
@@ -21,10 +22,10 @@ package net.morocoshi.moja3d.particle.emitters
 		 * @param	radiusZ	Z軸の半径
 		 * @param	equally	trueで均等に分布するようになりますが若干処理が重くなります。
 		 */
-		public function EllipsoidEmitter(radiusX:Number = 0, radiusY:Number = 0, radiusZ:Number = 0, equally:Boolean = true) 
+		public function EllipsoidRange(radiusX:Number = 0, radiusY:Number = 0, radiusZ:Number = 0, equally:Boolean = true) 
 		{
 			super();
-			type = ParticleEmitterType.ELLIPSOID;
+			type = ParticleRangeType.ELLIPSOID;
 			
 			this.radiusX = radiusX;
 			this.radiusY = radiusY;
@@ -32,9 +33,9 @@ package net.morocoshi.moja3d.particle.emitters
 			this.equally = equally;
 		}
 		
-		override public function getRandomPosition():Vector3D 
+		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
 		{
-			var v:Vector3D = super.getRandomPosition();
+			var v:Vector3D = super.getRandomPosition(emitter);
 			
 			var angle:Number = Math.acos(Math.random() * 2 - 1);
 			var unit:Number = Math.sin(angle);
@@ -44,9 +45,9 @@ package net.morocoshi.moja3d.particle.emitters
 			var tz:Number = Math.cos(angle) * radiusZ;
 			var intensity:Number = Math.random();
 			if (equally) intensity = Math.sqrt(intensity);
-			v.x += (xAxis.x * tx + yAxis.x * ty + zAxis.x * tz) * intensity;
-			v.y += (xAxis.y * tx + yAxis.y * ty + zAxis.y * tz) * intensity;
-			v.z += (xAxis.z * tx + yAxis.z * ty + zAxis.z * tz) * intensity;
+			v.x += (emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz) * intensity;
+			v.y += (emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz) * intensity;
+			v.z += (emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz) * intensity;
 			return v;
 		}
 		

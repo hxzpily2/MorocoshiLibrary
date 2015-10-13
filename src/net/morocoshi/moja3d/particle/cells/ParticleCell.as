@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.particle.cells
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.materials.Material;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Object3D;
 	
 	/**
@@ -11,6 +12,7 @@ package net.morocoshi.moja3d.particle.cells
 	 */
 	public class ParticleCell extends ParticleData 
 	{
+		moja3d var initTime:int = 0;
 		/**経過時間*/
 		public var time:Number = 0;
 		/**寿命*/

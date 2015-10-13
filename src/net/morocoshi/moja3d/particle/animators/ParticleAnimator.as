@@ -3,7 +3,7 @@ package net.morocoshi.moja3d.particle.animators
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
-	import net.morocoshi.moja3d.particle.ParticleSystem;
+	import net.morocoshi.moja3d.particle.ParticleEmitter;
 	
 	/**
 	 * パーティクルの動きを管理する基本クラス
@@ -12,8 +12,6 @@ package net.morocoshi.moja3d.particle.animators
 	 */
 	public class ParticleAnimator 
 	{
-		public var system:ParticleSystem;
-		
 		public var type:String;
 		public var scaleMin:Number = 1;
 		public var scaleMax:Number = 1;
@@ -51,11 +49,11 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function emitParticle(particle:ParticleCell):void 
+		public function emitParticle(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
-			particle.velocity = getEmitVelocity();
+			particle.velocity = getEmitVelocity(emitter);
 			particle.spinSpeed = getEmitSpinSpeed();
 			particle.scaleSpeed = getEmitScaleSpeed();
 			particle.time = 0;
@@ -147,7 +145,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル生成時の加速度を取得
 		 * @return
 		 */
-		public function getEmitVelocity():Vector3D
+		public function getEmitVelocity(emitter:ParticleEmitter):Vector3D
 		{
 			var vx:Number = random(velocityMin.x, velocityMax.x);
 			var vy:Number = random(velocityMin.y, velocityMax.y);
