@@ -112,7 +112,7 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function get key():String 
 		{
-			return seed + "_" + colorTransformShader.alphaMode;
+			return seed + "_" + (colorTransformShader? colorTransformShader.alphaMode : "A") + "_";
 		}
 		
 		override public function clone():Object3D 

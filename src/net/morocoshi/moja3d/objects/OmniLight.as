@@ -12,6 +12,14 @@ package net.morocoshi.moja3d.objects
 		private var _fadeStart:Number;
 		private var _fadeEnd:Number;
 		
+		/**
+		 * 
+		 * @param	rgb	ライトの色
+		 * @param	intensity	ライトの強さ
+		 * @param	fadeStart	フェードアウトし始める距離
+		 * @param	fadeEnd	フェードアウトし終わる距離
+		 * @param	specularPower	光沢の強度
+		 */
 		public function OmniLight(rgb:uint, intensity:Number, fadeStart:Number, fadeEnd:Number, specularPower:Number = 1)
 		{
 			super(rgb, intensity, specularPower);
