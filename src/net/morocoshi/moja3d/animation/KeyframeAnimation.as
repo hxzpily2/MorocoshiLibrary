@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.animation 
 {
-	import adobe.utils.CustomActions;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.math.transform.AngleUtil;
@@ -18,6 +17,8 @@ package net.morocoshi.moja3d.animation
 		static public const TYPE_CURVE:String = "curve";
 		/**姿勢をMatrix3Dで決定するタイプ*/
 		static public const TYPE_MATRIX:String = "matrix";
+		/**アニメーション情報のないノード用*/
+		static public const TYPE_MOTIONLESS_MATRIX:String = "motionlessMatrix";
 		/**マテリアルのUVオフセットを動かすタイプ*/
 		static public const TYPE_MATERIAL:String = "material";
 		
@@ -36,6 +37,7 @@ package net.morocoshi.moja3d.animation
 		public var scale:AnimationCurveNode;
 		public var defaultRotation:Vector3D;
 		public var matrix:AnimationMatrixTrack;
+		public var defaultMatrix:Matrix3D;
 		
 		public var target:Object3D;
 		
@@ -70,6 +72,7 @@ package net.morocoshi.moja3d.animation
 			result.rotation = rotation? rotation.clone() : null;
 			result.scale = scale? scale.clone() : null;
 			result.matrix = matrix? matrix.clone() : null;
+			result.defaultMatrix = defaultMatrix? defaultMatrix.clone() : null;
 			return result;
 		}
 		
@@ -107,6 +110,8 @@ package net.morocoshi.moja3d.animation
 				scale.defaultValue.y = target.scaleY;
 				scale.defaultValue.z = target.scaleZ;
 			}
+			
+			defaultMatrix = target.matrix.clone();
 		}
 		
 		/**
@@ -148,6 +153,19 @@ package net.morocoshi.moja3d.animation
 				case TYPE_CURVE:
 					setCurveMatrix(time);
 					break;
+				case TYPE_MOTIONLESS_MATRIX:
+					if (target)
+					{
+						if (blendRatio == 1)
+						{
+							target.matrix = defaultMatrix;
+						}
+						else
+						{
+							target.matrix = Matrix3D.interpolate(capturedTransform.matrix, defaultMatrix, blendRatio);
+						}
+					}
+					break;
 				case TYPE_MATRIX:
 					if (target)
 					{
@@ -178,33 +196,37 @@ package net.morocoshi.moja3d.animation
 		{
 			if (target == null) return;
 			
-			if (material)
+			switch(type)
 			{
-				capturedTransform.offsetU = uvOffsetShader.offsetU;
-				capturedTransform.offsetV = uvOffsetShader.offsetV;
-			}
-			if (position)
-			{
-				capturedTransform.x = target.x;
-				capturedTransform.y = target.y;
-				capturedTransform.z = target.z;
-			}
-			if (rotation)
-			{
-				capturedTransform.rotationX = target.rotationX;
-				capturedTransform.rotationY = target.rotationY;
-				capturedTransform.rotationZ = target.rotationZ;
-			}
-			if (scale)
-			{
-				capturedTransform.scaleX = target.scaleX;
-				capturedTransform.scaleY = target.scaleY;
-				capturedTransform.scaleZ = target.scaleZ;
-				
-			}
-			if (matrix)
-			{
-				capturedTransform.matrix = target.matrix.clone();
+				case TYPE_MATERIAL:
+					capturedTransform.offsetU = uvOffsetShader.offsetU;
+					capturedTransform.offsetV = uvOffsetShader.offsetV;
+					break;
+				case TYPE_CURVE:
+					if (position)
+					{
+						capturedTransform.x = target.x;
+						capturedTransform.y = target.y;
+						capturedTransform.z = target.z;
+					}
+					if (rotation)
+					{
+						capturedTransform.rotationX = target.rotationX;
+						capturedTransform.rotationY = target.rotationY;
+						capturedTransform.rotationZ = target.rotationZ;
+					}
+					if (scale)
+					{
+						capturedTransform.scaleX = target.scaleX;
+						capturedTransform.scaleY = target.scaleY;
+						capturedTransform.scaleZ = target.scaleZ;
+						
+					}
+					break;
+				case TYPE_MATRIX:
+				case TYPE_MOTIONLESS_MATRIX:
+					capturedTransform.matrix = target.matrix.clone();
+					break;
 			}
 			
 			fixRotation = true;
