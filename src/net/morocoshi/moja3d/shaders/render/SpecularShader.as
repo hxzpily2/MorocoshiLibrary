@@ -2,9 +2,12 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.config.LightSetting;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * 光沢シェーダー。フレネル効果にも対応。
@@ -93,7 +96,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			var xyz:String;
 			
-			for (i = 0; i < LightSetting.numOmniLights; i++)
+			for (i = 0; i < LightSetting._numOmniLights; i++)
 			{
 				xyz = ["x", "y", "z"][i];
 				var omniPosition:String = "@omniPosition" + i;
@@ -154,7 +157,7 @@ package net.morocoshi.moja3d.shaders.render
 				fragmentCode.addCode(code);
 			}
 			
-			for (i = 0; i < LightSetting.numDirectionalLights; i++) 
+			for (i = 0; i < LightSetting._numDirectionalLights; i++) 
 			{
 				xyz = ["x", "y", "z"][i];
 				var lightAxis:String = "@lightAxis" + i;

@@ -55,8 +55,8 @@ package net.morocoshi.moja3d.objects
 		{
 			super();
 			
-			castShadow = LightSetting.defaultCastShadow;
-			castLight = LightSetting.defaultCastLight;
+			castShadow = LightSetting._defaultCastShadow;
+			castLight = LightSetting._defaultCastLight;
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;

@@ -71,6 +71,11 @@ package net.morocoshi.moja3d.particle
 		//
 		//--------------------------------------------------------------------------
 		
+		public function addEmiter(emitter:ParticleEmitter):void
+		{
+			emitters.push(emitter);
+		}
+		
 		/**
 		 * パーティクル発生開始
 		 * @param	birthRate

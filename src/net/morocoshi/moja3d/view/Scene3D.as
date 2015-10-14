@@ -20,6 +20,7 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.common.ui.mouse.FPVController;
 	import net.morocoshi.common.ui.mouse.MouseDrag3D;
 	import net.morocoshi.moja3d.billboard.BillboardManager;
+	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.dialogs.SoftwareDialog;
 	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.filters.Filter3D;
@@ -271,6 +272,8 @@ package net.morocoshi.moja3d.view
 		 */
 		public function renderSceneTo(texture:RenderTextureResource, rootObject:Object3D, overlay:Object2D, camera:Camera3D, view:Viewport, filters:Vector.<Filter3D>):void
 		{
+			LightSetting.renderInitialized = true;
+			
 			billboard.lookAtCamera(camera, billboardUpAxis);
 			
 			dispatchEvent(new Event3D(Event3D.PRE_RENDER));

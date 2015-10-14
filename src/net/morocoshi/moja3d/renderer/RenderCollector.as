@@ -187,7 +187,7 @@ package net.morocoshi.moja3d.renderer
 			var n:int;
 			
 			//収集した影ライト数だけ定数を更新する
-			n = LightSetting.numDirectionalShadow;
+			n = LightSetting._numDirectionalShadow;
 			for (i = 0; i < n; i++)
 			{
 				var shadowConst:ShadowConstant = shadowConstantList[i];
@@ -242,7 +242,7 @@ package net.morocoshi.moja3d.renderer
 			sunLightList = sunShadowList.concat(sunLightList);
 			
 			//収集したライト数だけ定数を更新する
-			for (i = 0; i < LightSetting.numDirectionalLights; i++) 
+			for (i = 0; i < LightSetting._numDirectionalLights; i++) 
 			{
 				var light:DirectionalLightConstant = sunLightConstantList[i];
 				if (sunLightList.length <= i)
@@ -253,7 +253,7 @@ package net.morocoshi.moja3d.renderer
 				light.applyFrom(sunLightList[i]);
 			}
 			
-			for (i = 0; i < LightSetting.numOmniLights; i++) 
+			for (i = 0; i < LightSetting._numOmniLights; i++) 
 			{
 				var omniLight:OmniLightConstant = omniLightConstantList[i];
 				if (omniLightList.length <= i)
@@ -312,19 +312,19 @@ package net.morocoshi.moja3d.renderer
 			
 			var i:int;
 			var n:int;
-			n = LightSetting.numDirectionalShadow;
+			n = LightSetting._numDirectionalShadow;
 			for (i = 0; i < n; i++)
 			{
 				shadowConstantList.push(new ShadowConstant(i, vertexCode, fragmentCode));
 			}
 			
-			n = LightSetting.numDirectionalLights;
+			n = LightSetting._numDirectionalLights;
 			for (i = 0; i < n; i++) 
 			{
 				sunLightConstantList.push(new DirectionalLightConstant(i, vertexCode, fragmentCode));
 			}
 			
-			n = LightSetting.numOmniLights;
+			n = LightSetting._numOmniLights;
 			for (i = 0; i < n; i++) 
 			{
 				omniLightConstantList.push(new OmniLightConstant(i, vertexCode, fragmentCode));
@@ -342,7 +342,7 @@ package net.morocoshi.moja3d.renderer
 			if (hasShadow)
 			{
 				//限界まで影ライトを追加する
-				if (sunShadowList.length < LightSetting.numDirectionalShadow)
+				if (sunShadowList.length < LightSetting._numDirectionalShadow)
 				{
 					sunShadowList.push(light as DirectionalLight);
 				}
@@ -363,7 +363,7 @@ package net.morocoshi.moja3d.renderer
 			
 			if (light is DirectionalLight)
 			{
-				if (sunLightList.length < LightSetting.numDirectionalLights)
+				if (sunLightList.length < LightSetting._numDirectionalLights)
 				{
 					sunLightList.push(light as DirectionalLight);
 				}
@@ -371,7 +371,7 @@ package net.morocoshi.moja3d.renderer
 			
 			if (light is OmniLight)
 			{
-				if (omniLightList.length < LightSetting.numOmniLights)
+				if (omniLightList.length < LightSetting._numOmniLights)
 				{
 					omniLightList.push(light as OmniLight);
 				}

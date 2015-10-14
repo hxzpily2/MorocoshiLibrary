@@ -1,12 +1,16 @@
-package net.morocoshi.moja3d.shaders.shadow {
+package net.morocoshi.moja3d.shaders.shadow
+{
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * まだ1つ分のライトしか正確に処理できてない？もうできた？要確認！
@@ -82,7 +86,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 		
 		override public function getKey():String 
 		{
-			return "ShadowShader:" + LightSetting.numDirectionalShadow + "_" + _mainSamples + "_" + _wideSamples;
+			return "ShadowShader:" + LightSetting._numDirectionalShadow + "_" + _mainSamples + "_" + _wideSamples;
 		}
 		
 		private function calcBlur():void 
@@ -133,7 +137,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 				"$result.xy = @0_0"
 			);
 			
-			for (i = 0; i < LightSetting.numDirectionalShadow; i++) 
+			for (i = 0; i < LightSetting._numDirectionalShadow; i++) 
 			{
 				var xyz:String = ["x", "y", "z"][i];
 				var numLightLeyers:int = _useWideShadow? 2 : 1;

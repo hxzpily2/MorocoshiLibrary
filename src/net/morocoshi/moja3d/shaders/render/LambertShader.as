@@ -1,9 +1,12 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.config.LightSetting;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * ランバートシェーディング
@@ -68,7 +71,7 @@ package net.morocoshi.moja3d.shaders.render
 			var i:int;
 			
 			//点光源を加算
-			for (i = 0; i < LightSetting.numOmniLights; i++)
+			for (i = 0; i < LightSetting._numOmniLights; i++)
 			{
 				fragmentCode.addCode("var $temp");
 				var omniPosition:String = "@omniPosition" + i;
@@ -104,7 +107,7 @@ package net.morocoshi.moja3d.shaders.render
 			}
 			
 			//平行光源を加算
-			for (i = 0; i < LightSetting.numDirectionalLights; i++) 
+			for (i = 0; i < LightSetting._numDirectionalLights; i++) 
 			{
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
