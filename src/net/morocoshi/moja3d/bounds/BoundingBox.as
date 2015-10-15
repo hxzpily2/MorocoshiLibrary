@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.bounds 
 {
 	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.collision.solid.bounds.AABB3D;
 	import net.morocoshi.moja3d.moja3d;
@@ -264,6 +265,11 @@ package net.morocoshi.moja3d.bounds
 		public function toString():String 
 		{
 			return "[" + getQualifiedClassName(this).split("::")[1] + " min(" + minX + "," + minY + "," + minZ + ") max(" + maxX + "," + maxY + "," + maxZ + ")]";
+		}
+		
+		public function getCenterPoint():Vector3D 
+		{
+			return new Vector3D((minX + maxX) * 0.5, (minY + maxY) * 0.5, (minZ + maxZ) * 0.5);
 		}
 		
 	}

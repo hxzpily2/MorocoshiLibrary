@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.animation 
 {
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Object3D;
 	
 	/**
@@ -59,7 +60,10 @@ package net.morocoshi.moja3d.animation
 			}
 		}
 		
-		public function checkTime():void
+		/**
+		 * 全アニメーションの開始＆終了時間をチェックし、一番長いものをモーションの時間とする
+		 */
+		moja3d function checkTime():void
 		{
 			startTime = Number.MAX_VALUE;
 			endTime = 0;

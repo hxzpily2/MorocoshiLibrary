@@ -33,7 +33,7 @@ package net.morocoshi.moja3d.filters
 		
 		override public function render(manager:PostEffectManager):void 
 		{
-			manager.renderFinal(shaderList, 0, [manager.renderTexture, manager.maskTexture]);
+			manager.renderFinal(shaderList, 0, [null, manager.maskTexture]);
 		}
 		
 	}

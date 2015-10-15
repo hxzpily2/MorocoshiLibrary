@@ -11,6 +11,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
@@ -30,11 +31,15 @@ package net.morocoshi.moja3d.objects
 		public var name:String;
 		public var animationID:String;
 		public var userData:Object;
-		/**反射用レンダリング時に除外するか*/
-		public var ignoreReflect:Boolean;
 		/**このオブジェクトが影を落とすか*/
-		public var castShadow:Boolean;
-		public var castLight:Boolean;
+		public var castShadowEnabled:Boolean;
+		public var castShadowChildren:Boolean;
+		/**このオブジェクトが光筋を伸ばすか*/
+		public var castLightEnabled:Boolean;
+		public var castLightChildren:Boolean;
+		/**このオブジェクトが反射で映り込むか*/
+		public var reflectEnabled:Boolean;
+		public var reflectChildren:Boolean;
 		/**これが-1以外だと自分をマスクレンダリングの対象にします。MaskColorクラス参照。*/
 		public var renderMask:int;
 		/**これが-1以外だと自分を含む子全てをマスクレンダリングの対象にします。MaskColorクラス参照。*/
@@ -103,9 +108,13 @@ package net.morocoshi.moja3d.objects
 			_visible = true;
 			flip = 1;
 			
-			castShadow = true;
-			castLight = true;
-			ignoreReflect = false;
+			castShadowEnabled = LightSetting._defaultCastShadow;
+			castLightEnabled = LightSetting._defaultCastLight;
+			reflectEnabled = LightSetting._defaultReflect;
+			castShadowChildren = true;
+			castLightChildren = true;
+			reflectChildren = true;
+			
 			renderMask = -1;
 			containerRenderMask = -1;
 			calculateMatrixOrder = true;
@@ -489,9 +498,10 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target.castShadow = castShadow;
-			target.castLight = castLight;
-			target.ignoreReflect = ignoreReflect;
+			target.castShadowEnabled = castShadowEnabled;
+			target.castShadowChildren = castShadowChildren;
+			target.castLightEnabled = castLightEnabled;
+			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
@@ -513,9 +523,10 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target.castShadow = castShadow;
-			target.castLight = castLight;
-			target.ignoreReflect = ignoreReflect;
+			target.castShadowEnabled = castShadowEnabled;
+			target.castShadowChildren = castShadowChildren;
+			target.castLightEnabled = castLightEnabled;
+			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
@@ -778,19 +789,13 @@ package net.morocoshi.moja3d.objects
 			var phase:String = collector.renderPhase;
 			
 			//Z深度レンダリング時に除外する場合
-			if (phase == RenderPhase.DEPTH && castShadow == false)
-			{
-				return false;
-			}
-			
-			//Z深度レンダリング時に除外する場合
-			if (phase == RenderPhase.LIGHT && castLight == false)
+			if (phase == RenderPhase.LIGHT && castLightEnabled == false)
 			{
 				return false;
 			}
 			
 			//反射レンダリング時に除外する場合
-			if (phase == RenderPhase.REFLECT && ignoreReflect)
+			if (phase == RenderPhase.REFLECT && reflectEnabled == false)
 			{
 				return false;
 			}
@@ -866,23 +871,36 @@ package net.morocoshi.moja3d.objects
 				calculateColorOrder = false;
 			}
 			
-			//SkyBoxなどで常にカメラ位置に動かした場合などに使う
+			//SkyBoxなどで常にカメラ位置に動かしたい場合などに使う
 			if (phase != RenderPhase.CHECK)
 			{
 				collecting(collector);
 			}
 			
+			//デプスシャドウレンダリング時に除外する場合
+			var skipChildren:Boolean = 
+				(phase == RenderPhase.DEPTH && castShadowChildren == false)
+			||	(phase == RenderPhase.LIGHT && castLightChildren == false)
+			||	(phase == RenderPhase.REFLECT && reflectChildren == false);
+			
 			//子を再帰的に収集する
-			for (var current:Object3D = _children; current; current = current._next)
+			if (skipChildren == false)
 			{
-				//非表示の子は計算はしないが、親が姿勢変化していた場合は通知しておく
-				if (current._visible == false)
+				for (var current:Object3D = _children; current; current = current._next)
 				{
-					current.calculateMatrixOrder = (current.calculateMatrixOrder || calcMatrix);
-					continue;
+					//非表示の子は計算はしないが、親が姿勢変化していた場合は通知しておく
+					if (current._visible == false)
+					{
+						current.calculateMatrixOrder = (current.calculateMatrixOrder || calcMatrix);
+						continue;
+					}
+					current.collectRenderElements(collector, calcMatrix, calcColor, calcBounds, worldFlip * flip, mask);
 				}
-				current.collectRenderElements(collector, calcMatrix, calcColor, calcBounds, worldFlip * flip, mask);
 			}
+			
+			
+			//デプスシャドウレンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.DEPTH && castShadowEnabled == false) return false;
 			
 			//境界球で除外
 			_inCameraView = !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);

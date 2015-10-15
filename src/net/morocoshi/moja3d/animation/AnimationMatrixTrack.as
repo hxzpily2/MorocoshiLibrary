@@ -46,11 +46,6 @@ package net.morocoshi.moja3d.animation
 			updateTimeLength();
 		}
 		
-		private function updateTimeLength():void 
-		{
-			timeLength = _endTime - _startTime;
-		}
-		
 		public function getMatrix3D(time:Number):Matrix3D 
 		{
 			if (!timeList.length) return null;
@@ -117,6 +112,11 @@ package net.morocoshi.moja3d.animation
 		public function reset():void 
 		{
 			lastIndex = 0;
+		}
+		
+		private function updateTimeLength():void 
+		{
+			timeLength = _endTime - _startTime;
 		}
 		
 		public function get startTime():Number 

@@ -40,9 +40,9 @@ package net.morocoshi.air.application
 		 * タイトル＋バージョンの文字列を取得
 		 * @return
 		 */
-		public function getTitleAndVersion():String 
+		public function getTitleAndVersion(split:String = " "):String 
 		{
-			return name + " - " + version;
+			return name + split + version;
 		}
 		
 	}

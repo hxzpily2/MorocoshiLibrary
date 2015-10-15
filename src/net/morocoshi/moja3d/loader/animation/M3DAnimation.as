@@ -12,6 +12,7 @@ package net.morocoshi.moja3d.loader.animation
 		static public const TYPE_MATERIAL:String = "material";
 		static public const TYPE_CURVE:String = "curve";
 		static public const TYPE_MATRIX:String = "matrix";
+		static public const TYPE_MOTIONLESS_MATRIX:String = "motionlessMatrix";
 		/***/
 		public var type:String;
 		
@@ -25,6 +26,8 @@ package net.morocoshi.moja3d.loader.animation
 		public var scale:M3DTrackXYZ;
 		/**[type=TYPE_MATRIX時使用]Matrix3Dデータ*/
 		public var matrix:M3DMatrixTrack;
+		/**[type=TYPE_MOTIONLESS_MATRIX時使用]*/
+		public var defaultMatrix:Vector.<Number>;
 		/**[type=TYPE_CURVE時使用]足りない要素をここから使う*/
 		public var defaultRotation:Vector3D;
 		

@@ -30,6 +30,11 @@ package net.morocoshi.moja3d.objects
 			super();
 			
 			updateSeed();
+			
+			castShadowChildren = false;
+			castLightChildren = false;
+			reflectChildren = false;
+			
 			bones = new Vector.<Bone>;
 			skinShaderList = new Vector.<SkinShader>;
 		}

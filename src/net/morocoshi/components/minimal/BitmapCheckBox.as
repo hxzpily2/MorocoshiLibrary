@@ -1,5 +1,6 @@
 package net.morocoshi.components.minimal 
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
@@ -17,9 +18,11 @@ package net.morocoshi.components.minimal
 		private var _selected:Boolean;
 		private var click:Function;
 		
-		public function BitmapCheckBox(parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, off:BitmapData = null, on:BitmapData = null, defaultHandler:Function = null, smoothing:Boolean = true, scaleMode:String = "auto")
+		public function BitmapCheckBox(parent:DisplayObjectContainer = null, xpos:Number = 0, ypos:Number = 0, off:* = null, on:* = null, defaultHandler:Function = null, smoothing:Boolean = true, scaleMode:String = "auto")
 		{
 			this.click = defaultHandler;
+			if (on is Bitmap) on = Bitmap(on).bitmapData; 
+			if (off is Bitmap) off = Bitmap(off).bitmapData; 
 			super(parent, xpos, ypos, off, null, null, clickHandler, smoothing, scaleMode);
 			_selected = false;
 			images = Vector.<BitmapData>([off, on]);

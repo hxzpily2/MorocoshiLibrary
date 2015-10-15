@@ -17,6 +17,27 @@ package net.morocoshi.moja3d.loader.objects
 		{
 		}
 		
+		override public function toM3DObject3D():M3DObject 
+		{
+			var result:M3DBone = new M3DBone();
+			
+			result.index = index;
+			result.enabled = enabled;
+			result.transformLink = transformLink;
+			
+			result.animation = animation;
+			result.animationID = animationID;
+			result.id = id;
+			result.layer = layer;
+			result.matrix = matrix;
+			result.name = name;
+			result.parent = parent;
+			result.userData = userData;
+			result.visible = visible;
+			
+			return result;
+		}
+		
 	}
 
 }

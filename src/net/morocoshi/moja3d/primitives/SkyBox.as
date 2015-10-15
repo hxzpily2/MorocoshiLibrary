@@ -27,7 +27,7 @@ package net.morocoshi.moja3d.primitives
 		{
 			super();
 			
-			castShadow = false;
+			castShadowEnabled = false;
 			
 			var vertices:Vector.<Number> = new Vector.<Number>;
 			var uvs:Vector.<Number> = new Vector.<Number>;

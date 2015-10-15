@@ -1,6 +1,7 @@
 package net.morocoshi.components.minimal.buttons 
 {
 	import com.bit101.components.Component;
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
@@ -39,9 +40,14 @@ package net.morocoshi.components.minimal.buttons
 		 * @param	smoothing
 		 * @param	scaleMode	[ScaleMode:fit]
 		 */
-		public function BitmapButton(parent:DisplayObjectContainer, xpos:Number, ypos:Number, image:BitmapData, over:BitmapData = null, down:BitmapData = null, clickHandler:Function = null, smoothing:Boolean = true, scaleMode:String = "fit")
+		public function BitmapButton(parent:DisplayObjectContainer, xpos:Number, ypos:Number, image:*, over:* = null, down:* = null, clickHandler:Function = null, smoothing:Boolean = true, scaleMode:String = "fit")
 		{
 			super(parent, xpos, ypos);
+			
+			if (image is Bitmap) image = Bitmap(image).bitmapData;
+			if (over is Bitmap) over = Bitmap(over).bitmapData;
+			if (down is Bitmap) down = Bitmap(down).bitmapData;
+			
 			buttonMode = true;
 			mouseChildren = false;
 			_imageClip = new BitmapClip(this, 0, 0, image, smoothing, scaleMode);

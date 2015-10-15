@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.loader
 {
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
@@ -140,7 +141,7 @@ package net.morocoshi.moja3d.loader
 			for (i = 0; i < n; i++) 
 			{
 				obj = objectList[i];
-				var lock:Boolean = obj.userData.lock || (obj.hasUserData && lockUserPropertyObject);
+				var lock:Boolean = (obj.animation != null) || obj.userData.lock || (obj.hasUserData && lockUserPropertyObject);
 				if (lock || obj is M3DLight || obj is M3DMesh || obj is M3DCamera || obj is M3DLine || obj is M3DBone)
 				{
 					var current:M3DObject = obj;
@@ -249,7 +250,8 @@ package net.morocoshi.moja3d.loader
 		public function setOnlyAnimation():void 
 		{
 			animation = { };
-			for each(var object:M3DObject in objectList)
+			var object:M3DObject;
+			for each(object in objectList)
 			{
 				if (object.animation)
 				{
@@ -257,7 +259,19 @@ package net.morocoshi.moja3d.loader
 					animation[key] = object.animation;
 				}
 			}
-			objectList.length = 0;
+			var n:int = objectList.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				object = objectList[i].toM3DObject3D();
+				objectList[i] = object;
+				if (object is M3DBone && object.animation == null)
+				{
+					object.animation = new M3DAnimation();
+					object.animation.type = M3DAnimation.TYPE_MOTIONLESS_MATRIX;
+					object.animation.defaultMatrix = object.matrix.concat();
+					animation[object.animationID] = object.animation;
+				}
+			}
 			geometryList.length = 0;
 			materialList.length = 0;
 		}

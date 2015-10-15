@@ -63,6 +63,12 @@ package net.morocoshi.common.timers
 			return t;
 		}
 		
+		public function set time(value:int):void
+		{
+			_time = value;
+			_lastTime = getTimer();
+		}
+		
 		/**
 		 * 再生中か
 		 */

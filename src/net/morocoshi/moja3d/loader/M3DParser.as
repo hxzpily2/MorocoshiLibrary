@@ -136,7 +136,11 @@ package net.morocoshi.moja3d.loader
 		
 		private var geometryA3DLink:Object;
 		private var geometryM3DLink:Object;
-		private var hasModel:Boolean;
+		
+		private var _hasModel:Boolean;
+		
+		//モーションデータのみパースする場合内部でtrueにする
+		private var forMotionData:Boolean;
 		
 		
 		//--------------------------------------------------------------------------
@@ -148,6 +152,7 @@ package net.morocoshi.moja3d.loader
 		public function M3DParser() 
 		{
 			//onConvertMaterial = toMaterial;
+			forMotionData = false;
 			animationPlayer = new AnimationPlayer();
 		}
 		
@@ -231,11 +236,23 @@ package net.morocoshi.moja3d.loader
 		//
 		//--------------------------------------------------------------------------
 		
+		/**
+		 * 
+		 * @param	data
+		 * @param	includeTo
+		 * @return
+		 */
 		public function parse(data:ByteArray, includeTo:Object3D = null):M3DParser
 		{
 			this.includeTo = includeTo;
 			
 			init();
+			
+			if (data == null)
+			{
+				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "引数に渡されたByteArrayがnullです！"));
+				return this;
+			}
 			
 			var holder:TFPHolder = new TFPHolder();
 			var loader:TFPLoader = new TFPLoader(holder);
@@ -257,6 +274,7 @@ package net.morocoshi.moja3d.loader
 		static public function parseMotion(data:ByteArray, bezierCurveInterval:Number):MotionData 
 		{
 			var parser:M3DParser = new M3DParser();
+			parser.forMotionData = true;
 			parser.bezierCurveInterval = bezierCurveInterval;
 			parser.parse(data);
 			return parser.motion;
@@ -288,7 +306,7 @@ package net.morocoshi.moja3d.loader
 			loader.removeEventListener(Event.COMPLETE, tfpLoader_completeHandler);
 			var info:M3DInfo = loader.holder.getByteArray("/info.dat").readObject() as M3DInfo;
 			
-			hasModel = info.hasModel;
+			_hasModel = info.hasModel;
 			
 			resourcePack = null;
 			//画像があったら
@@ -331,7 +349,7 @@ package net.morocoshi.moja3d.loader
 			this.includeTo = includeTo;
 			
 			resourcePack = null;
-			hasModel = true;
+			_hasModel = true;
 			parseM3DScene(scene);
 		}
 		
@@ -365,115 +383,124 @@ package net.morocoshi.moja3d.loader
 			var geomM3D:M3DGeometry;
 			var geomA3D:Geometry;
 			var combineRequest:Vector.<M3DCombinedGeometry> = new Vector.<M3DCombinedGeometry>;
-			//単体のジオメトリをパース
-			n = scene.geometryList.length;
 			
-			for (i = 0; i < n; i++) 
+			//通常モデルデータの場合
+			if (forMotionData == false)
 			{
-				geomM3D = scene.geometryList[i];
-				//もしジオメトリが集合体だった場合
-				if (geomM3D is M3DCombinedGeometry)
+				//単体のジオメトリをパース
+				n = scene.geometryList.length;
+				for (i = 0; i < n; i++) 
 				{
-					combineRequest.push(geomM3D);
-					continue;
-				}
-				geomA3D = toGeometry(geomM3D as M3DMeshGeometry);
-				geometryA3DLink[geomM3D.id] = geomA3D;
-				geometries.push(geomA3D);
-			}
-			
-			//Materialパース
-			n = scene.materialList.length;
-			for (i = 0; i < n; i++) 
-			{
-				var materialM3D:M3DMaterial = scene.materialList[i];
-				
-				//アニメーション
-				var materialAnimation:KeyframeAnimation;
-				if (materialM3D.animation)
-				{
-					materialAnimation = toKeyAnimation(materialM3D.animation);
-					materialAnimation.initMaterial();
-					keyAnimations.push(materialAnimation);
-					animationPlayer.keyAnimations.push(materialAnimation);
+					geomM3D = scene.geometryList[i];
+					//もしジオメトリが集合体だった場合
+					if (geomM3D is M3DCombinedGeometry)
+					{
+						combineRequest.push(geomM3D);
+						continue;
+					}
+					geomA3D = toGeometry(geomM3D as M3DMeshGeometry);
+					geometryA3DLink[geomM3D.id] = geomA3D;
+					geometries.push(geomA3D);
 				}
 				
-				var materialA3D:ParserMaterial = new ParserMaterial(materialM3D, materialAnimation);
-				materialA3DLink[materialM3D.id] = materialA3D;
-				materialM3DLink[materialA3D] = materialM3D;
-				materials.push(materialA3D);
-			}
-			
-			//集合体のジオメトリをパース
-			n = combineRequest.length;
-			for (i = 0; i < n; i++) 
-			{
-				geomM3D = combineRequest[i];
-				geomA3D = toCombinedGeometry(geomM3D as M3DCombinedGeometry);
-				geometryA3DLink[geomM3D.id] = geomA3D;
-				geometries.push(geomA3D);
-			}
-			
-			//Objectパース
-			n = scene.objectList.length;
-			for (i = 0; i < n; i++) 
-			{
-				objectM3D = scene.objectList[i];
-				objectA3D = toObject3D(objectM3D);
-				objectA3D.calculateBounds();
-				objectM3DLink[objectA3D] = objectM3D;
-				objectA3DLink[objectM3D.id] = objectA3D;
-				objects.push(objectA3D);
-				
-				if (objectA3D is Camera3D)
+				//Materialパース
+				n = scene.materialList.length;
+				for (i = 0; i < n; i++) 
 				{
-					cameras.push(objectA3D as Camera3D);
+					var materialM3D:M3DMaterial = scene.materialList[i];
+					
+					//アニメーション
+					var materialAnimation:KeyframeAnimation;
+					if (materialM3D.animation)
+					{
+						materialAnimation = toKeyAnimation(materialM3D.animation);
+						materialAnimation.initMaterial();
+						keyAnimations.push(materialAnimation);
+						animationPlayer.keyAnimations.push(materialAnimation);
+					}
+					
+					var materialA3D:ParserMaterial = new ParserMaterial(materialM3D, materialAnimation);
+					materialA3DLink[materialM3D.id] = materialA3D;
+					materialM3DLink[materialA3D] = materialM3D;
+					materials.push(materialA3D);
 				}
 				
-				//アニメーション
-				if (objectM3D.animation)
+				//集合体のジオメトリをパース
+				n = combineRequest.length;
+				for (i = 0; i < n; i++) 
 				{
-					var anm:KeyframeAnimation = toKeyAnimation(objectM3D.animation);
-					anm.setObject(objectA3D);
-					///animatedObjectLink[anm] = objectA3D;
-					keyAnimations.push(anm);
-					animationPlayer.keyAnimations.push(anm);
+					geomM3D = combineRequest[i];
+					geomA3D = toCombinedGeometry(geomM3D as M3DCombinedGeometry);
+					geometryA3DLink[geomM3D.id] = geomA3D;
+					geometries.push(geomA3D);
+				}
+				
+				//Objectパース
+				n = scene.objectList.length;
+				for (i = 0; i < n; i++) 
+				{
+					objectM3D = scene.objectList[i];
+					objectA3D = toObject3D(objectM3D);
+					objectA3D.calculateBounds();
+					objectM3DLink[objectA3D] = objectM3D;
+					objectA3DLink[objectM3D.id] = objectA3D;
+					objects.push(objectA3D);
+					
+					if (objectA3D is Camera3D)
+					{
+						cameras.push(objectA3D as Camera3D);
+					}
+					
+					//アニメーション
+					if (objectM3D.animation)
+					{
+						var anm:KeyframeAnimation = toKeyAnimation(objectM3D.animation);
+						anm.setObject(objectA3D);
+						///animatedObjectLink[anm] = objectA3D;
+						keyAnimations.push(anm);
+						animationPlayer.keyAnimations.push(anm);
+					}
+				}
+				
+				animationPlayer.checkTime();
+				
+				//親子リンク
+				for (i = 0; i < n; i++) 
+				{
+					objectM3D = scene.objectList[i];
+					var parent:Object3D = objectA3DLink[objectM3D.parent];
+					var child:Object3D = objectA3DLink[objectM3D.id];
+					if (!parent)
+					{
+						hierarchy.push(child);
+						continue;
+					}
+					parent.addChild(child);
+				}
+				
+				for (i = 0; i < n; i++) 
+				{
+					//各Object3DのアニメーションIDを保存しておく
+					objectA3D = objects[i];
+					
+					//SKIN初期化
+					if (objectA3D is Skin)
+					{
+						Skin(objectA3D).calculateBones();
+					}
 				}
 			}
 			
 			//モーションデータ用アニメーション
-			motion = new MotionData();
-			for (var key:String in scene.animation)
+			if (forMotionData)
 			{
-				var keyAnimation:KeyframeAnimation = toKeyAnimation(scene.animation[key]);
-				motion.animation[key] = keyAnimation;
-			}
-			motion.checkTime();
-			
-			//親子リンク
-			for (i = 0; i < n; i++) 
-			{
-				objectM3D = scene.objectList[i];
-				var parent:Object3D = objectA3DLink[objectM3D.parent];
-				var child:Object3D = objectA3DLink[objectM3D.id];
-				if (!parent)
+				motion = new MotionData();
+				for (var key:String in scene.animation)
 				{
-					hierarchy.push(child);
-					continue;
+					var keyAnimation:KeyframeAnimation = toKeyAnimation(scene.animation[key]);
+					motion.animation[key] = keyAnimation;
 				}
-				parent.addChild(child);
-			}
-			
-			for (i = 0; i < n; i++) 
-			{
-				//各Object3DのアニメーションIDを保存しておく
-				objectA3D = objects[i];
-				
-				//SKIN初期化
-				if (objectA3D is Skin)
-				{
-					Skin(objectA3D).calculateBones();
-				}
+				motion.checkTime();
 			}
 			
 			//キーフレームアニメーション
@@ -501,7 +528,7 @@ package net.morocoshi.moja3d.loader
 			}
 			
 			//モデルとリソースがあるなら、ここでアタッチしておく（アップロードまではしない）
-			if (hasModel && resourcePack)
+			if (_hasModel && resourcePack)
 			{
 				resourcePack.attachTo(resources, false);
 			}
@@ -567,6 +594,7 @@ package net.morocoshi.moja3d.loader
 			if (data.rotation) anm.rotation = toCurveNode(data.rotation);
 			if (data.scale) anm.scale = toCurveNode(data.scale);
 			if (data.matrix) anm.matrix = toMatrixTrack(data.matrix);
+			if (data.defaultMatrix) anm.defaultMatrix = new Matrix3D(data.defaultMatrix);
 			anm.defaultRotation = data.defaultRotation? data.defaultRotation.clone() : null;
 			return anm;
 		}
@@ -884,6 +912,14 @@ package net.morocoshi.moja3d.loader
 			{
 				objects[i].upload(context3D, false, async);
 			}
+		}
+		
+		/**
+		 * モデルデータが書き出されているか
+		 */
+		public function get hasModel():Boolean 
+		{
+			return _hasModel;
 		}
 		
 		/*

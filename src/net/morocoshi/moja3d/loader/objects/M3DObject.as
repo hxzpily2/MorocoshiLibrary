@@ -49,6 +49,21 @@ package net.morocoshi.moja3d.loader.objects
 			return key;
 		}
 		
+		public function toM3DObject3D():M3DObject 
+		{
+			var result:M3DObject = new M3DObject();
+			result.animation = animation;
+			result.animationID = animationID;
+			result.id = id;
+			result.layer = layer;
+			result.matrix = matrix;
+			result.name = name;
+			result.parent = parent;
+			result.userData = userData;
+			result.visible = visible;
+			return result;
+		}
+		
 		public function get hasUserData():Boolean 
 		{
 			if (userData == null) return false;

@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.primitives.Cube;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
+	
 	use namespace moja3d;
 	
 	/**
@@ -61,7 +62,7 @@ package net.morocoshi.moja3d.objects
 			fm.culling = TriangleFace.BOTH;
 			debugCube = new Cube(1, 1, 1, 1, 1, 1, fm);
 			debugCube.name = "ShadowCube"
-			debugCube.castShadow = false;
+			debugCube.castShadowEnabled = false;
 			addChild(debugCube);
 			
 			debug = _debug;
