@@ -250,7 +250,7 @@ package net.morocoshi.moja3d.loader
 			
 			if (data == null)
 			{
-				dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, "引数に渡されたByteArrayがnullです！"));
+				dispatchError("引数に渡されたByteArrayがnullです！");
 				return this;
 			}
 			
@@ -294,7 +294,7 @@ package net.morocoshi.moja3d.loader
 		
 		private function tfpLoader_errorHandler(e:TFPErrorEvent):void 
 		{
-			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, e.text));
+			dispatchError(e.text);
 		}
 		
 		private function tfpLoader_completeHandler(e:Event):void 
@@ -399,6 +399,8 @@ package net.morocoshi.moja3d.loader
 						continue;
 					}
 					geomA3D = toGeometry(geomM3D as M3DMeshGeometry);
+					//エラーが出ていたら処理停止
+					if (geomA3D == null) return;
 					geometryA3DLink[geomM3D.id] = geomA3D;
 					geometries.push(geomA3D);
 				}
@@ -414,7 +416,7 @@ package net.morocoshi.moja3d.loader
 					if (materialM3D.animation)
 					{
 						materialAnimation = toKeyAnimation(materialM3D.animation);
-						materialAnimation.initMaterial();
+						materialAnimation.initMaterialShader();
 						keyAnimations.push(materialAnimation);
 						animationPlayer.keyAnimations.push(materialAnimation);
 					}
@@ -441,6 +443,9 @@ package net.morocoshi.moja3d.loader
 				{
 					objectM3D = scene.objectList[i];
 					objectA3D = toObject3D(objectM3D);
+					//エラーが出ていたら処理停止
+					if (objectA3D == null) return;
+					
 					objectA3D.calculateBounds();
 					objectM3DLink[objectA3D] = objectM3D;
 					objectA3DLink[objectM3D.id] = objectA3D;
@@ -678,7 +683,7 @@ package net.morocoshi.moja3d.loader
 			}
 			if (result == null)
 			{
-				result = new Object3D();
+				return null;
 			}
 			
 			result.visible = m3d.visible;
@@ -790,6 +795,16 @@ package net.morocoshi.moja3d.loader
 				if (m3dSkinGeom.weights2)		skinGeom.addVertices(VertexAttribute.BONEWEIGHT2, 4, m3dSkinGeom.weights2);
 				
 				skinGeom.boneIDList = m3dSkinGeom.boneIDList;
+				if (skinGeom.boneIDList == null)
+				{
+					dispatchError("スキンメッシュ用ジオメトリにboneIDListが存在しません！古いデータの可能性があります。");
+					return null;
+				}
+				if (m3dSkinGeom.boneIndices1 == null)
+				{
+					dispatchError("スキンメッシュ用ジオメトリにboneIndices1が存在しません！古いデータの可能性があります。");
+					return null;
+				}
 				geom = skinGeom;
 			}
 			else
@@ -808,6 +823,15 @@ package net.morocoshi.moja3d.loader
 			return geom;
 		}
 		
+		/**
+		 * エラーイベントを発行する
+		 * @param	text
+		 */
+		private function dispatchError(text:String):void 
+		{
+			dispatchEvent(new ErrorEvent(ErrorEvent.ERROR, false, false, text));
+		}
+		
 		private function toMesh(m3d:M3DMesh):Mesh 
 		{
 			var geomM3D:M3DGeometry = geometryM3DLink[m3d.geometryID];
@@ -815,6 +839,12 @@ package net.morocoshi.moja3d.loader
 			var m3dSkin:M3DSkin = m3d as M3DSkin;
 			var mesh:Mesh = m3dSkin? new Skin() : new Mesh();
 			mesh.geometry = geom;
+			
+			if (m3dSkin && !(geom is SkinGeometry) && !(geom is CombinedGeometry))
+			{
+				dispatchError("スキンメッシュ用ジオメトリの構成に問題があります！古いデータの可能性があります。");
+				return null;
+			}
 			//___スキンの場合、各頂点のボーンインデックス＆ウェイトを設定・・・してたけど、ジオメトリ側で設定しないとだめ？
 			/*
 			if (mesh is Skin)

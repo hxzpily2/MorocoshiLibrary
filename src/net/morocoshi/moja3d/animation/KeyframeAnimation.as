@@ -7,7 +7,7 @@ package net.morocoshi.moja3d.animation
 	import net.morocoshi.moja3d.shaders.render.UVOffsetShader;
 	
 	/**
-	 * ...
+	 * 1つのオブジェクトを動かすキーフレームアニメーション
 	 * 
 	 * @author tencho
 	 */
@@ -24,12 +24,11 @@ package net.morocoshi.moja3d.animation
 		
 		static private var DEGREE:Number = 180 / Math.PI;
 		
-		private var capturedTransform:Object;
-		private var fixRotation:Boolean;
-		public var blendRatio:Number;
-			
 		public var type:String;
 		
+		/**モーションブレンドの割合*/
+		public var blendRatio:Number;
+		/**UVオフセットシェーダー*/
 		public var uvOffsetShader:UVOffsetShader;
 		public var material:AnimationMaterialNode;
 		public var position:AnimationCurveNode;
@@ -37,13 +36,21 @@ package net.morocoshi.moja3d.animation
 		public var scale:AnimationCurveNode;
 		public var defaultRotation:Vector3D;
 		public var matrix:AnimationMatrixTrack;
+		/**MOTIONLESS_MATRIX用*/
 		public var defaultMatrix:Matrix3D;
-		
+		/**動かす対象*/
 		public var target:Object3D;
+		/**ターゲット指定などがされていて有効なアニメーションかどうか*/
+		public var valid:Boolean;
+		/**モーションブレンド用のブレンド直前の姿勢情報*/
+		private var capturedTransform:Object;
+		/**角度をブレンドする際に1度だけ近い角度に修正するフラグ*/
+		private var fixRotation:Boolean;
 		
 		public function KeyframeAnimation(type:String = TYPE_CURVE) 
 		{
 			this.type = type;
+			valid = false;
 			blendRatio = 1;
 			capturedTransform = { };
 		}
@@ -79,7 +86,7 @@ package net.morocoshi.moja3d.animation
 		/**
 		 * 
 		 */
-		public function initMaterial():void
+		public function initMaterialShader():void
 		{
 			uvOffsetShader = new UVOffsetShader(0, 0, 1, 1);
 		}
@@ -92,6 +99,8 @@ package net.morocoshi.moja3d.animation
 		public function setObject(object:Object3D):void
 		{
 			target = object;
+			valid = (target != null);
+			
 			if (position)
 			{
 				position.defaultValue.x = target.x;
@@ -110,8 +119,6 @@ package net.morocoshi.moja3d.animation
 				scale.defaultValue.y = target.scaleY;
 				scale.defaultValue.z = target.scaleZ;
 			}
-			
-			defaultMatrix = target.matrix.clone();
 		}
 		
 		/**
@@ -133,6 +140,8 @@ package net.morocoshi.moja3d.animation
 		 */
 		public function setTime(time:Number):void
 		{
+			if (valid == false) return;
+			
 			var ratio:Number = 1 - blendRatio;
 			switch(type)
 			{

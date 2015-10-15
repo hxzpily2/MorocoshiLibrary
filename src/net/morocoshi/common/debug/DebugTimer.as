@@ -7,23 +7,30 @@ package net.morocoshi.common.debug
 	 */
 	public class DebugTimer 
 	{
-		static private var time:int = -1;
+		static private var time:Object = { };
 		
 		public function DebugTimer() 
 		{
 			
 		}
 		
-		static public function show(label:String = ""):void
+		static public function show(label:String = "", id:String = ""):void
 		{
-			var t:int = (time == -1)? 0 : getTimer() - time;
+			var key:String = "_" + id;
+			if (time.hasOwnProperty(key) == false)
+			{
+				trace(label + " DebugTimer.start()が呼び出されていません！");
+				return;
+			}
+			
+			var t:int = getTimer() - time[key];
 			trace(label + " " + t + "ms");
-			start();
+			start(id);
 		}
 		
-		static public function start():void
+		static public function start(id:String = ""):void
 		{
-			time = getTimer();
+			time["_" + id] = getTimer();
 		}
 		
 	}

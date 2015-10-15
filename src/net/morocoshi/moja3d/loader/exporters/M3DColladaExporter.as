@@ -378,8 +378,6 @@ package net.morocoshi.moja3d.loader.exporters
 				keyframe.tangent = tangentData[animation.tangents[i]];
 				if (keyframe.tangent == TangentType.BEZIER)
 				{
-					//___trace("IN", animation.inTangent[i][0]-time);
-					//___trace("OT", animation.outTangent[i][0]-time);
 					keyframe.prevTime = animation.inTangent[i][0] - time;
 					keyframe.prevValue = animation.inTangent[i][1] - value;
 					keyframe.nextTime = animation.outTangent[i][0] - time;

@@ -52,7 +52,6 @@ package net.morocoshi.moja3d.animation
 				var motion:MotionData = motions[key];
 				motion.setObject(object);
 			}
-			checkMotionlessNodes();
 		}
 		
 		/**
@@ -87,13 +86,12 @@ package net.morocoshi.moja3d.animation
 			{
 				motionData.setObject(object);
 			}
-			checkMotionlessNodes();
 		}
 		
 		/**
 		 * モーションの無いオブジェクトのデフォルト姿勢をチェックする
 		 */
-		private function checkMotionlessNodes():void 
+		public function fixMotionlessNodes():void 
 		{
 			var exists:Object = { };
 			var motionKey:String;

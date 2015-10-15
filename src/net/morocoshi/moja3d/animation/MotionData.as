@@ -57,6 +57,10 @@ package net.morocoshi.moja3d.animation
 				{
 					anm.setObject(child);
 				}
+				else
+				{
+					anm.valid = false;
+				}
 			}
 		}
 		
