@@ -19,7 +19,7 @@ package net.morocoshi.components.minimal.grid
 	 */
 	public class DataGrid extends Panel
 	{
-		private var box:PushButton;
+		public var box:PushButton;
 		private var _items:Vector.<DataGridItem>;
 		private var _columns:Vector.<ColumnData>;
 		private var _columnHeight:Number = 30;

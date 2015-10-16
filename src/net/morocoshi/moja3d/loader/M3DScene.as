@@ -126,9 +126,9 @@ package net.morocoshi.moja3d.loader
 		}
 		
 		/**
-		 * 空のオブジェクトを削除する
+		 * 空っぽのオブジェクトを削除する
 		 */
-		public function removeEmptyObject(lockUserPropertyObject:Boolean):void
+		public function removeEmptyObject(lockUserPropertyObject:Boolean, lockSkinEmptyObject:Boolean):void
 		{
 			var i:int;
 			var n:int;
@@ -149,6 +149,19 @@ package net.morocoshi.moja3d.loader
 					{
 						existLink[current] = true;
 						current = objectLink[current.parent];
+					}
+				}
+				else if (lockSkinEmptyObject)
+				{
+					var current2:M3DObject = obj;
+					while (current2)
+					{
+						if (current2 is M3DSkin)
+						{
+							existLink[obj] = true;
+							break;
+						}
+						current2 = objectLink[current2.parent];
 					}
 				}
 			}

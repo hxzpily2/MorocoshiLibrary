@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.loader.exporters
 	public class M3DExportOption 
 	{
 		public var exportModel:Boolean = true;
-		public var exportAnimation:Boolean = false;
+		public var exportAnimation:Boolean = true;
 		public var exportImage:Boolean = true;
 		public var exportTangent4:Boolean = true;
 		public var exportVertexColor:Boolean = true;
@@ -22,7 +22,7 @@ package net.morocoshi.moja3d.loader.exporters
 		/**透過マップを書き出す*/
 		public var exportTransparent:Boolean = true;
 		/**ノーマルマップを書き出す*/
-		public var exportNormal:Boolean = false;
+		public var exportNormal:Boolean = true;
 		/**反射マップを書き出す*/
 		public var exportReflection:Boolean = false;
 		/**透過PNGのふちを修正する*/
@@ -36,16 +36,18 @@ package net.morocoshi.moja3d.loader.exporters
 		public var objectParamList:Array = [];
 		
 		/**非表示レイヤーを書き出す*/
-		public var useHideLayer:Boolean = false;
+		public var useHideLayer:Boolean = true;
 		/**フリーズレイヤーを書き出す*/
 		public var useFreezeLayer:Boolean = true;
 		
 		/**空のObjectは削除する*/
 		public var deleteEmptyObject:Boolean = true;
-		/***/
+		/**スキン内部の空っぽオブジェクトは削除しない*/
+		public var lockSkinEmptyObject:Boolean = true;
+		/**ユーザープロパティをもつ空っぽオブジェクトは削除しない*/
 		public var lockUserPropertyObject:Boolean = true;
 		/**マテリアルパスのフォルダを削るか*/
-		public var removeDirectory:Boolean = false;
+		public var removeDirectory:Boolean = true;
 		/**基点をオブジェクトのAABBの中心に動かす*/
 		public var moveBasePoint:Boolean = false;
 		/**ユーザープロパティのvisible=falseで非表示にする*/
@@ -53,11 +55,11 @@ package net.morocoshi.moja3d.loader.exporters
 		/**ユーザープロパティのshow=falseで非表示にする*/
 		public var useShow:Boolean = false;
 		/**マテリアルのリピート設定をUVから自動判別*/
-		public var autoRepeat:Boolean = true;
+		public var autoRepeat:Boolean = false;
 		/**ルート階層へ動かせるオブジェクトは全て動かす*/
-		public var moveToRoot:Boolean = true;
+		public var moveToRoot:Boolean = false;
 		/**同一マテリアルのサーフェイスを統合して最適化する*/
-		public var optimizeSurface:Boolean = true;
+		public var optimizeSurface:Boolean = false;
 		/**1つのスキンメッシュが持てるボーン数の限界数（これを超えた部分は分割される）*/
 		public var boneLimit:int = 20;
 		/***/

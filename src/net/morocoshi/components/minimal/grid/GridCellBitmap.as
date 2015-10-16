@@ -1,6 +1,7 @@
 package net.morocoshi.components.minimal.grid 
 {
 	import com.bit101.components.Panel;
+	import flash.display.Bitmap;
 	import net.morocoshi.components.minimal.BitmapClip;
 	
 	/**
@@ -48,6 +49,7 @@ package net.morocoshi.components.minimal.grid
 		
 		public function set cellValue(value:*):void 
 		{
+			if (value is Bitmap) value = Bitmap(value).bitmapData;
 			_bitmapClip.bitmapData = value;
 		}
 		

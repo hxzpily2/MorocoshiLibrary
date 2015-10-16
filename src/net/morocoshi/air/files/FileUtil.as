@@ -230,6 +230,8 @@
 		 */
 		static public function toFile(path:String):File 
 		{
+			if (path == null) return null;
+			
 			try
 			{
 				return new File(path);
