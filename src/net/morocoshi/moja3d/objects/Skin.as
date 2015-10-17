@@ -21,7 +21,7 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * このスキン内にあるボーンオブジェクトのリスト
 		 */
-		private var bones:Vector.<Bone>;
+		public var bones:Vector.<Bone>;
 		
 		public var skinShaderList:Vector.<SkinShader>;
 		
