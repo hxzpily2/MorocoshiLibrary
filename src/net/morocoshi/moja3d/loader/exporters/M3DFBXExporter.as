@@ -1025,7 +1025,7 @@ package net.morocoshi.moja3d.loader.exporters
 			result.userData = { };
 			for (var k:String in fbx.userData)
 			{
-				if (option.ignoreUserDaraList.indexOf(k) != -1) continue;
+				if (option.ignoreUserDataList.indexOf(k) != -1) continue;
 				result.userData[k] = fbx.userData[k];
 			}
 			

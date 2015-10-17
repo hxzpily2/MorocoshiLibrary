@@ -48,12 +48,18 @@ package net.morocoshi.common.graphics
 			completeCallback = complete;
 			progressCallback = progress;
 			
+			//var diffuse:BitmapData = BitmapUtil.setTransparent(image, false, 0x0);
+			var diffuse:BitmapData = new BitmapData(image.width, image.height, false, 0x0);
+			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.BLUE, BitmapDataChannel.BLUE);
+			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.RED, BitmapDataChannel.RED);
+			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
+			
 			var opacity:BitmapData = new BitmapData(image.width, image.height, false, 0x0);
 			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
 			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.RED);
 			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.GREEN);
 			
-			extrudeAsync(image, opacity, extend, transparent, threshold, function(result:BitmapData):void {	
+			extrudeAsync(diffuse, opacity, extend, transparent, threshold, function(result:BitmapData):void {	
 				complete(result, opacity);
 			}, progress);
 		}
@@ -87,7 +93,11 @@ package net.morocoshi.common.graphics
 			{
 				var d:int = Math.max(Math.abs(ex), Math.abs(ey));
 				if (!roundCoord[d]) roundCoord[d] = [];
-				roundCoord[d].push( { x:ex, y:ey } );
+				roundCoord[d].push( { x:ex, y:ey, d:Math.sqrt(ex * ex + ey * ey) } );
+			}
+			for (var j:int = 0; j < roundCoord.length; j++) 
+			{
+				roundCoord[j].sortOn("d", Array.NUMERIC);
 			}
 			
 			resultImage = BitmapUtil.setTransparent(diffuse, transparent, 0);

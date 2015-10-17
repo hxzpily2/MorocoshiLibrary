@@ -38,7 +38,7 @@ package net.morocoshi.components.balloon
 		
 		public function MouseOverLabel() 
 		{
-			//AIRは複数Stageがある場合があるので本当はシングルトンにしない方がいいかも・・
+			//AIRは複数Stageが存在できるから本当はシングルトンにしない方がいいかも・・
 			if (_instance) throw new Error("MouseOverLabelのインスタンスは1つしか作れません。");
 			
 			border = 1;
@@ -61,7 +61,7 @@ package net.morocoshi.components.balloon
 			textField.autoSize = TextFieldAutoSize.LEFT;
 			textField.embedFonts = false;
 			textField.selectable = false;
-			textField.defaultTextFormat = new TextFormat("_sans", 12, 0x0);
+			textField.defaultTextFormat = new TextFormat("Meiryo", 12, 0x0);
 			
 			container.addChild(label);
 			label.visible = false;
@@ -70,7 +70,6 @@ package net.morocoshi.components.balloon
 		
 		private function addedToStageHandler(e:Event):void 
 		{
-			e.currentTarget.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			stage = container.stage;
 		}
 		
@@ -159,7 +158,9 @@ package net.morocoshi.components.balloon
 			textField.text = text;
 			textField.x = margin + border - 2;
 			textField.y = margin + border - 2;
-			setSize(textField.textWidth + (margin + border) * 2, textField.textHeight + (margin + border) * 2);
+			var tw:Number = textField.textWidth + (margin + border) * 2;
+			var th:Number = textField.textHeight + (margin + border) * 2;
+			setSize(tw, th);
 			label.x = x;
 			label.y = y;
 			label.visible = true;

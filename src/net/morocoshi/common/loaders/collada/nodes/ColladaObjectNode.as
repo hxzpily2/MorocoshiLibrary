@@ -2,6 +2,7 @@ package net.morocoshi.common.loaders.collada.nodes
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import mx.utils.StringUtil;
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
 	import net.morocoshi.common.math.list.VectorUtil;
@@ -24,6 +25,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var instanceLink:String;
 		public var parent:ColladaObjectNode;
 		
+		public var userData:Object;
 		public var visible:Boolean;
 		public var castShadow:Boolean;
 		public var receiveShadows:Boolean;
@@ -43,6 +45,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			castShadow = true;
 			receiveShadows = true;
 			bindMaterial = { };
+			userData = { };
 		}
 		
 		override public function parse(xml:XML, collector:ColladaCollector):void
@@ -140,6 +143,11 @@ package net.morocoshi.common.loaders.collada.nodes
 				jointMatrix = collector.jointMatrixMap[sid];
 			}
 			
+			if (xml..user_properties[0])
+			{
+				parseUserProp(String(xml..user_properties[0]));
+			}
+			
 			if (xml.instance_light[0])
 			{
 				type = TYPE_LIGHT;
@@ -152,6 +160,33 @@ package net.morocoshi.common.loaders.collada.nodes
 				child.parent = this;
 				child.parse(node, collector);
 				childlen.push(child);
+			}
+		}
+		
+		private function parseUserProp(text:String):void 
+		{
+			var list:Array = text.split("\r\n").join("\n").split("\n");
+			var n:int = list.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				var line:String = list[i];
+				if (line.charAt(line.length - 1) == ";")
+				{
+					line = line.substr(0, line.length - 1);
+				}
+				var seg:Array = line.split("=");
+				var attr:String = StringUtil.trim(seg.shift());
+				var value:String = StringUtil.trim(seg.join("="));
+				var s:String = value.charAt(0);
+				var e:String = value.charAt(value.length - 1);
+				if (value.length >= 2 && s == e && (s == "'" || s == '"'))
+				{
+					userData[attr] = value.substr(1, value.length - 2);
+				}
+				else
+				{
+					userData[attr] = parseFloat(value);
+				}
 			}
 		}
 		

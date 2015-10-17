@@ -53,13 +53,20 @@ package net.morocoshi.common.loaders.collada
 			log += "[ERROR] " + args.join("\n[ERROR] ") + "\n";
 		}
 		
-		public function getLog():String 
+		public function getMiscLogList():Array
 		{
-			var result:String = log;
+			var result:Array = [];
 			for (var key:* in miscLog) 
 			{
-				result += miscLog[key].text + " (" + miscLog[key].count + "箇所)\n";
+				result.push(miscLog[key].text + " (" + miscLog[key].count + "箇所)");
 			}
+			return result;
+		}
+		
+		public function getLog():String 
+		{
+			var result:String = getMiscLogList().join("\n");
+			if (result != "") result += "\n";
 			return result;
 		}
 		

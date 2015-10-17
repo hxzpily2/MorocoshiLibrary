@@ -4,11 +4,13 @@ package net.morocoshi.components.minimal.color
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import net.morocoshi.graphics.Create;
-	import net.morocoshi.graphics.Palette;
-	import net.morocoshi.mouse.MouseDrag2D;
+	import net.morocoshi.common.graphics.Create;
+	import net.morocoshi.common.graphics.Palette;
+	import net.morocoshi.common.ui.mouse.MouseDrag2D;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class SVBoxSelector extends Sprite

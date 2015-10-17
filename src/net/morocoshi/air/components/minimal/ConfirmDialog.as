@@ -53,13 +53,13 @@ package net.morocoshi.air.components.minimal
 			win.addEventListener(Event.CLOSING, dialog_closingHandler);
 			var label:Label = new Label(win.stage, padding, padding, text);
 			Bit101Util.setLabelSelectable(label, true);
-			var buttonHeight:Number = 20;
+			var buttonHeight:Number = 22;
 			
 			win.stage.stageWidth = Math.max(minWidth, label.width + padding * 2);
 			win.stage.stageHeight = label.textField.textHeight + buttonHeight + 20 + padding * 2 + addHeight;
 			
 			var buttons:ButtonHList = new ButtonHList(win.stage, ["OK", "キャンセル"], ["ok", "cancel"], 0, 0, dialog_clickHandler);
-			buttons.setButtonSize(65, buttonHeight);
+			buttons.setButtonSize(75, buttonHeight);
 			buttons.spacing = 15;
 			buttons.update();
 			buttons.x = (win.stage.stageWidth - buttons.width) / 2;

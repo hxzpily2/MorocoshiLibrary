@@ -11,9 +11,8 @@ package net.morocoshi.components.minimal.color
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	import net.morocoshi.graphics.Create;
-	import net.morocoshi.graphics.Palette;
-	import net.naruto.project.barts.loader.color.RGB;
+	import net.morocoshi.common.graphics.Create;
+	import net.morocoshi.common.graphics.Palette;
 	
 	/**
 	 * カラーセレクタ用RGBスライダ

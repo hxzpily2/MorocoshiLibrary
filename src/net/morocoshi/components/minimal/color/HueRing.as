@@ -3,9 +3,11 @@ package net.morocoshi.components.minimal.color
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
-	import net.morocoshi.graphics.Palette;
+	import net.morocoshi.common.graphics.Palette;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class HueRing extends Sprite

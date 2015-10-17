@@ -29,6 +29,8 @@ package net.morocoshi.moja3d.loader.exporters
 		public var fixImage:Boolean = false;
 		/**透過PNGのふちを修正する際の閾値[0x00-0xff]*/
 		public var fixImageThreshold:uint = 0x80;
+		/**MAXから書き出した時によくある、diffuseとopacity両方に同じPNG画像が貼られていた場合にopacityを無視する*/
+		public var fixMaxStylePngTexture:Boolean = true;
 		
 		/**FBXオブジェクトの追加プロパティをユーザーデータとして抽出するか*/
 		public var extractObjectParam:Boolean = true;
@@ -63,7 +65,7 @@ package net.morocoshi.moja3d.loader.exporters
 		/**1つのスキンメッシュが持てるボーン数の限界数（これを超えた部分は分割される）*/
 		public var boneLimit:int = 20;
 		/***/
-		public var ignoreUserDaraList:Array = [];
+		public var ignoreUserDataList:Array = [];
 		
 		
 		/**小数点の精度を下げる*/

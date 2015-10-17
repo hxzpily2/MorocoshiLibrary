@@ -271,6 +271,7 @@ package net.morocoshi.moja3d.loader.exporters
 			result.id = ++objectCount;
 			result.matrix = object.matrix.rawData.concat();
 			result.parent = parent? parent.id : -1;
+			result.userData = object.userData;
 			scene.objectList.push(result);
 			
 			n = object.childlen.length;
@@ -545,7 +546,16 @@ package net.morocoshi.moja3d.loader.exporters
 			result.alpha = effect.alpha;
 			result.diffusePath = effect.diffuseTexture? collada.getImageByID(effect.diffuseTexture).path : "";
 			result.normalPath = (option.exportNormal == false)? "" : effect.normalTexture? collada.getImageByID(effect.normalTexture).path : "";
+			
 			result.opacityPath = (option.exportTransparent == false)? "" : effect.transparentTexture? collada.getImageByID(effect.transparentTexture).path : "";
+			//opcityとdiffuseが同じPNG画像だった場合にopacityを削除する処理
+			if (option.fixMaxStylePngTexture && result.diffusePath == result.opacityPath)
+			{
+				if (result.diffusePath.split(".").reverse()[0].toLowerCase() == "png")
+				{
+					result.opacityPath = "";
+				}
+			}
 			result.diffuseColor = effect.diffuseColor;
 			result.smoothing = true;
 			result.mipmap = Mipmap.MIPLINEAR;
