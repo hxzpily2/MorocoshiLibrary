@@ -48,6 +48,8 @@ package net.morocoshi.moja3d.objects
 		public var sortPriority:Number;
 		//public var boundingSphere:BoundingSphere;
 		public var boundingBox:BoundingBox;
+		/**子以下をレンダリング対象に含めるか*/
+		public var renderChildren:Boolean;
 		private var _inCameraView:Boolean;
 		
 		private var _colorTransform:ColorTransform;
@@ -106,6 +108,7 @@ package net.morocoshi.moja3d.objects
 			_alpha = 1;
 			sortPriority = 0;
 			_visible = true;
+			renderChildren = true;
 			flip = 1;
 			
 			castShadowEnabled = LightSetting._defaultCastShadow;
@@ -878,8 +881,8 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			//デプスシャドウレンダリング時に除外する場合
-			var skipChildren:Boolean = 
-				(phase == RenderPhase.DEPTH && castShadowChildren == false)
+			var skipChildren:Boolean = (renderChildren == false)
+			||	(phase == RenderPhase.DEPTH && castShadowChildren == false)
 			||	(phase == RenderPhase.LIGHT && castLightChildren == false)
 			||	(phase == RenderPhase.REFLECT && reflectChildren == false);
 			

@@ -38,28 +38,18 @@ package net.morocoshi.common.graphics
 		 * 	
 		 * @param	image		ソース画像
 		 * @param	extend		引き延ばすピクセル数
-		 * @param	transparent	分割後のdiffuse画像を透過画像にする
 		 * @param	threshold	[0ｘ00～0xff]アルファ値がこの数値以下のピクセル部分を引き伸ばし対象にする
 		 * @param	complete	complete(diffuse:BitmapData, opacity:BitmapData)
 		 * @param	progress	progress(per:Number = 0.0-1.0)
 		 */
-		public function splitAndExtrudeAsync(image:BitmapData, extend:int, transparent:Boolean, threshold:uint, complete:Function, progress:Function = null):void
+		public function splitAndExtrudeAsync(image:BitmapData, extend:int, threshold:uint, complete:Function, progress:Function = null):void
 		{
 			completeCallback = complete;
 			progressCallback = progress;
 			
-			//var diffuse:BitmapData = BitmapUtil.setTransparent(image, false, 0x0);
-			var diffuse:BitmapData = new BitmapData(image.width, image.height, false, 0x0);
-			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.BLUE, BitmapDataChannel.BLUE);
-			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.RED, BitmapDataChannel.RED);
-			diffuse.copyChannel(image, image.rect, new Point(), BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
+			var opacity:BitmapData = BitmapUtil.toAlphaChannel(image);
 			
-			var opacity:BitmapData = new BitmapData(image.width, image.height, false, 0x0);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.RED);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.GREEN);
-			
-			extrudeAsync(diffuse, opacity, extend, transparent, threshold, function(result:BitmapData):void {	
+			extrudeAsync(image, opacity, extend, threshold, function(result:BitmapData):void {	
 				complete(result, opacity);
 			}, progress);
 		}
@@ -69,13 +59,12 @@ package net.morocoshi.common.graphics
 		 * @param	diffuse	diffuse画像
 		 * @param	opacity	モノクロ透過領域画像
 		 * @param	extend	引き伸ばすピクセル数
-		 * @param	transparent	出力Bitmapの透過オプション設定
 		 * @param	threshold	[0ｘ00～0xff]アルファ値がこの数値以下のピクセル部分を引き伸ばし対象にする
 		 * @param	complete	complete(diffuse:BitmapData)
 		 * @param	progress	progress(per:Number = 0.0-1.0)
 		 * @return
 		 */
-		public function extrudeAsync(diffuse:BitmapData, opacity:BitmapData, extend:int, transparent:Boolean, threshold:uint, complete:Function, progress:Function = null):void
+		public function extrudeAsync(diffuse:BitmapData, opacity:BitmapData, extend:int, threshold:uint, complete:Function, progress:Function = null):void
 		{
 			if (!diffuse.rect.equals(opacity.rect))
 			{
@@ -100,8 +89,8 @@ package net.morocoshi.common.graphics
 				roundCoord[j].sortOn("d", Array.NUMERIC);
 			}
 			
-			resultImage = BitmapUtil.setTransparent(diffuse, transparent, 0);
-			diffuseImage = diffuse;
+			resultImage = BitmapUtil.setTransparent(diffuse, false);
+			diffuseImage = resultImage.clone();
 			opacityImage = opacity;
 			
 			var dx:int;
@@ -177,21 +166,16 @@ package net.morocoshi.common.graphics
 		 * 一枚の画像をdiffuseとopacityに分離し、透過領域に接する縁の色を拡張したdiffuse画像とopacity画像を生成する。
 		 * @param	image		ソース画像
 		 * @param	extend		引き延ばすピクセル数
-		 * @param	transparent	分割後のdiffuse画像を透過画像にする
 		 * @param	threshold	[0ｘ00～0xff]アルファ値がこの数値以下のピクセル部分を引き伸ばし対象にする
 		 * @return
 		 */
-		static public function splitAndExtrude(image:BitmapData, extend:int, transparent:Boolean, threshold:uint):Vector.<BitmapData>
+		static public function splitAndExtrude(image:BitmapData, extend:int, threshold:uint):Vector.<BitmapData>
 		{
 			var result:Vector.<BitmapData> = new Vector.<BitmapData>;
 			
-			//var diffuse:BitmapData = BitmapUtil.setTransparent(image, transparent, 0x0);
-			var opacity:BitmapData = new BitmapData(image.width, image.height, false, 0x0);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.RED);
-			opacity.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.GREEN);
+			var opacity:BitmapData = BitmapUtil.toAlphaChannel(image);
 			
-			result[0] = extrude(image, opacity, extend, transparent, threshold);
+			result[0] = extrude(image, opacity, extend, threshold);
 			result[1] = opacity;
 			
 			return result;
@@ -202,11 +186,10 @@ package net.morocoshi.common.graphics
 		 * @param	diffuse	diffuse画像
 		 * @param	opacity	モノクロ透過領域画像
 		 * @param	extend	引き伸ばすピクセル数
-		 * @param	transparent	出力Bitmapの透過オプション設定
 		 * @param	threshold	[0ｘ00～0xff]アルファ値がこの数値以下のピクセル部分を引き伸ばし対象にする
 		 * @return
 		 */
-		static public function extrude(diffuse:BitmapData, opacity:BitmapData, extend:int, transparent:Boolean, threshold:uint = 0x00):BitmapData
+		static public function extrude(diffuse:BitmapData, opacity:BitmapData, extend:int, threshold:uint = 0x00):BitmapData
 		{
 			if (!diffuse.rect.equals(opacity.rect))
 			{
@@ -220,7 +203,7 @@ package net.morocoshi.common.graphics
 				if (!roundCoord[d]) roundCoord[d] = [];
 				roundCoord[d].push( { x:ex, y:ey } );
 			}
-			var result:BitmapData = BitmapUtil.setTransparent(diffuse, transparent, 0);
+			var result:BitmapData = BitmapUtil.setTransparent(diffuse, false);
 			var dx:int;
 			var dy:int;
 			var i:int;

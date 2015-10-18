@@ -332,7 +332,7 @@ package net.morocoshi.moja3d.materials
 				result.addShader(AGALCache.viewShaderList);
 				if (mesh.afterViewShaderList) result.attach(mesh.afterViewShaderList);
 				result.addShader(new EndShader(geometry));
-				//%%%ここは？
+				//___ここは？
 				result.updateFromGeometry(geometry);
 				
 				var mode:uint = result.alphaMode;

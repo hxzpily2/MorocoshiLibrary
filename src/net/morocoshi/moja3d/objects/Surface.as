@@ -13,12 +13,16 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Surface 
 	{
-		private var linkedSurfaceList:Vector.<Surface>;
+		/**頂点インデックスの開始位置。ポリゴン数x3*/
 		public var firstIndex:int;
+		/**ポリゴン数*/
 		public var numTriangles:int;
+		/**マテリアル*/
 		moja3d var _material:Material;
 		/**頂点アルファで半透明になっているサーフェイス用*/
 		public var layer:uint;
+		/**合成ジオメトリ用*/
+		private var linkedSurfaceList:Vector.<Surface>;
 		
 		/**
 		 * 

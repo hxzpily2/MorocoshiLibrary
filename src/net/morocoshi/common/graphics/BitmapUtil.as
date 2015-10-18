@@ -1,6 +1,7 @@
 package net.morocoshi.common.graphics
 {
 	import flash.display.BitmapData;
+	import flash.display.BitmapDataChannel;
 	import flash.display.StageQuality;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
@@ -99,17 +100,23 @@ package net.morocoshi.common.graphics
 		}
 		
 		/**
-		 * BitmapDataを透明度あり版にする
-		 * @param	bmd
+		 * BitmapDataを透明度の有無を変更した新しいBitmapDataを返す。無しにした場合はアルファチャンネルが削除される
+		 * @param	image
 		 * @param	transparent
-		 * @param	color
 		 * @return
 		 */
-		static public function setTransparent(bmd:BitmapData, transparent:Boolean, color:uint = 0x000000):BitmapData
+		static public function setTransparent(image:BitmapData, transparent:Boolean):BitmapData
 		{
-			var img:BitmapData = new BitmapData(bmd.width, bmd.height, transparent, transparent? 0 : 0xFF << 24 | color);
-			img.copyPixels(bmd, bmd.rect, new Point(), null, null, true);
-			return img;
+			var color:uint = transparent? 0xff000000 : 0x000000;
+			var result:BitmapData = new BitmapData(image.width, image.height, transparent, color);
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.BLUE, BitmapDataChannel.BLUE);
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.RED, BitmapDataChannel.RED);
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.GREEN, BitmapDataChannel.GREEN);
+			if (transparent)
+			{
+				result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.ALPHA);
+			}
+			return result;
 		}
 		
 		/**
@@ -184,6 +191,22 @@ package net.morocoshi.common.graphics
 		static public function isTransparent(image:BitmapData):Boolean 
 		{
 			return (image.transparent && image.getColorBoundsRect(0xff000000, 0xff000000, false).width > 0);
+		}
+		
+		/**
+		 * アルファチャンネル画像を取得する
+		 * @param	image
+		 */
+		static public function toAlphaChannel(image:BitmapData):BitmapData 
+		{
+			var result:BitmapData = new BitmapData(image.width, image.height, false, 0xffffff);
+			if (image.transparent == false) return result;
+			
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.BLUE);
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.RED);
+			result.copyChannel(image, image.rect, new Point(), BitmapDataChannel.ALPHA, BitmapDataChannel.GREEN);
+			
+			return result;
 		}
 		
 	}

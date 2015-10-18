@@ -4,6 +4,7 @@ package net.morocoshi.components.minimal.grid
 	import com.bit101.components.Panel;
 	import com.bit101.components.PushButton;
 	import flash.events.Event;
+	import flash.events.FocusEvent;
 	import flash.filesystem.File;
 	import net.morocoshi.air.drop.DragDrop;
 	import net.morocoshi.air.files.ClipData;
@@ -38,6 +39,7 @@ package net.morocoshi.components.minimal.grid
 		{
 			super();
 			_inputText = new InputText(this, 0, 0);
+			_inputText.textField.addEventListener(FocusEvent.FOCUS_OUT, text_focusOutHandler);
 			_button = new PushButton(this, 0, 0, "参照", browse_clickHandler);
 			_inputText.addEventListener(Event.CHANGE, input_changeHandler);
 			isReady = true;
@@ -46,6 +48,11 @@ package net.morocoshi.components.minimal.grid
 			_dragDrop.allowFile = true;
 			_dragDrop.allowFolder = true;
 			_dragDrop.onDragDrop = dropHandler;
+		}
+		
+		private function text_focusOutHandler(e:FocusEvent = null):void 
+		{
+			_inputText.textField.scrollH = _inputText.textField.maxScrollH;
 		}
 		
 		private function dropHandler(clip:ClipData):void 
@@ -82,6 +89,7 @@ package net.morocoshi.components.minimal.grid
 		{
 			var f:File = e.currentTarget as File;
 			_inputText.text = f.nativePath;
+			text_focusOutHandler();
 			dispatchEvent(new DataGridEvent(DataGridEvent.CHANGE, null, this));
 		}
 		
@@ -145,7 +153,7 @@ package net.morocoshi.components.minimal.grid
 			_button.x = w - 42;
 			_button.y = 2;
 			_button.setSize(40, h - 4);
-			
+			text_focusOutHandler();
 		}
 		
 		/* INTERFACE net.morocoshi.components.minimal.grid.IGridCell */
