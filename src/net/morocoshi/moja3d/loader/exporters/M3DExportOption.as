@@ -26,11 +26,15 @@ package net.morocoshi.moja3d.loader.exporters
 		/**反射マップを書き出す*/
 		public var exportReflection:Boolean = false;
 		/**透過PNGのふちを修正する*/
-		public var fixImage:Boolean = false;
+		public var fixImageEnabled:Boolean = false;
 		/**透過PNGのふちを修正する際の閾値[0x00-0xff]*/
 		public var fixImageThreshold:uint = 0x80;
 		/**MAXから書き出した時によくある、diffuseとopacity両方に同じPNG画像が貼られていた場合にopacityを無視する*/
 		public var fixMaxStylePngTexture:Boolean = true;
+		/**画像出力時、可能なものはJPGに変換する*/
+		public var convertJpgEnabled:Boolean = true;
+		/**JPG化する際の画質設定*/
+		public var convertJpgQuality:uint = 90;
 		
 		/**FBXオブジェクトの追加プロパティをユーザーデータとして抽出するか*/
 		public var extractObjectParam:Boolean = true;
