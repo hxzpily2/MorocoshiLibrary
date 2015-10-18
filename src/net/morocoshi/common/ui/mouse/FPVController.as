@@ -36,6 +36,7 @@ package net.morocoshi.common.ui.mouse
 		
 		/**座標が変わると呼ばれる関数*/
 		public var onMove:Function;
+		public var speedUpRate:Number = 5;
 		private var _upAxis:Vector3D = new Vector3D(0, 0, 1);
 		private var _top:Vector3D = new Vector3D();
 		private var roll:Number = 0;
@@ -144,7 +145,7 @@ package net.morocoshi.common.ui.mouse
 		 * 指定座標を向く
 		 * @param	v
 		 */
-		public function lookAt(v:Vector3D):void 
+		public function lookAt3D(v:Vector3D):void 
 		{
 			_dragger.setPositionXYZ(v.x - _position.x, v.y - _position.y, v.z - _position.z, true);
 		}
@@ -175,7 +176,7 @@ package net.morocoshi.common.ui.mouse
 		{
 			position = matrix.position;
 			var data:Vector.<Number> = matrix.rawData;
-			lookAt(position.add(new Vector3D(data[8], data[9], data[10])));
+			lookAt3D(position.add(new Vector3D(data[8], data[9], data[10])));
 		}
 		
 		private function object_addedHandler(e:Event):void 
@@ -213,7 +214,7 @@ package net.morocoshi.common.ui.mouse
 				return;
 			}
 			
-			var speedRate:Number = (speedUp? 3 : 1) * (speedDown? 1 / 3 : 1);
+			var speedRate:Number = (speedUp? speedUpRate : 1) * (speedDown? 1 / speedUpRate : 1);
 			
 			var av:Number = ((_angleKey & 0xF000)? 1 : 0) - ((_angleKey & 0x0F00)? 1 : 0);
 			var ah:Number = ((_angleKey & 0x000F)? 1 : 0) - ((_angleKey & 0x00F0)? 1 : 0);

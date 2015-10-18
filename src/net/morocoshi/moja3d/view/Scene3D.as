@@ -16,6 +16,7 @@ package net.morocoshi.moja3d.view
 	import flash.geom.Vector3D;
 	import flash.system.Capabilities;
 	import flash.utils.getTimer;
+	import net.morocoshi.common.math.geom.Vector3DUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.common.ui.mouse.FPVController;
 	import net.morocoshi.common.ui.mouse.MouseDrag3D;
@@ -135,6 +136,12 @@ package net.morocoshi.moja3d.view
 		
 		public function setFPVController(obj:InteractiveObject, horizontal:Boolean = false, moveSpeed:Number = 10, x:Number = 0, y:Number = 0, z:Number = 0):void
 		{
+			if (tpv)
+			{
+				tpv.dispose();
+				tpv = null;
+			}
+			
 			fpv = new FPVController();
 			fpv.init(obj);
 			fpv.onMove = fpv_moveHandler;
@@ -147,6 +154,12 @@ package net.morocoshi.moja3d.view
 		
 		public function setTPVController(obj:InteractiveObject, rotation:Number = -90, angle:Number = 45, distance:Number = 100, x:Number = 0, y:Number = 0, z:Number = 0):void
 		{
+			if (fpv)
+			{
+				fpv.dispose();
+				fpv = null;
+			}
+			
 			tpv = new MouseDrag3D();
 			tpv.init(obj, rotation, angle, distance);
 			tpv.onMovePosition = tpv_moveHandler;
@@ -156,7 +169,7 @@ package net.morocoshi.moja3d.view
 		private function fpv_moveHandler():void
 		{
 			camera.setPosition3D(fpv.position);
-			camera.lookAt3D(fpv.position.add(fpv.front));
+			camera.lookAt3D(fpv.position.add(Vector3DUtil.getScaled(fpv.front, 1000)));
 		}
 		
 		private function tpv_moveHandler():void 
