@@ -319,14 +319,7 @@ package net.morocoshi.moja3d.loader
 					{
 						var assetData:* = loader.holder.getAsset(assetPath);
 						var assetName:String = assetPath.substr(7);
-						if (assetData is BitmapData)
-						{
-							resourcePack.registerBitmapData(assetName, assetData as BitmapData, true);
-						}
-						else if (assetData is ByteArray)
-						{
-							resourcePack.registerATF(assetName, assetData as ByteArray);
-						}
+						resourcePack.register(assetName, assetData, true);
 					}
 				}
 			}

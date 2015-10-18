@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.resources 
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display3D.Context3D;
 	import flash.utils.ByteArray;
@@ -7,67 +8,107 @@ package net.morocoshi.moja3d.resources
 	import net.morocoshi.moja3d.resources.Resource;
 	
 	/**
-	 * ...
+	 * マテリアル画像をまとめたもの
 	 * 
 	 * @author tencho
 	 */
 	public class ResourcePack 
 	{
-		public var atf:Object;
-		public var bitmap:Object;
+		private var imageFile:Object;
+		private var imagePath:Object;
 		
 		public function ResourcePack() 
 		{
-			atf = { };
-			bitmap = { };
-		}
-		
-		public function dispose():void
-		{
-			for each(var ba:ByteArray in atf)
-			{
-				ba.clear();
-			}
-			for each(var bd:BitmapData in bitmap) 
-			{
-				bd.dispose();
-			}
-			bitmap = { };
-			atf = { };
-		}
-		
-		public function registerATF(path:String, data:ByteArray):void
-		{
-			var id:String = toFileID(path);
-			if (atf[id]) return;
-			
-			atf[id] = data;
-		}
-		
-		public function registerBitmapData(path:String, image:BitmapData, resize:Boolean):void
-		{
-			var id:String = toFileID(path);
-			if (bitmap[id]) return;
-			
-			if (resize)
-			{
-				image = TextureUtil.correctSize(image);
-			}
-			bitmap[id] = image;
+			imageFile = { };
+			imagePath = { };
 		}
 		
 		/**
-		 * 拡張子を抜いたファイル名を取得
+		 * 登録した全ての画像を完全に破棄する。登録情報だけではなく画像データ自体がメモリから破棄される。
+		 */
+		public function dispose():void
+		{
+			for each(var ba:ByteArray in imageFile)
+			{
+				ba.clear();
+			}
+			for each(var bd:BitmapData in imagePath) 
+			{
+				bd.dispose();
+			}
+			imageFile = { };
+			imagePath = { };
+		}
+		
+		/**
+		 * 画像の登録情報のみを破棄する。画像の元データ自体は破棄されない。
+		 */
+		public function clear():void
+		{
+			imageFile = { };
+			imagePath = { };
+		}
+		
+		/**
+		 * 画像リソースをパスで登録する
+		 * @param	path	マテリアルのフルパスもしくはファイル名のみ。拡張子は無視されるので書かなくてもいい。
+		 * @param	image	登録する画像データ（BitmapData、Bitmap、ATFデータ）
+		 * @param	resize	BitmapDataのサイズがもし2の累乗でなければリサイズする
+		 */
+		public function register(path:String, image:*, resize:Boolean = false):void
+		{
+			if (image is Bitmap) image = Bitmap(image).bitmapData;
+			
+			if (image is BitmapData && resize)
+			{
+				image = TextureUtil.correctSize(image);
+			}
+			
+			imageFile[toFileID(path)] = image;
+			imagePath[toPathID(path)] = image;
+		}
+		
+		/**
+		 * 拡張子を抜いたフォルダ+ファイル名を取得
+		 * @param	path
+		 * @return
+		 */
+		private function toPathID(path:String):String 
+		{
+			var list:Array = path.split("\\").join("/").split("/");
+			
+			var name:String = list.pop();
+			if (name.indexOf(".") != -1)
+			{
+				var items:Array = name.split(".");
+				items.pop();
+				name = items.join(".");
+			}
+			
+			var folder:String = list.join("/");
+			if (folder != "") folder += "/";
+			
+			return folder + name;
+		}
+		
+		/**
+		 * 拡張子を抜いたフォルダ無しファイル名を取得
 		 * @param	path
 		 * @return
 		 */
 		private function toFileID(path:String):String 
 		{
-			if (path.indexOf(".") == -1) return path;
+			var list:Array = path.split("\\").join("/").split("/");
 			
-			var items:Array = path.split(".");
-			items.pop();
-			return items.join(".");
+			var name:String = list.pop();
+			if (name.indexOf(".") != -1)
+			{
+				var items:Array = name.split(".");
+				items.pop();
+				name = items.join(".");
+			}
+			
+			return name;
 		}
 		
 		/**
@@ -88,8 +129,9 @@ package net.morocoshi.moja3d.resources
 				var externalTexture:ExternalTextureResource = item as ExternalTextureResource;
 				if (externalTexture == null) continue;
 				
-				var id:String = toFileID(externalTexture.path);
-				var data:* = atf[id] || bitmap[id];
+				var pathID:String = toPathID(externalTexture.path);
+				var fileID:String = toFileID(externalTexture.path);
+				var data:* = imagePath[pathID] || imageFile[fileID];
 				if (data is BitmapData)
 				{
 					externalTexture.setBitmapResource(data, true);
