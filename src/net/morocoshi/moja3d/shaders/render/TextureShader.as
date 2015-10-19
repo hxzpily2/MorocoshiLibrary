@@ -182,7 +182,9 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:TextureShader = new TextureShader(_diffuse, _opacity, _mipmap, _smoothing, _tiling);
+			var diffuse:TextureResource = _diffuse? _diffuse.clone() as TextureResource : null;
+			var opacity:TextureResource = _opacity? _opacity.clone() as TextureResource : null;
+			var shader:TextureShader = new TextureShader(diffuse, opacity, _mipmap, _smoothing, _tiling);
 			return shader;
 		}
 		

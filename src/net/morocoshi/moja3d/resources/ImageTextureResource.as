@@ -304,8 +304,11 @@ package net.morocoshi.moja3d.resources
 		
 		override public function clone():Resource 
 		{
-			var resource:* = (resourceType == ATF)? _atf : _bitmapData;
-			return new ImageTextureResource(resource);
+			var resource:* = (resourceType == ATF)? _atf : _bitmapData.clone();
+			var result:ImageTextureResource = new ImageTextureResource(resource, false);
+			result._hasAlpha = _hasAlpha;
+			result.autoDispose = autoDispose;
+			return result;
 		}
 		
 		public function get hasAlpha():Boolean

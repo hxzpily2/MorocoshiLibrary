@@ -501,6 +501,7 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
+			target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
 			target.castLightEnabled = castLightEnabled;
@@ -526,6 +527,7 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
+			target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
 			target.castLightEnabled = castLightEnabled;
