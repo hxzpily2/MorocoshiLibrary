@@ -5,7 +5,7 @@ package net.morocoshi.common.math.transform
 	import net.morocoshi.common.math.geom.Vector3DUtil;
 	
 	/**
-	 * ...
+	 * 姿勢制御
 	 * 
 	 * @author tencho
 	 */
@@ -17,6 +17,7 @@ package net.morocoshi.common.math.transform
 		static private var _fromZ:Vector3D = new Vector3D;
 		static private var _toY:Vector3D = new Vector3D;
 		static private var _toZ:Vector3D = new Vector3D;
+		static private var localUpAxis:Vector3D = new Vector3D(0, 0, 0);
 		
 		/**
 		 * ベクトルの向きをfromからtoへt（0～1）の割合だけ球面線形補間した新しい単位ベクトルを返す
@@ -42,7 +43,7 @@ package net.morocoshi.common.math.transform
 			_toN.normalize();
 			
 			var angle:Number = Vector3DUtil.getAngleUnit(_fromN, _toN);
-			//2つのベクトルが真逆を向いていると補間できないのでずらしてます（強引かもしれない）
+			//TODO: 2つのベクトルが真逆を向いていると補間できないのでずらしてます（強引かもしれない）
 			if (angle == Math.PI)
 			{
 				_fromN.x += 0.000001;
@@ -248,6 +249,13 @@ package net.morocoshi.common.math.transform
 			front.x = x - rawData[12];
 			front.y = y - rawData[13];
 			front.z = z - rawData[14];
+			//視点と注視点が同じだったら計算ができない
+			if (front.x == 0 && front.y == 0 && front.z == 0)
+			{
+				return;
+			}
+			
+			//TODO: 内積計算でエラーが出る可能性がある？
 			right.x = (front.y * up.z) - (front.z * up.y);
 			right.y = (front.z * up.x) - (front.x * up.z);
 			right.z = (front.x * up.y) - (front.y * up.x);
@@ -365,16 +373,51 @@ package net.morocoshi.common.math.transform
 		
 		static public function lookAtXYZ(matrix:Matrix3D, x:Number, y:Number, z:Number, frontAxis:String, topAxis:String, upAxis:Vector3D = null, applyScale:Boolean = true):void
 		{
-			if (upAxis == null) upAxis = Vector3D.Z_AXIS;
+			if (upAxis == null)
+			{
+				localUpAxis.x = 0;
+				localUpAxis.y = 0;
+				localUpAxis.z = 1;
+			}
+			else
+			{
+				localUpAxis.x = upAxis.x;
+				localUpAxis.y = upAxis.y;
+				localUpAxis.z = upAxis.z;
+			}
 			
 			var rawData:Vector.<Number> = matrix.rawData;
 			
 			front.x = x - rawData[12];
 			front.y = y - rawData[13];
 			front.z = z - rawData[14];
-			right.x = (front.y * upAxis.z) - (front.z * upAxis.y);
-			right.y = (front.z * upAxis.x) - (front.x * upAxis.z);
-			right.z = (front.x * upAxis.y) - (front.y * upAxis.x);
+			//視点と注視点が同じだったら計算ができない
+			if (front.x == 0 && front.y == 0 && front.z == 0)
+			{
+				return;
+			}
+			right.x = (front.y * localUpAxis.z) - (front.z * localUpAxis.y);
+			right.y = (front.z * localUpAxis.x) - (front.x * localUpAxis.z);
+			right.z = (front.x * localUpAxis.y) - (front.y * localUpAxis.x);
+			if (right.x == 0 && right.y == 0 && right.z == 0)
+			{
+				front.normalize();
+				if (front.x == 1 && front.y == 0 && front.z == 0)
+				{
+					localUpAxis.x = 0;
+					localUpAxis.y = 1;
+					localUpAxis.z = 0;
+				}
+				else
+				{
+					localUpAxis.x = 1;
+					localUpAxis.y = 0;
+					localUpAxis.z = 0;
+				}
+				right.x = (front.y * localUpAxis.z) - (front.z * localUpAxis.y);
+				right.y = (front.z * localUpAxis.x) - (front.x * localUpAxis.z);
+				right.z = (front.x * localUpAxis.y) - (front.y * localUpAxis.x);
+			}
 			up.x = (right.y * front.z) - (right.z * front.y);
 			up.y = (right.z * front.x) - (right.x * front.z);
 			up.z = (right.x * front.y) - (right.y * front.x);
