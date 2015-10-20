@@ -136,7 +136,7 @@ package net.morocoshi.moja3d.resources
 			_isParsed = false;
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean, complete:Function = null):void 
+		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
 		{
 			if (_hasResource == false || isUploaded)
 			{
@@ -164,7 +164,7 @@ package net.morocoshi.moja3d.resources
 					{
 						texture.dispose();
 					}
-					texture = context3D.createCubeTexture(_atf.width, _atf.format, async);
+					texture = context3D.createCubeTexture(_atf.width, _atf.format, false, 0);
 				}
 				
 				if (async)

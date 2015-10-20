@@ -37,8 +37,12 @@ package net.morocoshi.moja3d.resources
 			return resource;
 		}
 		
-		public function upload(context3D:Context3D, async:Boolean, complete:Function = null):void
+		public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void
 		{
+			if (async == true)
+			{
+				throw new Error("非同期アップロードは現在調査中のため使えません！");
+			}
 			isUploaded = true;
 		}
 		

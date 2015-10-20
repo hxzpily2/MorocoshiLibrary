@@ -118,7 +118,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		override public function upload(context3D:Context3D, async:Boolean, complete:Function = null):void
+		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void
 		{
 			dispose();
 			

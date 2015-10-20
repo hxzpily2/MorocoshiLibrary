@@ -68,7 +68,7 @@ package net.morocoshi.moja3d.resources
 			//texture = context3D.createRectangleTexture(width, height, format, renderToTexture);
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean, complete:Function = null):void 
+		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
 		{
 		}
 		

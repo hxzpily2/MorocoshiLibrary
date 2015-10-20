@@ -46,7 +46,7 @@ package net.morocoshi.moja3d.resources
 			return result;
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean, complete:Function = null):void 
+		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
 		{
 			for each (var item:Geometry in geometries) 
 			{
