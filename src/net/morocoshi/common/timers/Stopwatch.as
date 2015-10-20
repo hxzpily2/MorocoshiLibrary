@@ -9,9 +9,10 @@ package net.morocoshi.common.timers
 	 */
 	public class Stopwatch 
 	{
-		private var _time:int = 0;
-		private var _lastTime:int;
+		private var _time:Number = 0;
+		private var _lastTime:Number;
 		private var _isPlaying:Boolean = false;
+		private var _speed:Number = 1;
 		
 		/**
 		 * コンストラクタ
@@ -45,25 +46,20 @@ package net.morocoshi.common.timers
 		public function stop():void
 		{
 			if (!_isPlaying) return;
-			checkTime();
+			_time += (getTimer() - _lastTime) * _speed;
+			_lastTime = getTimer();
 			_isPlaying = false;
-		}
-		
-		private function checkTime():void 
-		{
-			if (_isPlaying) _time += getTimer() - _lastTime;
 		}
 		
 		/**
 		 * 現在時間（ミリ秒）
 		 */
-		public function get time():int
+		public function get time():Number
 		{
-			var t:int = _isPlaying? _time + getTimer() - _lastTime : _time;
+			var t:int = _isPlaying? _time + (getTimer() - _lastTime) * _speed : _time;
 			return t;
 		}
-		
-		public function set time(value:int):void
+		public function set time(value:Number):void
 		{
 			_time = value;
 			_lastTime = getTimer();
@@ -72,11 +68,31 @@ package net.morocoshi.common.timers
 		/**
 		 * 再生中か
 		 */
-		public function get isPlaying():Boolean { return _isPlaying; }
+		public function get isPlaying():Boolean
+		{
+			return _isPlaying;
+		}
 		public function set isPlaying(value:Boolean):void
 		{
 			if (value) start();
 			else stop();
+		}
+		
+		public function get speed():Number 
+		{
+			return _speed;
+		}
+		
+		public function set speed(value:Number):void 
+		{
+			if (_speed == value) return;
+			
+			if (_isPlaying)
+			{
+				_time += (getTimer() - _lastTime) * _speed;
+				_lastTime = getTimer();
+			}
+			_speed = value;
 		}
 		
 	}

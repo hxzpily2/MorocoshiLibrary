@@ -11,28 +11,40 @@ package net.morocoshi.moja3d.animation
 	 */
 	public class MotionController extends EventDispatcher
 	{
-		private var current:MotionData;
-		private var _isPlaying:Boolean;
-		private var _time:Number;
-		private var _capturedTime:Number;
-		private var timer:Stopwatch;
-		private var blendTime:Number;
-		private var _interpolationEnabled:Boolean;
-		private var numLoop:int;
-		private var firstTime:Boolean;
 		public var object:Object3D;
 		public var motions:Object;
-		public var timeScale:Number;
+		
+		//ブレンドモード用タイマー
+		private var blendTimer:Stopwatch;
+		//モーション再生位置用タイマー
+		private var motionTimer:Stopwatch;
+		//再生中のモーションの速度
+		private var currentMotionSpeed:Number;
+		//ブレンドにかける時間（秒）
+		private var blendTime:Number;
+		//再生回数
+		private var numLoop:int;
+		
+		private var _current:MotionData;
+		private var _interpolationEnabled:Boolean;
+		private var _isPlaying:Boolean;
+		private var _timeScale:Number;
+		private var updateOrder:Boolean;
+		private var lastMotionTime:Number;
+		private var lastBlend:Number;
 		
 		public function MotionController() 
 		{
-			_interpolationEnabled = true;
-			firstTime = true;
-			_isPlaying = false;
-			_time = 0;
-			timeScale = 1;
 			motions = { };
-			timer = new Stopwatch();
+			blendTimer = new Stopwatch();
+			motionTimer = new Stopwatch();
+			
+			lastMotionTime = -1;
+			lastBlend = -1;
+			_interpolationEnabled = true;
+			_isPlaying = false;
+			updateOrder = false;
+			_timeScale = 1;
 		}
 		
 		/**
@@ -73,7 +85,9 @@ package net.morocoshi.moja3d.animation
 		public function addMotion(motionID:String, data:MotionData, trimStart:Number = 0, trimEnd:Number = 0):void
 		{
 			var motionData:MotionData = data.clone();
-			if (trimEnd != 0)
+			if (trimEnd == 0 || trimEnd > motionData.endTime) trimEnd = motionData.endTime;
+			if (trimStart < 0) trimStart = 0;
+			if (trimStart != 0 || trimEnd != motionData.endTime)
 			{
 				motionData.setStartTime(trimStart);
 				motionData.setEndTime(trimEnd);
@@ -119,91 +133,106 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * モーションを再生
-		 * @param	motionID	再生するモーションID
+		 * モーションを変更する
+		 * @param	motionID	変更するモーションのID
 		 * @param	blendTime	モーションブレンドにかける時間（秒）
-		 * @param	numLoop		ループ回数。0で無限ループ
+		 * @param	loop		再生回数。0で無限ループ
 		 * @param	speedScale	モーションの速度の倍率
 		 */
-		public function play(motionID:String, blendTime:Number, numLoop:int = 0, speedScale:Number = 1):void 
+		public function changeMotion(motionID:String, blendTime:Number, loop:int = 0, speedScale:Number = 1):void 
 		{
 			var motion:MotionData = motions[motionID];
 			if (motion == null)
 			{
-				stop();
 				return;
 			}
 			
-			if (current == null)
+			if (_current == null)
 			{
 				blendTime = 0;
 			}
 			
 			this.blendTime = blendTime;
-			this.numLoop = numLoop;
-			timer.reset();
+			this.numLoop = loop;
 			
-			current = motion;
-			current.capture();
-			current.reset();
-			current.setBlendRatio(0);
+			motionTimer.reset();
+			blendTimer.reset();
+			blendTimer.start();
 			
-			timeScale = speedScale;
-			firstTime = true;
-			resume();
-			setTime(_time);
+			_current = motion;
+			_current.capture();
+			_current.reset();
+			_current.setBlendRatio(0);
+			
+			currentMotionSpeed = speedScale;
+			motionTimer.speed = currentMotionSpeed * _timeScale;
+			
+			updateOrder = true;
+			update();
 		}
 		
 		/**
-		 * 一時停止を再開
+		 * モーションを再生
 		 */
-		public function resume():void
+		public function play():void
 		{
-			_isPlaying = true;
-			timer.start();
+			motionTimer.start();
 		}
 		
 		/**
-		 * モーションの一時停止
+		 * モーションを一時停止
 		 */
 		public function stop():void
 		{
-			_isPlaying = false;
-			timer.stop();
+			motionTimer.stop();
 		}
 		
 		/**
-		 * 時間（秒）を指定して描画する
+		 * モーション位置をフレームで指定
+		 * @param	frame
+		 * @param	frameRate
+		 */
+		public function setFrame(frame:int, frameRate:Number = 30):void
+		{
+			motionTimer.time = 1000 / frameRate * frame;
+		}
+		
+		/**
+		 * モーション位置を秒で指定
 		 * @param	time
 		 */
-		public function setTime(time:Number):void 
+		public function setTime(time:Number):void
 		{
-			_time = time;
-			var diff:Number = _time - _capturedTime;
-			if (_isPlaying)
+			motionTimer.time = time * 1000;
+		}
+		
+		/**
+		 * 現在再生中のモーションを描画に反映する
+		 */
+		public function update():void 
+		{
+			var blend:Number = (blendTime == 0)? 1 : blendTimer.time / 1000 / blendTime;
+			if (blend > 1) blend = 1;
+			_current.setBlendRatio(blend);
+			
+			if (updateOrder || lastMotionTime != motionTimer.time || lastBlend != blend)
 			{
-				if (firstTime)
+				updateOrder = false;
+				lastMotionTime = motionTimer.time;
+				lastBlend = blend;
+				
+				var sec:Number = motionTimer.time / 1000;
+				if (numLoop > 0 && sec / _current.timeLength >= numLoop)
 				{
-					firstTime = false;
-					_capturedTime = _time;
-					diff = 0;
-				}
-				var ratio:Number = (blendTime == 0)? 1 : timer.time / 1000 / blendTime;
-				if (ratio > 1) ratio = 1;
-				current.setBlendRatio(ratio);
-				var sec:Number = diff * timeScale;
-				var motionlength:Number = (current.endTime - current.startTime);
-				if (numLoop > 0 && sec / motionlength >= numLoop)
-				{
-					current.setTime(current.endTime);
+					_current.setTime(_current.endTime);
 					stop();
 					dispatchEvent(new MotionEvent(MotionEvent.MOTION_COMPLETE));
 				}
 				else
 				{
 					//dispatchEvent(new MotionEvent(MotionEvent.MOTION_LOOP));
-					sec %= motionlength;
-					current.setTime(sec);
+					sec %= _current.timeLength;
+					_current.setTime(_current.startTime + sec);
 				}
 			}
 		}
@@ -225,6 +254,29 @@ package net.morocoshi.moja3d.animation
 				var motion:MotionData = motions[key];
 				motion.setInterpolationEnabled(_interpolationEnabled);
 			}
+		}
+		
+		/**
+		 * モーション再生やブレンド処理などこのクラス内で扱う全ての処理に影響する時間のスケール
+		 */
+		public function get timeScale():Number 
+		{
+			return _timeScale;
+		}
+		
+		public function set timeScale(value:Number):void 
+		{
+			_timeScale = value;
+			blendTimer.speed = _timeScale;
+			motionTimer.speed = currentMotionSpeed * _timeScale;
+		}
+		
+		/**
+		 * 現在再生中のモーションデータ
+		 */
+		public function get current():MotionData 
+		{
+			return _current;
 		}
 		
 	}

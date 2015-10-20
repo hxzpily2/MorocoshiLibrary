@@ -159,6 +159,14 @@ package net.morocoshi.moja3d.animation
 			}
 		}
 		
+		/**
+		 * モーションの長さ（秒）。モーションの終了時間から開始時間を引いたものです。
+		 */
+		public function get timeLength():Number
+		{
+			return endTime - startTime;
+		}
+		
 		public function get loop():Boolean 
 		{
 			return _loop;
