@@ -359,6 +359,18 @@ package net.morocoshi.moja3d.objects
 			z = point.z;
 		}
 		
+		/**
+		 * ワールド座標がこの空間内でのどの座標なのか返す
+		 * @param	point
+		 * @return
+		 */
+		public function worldToLocal(point:Vector3D):Vector3D
+		{
+			var world:Matrix3D = worldMatrix.clone();
+			world.invert();
+			return world.transformVector(point);
+		}
+		
 		public function getWorldPosition():Vector3D
 		{
 			var point:Vector3D = new Vector3D(x, y, z);
