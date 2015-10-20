@@ -188,6 +188,8 @@ package net.morocoshi.common.loaders.collada.nodes
 					userData[attr] = parseFloat(value);
 				}
 			}
+			delete userData["LastPose"];
+			delete userData["MapChannel:1"];
 		}
 		
 		public function getWorldMatrix():Matrix3D
