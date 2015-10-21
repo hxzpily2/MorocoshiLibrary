@@ -51,6 +51,7 @@ package net.morocoshi.moja3d.particle.animators
 		
 		public function emitParticle(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
+			particle.animator = this;
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
 			particle.velocity = getEmitVelocity(emitter);

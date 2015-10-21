@@ -30,7 +30,7 @@ package net.morocoshi.moja3d.particle
 		public var limit:int = -1;
 		
 		private var particleCache:Vector.<ParticleCell> = new Vector.<ParticleCell>;
-		private var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
+		public var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
 		
 		private var sprite:Sprite = new Sprite();
 		private var context3D:Context3D;
@@ -209,6 +209,7 @@ package net.morocoshi.moja3d.particle
 			for (i = 0; i < n; i++) 
 			{
 				particle = particles[i] as ParticleCell;
+				particle.update();
 				//風
 				//if (_wind) _wind.updateParticle(particle);
 				//重力、回転、アルファ変化

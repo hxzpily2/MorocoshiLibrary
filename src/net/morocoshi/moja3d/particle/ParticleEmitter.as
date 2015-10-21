@@ -65,7 +65,7 @@ package net.morocoshi.moja3d.particle
 		
 		public function getRandomPosition():Vector3D 
 		{
-			return new Vector3D();
+			return _range.getRandomPosition(this);
 		}
 		
 		/**

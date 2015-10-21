@@ -4,6 +4,7 @@ package net.morocoshi.moja3d.particle.cells
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Object3D;
+	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
 	
 	/**
 	 * パーティクルシステム用のSprite3D
@@ -31,9 +32,16 @@ package net.morocoshi.moja3d.particle.cells
 		/**最後にチェックしたアルファキー用インデックス*/
 		public var latestIndex:int = 0;
 		
+		public var animator:ParticleAnimator;
+		
 		public function ParticleCell()
 		{
 			super();
+		}
+		
+		public function update():void 
+		{
+			animator.updateParticle(this);
 		}
 		
 		/**

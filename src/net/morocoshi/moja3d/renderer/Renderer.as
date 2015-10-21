@@ -195,7 +195,7 @@ package net.morocoshi.moja3d.renderer
 			{
 				//カメラ平面からの距離をチェックする
 				var data:Vector.<Number> = item.matrix.rawData;
-				item.distance = camera.getDistance(data[12], data[13], data[14]) - item.sortPriority;
+				item.distance = camera.getDistanceXYZ(data[12], data[13], data[14]) - item.sortPriority;
 				item = item.next;
 			}
 			collector.renderElementList[layer] = elementSort.sort(collector.renderElementList[layer]);

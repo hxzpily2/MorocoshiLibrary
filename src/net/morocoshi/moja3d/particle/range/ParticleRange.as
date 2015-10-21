@@ -14,14 +14,13 @@ package net.morocoshi.moja3d.particle.range
 	 * 
 	 * @author tencho
 	 */
-	public class ParticleRange extends Object3D
+	public class ParticleRange
 	{
 		public var type:String;
 		//public var system:ParticleSystem;
 		
 		public function ParticleRange() 
 		{
-			super();
 			type = ParticleRangeType.POINT;
 		}
 		

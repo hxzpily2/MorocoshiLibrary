@@ -178,6 +178,10 @@ package net.morocoshi.moja3d.objects
 			return true;
 		}
 		
+		public function getDistance3D(point:Vector3D):Number
+		{
+			return getDistanceXYZ(point.x, point.y, point.z);
+		}
 		/**
 		 * カメラ平面からの距離を調べる
 		 * @param	px
@@ -185,7 +189,7 @@ package net.morocoshi.moja3d.objects
 		 * @param	pz
 		 * @return
 		 */
-		public function getDistance(px:Number, py:Number, pz:Number):Number 
+		public function getDistanceXYZ(px:Number, py:Number, pz:Number):Number 
 		{
 			var data:Vector.<Number> = _worldMatrix.rawData;
 			

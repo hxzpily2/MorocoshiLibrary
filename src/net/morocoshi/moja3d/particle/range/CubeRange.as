@@ -48,17 +48,17 @@ package net.morocoshi.moja3d.particle.range
 		override public function parse(xml:XML):void 
 		{
 			super.parse(xml);
-			x = XMLUtil.getAttrNumber(xml.size, "x", 0);
-			y = XMLUtil.getAttrNumber(xml.size, "y", 0);
-			z = XMLUtil.getAttrNumber(xml.size, "z", 0);
+			sizeX = XMLUtil.getAttrNumber(xml.size, "x", 0);
+			sizeY = XMLUtil.getAttrNumber(xml.size, "y", 0);
+			sizeZ = XMLUtil.getAttrNumber(xml.size, "z", 0);
 		}
 		
 		override public function toXML():XML 
 		{
 			var xml:XML = super.toXML();
-			xml.size.@x = x;
-			xml.size.@y = y;
-			xml.size.@z = z;
+			xml.size.@x = sizeX;
+			xml.size.@y = sizeY;
+			xml.size.@z = sizeZ;
 			return xml;
 		}
 		
