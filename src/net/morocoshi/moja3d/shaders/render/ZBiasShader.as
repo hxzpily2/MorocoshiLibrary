@@ -50,7 +50,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			vertexCode.addCode(
-				"$pos.z -= @zbias.x"
+				"$pos.w += @zbias.x"
 			);
 		}
 		

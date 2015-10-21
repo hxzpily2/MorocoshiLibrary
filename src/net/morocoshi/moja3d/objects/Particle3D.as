@@ -27,9 +27,6 @@ package net.morocoshi.moja3d.objects
 		{
 			super();
 			
-			depthMask = false;
-			passCompareMode = Context3DCompareMode.LESS;
-			
 			geometry = new ParticleGeometry();
 			particles = new Vector.<ParticleData>;
 			surface = new Surface(material, 0, 0);
