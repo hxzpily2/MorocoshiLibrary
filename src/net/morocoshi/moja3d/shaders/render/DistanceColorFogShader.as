@@ -177,9 +177,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DistanceColorFogShader = new DistanceColorFogShader(_color, _distanceNear, _distanceFar, _densityNear, _densityFar);
-			shader.blendMode = _blendMode;
-			return shader;
+			return new DistanceColorFogShader(_color, _distanceNear, _distanceFar, _densityNear, _densityFar, _blendMode);
 		}
 		
 	}

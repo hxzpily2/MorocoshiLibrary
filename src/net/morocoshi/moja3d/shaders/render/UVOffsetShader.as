@@ -1,13 +1,12 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * UVをずらす
 	 * 
 	 * @author tencho
 	 */
@@ -130,8 +129,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:UVOffsetShader = new UVOffsetShader(_offsetU, _offsetV, _scaleU, _scaleV);
-			return shader;
+			return new UVOffsetShader(_offsetU, _offsetV, _scaleU, _scaleV);
 		}
 		
 	}

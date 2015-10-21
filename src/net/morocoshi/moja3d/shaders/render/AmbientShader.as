@@ -117,8 +117,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:AmbientShader = new AmbientShader();
-			return shader;
+			return new AmbientShader();
 		}
 		
 	}

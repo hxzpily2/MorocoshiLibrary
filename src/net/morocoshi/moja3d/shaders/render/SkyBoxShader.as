@@ -1,12 +1,9 @@
 package net.morocoshi.moja3d.shaders.render 
 {
-	import flash.display.BlendMode;
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.resources.CubeTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -79,11 +76,14 @@ package net.morocoshi.moja3d.shaders.render
 			
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new SkyBoxShader(_resource);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var diffuse:TextureResource = _resource? _resource.clone() as TextureResource : null;
-			var shader:SkyBoxShader = new SkyBoxShader(diffuse);
-			return shader;
+			return new SkyBoxShader(cloneTexture(_resource));
 		}
 		
 		public function get resource():TextureResource 

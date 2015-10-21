@@ -390,15 +390,17 @@ package net.morocoshi.moja3d.shaders
 		
 		/**
 		 * 複製(ここをちゃんとコピーするようにしたい)
+		 * @param	cloneResources	リソースも複製する
 		 * @return
 		 */
-		public function clone():ShaderList 
+		public function clone(cloneResources:Boolean = true):ShaderList 
 		{
 			var result:ShaderList = new ShaderList();
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				result.addShader(shaders[i].clone());
+				var shader:MaterialShader = cloneResources? shaders[i].clone() : shaders[i].reference();
+				result.addShader(shader);
 			}
 			return result;
 		}

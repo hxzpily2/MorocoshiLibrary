@@ -155,10 +155,17 @@ package net.morocoshi.moja3d.shaders.render
 			
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			var shader:EnvironmentShader = new EnvironmentShader(null, _reflection, _fresnel, _blendMode);
+			shader.resource = _resource;
+			return shader;
+		}
+		
 		override public function clone():MaterialShader 
 		{
 			var shader:EnvironmentShader = new EnvironmentShader(null, _reflection, _fresnel, _blendMode);
-			shader.resource = _resource? _resource.clone() as TextureResource : null;
+			shader.resource = cloneTexture(_resource);
 			return shader;
 		}
 		

@@ -88,8 +88,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:RectClipShader = new RectClipShader(_left, _top, _right,_bottom);
-			return shader;
+			return new RectClipShader(_left, _top, _right,_bottom);
 		}
 		
 		public function get left():Number 

@@ -252,9 +252,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ReflectionShader = new ReflectionShader(_ratio, _fresnel, _noize, _blur, _quality);
-			//shader.reflectionTexture = shader.fragmentCode.textureList[0];
-			return shader;
+			return new ReflectionShader(_ratio, _fresnel, _noize, _blur, _quality);
 		}
 		
 	}

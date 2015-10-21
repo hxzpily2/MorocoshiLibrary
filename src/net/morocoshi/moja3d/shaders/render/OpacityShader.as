@@ -5,13 +5,12 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
+	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
 	 * 不透明度テクスチャ
@@ -78,10 +77,14 @@ package net.morocoshi.moja3d.shaders.render
 			);
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new OpacityShader(_opacity, _mipmap, _smoothing, _tiling);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:OpacityShader = new OpacityShader(_opacity, _mipmap, _smoothing, _tiling);
-			return shader;
+			return new OpacityShader(cloneTexture(_opacity), _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

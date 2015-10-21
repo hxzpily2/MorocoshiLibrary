@@ -10,7 +10,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * TODO: つくりかけ
 	 * 
 	 * @author tencho
 	 */
@@ -67,8 +67,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ToonShader = new ToonShader();
-			return shader;
+			return new ToonShader();
 		}
 		
 	}

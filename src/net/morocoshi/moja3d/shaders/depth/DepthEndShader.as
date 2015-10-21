@@ -72,8 +72,7 @@ package net.morocoshi.moja3d.shaders.depth
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DepthEndShader = new DepthEndShader(_shadowThreshold);
-			return shader;
+			return new DepthEndShader(_shadowThreshold);
 		}
 		
 		public function get shadowThreshold():Number 

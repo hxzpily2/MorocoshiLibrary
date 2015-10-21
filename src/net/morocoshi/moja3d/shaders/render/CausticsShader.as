@@ -133,10 +133,14 @@ package net.morocoshi.moja3d.shaders.render
 			);
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new CausticsShader(_texture, _alpha, _width, _height, _segmentW, _segmentH, _numImages);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:CausticsShader = new CausticsShader(_texture, _alpha, _width, _height, _segmentW, _segmentH, _numImages);
-			return shader;
+			return new CausticsShader(cloneTexture(_texture), _alpha, _width, _height, _segmentW, _segmentH, _numImages);
 		}
 		
 	}

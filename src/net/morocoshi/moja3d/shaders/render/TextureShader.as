@@ -180,12 +180,14 @@ package net.morocoshi.moja3d.shaders.render
 			updateShaderCode();
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new TextureShader(_diffuse, _opacity, _mipmap, _smoothing, _tiling);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var diffuse:TextureResource = _diffuse? _diffuse.clone() as TextureResource : null;
-			var opacity:TextureResource = _opacity? _opacity.clone() as TextureResource : null;
-			var shader:TextureShader = new TextureShader(diffuse, opacity, _mipmap, _smoothing, _tiling);
-			return shader;
+			return new TextureShader(cloneTexture(_diffuse), cloneTexture(_opacity), _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

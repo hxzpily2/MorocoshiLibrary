@@ -7,7 +7,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 単色塗シェーダー
 	 * 
 	 * @author tencho
 	 */
@@ -92,8 +92,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:FillShader = new FillShader(_color, _alpha);
-			return shader;
+			return new FillShader(_color, _alpha);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

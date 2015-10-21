@@ -117,8 +117,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:FresnelShader = new FresnelShader(_refractRatio, _incrementRatio);
-			return shader;
+			return new FresnelShader(_refractRatio, _incrementRatio);
 		}
 		
 	}

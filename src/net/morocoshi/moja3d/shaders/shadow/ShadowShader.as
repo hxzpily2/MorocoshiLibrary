@@ -6,7 +6,6 @@ package net.morocoshi.moja3d.shaders.shadow
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -275,8 +274,7 @@ package net.morocoshi.moja3d.shaders.shadow
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ShadowShader = new ShadowShader(_syncLight, _mainBlur, _wideBlur, _mainBlur, _wideBlur);
-			return shader;
+			return new ShadowShader(_syncLight, _mainBlur, _wideBlur, _mainBlur, _wideBlur);
 		}
 		
 		public function get intensity():Number 

@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.shaders.depth 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -58,8 +57,7 @@ package net.morocoshi.moja3d.shaders.depth
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DepthAlphaShader = new DepthAlphaShader(_alpha);
-			return shader;
+			return new DepthAlphaShader(_alpha);
 		}
 		
 		public function get alpha():Number 

@@ -139,8 +139,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DistanceAlphaFogShader = new DistanceAlphaFogShader(_distanceNear, _distanceFar, _alphaNear, _alphaFar);
-			return shader;
+			return new DistanceAlphaFogShader(_distanceNear, _distanceFar, _alphaNear, _alphaFar);
 		}
 		
 	}

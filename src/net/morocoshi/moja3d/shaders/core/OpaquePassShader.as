@@ -60,8 +60,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:OpaquePassShader = new OpaquePassShader(_threshold);
-			return shader;
+			return new OpaquePassShader(_threshold);
 		}
 		
 		public function get threshold():Number 

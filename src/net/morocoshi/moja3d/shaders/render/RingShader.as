@@ -156,8 +156,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:RingShader = new RingShader(_radius, _thickness, _rgb, _alpha);
-			return shader;
+			return new RingShader(_radius, _thickness, _rgb, _alpha);
 		}
 		
 	}

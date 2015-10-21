@@ -76,8 +76,7 @@ package net.morocoshi.moja3d.shaders.particle
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ParticleShader = new ParticleShader(geometry);
-			return shader;
+			return new ParticleShader(geometry);
 		}
 		
 	}

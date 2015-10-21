@@ -264,8 +264,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:SpecularShader = new SpecularShader(_power, _alpha, _fresnel, _protectTransparent, _protectReverse);
-			return shader;
+			return new SpecularShader(_power, _alpha, _fresnel, _protectTransparent, _protectReverse);
 		}
 		
 	}

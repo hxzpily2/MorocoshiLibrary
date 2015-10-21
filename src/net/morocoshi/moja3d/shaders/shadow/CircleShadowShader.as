@@ -163,10 +163,14 @@ package net.morocoshi.moja3d.shaders.shadow
 			}
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new CircleShadowShader(_texture, _width, _height);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:CircleShadowShader = new CircleShadowShader(_texture, _width, _height);
-			return shader;
+			return new CircleShadowShader(cloneTexture(_texture), _width, _height);
 		}
 		
 		public function get texture():TextureResource 

@@ -52,8 +52,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:FlipNormalShader = new FlipNormalShader();
-			return shader;
+			return new FlipNormalShader();
 		}
 		
 	}

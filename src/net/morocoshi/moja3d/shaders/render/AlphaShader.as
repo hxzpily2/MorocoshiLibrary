@@ -57,8 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:AlphaShader = new AlphaShader(_alpha);
-			return shader;
+			return new AlphaShader(_alpha);
 		}
 		
 		public function get alpha():Number 

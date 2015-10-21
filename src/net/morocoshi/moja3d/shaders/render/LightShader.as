@@ -1,11 +1,11 @@
 package net.morocoshi.moja3d.shaders.render 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * 光を投影する（___つくりかけ！）
+	 * 光を投影する
+	 * TODO: つくりかけ
 	 * 
 	 * @author tencho
 	 */
@@ -52,8 +52,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:LightShader = new LightShader();
-			return shader;
+			return new LightShader();
 		}
 		
 	}

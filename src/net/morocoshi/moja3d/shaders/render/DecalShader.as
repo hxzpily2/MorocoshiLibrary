@@ -60,8 +60,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DecalShader = new DecalShader(_offset);
-			return shader;
+			return new DecalShader(_offset);
 		}
 		
 		public function get offset():Number 

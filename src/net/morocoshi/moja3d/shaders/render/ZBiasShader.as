@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -57,8 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ZBiasShader = new ZBiasShader(_zbias);
-			return shader;
+			return new ZBiasShader(_zbias);
 		}
 		
 		public function get zbias():Number 

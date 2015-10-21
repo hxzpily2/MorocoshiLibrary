@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.shaders
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.agal.UsingConstants;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.resources.TextureResource;
 	
 	use namespace moja3d;
 	
@@ -161,18 +162,20 @@ package net.morocoshi.moja3d.shaders
 			}
 		}
 		
+		public function reference():MaterialShader
+		{
+			return clone();
+		}
+		
 		public function clone():MaterialShader 
 		{
 			throw new Error("継承してください！");
-			
-			//var result:MaterialShader = new MaterialShader();
-			//result.updateAlphaMode();
-			//result.updateConstants();
-			//result.updateShaderCode();
-			//result.updateTexture();
-			//cloneProperties(result);
-			
 			return null;
+		}
+		
+		protected function cloneTexture(resource:TextureResource):TextureResource 
+		{
+			return resource? resource.clone() as TextureResource : null;
 		}
 		
 		/**

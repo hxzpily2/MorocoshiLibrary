@@ -79,8 +79,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:EndShader = new EndShader(geometry);
-			return shader;
+			return new EndShader(geometry);
 		}
 		
 	}

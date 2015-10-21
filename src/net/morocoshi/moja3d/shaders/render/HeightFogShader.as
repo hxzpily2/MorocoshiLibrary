@@ -141,8 +141,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:HeightFogShader = new HeightFogShader(_top, _bottom, _topDensity, _bottomDensity, _color);
-			return shader;
+			return new HeightFogShader(_top, _bottom, _topDensity, _bottomDensity, _color);
 		}
 		
 	}

@@ -128,8 +128,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:BasicShader = new BasicShader(geometry);
-			return shader;
+			return new BasicShader(geometry);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

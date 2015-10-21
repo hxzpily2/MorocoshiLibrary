@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.shaders.core 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -66,8 +65,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:AlphaPassShader = new AlphaPassShader(_threshold);
-			return shader;
+			return new AlphaPassShader(_threshold);
 		}
 		
 		public function get threshold():Number 

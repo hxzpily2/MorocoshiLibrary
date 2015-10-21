@@ -1,12 +1,13 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
 	/**
-	 * ...
-	 * @author ...
+	 * UVをワールド空間規準で貼る
+	 * 
+	 * @author tencho
 	 */
 	public class UVWorldScaleShader extends MaterialShader 
 	{
@@ -113,8 +114,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:UVWorldScaleShader = new UVWorldScaleShader(_x, _y, _width, _height);
-			return shader;
+			return new UVWorldScaleShader(_x, _y, _width, _height);
 		}
 		
 	}

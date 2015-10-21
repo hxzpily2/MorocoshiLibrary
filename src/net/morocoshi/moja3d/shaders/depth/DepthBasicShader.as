@@ -146,8 +146,7 @@ package net.morocoshi.moja3d.shaders.depth
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:DepthBasicShader = new DepthBasicShader(geometry);
-			return shader;
+			return new DepthBasicShader(geometry);
 		}
 		
 	}

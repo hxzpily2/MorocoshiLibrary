@@ -152,8 +152,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:HalfLambertShader = new HalfLambertShader();
-			return shader;
+			return new HalfLambertShader();
 		}
 		
 	}

@@ -79,6 +79,14 @@ package net.morocoshi.moja3d.shaders.render
 		override public function clone():MaterialShader 
 		{
 			var shader:ColorTransformShader = new ColorTransformShader();
+			shader.alphaMultiplier = _alphaMultiplier;
+			shader.alphaOffset = _alphaOffset;
+			shader.blueMultiplier = _blueMultiplier;
+			shader.blueOffset = _blueOffset;
+			shader.greenMultiplier = _greenMultiplier;
+			shader.greenOffset = _greenOffset;
+			shader.redMultiplier = _redMultiplier;
+			shader.redOffset = _redOffset;
 			return shader;
 		}
 		

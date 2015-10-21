@@ -122,8 +122,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:VertexColorShader = new VertexColorShader(_colorBlend, _alphaBlend);
-			return shader;
+			return new VertexColorShader(_colorBlend, _alphaBlend);
 		}
 		
 		public function get colorBlend():String 

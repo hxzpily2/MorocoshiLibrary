@@ -55,8 +55,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ShadowMaskShader = new ShadowMaskShader();
-			return shader;
+			return new ShadowMaskShader();
 		}
 		
 	}

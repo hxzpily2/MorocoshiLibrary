@@ -284,10 +284,14 @@ package net.morocoshi.moja3d.shaders.render
 			updateShaderCode();
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new SphereMapShader(_sphereMap, _alpha, _blendMode, _strict, _applyNormal);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:SphereMapShader = new SphereMapShader(_sphereMap, _alpha, _blendMode, _strict, _applyNormal);
-			return shader;
+			return new SphereMapShader(cloneTexture(_sphereMap), _alpha, _blendMode, _strict, _applyNormal);
 		}
 		
 	}

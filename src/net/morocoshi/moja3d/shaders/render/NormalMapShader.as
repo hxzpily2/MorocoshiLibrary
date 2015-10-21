@@ -6,7 +6,6 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
@@ -137,10 +136,14 @@ package net.morocoshi.moja3d.shaders.render
 			scaleConst.x = _scale;
 		}
 		
+		override public function reference():MaterialShader
+		{
+			return new NormalMapShader(_resource, _scale);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:NormalMapShader = new NormalMapShader(_resource, _scale);
-			return shader;
+			return new NormalMapShader(cloneTexture(_resource), _scale);
 		}
 		
 	}

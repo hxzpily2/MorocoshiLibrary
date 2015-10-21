@@ -360,15 +360,20 @@ package net.morocoshi.moja3d.materials
 		
 		/**
 		 * 複製
+		 * @param	cloneResources	リソースも複製する
 		 */
-		public function clone():Material
+		public function clone(cloneResources:Boolean = true):Material
 		{
 			var result:Material = new Material();
 			result.name = name;
 			result.culling = culling;
-			result.shadowThreshold = shadowThreshold;
-			result.shaderList = shaderList.clone();
-			result.reflectShaderList = reflectShaderList? reflectShaderList.clone() : null;
+			result.blendMode = blendMode;
+			result.alphaThreshold = _alphaThreshold;
+			result.opaquePassEnabled = _opaquePassEnabled;
+			result.alphaPassEnabled = _alphaPassEnabled;
+			result.shadowThreshold = _shadowThreshold;
+			result.shaderList = shaderList.clone(cloneResources);
+			result.reflectShaderList = reflectShaderList? reflectShaderList.clone(cloneResources) : null;
 			return result;
 		}
 		

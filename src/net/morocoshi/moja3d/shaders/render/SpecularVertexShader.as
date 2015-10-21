@@ -1,13 +1,14 @@
 package net.morocoshi.moja3d.shaders.render 
 {
-	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class SpecularVertexShader extends MaterialShader 
@@ -182,8 +183,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:SpecularVertexShader = new SpecularVertexShader(_power, _alpha, _protectTransparent, _protectReverse);
-			return shader;
+			return new SpecularVertexShader(_power, _alpha, _protectTransparent, _protectReverse);
 		}
 		
 	}

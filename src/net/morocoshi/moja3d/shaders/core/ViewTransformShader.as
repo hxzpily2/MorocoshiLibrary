@@ -57,8 +57,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:ViewTransformShader = new ViewTransformShader();
-			return shader;
+			return new ViewTransformShader();
 		}
 		
 	}

@@ -1,7 +1,5 @@
 package net.morocoshi.moja3d.shaders.depth 
 {
-	import flash.display.BitmapDataChannel;
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
@@ -74,10 +72,16 @@ package net.morocoshi.moja3d.shaders.depth
 			);
 		}
 		
-		override public function clone():MaterialShader 
+		override public function reference():MaterialShader
 		{
 			return new DepthOpacityShader(_opacity, _colorChannel, _smoothing, _mipmap, _tiling);
 		}
+		
+		override public function clone():MaterialShader 
+		{
+			return new DepthOpacityShader(cloneTexture(_opacity), _colorChannel, _smoothing, _mipmap, _tiling);
+		}
+		
 		/*
 		public function get alpha():Number 
 		{

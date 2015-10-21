@@ -10,7 +10,7 @@ package net.morocoshi.moja3d.shaders.render
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 水面法線マップ
 	 * 
 	 * @author tencho
 	 */
@@ -134,10 +134,14 @@ package net.morocoshi.moja3d.shaders.render
 			ratioConst.x = _ratio;
 		}
 		
+		override public function reference():MaterialShader 
+		{
+			return new WaterNormalShader(_normalMap, _ratio);
+		}
+		
 		override public function clone():MaterialShader 
 		{
-			var shader:WaterNormalShader = new WaterNormalShader(_normalMap, _ratio);
-			return shader;
+			return new WaterNormalShader(cloneTexture(_normalMap), _ratio);
 		}
 	}
 

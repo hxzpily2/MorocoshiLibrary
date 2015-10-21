@@ -132,8 +132,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:LambertShader = new LambertShader();
-			return shader;
+			return new LambertShader();
 		}
 		
 	}
