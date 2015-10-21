@@ -152,7 +152,7 @@ package net.morocoshi.moja3d.renderer
 			//半透明要素のレンダリング
 			if (collector.renderElementList[RenderLayer.TRANSPARENT])
 			{
-				setDepthTest(context3D, true, Context3DCompareMode.LESS);
+				setDepthTest(context3D, false, Context3DCompareMode.LESS);
 				sortItem(RenderLayer.TRANSPARENT, collector, camera);//カメラからの距離でソート
 				renderLayer(RenderLayer.TRANSPARENT, collector, camera, drawTextures);
 			}
@@ -290,17 +290,17 @@ package net.morocoshi.moja3d.renderer
 				item.shaderList.fragmentCode.applyProgramConstants(context3D, fragmentIndex);
 				
 				//描画
-				if (item.passCompareMode)
-				{
-					tempPassCompareMode = defaltPassCompareMode;
-					tempDepthMask = defaltDepthMask;
-					context3D.setDepthTest(item.depthMask, item.passCompareMode);
-				}
-				else if (tempPassCompareMode)
-				{
-					context3D.setDepthTest(tempDepthMask, tempPassCompareMode);
-					tempPassCompareMode = "";
-				}
+				//if (item.passCompareMode)
+				//{
+				//	tempPassCompareMode = defaltPassCompareMode;
+				//	tempDepthMask = defaltDepthMask;
+				//	context3D.setDepthTest(item.depthMask, item.passCompareMode);
+				//}
+				//else if (tempPassCompareMode)
+				//{
+				//	context3D.setDepthTest(tempDepthMask, tempPassCompareMode);
+				//	tempPassCompareMode = "";
+				//}
 				context3D.drawTriangles(item.indexBuffer, item.firstIndex, item.numTriangles);
 				
 				//バッファをクリアする
