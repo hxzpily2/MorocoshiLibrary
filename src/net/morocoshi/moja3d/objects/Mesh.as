@@ -44,9 +44,9 @@ package net.morocoshi.moja3d.objects
 		private var renderElements:Vector.<RenderElement>;
 		private var elementCount:int;
 		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
-		public var passCompareMode:String;
+		//public var passCompareMode:String;
 		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
-		public var depthMask:Boolean;
+		//public var depthMask:Boolean;
 		
 		static moja3d var globalSeed:int;
 		private var seed:String;
@@ -58,8 +58,8 @@ package net.morocoshi.moja3d.objects
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;
-			depthMask = true;
-			passCompareMode = "";
+			//depthMask = true;
+			//passCompareMode = "";
 			layer = RenderLayer.OPAQUE;
 			geometry = new Geometry();
 			surfaces = new Vector.<Surface>;
@@ -415,8 +415,8 @@ package net.morocoshi.moja3d.objects
 					element.vertexBufferList = geom.vertexBufferList;
 					element.indexBuffer = geom.indexBuffer;
 					element.culling = material.culling;
-					element.depthMask = depthMask;
-					element.passCompareMode = passCompareMode;
+					//element.depthMask = depthMask;
+					//element.passCompareMode = passCompareMode;
 					element.sourceFactor = material.sourceFactor;
 					element.destinationFactor = material.destinationFactor;
 					//マイナススケールでフリップしていた場合は表示を反転する

@@ -23,8 +23,8 @@ package net.morocoshi.moja3d.renderer
 		public var culling:String;
 		public var layer:uint;
 		
-		public var passCompareMode:String;
-		public var depthMask:Boolean;
+		//public var passCompareMode:String;
+		//public var depthMask:Boolean;
 		public var sourceFactor:String;
 		public var destinationFactor:String;
 		public var useRefrectionTexture:Boolean;
