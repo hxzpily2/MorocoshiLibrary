@@ -23,6 +23,15 @@ package net.morocoshi.moja3d.billboard
 			tempVector = new Vector3D();
 		}
 		
+		/**
+		 * オブジェクトをビルボード化する
+		 * @param	object	対象オブジェクト
+		 * @param	pivot	軸回転モードにするか
+		 * @param	plane	カメラ平面に対して正面を向くかどうか。通常のビルボードはtrue。falseでカメラの視点を向くようになる。
+		 * @param	frontAxis	オブジェクトの正面方向の軸を指定。["+x", "-z"]
+		 * @param	topAxis	オブジェクトの上方向の軸を指定。["+x", "-z"]
+		 * @return
+		 */
 		public function addObject(object:Object3D, pivot:Boolean, plane:Boolean, frontAxis:String, topAxis:String):BillboardItem
 		{
 			var item:BillboardItem = new BillboardItem(object, pivot, plane, frontAxis, topAxis);

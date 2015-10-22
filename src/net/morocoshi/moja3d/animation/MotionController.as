@@ -188,13 +188,26 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * モーション位置をフレームで指定
+		 * モーション位置をフレーム（1～）で指定
 		 * @param	frame
 		 * @param	frameRate
 		 */
 		public function setFrame(frame:int, frameRate:Number = 30):void
 		{
-			motionTimer.time = 1000 / frameRate * frame;
+			motionTimer.time = 1000 / frameRate * (frame - 1);
+		}
+		
+		/**
+		 * モーション位置をフレーム（1～）で取得
+		 * @param	frameRate
+		 * @return
+		 */
+		public function getFrame(frameRate:Number = 30):int
+		{
+			if (current == null) return 1;
+			
+			var length:Number = current.timeLength;
+			return int((motionTimer.time / 1000) % length * frameRate) + 1;
 		}
 		
 		/**
@@ -204,6 +217,18 @@ package net.morocoshi.moja3d.animation
 		public function setTime(time:Number):void
 		{
 			motionTimer.time = time * 1000;
+		}
+		
+		/**
+		 * モーション位置を秒で取得
+		 * @return
+		 */
+		public function getTime():Number
+		{
+			if (current == null) return 0;
+			
+			var length:Number = current.timeLength;
+			return (motionTimer.time / 1000) % length;
 		}
 		
 		/**

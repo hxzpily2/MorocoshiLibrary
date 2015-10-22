@@ -493,10 +493,6 @@ package net.morocoshi.moja3d.view
 			var targetTexture:RenderTextureResource = (validFilters.length > 0)? postEffect.renderTexture : texture;
 			renderer.renderScene(collector, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias);
 			
-			//テクスチャを画面に映すサンプル
-			//collector.collectFilter(new Filter3D());
-			//renderer.renderTexture(collector.sunShadowList[0].shadow.texture, collector, null, bg[0], bg[1], bg[2], view.backgroundAlpha);
-			
 			//ポストエフェクト
 			n = validFilters.length;
 			if (n > 0)

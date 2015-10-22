@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.shaders.render
 	/**
 	 * フレネル反射シェーダー。反射系シェーダーにフレネル効果を持たせる為の事前計算をする。
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class FresnelShader extends MaterialShader 
 	{
