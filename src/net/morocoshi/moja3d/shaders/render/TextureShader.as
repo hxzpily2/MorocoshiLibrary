@@ -31,7 +31,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var opacityTexture:AGALTexture;
 		private var depthShader:DepthOpacityShader;
 		
-		public function TextureShader(diffuse:TextureResource, opacity:TextureResource, mipmap:String = Mipmap.MIPLINEAR, smoothing:String = Smoothing.LINEAR, tiling:String = Tiling.WRAP) 
+		public function TextureShader(diffuse:TextureResource, opacity:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
 		{
 			super();
 			
