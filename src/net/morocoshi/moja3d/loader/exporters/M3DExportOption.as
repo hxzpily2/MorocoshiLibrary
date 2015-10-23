@@ -68,6 +68,9 @@ package net.morocoshi.moja3d.loader.exporters
 		public var optimizeSurface:Boolean = false;
 		/**1つのスキンメッシュが持てるボーン数の限界数（これを超えた部分は分割される）*/
 		public var boneLimit:int = 20;
+		/**ウェイトの数を最大4つにする*/
+		public var halfWeight:Boolean = false;
+		
 		/***/
 		public var ignoreUserDataList:Array = [];
 		
@@ -92,6 +95,7 @@ package net.morocoshi.moja3d.loader.exporters
 			result.exportModel = exportModel;
 			result.exportNormal = exportNormal;
 			result.exportTangent4 = exportTangent4;
+			result.halfWeight = halfWeight;
 			
 			return result;
 		}

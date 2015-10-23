@@ -521,8 +521,8 @@ package net.morocoshi.moja3d.loader.exporters
 				var skin:M3DSkinGeometry = new M3DSkinGeometry();
 				skin.boneIndices1 = Vector.<Number>(data.jointList1);
 				skin.weights1 = Vector.<Number>(data.weightList1);
-				if (data.jointList2) skin.boneIndices2 = Vector.<Number>(data.jointList2);
-				if (data.weightList2) skin.weights2 = Vector.<Number>(data.weightList2);
+				if (data.jointList2 && data.jointList2.length) skin.boneIndices2 = Vector.<Number>(data.jointList2);
+				if (data.weightList2 && data.weightList2.length) skin.weights2 = Vector.<Number>(data.weightList2);
 				result = skin;
 			}
 			else

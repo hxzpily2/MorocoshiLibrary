@@ -791,6 +791,7 @@ package net.morocoshi.moja3d.objects
 		//
 		//--------------------------------------------------------------------------
 		
+		protected var currentMask:int;
 		/**
 		 * 描画データを収集する
 		 * @param	collector
@@ -824,7 +825,11 @@ package net.morocoshi.moja3d.objects
 			//マスクが設定されていれば全ての子をマスク扱いにする
 			if (containerRenderMask != -1)
 			{
-				mask = (mask == -1)? containerRenderMask : mask | containerRenderMask;
+				currentMask = (mask == -1)? containerRenderMask : mask | containerRenderMask;
+			}
+			else
+			{
+				currentMask = mask;
 			}
 			
 			//座標計算
@@ -911,7 +916,7 @@ package net.morocoshi.moja3d.objects
 						current.calculateMatrixOrder = (current.calculateMatrixOrder || calcMatrix);
 						continue;
 					}
-					current.collectRenderElements(collector, calcMatrix, calcColor, calcBounds, worldFlip * flip, mask);
+					current.collectRenderElements(collector, calcMatrix, calcColor, calcBounds, worldFlip * flip, currentMask);
 				}
 			}
 			

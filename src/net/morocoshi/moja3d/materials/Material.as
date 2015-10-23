@@ -325,7 +325,7 @@ package net.morocoshi.moja3d.materials
 				var result:ShaderList = new ShaderList();
 				result.addShader(new BasicShader(geometry));
 				if (mesh.startShaderList) result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
-				if (skinShader) result.addShader(skinShader);
+				if (skinShader) result.addShader(skinShader.getExtraShader(RenderPhase.MASK));
 				result.attach(collector.getMaskShaderList(mask));
 				result.attachExtra(shaderList, RenderPhase.MASK);
 				if (mesh.endShaderList) result.attachExtra(mesh.endShaderList, RenderPhase.MASK);

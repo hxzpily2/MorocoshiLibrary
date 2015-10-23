@@ -3,12 +3,16 @@ package net.morocoshi.components.minimal.grid
 	import com.bit101.components.InputText;
 	import com.bit101.components.Panel;
 	import com.bit101.components.PushButton;
+	import flash.display.NativeMenuItem;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.filesystem.File;
+	import flash.ui.ContextMenu;
 	import net.morocoshi.air.drop.DragDrop;
 	import net.morocoshi.air.files.ClipData;
 	import net.morocoshi.air.files.FileUtil;
+	import net.morocoshi.air.menu.AirMenu;
+	import net.morocoshi.common.timers.FrameTimer;
 	import net.morocoshi.components.minimal.grid.DataGridEvent;
 	
 	/**
@@ -40,6 +44,12 @@ package net.morocoshi.components.minimal.grid
 			super();
 			_inputText = new InputText(this, 0, 0);
 			_inputText.textField.addEventListener(FocusEvent.FOCUS_OUT, text_focusOutHandler);
+			
+			var textMenu:ContextMenu = new ContextMenu();
+			textMenu.clipboardMenu = true;
+			textMenu.addItem(new NativeMenuItem("パスをクリア", false)).addEventListener(Event.SELECT, clear_selectedHandler);
+			_inputText.textField.contextMenu = textMenu;
+			
 			_button = new PushButton(this, 0, 0, "参照", browse_clickHandler);
 			_inputText.addEventListener(Event.CHANGE, input_changeHandler);
 			isReady = true;
@@ -50,7 +60,17 @@ package net.morocoshi.components.minimal.grid
 			_dragDrop.onDragDrop = dropHandler;
 		}
 		
+		private function clear_selectedHandler(e:Event):void 
+		{
+			_inputText.text = "";
+		}
+		
 		private function text_focusOutHandler(e:FocusEvent = null):void 
+		{
+			FrameTimer.setTimer(2, scrollMax);
+		}
+		
+		private function scrollMax():void
 		{
 			_inputText.textField.scrollH = _inputText.textField.maxScrollH;
 		}
@@ -62,6 +82,8 @@ package net.morocoshi.components.minimal.grid
 			if (_inputMode != MODE_FOLDER && f.isDirectory) return; 
 			if (_inputMode == MODE_FOLDER && !f.isDirectory) return; 
 			_inputText.text = f.nativePath;
+			text_focusOutHandler();
+			
 			dispatchEvent(new DataGridEvent(DataGridEvent.CHANGE, null, this));
 		}
 		

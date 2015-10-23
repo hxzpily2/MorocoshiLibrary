@@ -104,7 +104,7 @@ package net.morocoshi.common.loaders.collada.nodes
 						{
 							data.vertexPositionList.push(index);
 						}
-						if(data.getList(semanticKey) == null) trace(semanticKey, index, data.getList(semanticKey));
+						//if(data.getList(semanticKey) == null) trace(semanticKey, index, data.getList(semanticKey));
 						data.getList(semanticKey).push(data.getInputData(semanticKey)[index]);
 					}
 				}

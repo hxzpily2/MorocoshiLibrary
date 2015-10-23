@@ -41,6 +41,8 @@ package net.morocoshi.common.loaders.collada.nodes
 		static public const COLOR:String = "COLOR";
 		static public const JOINT:String = "JOINT";
 		static public const WEIGHT:String = "WEIGHT";
+		static public const JOINT2:String = "JOINT2";
+		static public const WEIGHT2:String = "WEIGHT2";
 		static public const INV_BIND_MATRIX:String = "INV_BIND_MATRIX";
 		
 		public function ColladaGeometryData() 
@@ -58,6 +60,9 @@ package net.morocoshi.common.loaders.collada.nodes
 			
 			jointList1 = [];
 			weightList1 = [];
+			
+			jointList2 = [];
+			weightList2 = [];
 		}
 		
 		public function getList(semantic:String):Array 
@@ -72,7 +77,9 @@ package net.morocoshi.common.loaders.collada.nodes
 				case TEXBINORMAL: target = binormalList; break;
 				case TANGENT4: target = tangent4List; break;
 				case JOINT: target = jointList1; break;
+				case JOINT2: target = jointList2; break;
 				case WEIGHT: target = weightList1; break;
+				case WEIGHT2: target = weightList2; break;
 				case COLOR : target = vertexColorList; break;
 			}
 			return target;
@@ -110,6 +117,11 @@ package net.morocoshi.common.loaders.collada.nodes
 			{
 				types.push(JOINT);
 				types.push(WEIGHT);
+			}
+			if (jointList2.length)
+			{
+				types.push(JOINT2);
+				types.push(WEIGHT2);
 			}
 			
 			var numList:int = getList(VERTEX).length;
@@ -217,16 +229,28 @@ package net.morocoshi.common.loaders.collada.nodes
 			return result;
 		}
 		
-		public function attachSkinData(data:ColladaGeometryData):void 
+		public function attachSkinData(data:ColladaGeometryData, numWeight:int):void 
 		{
 			jointList1 = [];
 			weightList1 = [];
+			
+			if (numWeight >= 5)
+			{
+				jointList2 = [];
+				weightList2 = [];
+			}
+			
 			var n:int = vertexPositionList.length;	
 			for (var i:int = 0; i < n; i++)
 			{
 				var index:int = vertexPositionList[i];
-				jointList1.push(data.jointList1[index]);
-				weightList1.push(data.weightList1[index]);
+				jointList1.push(data.jointList1[index].concat().splice(0, 4));
+				weightList1.push(data.weightList1[index].concat().splice(0, 4));
+				if (numWeight >= 5)
+				{
+					jointList2.push(data.jointList1[index].concat().splice(4, 4));
+					weightList2.push(data.weightList1[index].concat().splice(4, 4));
+				}
 			}
 		}
 		

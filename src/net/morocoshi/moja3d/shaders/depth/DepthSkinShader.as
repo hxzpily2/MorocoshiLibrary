@@ -100,6 +100,7 @@ package net.morocoshi.moja3d.shaders.depth
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
+			
 			if (numBones == 0) return;
 			
 			vertexConstants.number = true;
@@ -110,22 +111,44 @@ package net.morocoshi.moja3d.shaders.depth
 				"$tempPosition = @0_0_0"
 			);
 			
-			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
-			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
+			var boneIndex1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
+			var boneWeight1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
 			
-			for (var i:int = 0; i < 4; i++) 
+			var i:int;
+			var xyzw:Array = ["x", "y", "z", "w"];
+			for (i = 0; i < 4; i++) 
 			{
-				var xyzw:String = ["x", "y", "z", "w"][i];
 				vertexCode.addCode(
 					//使用インデックス＝ボーンインデックス*4+開始インデックス
-					"$index.x = " + boneIndex + "." + xyzw + " * @skinData.y",
+					"$index.x = " + boneIndex1 + "." + xyzw[i] + " * @skinData.y",
 					"$index.x += @skinData.x",
 					
 					"$temp.xyz = m44($pos, vc[$index.x])",//元の座標を行列変換
-					"$temp.xyz *= " + boneWeight + "." + xyzw,//ウェイトを乗算
+					"$temp.xyz *= " + boneWeight1 + "." + xyzw[i],//ウェイトを乗算
 					"$tempPosition.xyz += $temp.xyz"
 				);
 			}
+			
+			var bone2:Boolean = geometry.hasAttribute(VertexAttribute.BONEINDEX2) && geometry.hasAttribute(VertexAttribute.BONEWEIGHT2);
+			if (bone2)
+			{
+				var boneIndex2:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX2);
+				var boneWeight2:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT2);
+				
+				for (i = 0; i < 4; i++)
+				{
+					vertexCode.addCode(
+						//使用インデックス＝ボーンインデックス*4+開始インデックス
+						"$index.x = " + boneIndex2 + "." + xyzw[i] + " * @skinData.y",
+						"$index.x += @skinData.x",
+						
+						"$temp.xyzw = m44($pos.xyzw, vc[$index.x])",//元の座標を行列変換
+						"$temp.xyz *= " + boneWeight2 + "." + xyzw[i],//ウェイトを乗算
+						"$tempPosition.xyz += $temp.xyz"
+					);
+				}	
+			}
+			
 			vertexCode.addCode(
 				"$pos.xyz = $tempPosition.xyz"
 			);

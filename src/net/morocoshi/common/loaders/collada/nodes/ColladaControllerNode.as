@@ -15,8 +15,8 @@ package net.morocoshi.common.loaders.collada.nodes
 		public var shapeMatrix:Matrix3D;
 		public var skinLink:String;
 		public var weightData:ColladaGeometryData;
-		//1頂点にもてるウェイトの限界（8にしたい）
-		public var weightLimit:int = 4;
+		//重みが0ではないウェイトがいくつあるか
+		public var numWeight:int;
 		
 		public function ColladaControllerNode() 
 		{
@@ -28,6 +28,10 @@ package net.morocoshi.common.loaders.collada.nodes
 			
 			var skin:XML = xml.skin[0];
 			if (!skin) return;
+			
+			//1頂点にもてるウェイトの限界
+			var weightLimit:int = collector.option.halfWeight? 4 : 8;
+			numWeight = 0;
 			
 			skinLink = XMLUtil.getAttrString(skin, "source", "");
 			shapeMatrix = ColladaUtil.toMatrix3D(skin.bind_shape_matrix);
@@ -145,8 +149,11 @@ package net.morocoshi.common.loaders.collada.nodes
 					tempWeight[iw] = tempWeight[iw] * scale;
 				}
 				
-				//4つに足りない枠は一番ウェイトが重いジョイントを重み0で埋める
-				var zero:int = weightLimit - dataList["WEIGHT"].length;
+				//8つに足りない枠は一番ウェイトが重いジョイントを重み0で埋める
+				var weightCount:int = dataList["WEIGHT"].length;
+				if (numWeight < weightCount) numWeight = weightCount;
+				
+				var zero:int = weightLimit - weightCount;
 				for (k = 0; k < zero; k++) 
 				{
 					dataList["JOINT"].push(swap[0].joint);

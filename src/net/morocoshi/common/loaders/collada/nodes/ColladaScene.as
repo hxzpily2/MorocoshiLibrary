@@ -112,7 +112,7 @@ package net.morocoshi.common.loaders.collada.nodes
 					{
 						if (geometry.id == cc.skinLink.substr(1))
 						{
-							geometry.data.attachSkinData(cc.weightData);
+							geometry.data.attachSkinData(cc.weightData, cc.numWeight);
 						}
 					}
 				}

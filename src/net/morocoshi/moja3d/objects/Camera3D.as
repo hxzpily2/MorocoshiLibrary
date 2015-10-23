@@ -326,7 +326,7 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function checkPerspectiveUpdate():void 
 		{
-			///___ここは？
+			///TODO: ここを消すべきか検討
 			//if (_orthographic) trace(this, worldMatrix.rawData);
 			//if (transformDirty == false && calculateMatrixOrder == false) return;
 			

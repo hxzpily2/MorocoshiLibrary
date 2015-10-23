@@ -37,8 +37,6 @@ package net.morocoshi.moja3d.shaders.skin
 			
 			requiredAttribute.push(VertexAttribute.BONEINDEX1);
 			requiredAttribute.push(VertexAttribute.BONEWEIGHT1);
-			//requiredAttribute.push(VertexAttribute.BONEINDEX2);
-			//requiredAttribute.push(VertexAttribute.BONEWEIGHT2);
 			
 			boneList = new Vector.<Bone>;
 			
@@ -84,6 +82,7 @@ package net.morocoshi.moja3d.shaders.skin
 		public function initializeBones(bones:Vector.<Bone>, skin:Skin, phase:String):void
 		{
 			this.skin = skin;
+			
 			boneList.length = 0;
 			
 			if (geometry.boneIDList == null)
@@ -155,18 +154,20 @@ package net.morocoshi.moja3d.shaders.skin
 				vertexCode.addCode("$tempNormal.xyzw = @0_0_0_1");
 			}
 			
-			var boneIndex:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
-			var boneWeight:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
-			for (var i:int = 0; i < 4; i++) 
+			var boneIndex1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
+			var boneWeight1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
+			
+			var i:int;
+			var xyzw:Array = ["x", "y", "z", "w"];
+			for (i = 0; i < 4; i++)
 			{
-				var xyzw:String = ["x", "y", "z", "w"][i];
 				vertexCode.addCode(
 					//使用インデックス＝ボーンインデックス*4+開始インデックス
-					"$index.x = " + boneIndex + "." + xyzw + " * @skinData.y",
+					"$index.x = " + boneIndex1 + "." + xyzw[i] + " * @skinData.y",
 					"$index.x += @skinData.x",
 					
 					"$temp.xyzw = m44($pos.xyzw, vc[$index.x])",//元の座標を行列変換
-					"$temp.xyz *= " + boneWeight + "." + xyzw + xyzw + xyzw,//ウェイトを乗算
+					"$temp.xyz *= " + boneWeight1 + "." + xyzw[i],//ウェイトを乗算
 					"$tempPosition.xyz += $temp.xyz"
 				);
 				
@@ -174,16 +175,47 @@ package net.morocoshi.moja3d.shaders.skin
 				{
 					vertexCode.addCode(
 						"$temp.xyz = m33($normal.xyz, vc[$index.x])",//元の法線を行列変換
-						"$temp.xyz *= " + boneWeight + "." + xyzw,//ウェイトを乗算
+						"$temp.xyz *= " + boneWeight1 + "." + xyzw[i],//ウェイトを乗算
 						"$tempNormal.xyz += $temp.xyz"
 					);
 				}
 			}
+			
+			var bone2:Boolean = geometry.hasAttribute(VertexAttribute.BONEINDEX2) && geometry.hasAttribute(VertexAttribute.BONEWEIGHT2);
+			if (bone2)
+			{
+				var boneIndex2:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX2);
+				var boneWeight2:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT2);
+				
+				for (i = 0; i < 4; i++)
+				{
+					vertexCode.addCode(
+						//使用インデックス＝ボーンインデックス*4+開始インデックス
+						"$index.x = " + boneIndex2 + "." + xyzw[i] + " * @skinData.y",
+						"$index.x += @skinData.x",
+						
+						"$temp.xyzw = m44($pos.xyzw, vc[$index.x])",//元の座標を行列変換
+						"$temp.xyz *= " + boneWeight2 + "." + xyzw[i],//ウェイトを乗算
+						"$tempPosition.xyz += $temp.xyz"
+					);
+					
+					if (geometry.hasAttribute(VertexAttribute.NORMAL))
+					{
+						vertexCode.addCode(
+							"$temp.xyz = m33($normal.xyz, vc[$index.x])",//元の法線を行列変換
+							"$temp.xyz *= " + boneWeight2 + "." + xyzw[i],//ウェイトを乗算
+							"$tempNormal.xyz += $temp.xyz"
+						);
+					}
+				}	
+			}
+			
 			vertexCode.addCode(
 				"$pos.xyz = $tempPosition.xyz",
 				"$pos.w = @1",
 				"$wpos = $pos"
 			);
+			
 			if (geometry.hasAttribute(VertexAttribute.NORMAL))
 			{
 				vertexCode.addCode("$normal.xyz = nrm($tempNormal.xyz)");

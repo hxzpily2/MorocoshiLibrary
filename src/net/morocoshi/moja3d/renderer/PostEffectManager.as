@@ -34,7 +34,7 @@ package net.morocoshi.moja3d.renderer
 		{
 			antiAlias = 0;
 			renderTexture = new RenderTextureResource(1024, 1024, 0, "renderTexture");
-			maskTexture = new RenderTextureResource(1024, 1024, 3, "maskTexture");
+			maskTexture = new RenderTextureResource(1024, 1024, 2, "maskTexture");
 			processTexture1 = new Vector.<RenderTextureResource>;
 			processTexture2 = new Vector.<RenderTextureResource>;
 			var lv:int;
