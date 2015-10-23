@@ -3,7 +3,6 @@ package net.morocoshi.moja3d.objects
 	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
 	import flash.geom.ColorTransform;
-	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
@@ -42,7 +41,7 @@ package net.morocoshi.moja3d.objects
 		public var reflectChildren:Boolean;
 		/**これが-1以外だと自分をマスクレンダリングの対象にします。MaskColorクラス参照。*/
 		public var renderMask:int;
-		/**これが-1以外だと自分を含む子全てをマスクレンダリングの対象にします。MaskColorクラス参照。*/
+		/**これが-1以外だと自分の子全てをマスクレンダリングの対象にします。自分は含みません。MaskColorクラス参照。*/
 		public var containerRenderMask:int;
 		/**負の値ほど後ろにまわる*/
 		public var sortPriority:Number;
@@ -661,8 +660,9 @@ package net.morocoshi.moja3d.objects
 			var child:Object3D = _children;
 			while (child)
 			{
+				var next:Object3D = child._next;
 				child.remove();
-				child = child._next;
+				child = next;
 			}
 		}
 		
