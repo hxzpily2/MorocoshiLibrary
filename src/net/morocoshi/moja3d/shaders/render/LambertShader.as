@@ -15,10 +15,13 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class LambertShader extends MaterialShader 
 	{
-		public function LambertShader() 
+		private var _useLightMap:Boolean;
+		
+		public function LambertShader(useLightMap:Boolean = false) 
 		{
 			super();
 			
+			_useLightMap = useLightMap;
 			requiredAttribute.push(VertexAttribute.NORMAL);
 			
 			updateTexture();
@@ -93,16 +96,10 @@ package net.morocoshi.moja3d.shaders.render
 					"$brightness.xyz = dp3($normal.xyz, $brightness.xyz)",//ライトの向きとのドット積
 					"$brightness.xyz = sat($brightness.xyz)",//0～1にする
 					"$brightness.xyz *= $temp.xxx",//距離による強度
-					"$brightness.xyz *= " + omniColor + ".xyz",//明るさに平行光源カラーを乗算
-					"$brightness.xyz *= " + omniColor + ".www"//明るさに平行光源強度を乗算
+					"$brightness.xyz *= " + omniColor + ".xyz",//明るさに光源カラーを乗算
+					"$brightness.xyz *= " + omniColor + ".www"//明るさに光源強度を乗算
 				)
-				/*
-				if (i < 3)
-				{
-					var xyz:String = ["x", "y", "z"][i];
-					fragmentCode.addCode("$brightness.xyz *= $common." + xyz)//明るさに影の強度を乗算
-				}
-				*/
+				//もし点光源の影を実装したらここに挿入する
 				fragmentCode.addCode("$total.xyz += $brightness.xyz");
 			}
 			
@@ -114,17 +111,23 @@ package net.morocoshi.moja3d.shaders.render
 				fragmentCode.addCode(
 					"$brightness.xyz = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
 					"$brightness.xyz = sat($brightness.xyz)",//0～1にする
-					"$brightness.xyz *= " + lightColor + ".xyz",//明るさに平行光源カラーを乗算
-					"$brightness.xyz *= " + lightColor + ".www"//明るさに平行光源強度を乗算
+					"$brightness.xyz *= " + lightColor + ".xyz",//明るさに光源カラーを乗算
+					"$brightness.xyz *= " + lightColor + ".www"//明るさに光源強度を乗算
 				)
-				if (i < 3)
+				if (i < 2)
 				{
-					var xyz1:String = ["x", "y", "z"][i];
+					var xyz1:String = ["x", "y"][i];
 					fragmentCode.addCode("$brightness.xyz *= $common." + xyz1)//明るさに影の強度を乗算
 				}
 				fragmentCode.addCode("$total.xyz += $brightness.xyz");
 			}
 			
+			if (_useLightMap)
+			{
+				fragmentCode.addCode(
+					"$total.xyz += $common.zzz"
+				);
+			}
 			fragmentCode.addCode(
 				"$output.xyz *= $total.xyz"
 			);
@@ -132,7 +135,18 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function clone():MaterialShader 
 		{
-			return new LambertShader();
+			return new LambertShader(_useLightMap);
+		}
+		
+		public function get useLightMap():Boolean 
+		{
+			return _useLightMap;
+		}
+		
+		public function set useLightMap(value:Boolean):void 
+		{
+			_useLightMap = value;
+			updateShaderCode();
 		}
 		
 	}

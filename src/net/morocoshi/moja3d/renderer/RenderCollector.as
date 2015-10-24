@@ -181,7 +181,7 @@ package net.morocoshi.moja3d.renderer
 		/**
 		 * 収集したライトから情報を整理
 		 */
-		private function complete():void
+		moja3d function complete():void
 		{
 			var i:int;
 			var n:int;
@@ -274,7 +274,7 @@ package net.morocoshi.moja3d.renderer
 			_alphaCount = 0;
 		}
 		
-		private function clear():void
+		moja3d function clear():void
 		{
 			hasShadowElement = false;
 			hasLightElement = false;
@@ -296,7 +296,7 @@ package net.morocoshi.moja3d.renderer
 			renderElementList = {};
 		}
 		
-		private function setBasicContext():void
+		moja3d function setBasicContext():void
 		{
 			vertexCode.clearAll();
 			fragmentCode.clearAll();

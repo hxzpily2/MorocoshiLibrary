@@ -12,7 +12,7 @@ package net.morocoshi.moja3d.shaders.shadow
 	use namespace moja3d;
 	
 	/**
-	 * まだ1つ分のライトしか正確に処理できてない？もうできた？要確認！
+	 * デプスシャドウの濃度を計算する
 	 * 
 	 * @author tencho
 	 */
@@ -40,24 +40,24 @@ package net.morocoshi.moja3d.shaders.shadow
 		private var distanceConst:AGALConstant;
 		private var fadeConst:AGALConstant;
 		private var numConst:AGALConstant;
+		private var _fadeType:String;
 		
 		/**
-		 * 
-		 * @param	syncLight
-		 * @param	mainSamples	1,5,9
-		 * @param	wideSamples	1.5.9
-		 * @param	mainBlur
-		 * @param	wideBlur
+		 * @param	syncLight	シャドウパラメータをシャドウライトと同期させる
+		 * @param	fadeType	影のフェードタイプ。ShadowFadeTypeクラスを参照。
 		 */
-		public function ShadowShader(syncLight:Boolean = true, mainSamples:int = 5, wideSamples:int = 5, mainBlur:Number = 1 / 1024, wideBlur:Number = 1 / 1024)
+		public function ShadowShader(syncLight:Boolean = true, fadeType:String = "clipBorder")
 		{
 			super();
 			
+			if (fadeType == ShadowFadeType.RADIAL_GRADIENT)
+			{
+				throw new Error("円形グラデーションタイプは未実装です！")
+			}
+			
 			_syncLight = syncLight;
-			_mainSamples = mainSamples;
-			_wideSamples = wideSamples;
-			_mainBlur = mainBlur;
-			_wideBlur = wideBlur;
+			_fadeType = fadeType;
+			
 			checkSample();
 			_intensity = 1;
 			_wideNear = _mainNear = 10000;
@@ -85,7 +85,7 @@ package net.morocoshi.moja3d.shaders.shadow
 		
 		override public function getKey():String 
 		{
-			return "ShadowShader:" + LightSetting._numDirectionalShadow + "_" + _mainSamples + "_" + _wideSamples;
+			return "ShadowShader:" + _fadeType + "_" + LightSetting._numDirectionalShadow + "_" + _mainSamples + "_" + _wideSamples;
 		}
 		
 		private function calcBlur():void 
@@ -111,10 +111,11 @@ package net.morocoshi.moja3d.shaders.shadow
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			distanceConst = fragmentCode.addConstantsFromArray("@S256", [256, 256 * 256, 0, _intensity]);
+			distanceConst = fragmentCode.addConstantsFromArray("@S256", [256, 256 * 256, 0.00001, _intensity]);
 			numConst = fragmentCode.addConstantsFromArray("@shadowBlurNum", [_mainSamples, _wideSamples, 0.5, -0.5]);
 			depthBlurConst = fragmentCode.addConstantsFromArray("@depthBlur", [_depthBias, _mainBlur, _wideDepthBias, _wideBlur]);
-			fadeConst = fragmentCode.addConstantsFromArray("@shadowFade", [_mainNear, _mainFar - _mainNear, _wideNear, _wideFar - _wideNear]);
+			fadeConst = fragmentCode.addConstantsFromArray("@shadowFade", [0, 0, 0, 0]);
+			calcConstants();
 		}
 		
 		override protected function updateShaderCode():void 
@@ -159,7 +160,8 @@ package net.morocoshi.moja3d.shaders.shadow
 				for (g = 0; g < numLightLeyers; g++)
 				{
 					var vt:String = "#shadowData" + i + "_" + g;
-					var xyz2:String = ["x", "y", "z"][g];
+					var xyz2:String = ["x", "y"][g];
+					var xyz3:String = ["z", "w"][g];
 					var shadowMap:String = "&shadowMap" + i + "_" + g;
 					var xz:String = ["x", "z"][g];
 					var yw:String = ["y", "w"][g];
@@ -213,45 +215,95 @@ package net.morocoshi.moja3d.shaders.shadow
 							"$result." + xyz2 + " += $lightZ.x"
 						);
 					}
+					if (_fadeType == ShadowFadeType.CLIP_BORDER)
+					{
+						fragmentCode.addCode(
+							//UVが0-1の外の影を消す
+							"$lightUV.xy = " + vt + ".xy / " + vt + ".w",
+							"$lightUV.xy = abs($lightUV.xy)",
+							"$lightUV.z = max($lightUV.x, $lightUV.y)",
+							"$lightUV.z += @S256.z",
+							"$power." + xyz2 + " = sge(@1, $lightUV.z)",
+							"$result." + xyz2 + " *= $power." + xyz2
+						);
+					}
+					if (_fadeType == ShadowFadeType.DIAMOND_GRADIENT)
+					{
+						fragmentCode.addCode(
+							//UVが0-1の外の影を消す
+							"$lightUV.xy = " + vt + ".xy / " + vt + ".w",
+							"$lightUV.xy = abs($lightUV.xy)",
+							"$lightUV.z = max($lightUV.x, $lightUV.y)",
+							"$lightUV.z = $lightUV.z - @shadowFade.x",
+							"$lightUV.z = $lightUV.z / @shadowFade.y",
+							"$lightUV.z = @1 - $lightUV.z",
+							"$power." + xyz2 + " = sat($lightUV.z)",
+							//"$lightUV.z += @S256.z",
+							//"$power." + xyz2 + " = sge(@1, $lightUV.z)",
+							"$result." + xyz2 + " *= $power." + xyz2
+						);
+					}
 				}
 				
-				//カメラ平面からの距離
-				fragmentCode.addCode(
-					"var $power",
-					"$power.w = #spos.w"
-				);
-				
-				fragmentCode.addCode(
+				if (_fadeType == ShadowFadeType.CASCADE)
+				{
+					//カメラ平面からの距離
+					fragmentCode.addCode(
+						"$power.w = #spos.w"
+					);
+					
 					//近い距離の割合0～1
-					"$power.x = $power.w - @shadowFade.x",
-					"$power.x /= @shadowFade.y",
-					"$power.x = sat($power.x)",
-					"$power.y = @1 - $power.x"
-				);
+					fragmentCode.addCode(
+						"$power.x = $power.w - @shadowFade.x",
+						"$power.x /= @shadowFade.y",
+						"$power.x = sat($power.x)",
+						"$power.y = @1 - $power.x"
+					);
+				}
 				
 				if (_useWideShadow)
 				{
 					//遠景の影がある場合
-					fragmentCode.addCode(
-						//遠い距離の割合0～1
-						"$power.z = $power.w - @shadowFade.z",
-						"$power.z /= @shadowFade.w",
-						"$power.z = sat($power.z)",
-						"$power.w = @1 - $power.z",
-						
-						"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
-						"$result.xy *= $power.yx",
-						"$result.x += $result.y",//近遠クロスフェード
-						"$result.x *= $power.w"//遠景フェードを乗算
-					);
+					if (_fadeType == ShadowFadeType.CASCADE)
+					{
+						fragmentCode.addCode(
+							//遠い距離の割合0～1
+							"$power.z = $power.w - @shadowFade.z",
+							"$power.z /= @shadowFade.w",
+							"$power.z = sat($power.z)",
+							"$power.w = @1 - $power.z",
+							
+							"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
+							"$result.xy *= $power.yx",
+							"$result.x += $result.y",//近遠クロスフェード
+							"$result.x *= $power.w"//遠景フェードを乗算
+						);
+					}
+					if (_fadeType == ShadowFadeType.CLIP_BORDER || _fadeType == ShadowFadeType.DIAMOND_GRADIENT)
+					{
+						//近遠クロスフェード
+						fragmentCode.addCode(
+							"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
+							//"$result.xy *= $power.yx",
+							"$result.z = @1 - $power.x",
+							"$result.y *= $result.z",
+							"$result.x += $result.y"
+							//"$result.x *= $power.w"//遠景フェードを乗算
+						);
+					}
 				}
 				else
 				{
 					//近景の影のみの場合
 					fragmentCode.addCode(
-						"$result.x /= @shadowBlurNum.x",//ぼかし加算分割る
-						"$result.x *= $power.y"//近景フェードを乗算
+						"$result.x /= @shadowBlurNum.x"//ぼかし加算分割る
 					);
+					if (_fadeType == ShadowFadeType.CASCADE)
+					{
+						fragmentCode.addCode(
+							"$result.x *= $power.y"//近景フェードを乗算
+						);
+					}
 				}
 				
 				fragmentCode.addCode(
@@ -266,15 +318,31 @@ package net.morocoshi.moja3d.shaders.shadow
 		 */
 		private function calcConstants():void 
 		{
-			fadeConst.x = _mainNear;
-			fadeConst.y = _mainFar - _mainNear;
-			fadeConst.z = _wideNear;
-			fadeConst.w = _wideFar - _wideNear;
+			if (_fadeType == ShadowFadeType.CASCADE)
+			{
+				fadeConst.x = _mainNear;
+				fadeConst.y = _mainFar - _mainNear;
+				fadeConst.z = _wideNear;
+				fadeConst.w = _wideFar - _wideNear;
+			}
+			else
+			{
+				fadeConst.x = _mainNear / _mainFar;
+				fadeConst.y = 1 - fadeConst.x;
+				fadeConst.z = _wideFar / _wideNear;
+				fadeConst.w = 1 - fadeConst.z;
+			}
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new ShadowShader(_syncLight, _mainBlur, _wideBlur, _mainBlur, _wideBlur);
+			var result:ShadowShader = new ShadowShader(_syncLight);
+			result.mainBlur = _mainBlur;
+			result.wideBlur = _wideBlur;
+			result.mainSamples = _mainSamples;
+			result.wideSamples = _wideSamples;
+			result.fadeType = _fadeType;
+			return result;
 		}
 		
 		public function get intensity():Number 
@@ -445,6 +513,17 @@ package net.morocoshi.moja3d.shaders.shadow
 			
 			_wideSamples = value;
 			calcBlur();
+			updateShaderCode();
+		}
+		
+		public function get fadeType():String 
+		{
+			return _fadeType;
+		}
+		
+		public function set fadeType(value:String):void 
+		{
+			_fadeType = value;
 			updateShaderCode();
 		}
 		

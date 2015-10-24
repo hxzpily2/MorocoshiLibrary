@@ -9,6 +9,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.common.graphics.Palette;
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
+	import net.morocoshi.moja3d.agal.Program3DPreloader;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.moja3d;
@@ -518,6 +519,7 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
@@ -544,6 +546,7 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
@@ -607,24 +610,12 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが生成する予定のProgram3Dを事前に生成しておく
+		 * このオブジェクトが内包する全オブジェクト（自分含む）が生成予定のProgram3Dを事前に生成しておく
 		 * @param	context3D
-		 * @param	hierarchy
 		 */
-		public function preloadPrograms(context3D:Context3D, hierarchy:Boolean):void 
+		public function preloadPrograms(context3D:Context3D):void 
 		{
-			var collector:RenderCollector = new RenderCollector();
-			collector.context3D = context3D;
-			collector.renderPhase = RenderPhase.CHECK;
-			collector.renderElementList = { };
-			collectRenderElements(collector, false, false, false, 1, 0);
-			if (collector.reflectiveWater.hasReflectElement)
-			{
-				collector.renderPhase = RenderPhase.REFLECT;
-				collectRenderElements(collector, false, false, false, 1, 0);
-			}
-			collector.renderPhase = RenderPhase.NORMAL;
-			collectRenderElements(collector, false, false, false, 1, 0);
+			new Program3DPreloader().load(this, context3D);
 		}
 		
 		/**
