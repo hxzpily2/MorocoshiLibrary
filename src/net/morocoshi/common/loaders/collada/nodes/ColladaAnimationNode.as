@@ -61,6 +61,15 @@ package net.morocoshi.common.loaders.collada.nodes
 					animationData[targetData[0]] = { };
 				}
 				anm.type = type;
+				//単位スケーリング
+				if (anm.type == "matrix")
+				{
+					anm.scaleMatrix(collector.unitScale);
+				}
+				if (anm.type == "translation.X" || anm.type == "translation.Y" || anm.type == "translation.Z")
+				{
+					anm.scaleTranslation(collector.unitScale);
+				}
 				animationData[targetData[0]][type] = anm;
 			}
 		}

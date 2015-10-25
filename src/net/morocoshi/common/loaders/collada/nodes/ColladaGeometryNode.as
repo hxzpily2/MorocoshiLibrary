@@ -105,7 +105,19 @@ package net.morocoshi.common.loaders.collada.nodes
 							data.vertexPositionList.push(index);
 						}
 						//if(data.getList(semanticKey) == null) trace(semanticKey, index, data.getList(semanticKey));
-						data.getList(semanticKey).push(data.getInputData(semanticKey)[index]);
+						var vertexData:Array = data.getInputData(semanticKey)[index];
+						if (semanticKey == ColladaGeometryData.VERTEX)
+						{
+							var scaledData:Array = [];
+							scaledData[0] = vertexData[0] * collector.unitScale;
+							scaledData[1] = vertexData[1] * collector.unitScale;
+							scaledData[2] = vertexData[2] * collector.unitScale;
+							data.getList(semanticKey).push(scaledData);
+						}
+						else
+						{
+							data.getList(semanticKey).push(vertexData);
+						}
 					}
 				}
 			}

@@ -543,7 +543,7 @@ package net.morocoshi.moja3d.loader.exporters
 			var result:M3DMaterial = new M3DMaterial();
 			var effect:ColladaEffectNode = collada.getEffectByID(material.effectID);
 			result.name = material.name;
-			result.alpha = effect.alpha;
+			result.alpha = option.exportAlpha? effect.alpha : 1;
 			result.diffusePath = effect.diffuseTexture? collada.getImageByID(effect.diffuseTexture).path : "";
 			result.normalPath = (option.exportNormal == false)? "" : effect.normalTexture? collada.getImageByID(effect.normalTexture).path : "";
 			

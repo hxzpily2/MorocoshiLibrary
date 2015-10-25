@@ -19,8 +19,10 @@ package net.morocoshi.moja3d.loader.exporters
 		public var exportCamera:Boolean = false;
 		/**ライトを書き出す*/
 		public var exportLight:Boolean = false;
-		/**透過マップを書き出す*/
+		/**不透明マップを書き出す*/
 		public var exportTransparent:Boolean = true;
+		/**数値による不透明情報を書き出す*/
+		public var exportAlpha:Boolean = true;
 		/**ノーマルマップを書き出す*/
 		public var exportNormal:Boolean = true;
 		/**反射マップを書き出す*/

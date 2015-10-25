@@ -1,5 +1,7 @@
 package net.morocoshi.common.loaders.collada 
 {
+	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaAnimationNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaEffectNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaNode;
@@ -19,6 +21,7 @@ package net.morocoshi.common.loaders.collada
 		public var jointMatrixMap:Object = { };
 		//public var animation:ColladaAnimationNode;
 		public var option:ColladaParseOption;
+		public var unitScale:Number = 1;
 		
 		public function ColladaCollector() 
 		{
@@ -95,6 +98,13 @@ package net.morocoshi.common.loaders.collada
 					object.addAnimationData(animationData[key]);
 				}
 			}
+		}
+		
+		public function fixMatrixScale(matrix:Matrix3D):void 
+		{
+			var p:Vector3D = matrix.position;
+			p.scaleBy(unitScale);
+			matrix.position = p;
 		}
 		
 	}

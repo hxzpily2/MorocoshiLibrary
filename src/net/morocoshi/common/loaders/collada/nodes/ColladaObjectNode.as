@@ -114,6 +114,9 @@ package net.morocoshi.common.loaders.collada.nodes
 				}
 			}
 			
+			//単位スケーリング
+			collector.fixMatrixScale(matrix);
+			
 			var controller:XML = xml.instance_controller[0];
 			if (controller)
 			{
