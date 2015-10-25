@@ -141,6 +141,8 @@ package net.morocoshi.moja3d.primitives
 		
 		override protected function collecting(collector:RenderCollector):void 
 		{
+			if (collector.camera == null) return;
+			
 			_worldMatrix.copyFrom(collector.camera.worldMatrix);
 		}
 		
