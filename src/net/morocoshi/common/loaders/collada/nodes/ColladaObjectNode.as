@@ -164,6 +164,30 @@ package net.morocoshi.common.loaders.collada.nodes
 				child.parse(node, collector);
 				childlen.push(child);
 			}
+			
+			var hasAnimation:Boolean = (collector.option.exportAnimation && animation != null);
+			if (childlen.length == 1 && childlen[0].existID == false && childlen[0].type == TYPE_MESH && hasAnimation == false)
+			{
+				mergeFrom(childlen[0]);
+				childlen.length = 0;
+			}
+		}
+		
+		/**
+		 * 本来入れ子ではないメッシュが空のObjectに包まれている場合があり、
+		 * 元のメッシュに戻す為に子Meshを親Objectに統合させる処理
+		 * アニメーションが設定されている場合は統合により姿勢が変化してしまうため実行しない事
+		 * @param	node
+		 */
+		private function mergeFrom(node:ColladaObjectNode):void 
+		{
+			matrix.prepend(node.matrix);
+			instanceLink = node.instanceLink;
+			type = node.type;
+			bindMaterial = node.bindMaterial;
+			visible = node.visible;
+			castShadow = node.castShadow;
+			receiveShadows = node.receiveShadows;
 		}
 		
 		private function parseUserProp(text:String):void 
@@ -185,6 +209,10 @@ package net.morocoshi.common.loaders.collada.nodes
 				if (value.length >= 2 && s == e && (s == "'" || s == '"'))
 				{
 					userData[attr] = value.substr(1, value.length - 2);
+				}
+				else if (value == "true" || value == "false")
+				{
+					userData[attr] = (value == "true");
 				}
 				else
 				{

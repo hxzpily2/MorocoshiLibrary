@@ -8,6 +8,8 @@ package net.morocoshi.common.loaders.collada.nodes
 	 */
 	public class ColladaNode 
 	{
+		/**<node>にidかnameどちらかの属性がある*/
+		public var existID:Boolean;
 		public var name:String;
 		public var id:String;
 		public var animation:Object;
@@ -19,6 +21,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		
 		public function parse(xml:XML, collector:ColladaCollector):void
 		{
+			existID = xml.hasOwnProperty("@name") || xml.hasOwnProperty("@id");
 			name = XMLUtil.getAttrString(xml, "name", "");
 			id = XMLUtil.getAttrString(xml, "id", "");
 		}
