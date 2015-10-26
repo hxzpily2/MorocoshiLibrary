@@ -846,10 +846,12 @@ package net.morocoshi.moja3d.objects
 				calculateMatrixOrder = false;
 				
 				//XYZスケールがマイナスかどうかチェックし、最終スケールがマイナスなら表示を反転する
+				/*
 				var rx:int = (scaleX >= 0)? 1 : -1;
 				var ry:int = (scaleY >= 0)? 1 : -1;
 				var rz:int = (scaleZ >= 0)? 1 : -1;
 				flip = (rx * ry * rz);
+				*/
 			}
 			
 			//色計算
