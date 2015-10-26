@@ -68,6 +68,8 @@ package net.morocoshi.moja3d.loader.exporters
 		public var moveToRoot:Boolean = false;
 		/**同一マテリアルのサーフェイスを統合して最適化する*/
 		public var optimizeSurface:Boolean = false;
+		/**基点移動で発生したメッシュのネスト化を解除する*/
+		public var mergeNestedMesh:Boolean = false;
 		/**1つのスキンメッシュが持てるボーン数の限界数（これを超えた部分は分割される）*/
 		public var boneLimit:int = 20;
 		/**ウェイトの数を最大4つにする*/
@@ -98,6 +100,7 @@ package net.morocoshi.moja3d.loader.exporters
 			result.exportNormal = exportNormal;
 			result.exportTangent4 = exportTangent4;
 			result.halfWeight = halfWeight;
+			result.mergeNestedMesh = mergeNestedMesh;
 			
 			return result;
 		}

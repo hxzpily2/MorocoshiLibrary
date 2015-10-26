@@ -166,7 +166,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			}
 			
 			var hasAnimation:Boolean = (collector.option.exportAnimation && animation != null);
-			if (childlen.length == 1 && childlen[0].existID == false && childlen[0].type == TYPE_MESH && hasAnimation == false)
+			if (collector.option.mergeNestedMesh && childlen.length == 1 && childlen[0].existID == false && childlen[0].type == TYPE_MESH && hasAnimation == false)
 			{
 				mergeFrom(childlen[0]);
 				childlen.length = 0;

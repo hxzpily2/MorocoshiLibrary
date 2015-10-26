@@ -18,6 +18,7 @@ package net.morocoshi.common.loaders.collada
 		public var removeEmptyObject:Boolean = false;
 		/**ウェイトの数を最大4つにする*/
 		public var halfWeight:Boolean = false;
+		public var mergeNestedMesh:Boolean = false;
 		
 		public function ColladaParseOption() 
 		{

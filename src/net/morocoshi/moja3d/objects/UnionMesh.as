@@ -3,10 +3,7 @@ package net.morocoshi.moja3d.objects
 	import flash.display3D.Context3D;
 	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
-	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.moja3d.materials.Material;
-	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -21,11 +18,18 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class UnionMesh extends Mesh 
 	{
+		/**統合する頂点アトリビュートのタイプ*/
+		public var requiredAttribute:Vector.<uint>;
 		
 		public function UnionMesh() 
 		{
 			super();
 			renderChildren = false;
+			
+			requiredAttribute = new Vector.<uint>;
+			requiredAttribute.push(VertexAttribute.POSITION);
+			requiredAttribute.push(VertexAttribute.UV);
+			requiredAttribute.push(VertexAttribute.NORMAL);
 		}
 		
 		public function update(context3D:Context3D, calculateBoundingBox:Boolean):void
@@ -41,10 +45,10 @@ package net.morocoshi.moja3d.objects
 				var rawData:Vector.<Number> = matrix.rawData;
 				
 				var v1:Vector.<Number> = new Vector.<Number>;
-				var v2:Vector.<Number> = geom.getVertices(VertexAttribute.NORMAL);
-				var v3:Vector.<Number> = geom.getVertices(VertexAttribute.UV);
-				var v4:Vector.<Number> = geom.getVertices(VertexAttribute.VERTEXCOLOR);
-				var v5:Vector.<Number> = geom.getVertices(VertexAttribute.TANGENT4);
+				if (hasAttribute(VertexAttribute.NORMAL)) var v2:Vector.<Number> = geom.getVertices(VertexAttribute.NORMAL);
+				if (hasAttribute(VertexAttribute.UV)) var v3:Vector.<Number> = geom.getVertices(VertexAttribute.UV);
+				if (hasAttribute(VertexAttribute.VERTEXCOLOR)) var v4:Vector.<Number> = geom.getVertices(VertexAttribute.VERTEXCOLOR);
+				if (hasAttribute(VertexAttribute.TANGENT4)) var v5:Vector.<Number> = geom.getVertices(VertexAttribute.TANGENT4);
 				matrix.transformVectors(geom.getVertices(VertexAttribute.POSITION), v1);
 				
 				var numSurfaces:int = mesh.surfaces.length;
@@ -71,18 +75,33 @@ package net.morocoshi.moja3d.objects
 						data.vertexIndices.push(indexCache[index]);
 						data.vertexCount++;
 						
-						var nx1:Number = v2[index * 3];
-						var ny1:Number = v2[index * 3 + 1];
-						var nz1:Number = v2[index * 3 + 2];
-						var nx2:Number = rawData[0] * nx1 + rawData[4] * ny1 + rawData[8]  * nz1;
-						var ny2:Number = rawData[1] * nx1 + rawData[5] * ny1 + rawData[9]  * nz1;
-						var nz2:Number = rawData[2] * nx1 + rawData[6] * ny1 + rawData[10] * nz1;
 						
-						data.vertex.push(v1[index * 3], v1[index * 3 + 1], v1[index * 3 + 2]);
-						data.normal.push(nx2, ny2, nz2);
-						data.uv.push(v3[index * 2], v3[index * 2 + 1]);
-						data.color.push(v4[index * 4], v4[index * 4 + 1], v4[index * 4 + 2], v4[index * 4 + 3]);
-						data.tangent4.push(v5[index * 4], v5[index * 4 + 1], v5[index * 4 + 2], v5[index * 4 + 3]);
+						if (hasAttribute(VertexAttribute.POSITION))
+						{
+							data.vertex.push(v1[index * 3], v1[index * 3 + 1], v1[index * 3 + 2]);
+						}
+						if (hasAttribute(VertexAttribute.NORMAL))
+						{
+							var nx1:Number = v2[index * 3];
+							var ny1:Number = v2[index * 3 + 1];
+							var nz1:Number = v2[index * 3 + 2];
+							var nx2:Number = rawData[0] * nx1 + rawData[4] * ny1 + rawData[8]  * nz1;
+							var ny2:Number = rawData[1] * nx1 + rawData[5] * ny1 + rawData[9]  * nz1;
+							var nz2:Number = rawData[2] * nx1 + rawData[6] * ny1 + rawData[10] * nz1;
+							data.normal.push(nx2, ny2, nz2);
+						}
+						if (hasAttribute(VertexAttribute.UV))
+						{
+							data.uv.push(v3[index * 2], v3[index * 2 + 1]);
+						}
+						if (hasAttribute(VertexAttribute.VERTEXCOLOR))
+						{
+							data.color.push(v4[index * 4], v4[index * 4 + 1], v4[index * 4 + 2], v4[index * 4 + 3]);
+						}
+						if (hasAttribute(VertexAttribute.TANGENT4))
+						{
+							data.tangent4.push(v5[index * 4], v5[index * 4 + 1], v5[index * 4 + 2], v5[index * 4 + 3]);
+						}
 					}
 				}
 			}
@@ -108,19 +127,19 @@ package net.morocoshi.moja3d.objects
 				vertexIndices = vertexIndices.concat(union.vertexIndices);
 				totalCount += union.vertexCount
 				
-				vertices = vertices.concat(union.vertex);
-				normals = normals.concat(union.normal);
-				uvs = uvs.concat(union.uv);
-				colors = colors.concat(union.color);
-				tangent4s = tangent4s.concat(union.tangent4);
+				if (hasAttribute(VertexAttribute.POSITION)) vertices = vertices.concat(union.vertex);
+				if (hasAttribute(VertexAttribute.NORMAL)) normals = normals.concat(union.normal);
+				if (hasAttribute(VertexAttribute.UV)) uvs = uvs.concat(union.uv);
+				if (hasAttribute(VertexAttribute.VERTEXCOLOR)) colors = colors.concat(union.color);
+				if (hasAttribute(VertexAttribute.TANGENT4)) tangent4s = tangent4s.concat(union.tangent4);
 			}
 			
 			geometry.vertexIndices = vertexIndices;
-			geometry.addVertices(VertexAttribute.POSITION, 3, vertices);
-			geometry.addVertices(VertexAttribute.VERTEXCOLOR, 4, colors);
-			geometry.addVertices(VertexAttribute.UV, 2, uvs);
-			geometry.addVertices(VertexAttribute.NORMAL, 3, normals);
-			geometry.addVertices(VertexAttribute.TANGENT4, 4, tangent4s);
+			if (hasAttribute(VertexAttribute.POSITION)) geometry.addVertices(VertexAttribute.POSITION, 3, vertices);
+			if (hasAttribute(VertexAttribute.VERTEXCOLOR)) geometry.addVertices(VertexAttribute.VERTEXCOLOR, 4, colors);
+			if (hasAttribute(VertexAttribute.UV)) geometry.addVertices(VertexAttribute.UV, 2, uvs);
+			if (hasAttribute(VertexAttribute.NORMAL)) geometry.addVertices(VertexAttribute.NORMAL, 3, normals);
+			if (hasAttribute(VertexAttribute.TANGENT4)) geometry.addVertices(VertexAttribute.TANGENT4, 4, tangent4s);
 			geometry.isUploaded = false;
 			
 			if (calculateBoundingBox)
@@ -132,6 +151,11 @@ package net.morocoshi.moja3d.objects
 			{
 				upload(context3D, false, false);
 			}
+		}
+		
+		private function hasAttribute(type:int):Boolean 
+		{
+			return requiredAttribute.indexOf(type) != -1;
 		}
 		
 		override public function getResources(hierarchy:Boolean, filter:Class = null):Vector.<Resource> 
