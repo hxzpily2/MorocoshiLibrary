@@ -146,7 +146,6 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			geometry.calculateBounds(boundingBox);
-			
 			boundingBox.localX = (boundingBox.minX + boundingBox.maxX) / 2;
 			boundingBox.localY = (boundingBox.minY + boundingBox.maxY) / 2;
 			boundingBox.localZ = (boundingBox.minZ + boundingBox.maxZ) / 2;

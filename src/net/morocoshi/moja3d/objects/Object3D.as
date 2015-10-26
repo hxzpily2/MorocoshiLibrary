@@ -155,8 +155,8 @@ package net.morocoshi.moja3d.objects
 			calculateMatrixOrder = true;
 			calculateBoundsOrder = true;
 			recomposeMatrixOrder = false;
-			decomposeMatrixOrder = false;
-			decomposeMatrix();
+			decomposeMatrixOrder = true;
+			//decomposeMatrix();
 		}
 		
 		/**
@@ -432,6 +432,7 @@ package net.morocoshi.moja3d.objects
 				target = target._parent;
 			}
 			notifyChild = null;
+			
 			//親が変化していない場合
 			if (startObject == null)
 			{
@@ -990,13 +991,31 @@ package net.morocoshi.moja3d.objects
 			var m3d:Matrix3D = matrix.clone();
 			while (target)
 			{
-				m3d.prepend(target.matrix);
+				m3d.append(target.matrix);
 				target = target._parent;
 			}
 			_worldMatrix = m3d;
 			
 			return _worldMatrix;
 			*/
+		}
+		
+		/**
+		 * 重いが確実に正確なワールド姿勢を計算して返す。弄る場合はcloneすること！
+		 * @return
+		 */
+		moja3d function getPerfectWorldMatrix():Matrix3D
+		{
+			var target:Object3D = this._parent;
+			var m3d:Matrix3D = matrix.clone();
+			while (target)
+			{
+				m3d.append(target.matrix);
+				target = target._parent;
+			}
+			_worldMatrix = m3d;
+			
+			return _worldMatrix;
 		}
 		
 		/**
@@ -1073,6 +1092,8 @@ package net.morocoshi.moja3d.objects
 				object._prev = _lastChild;
 			}
 			_lastChild = object;
+			object.calculateMatrixOrder = true;
+			//object.recomposeMatrixOrder = true;
 			return object;
 		}
 		

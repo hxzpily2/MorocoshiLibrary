@@ -33,15 +33,15 @@ package net.morocoshi.moja3d.objects
 			requiredAttribute.push(VertexAttribute.NORMAL);
 		}
 		
-		public function update(context3D:Context3D, calculateBoundingBox:Boolean):void
+		public function update(context3D:Context3D = null):void
 		{
-			var containerMatrix:Matrix3D = worldMatrix.clone();
+			var containerMatrix:Matrix3D = getPerfectWorldMatrix().clone();
 			containerMatrix.invert();
 			var unionMap:Dictionary = new Dictionary();
 			for each(var mesh:Mesh in getChildren(false, true, Mesh))
 			{
 				var geom:Geometry = mesh.geometry;
-				var matrix:Matrix3D = mesh.worldMatrix.clone();
+				var matrix:Matrix3D = mesh.getPerfectWorldMatrix().clone();
 				matrix.append(containerMatrix);
 				var rawData:Vector.<Number> = matrix.rawData;
 				
@@ -143,11 +143,6 @@ package net.morocoshi.moja3d.objects
 			if (hasAttribute(VertexAttribute.TANGENT4)) geometry.addVertices(VertexAttribute.TANGENT4, 4, tangent4s);
 			geometry.isUploaded = false;
 			
-			if (calculateBoundingBox)
-			{
-				calculateBounds();
-			}
-			
 			if (context3D)
 			{
 				upload(context3D, false, false);
@@ -224,6 +219,23 @@ package net.morocoshi.moja3d.objects
 				result.addChild(current.reference());
 			}
 			return result;
+		}
+		
+		static public function create(object:Object3D):UnionMesh 
+		{
+			var union:UnionMesh = new UnionMesh();
+			union.matrix = object.matrix;
+			object.parent.addChild(union);
+			while(object.children) 
+			{
+				union.addChild(object.children);
+			}
+			object.remove();
+			
+			union.update(null);
+			union.calculateBounds();
+			
+			return union;
 		}
 		
 	}
