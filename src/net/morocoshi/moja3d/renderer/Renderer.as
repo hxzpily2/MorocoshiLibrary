@@ -43,21 +43,21 @@ package net.morocoshi.moja3d.renderer
 		
 		public function renderTexture(textures:Array, collector:RenderCollector, target:RenderTextureResource, rgb:uint, alpha:Number, antiAlias:int):void
 		{
-			renderScene(collector, null, target, textures, rgb, alpha, antiAlias);
+			renderScene(collector, null, target, textures, rgb, alpha, antiAlias, false);
 		}
 		
 		public function renderShadowMap(collector:RenderCollector, shadow:Shadow):void 
 		{
-			//@@@アンチエイリアスは1固定で大丈夫？
+			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyShadowTexture(collector.context3D);
-			renderScene(collector, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1);
+			renderScene(collector, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		public function renderLightMap(collector:RenderCollector, shadow:Shadow):void 
 		{
-			//@@@アンチエイリアスは1固定で大丈夫？
+			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyLightTexture(collector.context3D);
-			renderScene(collector, shadow, shadow.lightTexture, null, 0xffffff, 1, 1);
+			renderScene(collector, shadow, shadow.lightTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		private var lastTarget:RenderTextureResource = new RenderTextureResource();
@@ -70,7 +70,7 @@ package net.morocoshi.moja3d.renderer
 		 * @param	rgb	背景色
 		 * @param	alpha	背景アルファ
 		 */
-		public function renderScene(collector:RenderCollector, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int):void
+		public function renderScene(collector:RenderCollector, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
 		{
 			var context:Context3D = collector.context3D.context;
 			
@@ -130,7 +130,7 @@ package net.morocoshi.moja3d.renderer
 			var b:Number = (rgb & 0xff) / 0xff;
 			context.clear(r, g, b, alpha);
 			
-			if (target == null && scene.dispatchRenderEventEnabled)
+			if (target == null && dispatchRenderEvent)
 			{
 				scene.dispatchEvent(new Event3D(Event3D.CONTEXT_POST_CLEAR));
 			}

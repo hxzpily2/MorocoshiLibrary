@@ -82,7 +82,6 @@ package net.morocoshi.moja3d.view
 		private var validFilters:Vector.<Filter3D>;
 		private var viewRect:Rectangle;
 		private var fillMaskTextureOrder:Boolean;
-		moja3d var dispatchRenderEventEnabled:Boolean;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -92,7 +91,6 @@ package net.morocoshi.moja3d.view
 		
 		public function Scene3D() 
 		{
-			dispatchRenderEventEnabled = true;
 			dispatchedComplete = false;
 			fillMaskTextureOrder = true;
 			viewRect = new Rectangle(0, 0, 0, 0);
@@ -263,7 +261,7 @@ package net.morocoshi.moja3d.view
 		 */
 		public function render():void
 		{
-			renderSceneTo(null, root, overlay, camera, view, filters);
+			renderSceneTo(null, root, overlay, camera, view, filters, true);
 		}
 		
 		/**
@@ -281,9 +279,7 @@ package net.morocoshi.moja3d.view
 			var backgroundAlpha:Number = view.backgroundAlpha;
 			if (transparent) view.backgroundColor = 0;
 			view.backgroundAlpha = 0;
-			dispatchRenderEventEnabled = dispatchRenderEvent;
-			renderSceneTo(null, root, hasOverlay? overlay : null, camera, view, filters);
-			dispatchRenderEventEnabled = true;
+			renderSceneTo(null, root, hasOverlay? overlay : null, camera, view, filters, dispatchRenderEvent);
 			collector.captureDestination = null;
 			view.backgroundAlpha = backgroundAlpha;
 			view.backgroundColor = backgroundColor;
@@ -294,15 +290,15 @@ package net.morocoshi.moja3d.view
 		 * カメラ、ビューポート、ポストエフェクト、レンダリング対象を設定してレンダリングする
 		 * @param	texture	テクスチャにレンダリングする場合は設定する。そうでなければnull。
 		 * @param	rootObject	このオブジェクト以下がレンダリングされる
-		 * @param	overlay
+		 * @param	overlay	2Dレイヤー
 		 * @param	camera	カメラ
 		 * @param	view	ビューポート
 		 * @param	filters	ポストエフェクト
+		 * @param	dispatchRenderEvent	主にStarlingレイヤー描画用に使うEvent3D.CONTEXT_POST_CLEARとEvent3D.CONTEXT_PRE_PRESENTをdispatchするか
 		 */
-		public function renderSceneTo(texture:RenderTextureResource, rootObject:Object3D, overlay:Object2D, camera:Camera3D, view:Viewport, filters:Vector.<Filter3D>):void
+		public function renderSceneTo(texture:RenderTextureResource, rootObject:Object3D, overlay:Object2D, camera:Camera3D, view:Viewport, filters:Vector.<Filter3D>, dispatchRenderEvent:Boolean):void
 		{
 			LightSetting.renderInitialized = true;
-			
 			billboard.lookAtCamera(camera, billboardUpAxis);
 			
 			dispatchEvent(new Event3D(Event3D.PRE_RENDER));
@@ -417,7 +413,7 @@ package net.morocoshi.moja3d.view
 			if (collector.hasMaskElement)
 			{
 				fillMaskTextureOrder = true;
-				renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias);
+				renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
 			}
 			else if (fillMaskTextureOrder == true)
 			{
@@ -496,7 +492,7 @@ package net.morocoshi.moja3d.view
 					
 					//反射モデル収集
 					collector.collect(rootObject, reflectCamera, this, RenderPhase.REFLECT);
-					renderer.renderScene(collector, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias);
+					renderer.renderScene(collector, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
 				}
 			}
 			
@@ -507,7 +503,7 @@ package net.morocoshi.moja3d.view
 				collector.collect2D(overlay, this, RenderPhase.OVERLAY);
 			}
 			var targetTexture:RenderTextureResource = (validFilters.length > 0)? postEffect.renderTexture : texture;
-			renderer.renderScene(collector, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias);
+			renderer.renderScene(collector, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
 			
 			//ポストエフェクト
 			n = validFilters.length;
@@ -528,7 +524,7 @@ package net.morocoshi.moja3d.view
 			if (texture == null)
 			{
 				_stats.apply(collector);
-				if (dispatchRenderEventEnabled)
+				if (dispatchRenderEvent)
 				{
 					dispatchEvent(new Event3D(Event3D.CONTEXT_PRE_PRESENT));
 				}
