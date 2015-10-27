@@ -20,6 +20,7 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.common.ui.mouse.FPVController;
 	import net.morocoshi.common.ui.mouse.MouseDrag3D;
+	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.billboard.BillboardManager;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.dialogs.SoftwareDialog;
@@ -225,6 +226,8 @@ package net.morocoshi.moja3d.view
 			context3D.context.enableErrorChecking = false;
 			context3D.driver = new DriverInfo(context3D.context.driverInfo);
 			_stats.setDriverInfo(context3D.driver);
+			
+			AGALCache.clear();
 			
 			var dummyPattern:BitmapData = new BitmapData(64, 64, false, 0x222222);
 			dummyPattern.fillRect(new Rectangle(0, 0, 32, 32), 0x808080);

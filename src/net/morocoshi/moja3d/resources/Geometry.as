@@ -121,6 +121,8 @@ package net.morocoshi.moja3d.resources
 		 */
 		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void
 		{
+			if (isUploaded == true) return;
+			
 			dispose();
 			
 			if (vertexIndices.length > 524287)
