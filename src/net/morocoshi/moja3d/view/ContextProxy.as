@@ -13,7 +13,7 @@ package net.morocoshi.moja3d.view
 	public class ContextProxy 
 	{
 		public var context:Context3D;
-		public var driverInfo:DriverInfo;
+		public var driver:DriverInfo;
 		
 		public function ContextProxy() 
 		{

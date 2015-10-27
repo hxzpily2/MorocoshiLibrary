@@ -130,7 +130,7 @@ package net.morocoshi.moja3d.renderer
 			var b:Number = (rgb & 0xff) / 0xff;
 			context.clear(r, g, b, alpha);
 			
-			if (target == null)
+			if (target == null && scene.dispatchRenderEventEnabled)
 			{
 				scene.dispatchEvent(new Event3D(Event3D.CONTEXT_POST_CLEAR));
 			}

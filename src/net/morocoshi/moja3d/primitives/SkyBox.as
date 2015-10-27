@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.primitives
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.objects.Surface;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
+	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.CubeTextureResource;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
@@ -28,6 +29,7 @@ package net.morocoshi.moja3d.primitives
 			super();
 			
 			castShadowEnabled = false;
+			layer = RenderLayer.BACKGROUND;
 			
 			var vertices:Vector.<Number> = new Vector.<Number>;
 			var uvs:Vector.<Number> = new Vector.<Number>;

@@ -37,6 +37,7 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
+	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.stats.MojaStats;
 	
@@ -60,6 +61,15 @@ package net.morocoshi.moja3d.view
 		public var driverInfo:DriverInfo;
 		public var collector:RenderCollector;
 		
+		public var filters:Vector.<Filter3D>;
+		public var postEffect:PostEffectManager;
+		public var overlay:Object2D;
+		public var billboard:BillboardManager;
+		public var billboardUpAxis:Vector3D;
+		
+		public var tpv:MouseDrag3D;
+		public var fpv:FPVController;
+		
 		private var _stats:MojaStats;
 		private var sprite:Sprite;
 		
@@ -71,14 +81,7 @@ package net.morocoshi.moja3d.view
 		private var validFilters:Vector.<Filter3D>;
 		private var viewRect:Rectangle;
 		private var fillMaskTextureOrder:Boolean;
-		
-		public var tpv:MouseDrag3D;
-		public var fpv:FPVController;
-		public var filters:Vector.<Filter3D>;
-		public var postEffect:PostEffectManager;
-		public var overlay:Object2D;
-		public var billboard:BillboardManager;
-		public var billboardUpAxis:Vector3D;
+		moja3d var dispatchRenderEventEnabled:Boolean;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -88,6 +91,7 @@ package net.morocoshi.moja3d.view
 		
 		public function Scene3D() 
 		{
+			dispatchRenderEventEnabled = true;
 			dispatchedComplete = false;
 			fillMaskTextureOrder = true;
 			viewRect = new Rectangle(0, 0, 0, 0);
@@ -219,9 +223,8 @@ package net.morocoshi.moja3d.view
 		{
 			context3D.context = stage3D.context3D;
 			context3D.context.enableErrorChecking = false;
-			
-			context3D.driverInfo = new DriverInfo(context3D.context.driverInfo);
-			_stats.setDriverInfo(context3D.driverInfo);
+			context3D.driver = new DriverInfo(context3D.context.driverInfo);
+			_stats.setDriverInfo(context3D.driver);
 			
 			var dummyPattern:BitmapData = new BitmapData(64, 64, false, 0x222222);
 			dummyPattern.fillRect(new Rectangle(0, 0, 32, 32), 0x808080);
@@ -232,6 +235,12 @@ package net.morocoshi.moja3d.view
 			collector.filterGeometry.upload(context3D, false);
 			collector.planeGeometry.upload(context3D, false);
 			collector.reflectiveWater.setContext3D(context3D);
+			
+			for each(var resource:Resource in root.getResources(true))
+			{
+				resource.dispose();
+				resource.upload(context3D, false);
+			}
 			
 			if (dispatchedComplete == false)
 			{
@@ -258,9 +267,10 @@ package net.morocoshi.moja3d.view
 		 * 現在のレンダリング設定で画面をキャプチャする
 		 * @param	transparent	背景を透過するか
 		 * @param	hasOverlay	2Dレイヤーもキャプチャするか
+		 * @param	dispatchRenderEvent	主にStarlingレイヤー描画用に使うEvent3D.CONTEXT_POST_CLEARとEvent3D.CONTEXT_PRE_PRESENTをdispatchするか
 		 * @return
 		 */
-		public function capture(transparent:Boolean, hasOverlay:Boolean):BitmapData
+		public function capture(transparent:Boolean, hasOverlay:Boolean, dispatchRenderEvent:Boolean):BitmapData
 		{
 			var bitmapData:BitmapData = new BitmapData(view.width, view.height, transparent, 0x0);
 			collector.captureDestination = bitmapData;
@@ -268,7 +278,9 @@ package net.morocoshi.moja3d.view
 			var backgroundAlpha:Number = view.backgroundAlpha;
 			if (transparent) view.backgroundColor = 0;
 			view.backgroundAlpha = 0;
+			dispatchRenderEventEnabled = dispatchRenderEvent;
 			renderSceneTo(null, root, hasOverlay? overlay : null, camera, view, filters);
+			dispatchRenderEventEnabled = true;
 			collector.captureDestination = null;
 			view.backgroundAlpha = backgroundAlpha;
 			view.backgroundColor = backgroundColor;
@@ -513,7 +525,10 @@ package net.morocoshi.moja3d.view
 			if (texture == null)
 			{
 				_stats.apply(collector);
-				dispatchEvent(new Event3D(Event3D.CONTEXT_PRE_PRESENT));
+				if (dispatchRenderEventEnabled)
+				{
+					dispatchEvent(new Event3D(Event3D.CONTEXT_PRE_PRESENT));
+				}
 				if (collector.captureDestination)
 				{
 					context3D.context.drawToBitmapData(collector.captureDestination);
