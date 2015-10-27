@@ -186,7 +186,7 @@ package net.morocoshi.moja3d.agal
 		//
 		//--------------------------------------------------------------------------
 		
-		public function applyProgramConstants(context3D:Context3D, start:int):int 
+		public function applyProgramConstants(context:Context3D, start:int):int 
 		{
 			var n:int = constantList.length;
 			var index:int = start;
@@ -198,11 +198,11 @@ package net.morocoshi.moja3d.agal
 				switch(constant.type)
 				{
 					case AGALConstant.VECTOR	:
-						context3D.setProgramConstantsFromVector(programType, index, constant.vector);
+						context.setProgramConstantsFromVector(programType, index, constant.vector);
 						index += 1;
 						break;
 					case AGALConstant.MATRIX	:
-						context3D.setProgramConstantsFromMatrix(programType, index, constant.matrix, constant.transposed);
+						context.setProgramConstantsFromMatrix(programType, index, constant.matrix, constant.transposed);
 						index += 4;
 						break;
 					//case AGALConstant.BYTEARRAY	: context3D.setProgramConstantsFromByteArray(programType, 0, constant.bytes); break;

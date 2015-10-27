@@ -18,6 +18,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourceUploader;
 	import net.morocoshi.moja3d.shaders.render.ColorTransformShader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -614,7 +615,7 @@ package net.morocoshi.moja3d.objects
 		 * @param	async	非同期でuploadするか
 		 * @param	complete	非同期uploadする場合の完了イベント
 		 */
-		public function upload(context3D:Context3D, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
 		{
 			new ResourceUploader().upload(context3D, getResources(hierarchy), async, complete);
 		}
@@ -623,7 +624,7 @@ package net.morocoshi.moja3d.objects
 		 * このオブジェクトが内包する全オブジェクト（自分含む）が生成予定のProgram3Dを事前に生成しておく
 		 * @param	context3D
 		 */
-		public function preloadPrograms(context3D:Context3D):void 
+		public function preloadPrograms(context3D:ContextProxy):void 
 		{
 			new Program3DPreloader().load(this, context3D);
 		}

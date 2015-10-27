@@ -10,6 +10,7 @@ package net.morocoshi.moja3d.resources
 	import flash.geom.Matrix;
 	import flash.utils.ByteArray;
 	import net.morocoshi.moja3d.events.Event3D;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * イメージテクスチャ用リソース
@@ -136,7 +137,7 @@ package net.morocoshi.moja3d.resources
 			_isParsed = false;
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 			if (_hasResource == false || isUploaded)
 			{
@@ -164,7 +165,7 @@ package net.morocoshi.moja3d.resources
 					{
 						texture.dispose();
 					}
-					texture = context3D.createCubeTexture(_atf.width, _atf.format, false, 0);
+					texture = context3D.context.createCubeTexture(_atf.width, _atf.format, false, 0);
 				}
 				
 				if (async)
@@ -270,7 +271,7 @@ package net.morocoshi.moja3d.resources
 			isReady = true;
 		}
 		
-		override public function createTexture(context3D:Context3D, width:int, height:int):void 
+		override public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
 			//前回と同じならスキップ
 			if (prevSize.x == width && prevSize.y == height)
@@ -294,11 +295,11 @@ package net.morocoshi.moja3d.resources
 			
 			if (isCubeMap == false)
 			{
-				texture = context3D.createTexture(width, height, _format, false, 0);
+				texture = context3D.context.createTexture(width, height, _format, false, 0);
 			}
 			else
 			{
-				texture = context3D.createCubeTexture(width, _format, false, 0);
+				texture = context3D.context.createCubeTexture(width, _format, false, 0);
 			}
 		}
 		

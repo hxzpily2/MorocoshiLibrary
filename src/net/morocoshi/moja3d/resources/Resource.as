@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * Context3Dにuploadするリソース
@@ -37,7 +38,7 @@ package net.morocoshi.moja3d.resources
 			return resource;
 		}
 		
-		public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void
+		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void
 		{
 			if (async == true)
 			{

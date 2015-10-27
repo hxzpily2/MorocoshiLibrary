@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.resources
 	import flash.utils.ByteArray;
 	import net.morocoshi.moja3d.resources.ExternalTextureResource;
 	import net.morocoshi.moja3d.resources.Resource;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * マテリアル画像をまとめたもの
@@ -119,7 +120,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		public function attachTo(resources:*, upload:Boolean, context3D:Context3D = null, async:Boolean = false, complete:Function = null):void 
+		public function attachTo(resources:*, upload:Boolean, context3D:ContextProxy = null, async:Boolean = false, complete:Function = null):void 
 		{
 			if (resources is Resource) resources = [resources];
 			var n:int = resources.length;

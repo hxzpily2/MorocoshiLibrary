@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3D;
 	import net.morocoshi.common.math.transform.AngleUtil;
 	import net.morocoshi.moja3d.particle.cells.ParticleData;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * パーティクル用ジオメトリ
@@ -31,7 +32,7 @@ package net.morocoshi.moja3d.resources
 			vertexIndices = new Vector.<uint>;
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 			if (vertexIndices.length == 0)
 			{
@@ -41,7 +42,7 @@ package net.morocoshi.moja3d.resources
 			super.upload(context3D, async, complete);
 		}
 		
-		public function update(particles:Vector.<ParticleData>, context3D:Context3D):void
+		public function update(particles:Vector.<ParticleData>, context3D:ContextProxy):void
 		{
 			vertices.length = 0;
 			sizes.length = 0;

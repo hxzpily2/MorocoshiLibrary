@@ -72,7 +72,7 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function renderScene(collector:RenderCollector, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int):void
 		{
-			var context3D:Context3D = collector.context3D;
+			var context:Context3D = collector.context3D.context;
 			
 			frame++;
 			if (camera)
@@ -112,12 +112,12 @@ package net.morocoshi.moja3d.renderer
 				lastTarget = target;
 				if (target)
 				{
-					context3D.setRenderToTexture(target.texture, true, antiAlias);
+					context.setRenderToTexture(target.texture, true, antiAlias);
 					target.isUploaded = true;
 				}
 				else
 				{
-					context3D.setRenderToBackBuffer();
+					context.setRenderToBackBuffer();
 				}
 				
 			}
@@ -128,7 +128,7 @@ package net.morocoshi.moja3d.renderer
 			var r:Number = (rgb >> 16 & 0xff) / 0xff;
 			var g:Number = (rgb >> 8 & 0xff) / 0xff;
 			var b:Number = (rgb & 0xff) / 0xff;
-			context3D.clear(r, g, b, alpha);
+			context.clear(r, g, b, alpha);
 			
 			if (target == null)
 			{
@@ -138,21 +138,21 @@ package net.morocoshi.moja3d.renderer
 			//最背面要素のレンダリング
 			if (collector.renderElementList[RenderLayer.BACKGROUND])
 			{
-				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.BACKGROUND, collector, camera, drawTextures);
 			}
 			
 			//不透明要素のレンダリング
 			if (collector.renderElementList[RenderLayer.OPAQUE])
 			{
-				setDepthTest(context3D, true, Context3DCompareMode.LESS);
+				setDepthTest(context, true, Context3DCompareMode.LESS);
 				renderLayer(RenderLayer.OPAQUE, collector, camera, drawTextures);
 			}
 			
 			//半透明要素のレンダリング
 			if (collector.renderElementList[RenderLayer.TRANSPARENT])
 			{
-				setDepthTest(context3D, false, Context3DCompareMode.LESS);
+				setDepthTest(context, false, Context3DCompareMode.LESS);
 				sortItem(RenderLayer.TRANSPARENT, collector, camera);//カメラからの距離でソート
 				renderLayer(RenderLayer.TRANSPARENT, collector, camera, drawTextures);
 			}
@@ -160,24 +160,24 @@ package net.morocoshi.moja3d.renderer
 			//最前面要素のレンダリング
 			if (collector.renderElementList[RenderLayer.FOREFRONT])
 			{
-				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.FOREFRONT, collector, camera, drawTextures);
 			}
 			
 			//2Dオーバーレイのレンダリング
 			if (collector.renderElementList[RenderLayer.OVERLAY])
 			{
-				setDepthTest(context3D, false, Context3DCompareMode.ALWAYS);
+				setDepthTest(context, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.OVERLAY, collector, camera, drawTextures);
 			}
 			
 		}
 		
-		private function setDepthTest(context3D:Context3D, depthMask:Boolean, passCompareMode:String):void 
+		private function setDepthTest(context:Context3D, depthMask:Boolean, passCompareMode:String):void 
 		{
 			defaltPassCompareMode = passCompareMode;
 			defaltDepthMask = depthMask;
-			context3D.setDepthTest(depthMask, passCompareMode);
+			context.setDepthTest(depthMask, passCompareMode);
 		}
 		
 		/**
@@ -188,8 +188,6 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function sortItem(layer:int, collector:RenderCollector, camera:Camera3D):void
 		{
-			var context3D:Context3D = collector.context3D;
-			
 			var item:RenderElement = collector.renderElementList[layer];
 			while (item)
 			{
@@ -215,7 +213,7 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function renderLayer(layer:int, collector:RenderCollector, camera:Camera3D, drawTextures:Array):void
 		{
-			var context3D:Context3D = collector.context3D;
+			var context:Context3D = collector.context3D.context;
 			var timer:int = getTimer();
 			
 			var item:RenderElement = collector.renderElementList[layer];
@@ -236,7 +234,7 @@ package net.morocoshi.moja3d.renderer
 				n = item.vertexBufferList.length;
 				for (i = 0; i < n; i++) 
 				{
-					context3D.setVertexBufferAt(i, item.vertexBufferList[i], 0, item.vertexBufferFormatList[i]);
+					context.setVertexBufferAt(i, item.vertexBufferList[i], 0, item.vertexBufferFormatList[i]);
 				}
 				
 				//テクスチャ
@@ -262,32 +260,32 @@ package net.morocoshi.moja3d.renderer
 					var textureResource:TextureResource = agalTex.texture;
 					//テクスチャがnullならダミーテクスチャを使う
 					textureResource = (textureResource && textureResource.isUploaded && textureResource.isReady)? textureResource : dummyTexture;
-					context3D.setTextureAt(textureCount, textureResource.texture);
+					context.setTextureAt(textureCount, textureResource.texture);
 					textureCount++;
 				}
 				
 				//プログラム生成
-				context3D.setBlendFactors(item.sourceFactor, item.destinationFactor);
-				context3D.setCulling(item.culling);
+				context.setBlendFactors(item.sourceFactor, item.destinationFactor);
+				context.setCulling(item.culling);
 				
 				//行列用の定数を更新
 				collector.vertexConstant.modelMatrix.matrix = item.matrix;
 				collector.fragmentConstant.modelMatrix.matrix = item.matrix;
 				
 				//プログラム生成（キャッシュ判定で初回のみ生成）
-				context3D.setProgram(item.shaderList.getProgram(collector));
+				context.setProgram(item.shaderList.getProgram(collector));
 				
 				//定数をシェーダーに渡す
-				var vertexIndex:int = collector.vertexCode.applyProgramConstants(context3D, 0);
-				var fragmentIndex:int = collector.fragmentCode.applyProgramConstants(context3D, 0);
+				var vertexIndex:int = collector.vertexCode.applyProgramConstants(context, 0);
+				var fragmentIndex:int = collector.fragmentCode.applyProgramConstants(context, 0);
 				
 				//描画毎に処理を実行するタイプのシェーダーがあるなら
 				if (item.shaderList.existTickShader)
 				{
 					item.shaderList.tick(frame, timer);
 				}
-				item.shaderList.vertexCode.applyProgramConstants(context3D, vertexIndex);
-				item.shaderList.fragmentCode.applyProgramConstants(context3D, fragmentIndex);
+				item.shaderList.vertexCode.applyProgramConstants(context, vertexIndex);
+				item.shaderList.fragmentCode.applyProgramConstants(context, fragmentIndex);
 				
 				//描画
 				//if (item.passCompareMode)
@@ -301,13 +299,13 @@ package net.morocoshi.moja3d.renderer
 				//	context3D.setDepthTest(tempDepthMask, tempPassCompareMode);
 				//	tempPassCompareMode = "";
 				//}
-				context3D.drawTriangles(item.indexBuffer, item.firstIndex, item.numTriangles);
+				context.drawTriangles(item.indexBuffer, item.firstIndex, item.numTriangles);
 				
 				//バッファをクリアする
 				for (i = 0; i < 8; i++)
 				{
-					context3D.setVertexBufferAt(i, null);
-					context3D.setTextureAt(i, null);
+					context.setVertexBufferAt(i, null);
+					context.setTextureAt(i, null);
 				}
 				
 				item = item.next;

@@ -16,6 +16,7 @@ package net.morocoshi.moja3d.overlay.objects
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.shaders.render.ColorTransformShader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -446,7 +447,7 @@ package net.morocoshi.moja3d.overlay.objects
 		 * 必要素材をContext3Dに転送する
 		 * @param	context3D
 		 */
-		public function upload(context3D:Context3D, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
 		{
 			var list:Vector.<Resource> = getResources(hierarchy);
 			var n:int = list.length;

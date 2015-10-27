@@ -9,6 +9,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.shaders.particle.ParticleShader;
 	import net.morocoshi.moja3d.shaders.render.VertexColorShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -37,7 +38,7 @@ package net.morocoshi.moja3d.objects
 			afterViewShaderList.addShader(particleShader);
 		}
 		
-		public function update(context3D:Context3D):void
+		public function update(context3D:ContextProxy):void
 		{
 			surface.numTriangles = particles.length * 2;
 			ParticleGeometry(_geometry).update(particles, context3D);

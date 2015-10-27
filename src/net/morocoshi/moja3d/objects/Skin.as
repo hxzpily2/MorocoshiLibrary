@@ -8,6 +8,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.shaders.skin.SkinShader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -45,7 +46,7 @@ package net.morocoshi.moja3d.objects
 			skinShader.setGeometry(value);
 		}
 		*/
-		override public function upload(context3D:Context3D, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
 		{
 			super.upload(context3D, hierarchy, async, complete);
 		}

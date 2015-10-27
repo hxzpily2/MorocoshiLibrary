@@ -7,6 +7,7 @@ package net.morocoshi.moja3d.resources
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * メッシュジオメトリ
@@ -118,7 +119,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void
 		{
 			dispose();
 			
@@ -147,14 +148,14 @@ package net.morocoshi.moja3d.resources
 					dispose();
 					return;
 				}
-				var vertexBuffer:VertexBuffer3D = context3D.createVertexBuffer(numVertices, numAttribute);
+				var vertexBuffer:VertexBuffer3D = context3D.context.createVertexBuffer(numVertices, numAttribute);
 				vertexBufferList[i] = vertexBuffer;
 				vertexBuffer.uploadFromVector(verticesList[i], 0, numVertices);
 			}
 			
 			try
 			{
-				indexBuffer = context3D.createIndexBuffer(vertexIndices.length);
+				indexBuffer = context3D.context.createIndexBuffer(vertexIndices.length);
 				indexBuffer.uploadFromVector(vertexIndices, 0, vertexIndices.length);
 			}
 			catch (e:Error)

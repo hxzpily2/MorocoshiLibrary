@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.shaders.render.KillShader;
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * 鏡面反射用テクスチャを管理
@@ -22,7 +23,7 @@ package net.morocoshi.moja3d.renderer
 		
 		private var reflectionIndex:int = -1;
 		private var size:Rectangle;
-		private var context3D:Context3D;
+		private var context3D:ContextProxy;
 		
 		public function ReflectiveWater() 
 		{
@@ -32,7 +33,7 @@ package net.morocoshi.moja3d.renderer
 			size = new Rectangle(0, 0, 2, 2);
 		}
 		
-		public function setContext3D(context3D:Context3D):void
+		public function setContext3D(context3D:ContextProxy):void
 		{
 			this.context3D = context3D;
 		}

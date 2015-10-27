@@ -16,6 +16,7 @@ package net.morocoshi.moja3d.particle
 	import net.morocoshi.moja3d.particle.range.ParticleRangeType;
 	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	import net.morocoshi.moja3d.particle.wind.ParticleWindType;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -33,7 +34,7 @@ package net.morocoshi.moja3d.particle
 		public var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
 		
 		private var sprite:Sprite = new Sprite();
-		private var context3D:Context3D;
+		private var context3D:ContextProxy;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -60,7 +61,7 @@ package net.morocoshi.moja3d.particle
 		//
 		//--------------------------------------------------------------------------
 		
-		public function setContetx3D(context3D:Context3D):void
+		public function setContetx3D(context3D:ContextProxy):void
 		{
 			this.context3D = context3D;
 		}
@@ -169,7 +170,7 @@ package net.morocoshi.moja3d.particle
 		//
 		//--------------------------------------------------------------------------
 		
-		override public function update(context3D:Context3D):void
+		override public function update(context3D:ContextProxy):void
 		{
 			//var step:Number = 33 / 1000;
 			var time:int = getTimer() / 1000;

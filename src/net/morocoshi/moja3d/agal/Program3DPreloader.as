@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.agal
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -20,7 +21,7 @@ package net.morocoshi.moja3d.agal
 		{
 		}
 		
-		public function load(object:Object3D, context3D:Context3D):void 
+		public function load(object:Object3D, context3D:ContextProxy):void 
 		{
 			var collector:RenderCollector = new RenderCollector();
 			collector.context3D = context3D;

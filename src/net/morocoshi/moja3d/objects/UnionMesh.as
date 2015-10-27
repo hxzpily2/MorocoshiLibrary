@@ -9,6 +9,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -33,7 +34,7 @@ package net.morocoshi.moja3d.objects
 			requiredAttribute.push(VertexAttribute.NORMAL);
 		}
 		
-		public function update(context3D:Context3D = null):void
+		public function update(context3D:ContextProxy = null):void
 		{
 			var containerMatrix:Matrix3D = getPerfectWorldMatrix().clone();
 			containerMatrix.invert();

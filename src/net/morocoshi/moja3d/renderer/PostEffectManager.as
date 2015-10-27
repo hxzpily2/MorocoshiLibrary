@@ -7,6 +7,7 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.EndFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	import net.morocoshi.moja3d.view.Scene3D;
 	
 	/**
@@ -72,7 +73,7 @@ package net.morocoshi.moja3d.renderer
 		 * @param	w
 		 * @param	h
 		 */
-		public function setViewSize(context3D:Context3D, w:int, h:int):void
+		public function setViewSize(context3D:ContextProxy, w:int, h:int):void
 		{
 			renderTexture.createTexture(context3D, w, h);
 			maskTexture.createTexture(context3D, w, h);

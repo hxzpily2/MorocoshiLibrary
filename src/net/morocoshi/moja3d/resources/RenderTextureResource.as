@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.resources
 {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * ...
@@ -24,15 +25,15 @@ package net.morocoshi.moja3d.resources
 			isReady = true;
 		}
 		
-		public function fillColor(context3D:Context3D, rgb:uint, alpha:Number = 1):void
+		public function fillColor(context3D:ContextProxy, rgb:uint, alpha:Number = 1):void
 		{
-			context3D.setRenderToTexture(texture, true, 0);
-			context3D.clear((rgb >> 16 & 0xff) / 0xff, (rgb >> 8 & 0xff) / 0xff, (rgb & 0xff) / 0xff, alpha);
+			context3D.context.setRenderToTexture(texture, true, 0);
+			context3D.context.clear((rgb >> 16 & 0xff) / 0xff, (rgb >> 8 & 0xff) / 0xff, (rgb & 0xff) / 0xff, alpha);
 			isUploaded = true;
 		}
 		
 		//レンダリング用テクスチャの場合
-		override public function createTexture(context3D:Context3D, width:int, height:int):void 
+		override public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
 			if (width > limitW) width = limitW;
 			if (height > limitH) height = limitH;
@@ -63,12 +64,12 @@ package net.morocoshi.moja3d.resources
 				texture.dispose();
 			}
 			
-			texture = context3D.createTexture(width, height, Context3DTextureFormat.BGRA, true);
+			texture = context3D.context.createTexture(width, height, Context3DTextureFormat.BGRA, true);
 			//RectangleTextureを使った場合
 			//texture = context3D.createRectangleTexture(width, height, format, renderToTexture);
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 		}
 		

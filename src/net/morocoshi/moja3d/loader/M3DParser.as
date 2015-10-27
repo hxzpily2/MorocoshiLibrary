@@ -69,6 +69,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.resources.ResourcePack;
 	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -926,7 +927,7 @@ package net.morocoshi.moja3d.loader
 			ClassAliasUtil.register(Vector.<Vector3D>);
 		}
 		
-		public function upload(context3D:Context3D, async:Boolean):void 
+		public function upload(context3D:ContextProxy, async:Boolean):void 
 		{
 			var i:int;
 			var n:int;

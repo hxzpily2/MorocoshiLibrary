@@ -21,6 +21,7 @@ package net.morocoshi.moja3d.shaders
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
 	import net.morocoshi.moja3d.shaders.shadow.ShadowShader;
 	import net.morocoshi.moja3d.utils.AssemblerUtil;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -639,9 +640,9 @@ package net.morocoshi.moja3d.shaders
 		 * @param	rootFragment
 		 * @return
 		 */
-		private function createProgram(context3D:Context3D, info:AGALInfo, rootVertex:AGALCode, rootFragment:AGALCode):Program3D 
+		private function createProgram(context3D:ContextProxy, info:AGALInfo, rootVertex:AGALCode, rootFragment:AGALCode):Program3D 
 		{
-			var program:Program3D = context3D.createProgram();
+			var program:Program3D = context3D.context.createProgram();
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 
 			{
@@ -681,7 +682,7 @@ package net.morocoshi.moja3d.shaders
 		 * @param	code
 		 * @param	vertex
 		 */
-		private function checkOpecodeLine(context3D:Context3D, info:AGALInfo, code:String, vertex:Boolean):void 
+		private function checkOpecodeLine(context3D:ContextProxy, info:AGALInfo, code:String, vertex:Boolean):void 
 		{
 			var num:int = code.split("\n").length;
 			if (num > info.maxTokens)

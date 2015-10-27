@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.primitives.Cube;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -92,12 +93,12 @@ package net.morocoshi.moja3d.objects
 			debugCube.calculteWorldMatrix();
 		}
 		
-		public function readyLightTexture(context3D:Context3D):void
+		public function readyLightTexture(context3D:ContextProxy):void
 		{
 			lightTexture.createTexture(context3D, textureWidth, textureHeight);
 		}
 		
-		public function readyShadowTexture(context3D:Context3D):void 
+		public function readyShadowTexture(context3D:ContextProxy):void 
 		{
 			shadowTexture.createTexture(context3D, textureWidth, textureHeight);
 		}

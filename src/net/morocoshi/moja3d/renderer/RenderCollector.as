@@ -28,6 +28,7 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.shadow.ShadowShader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	import net.morocoshi.moja3d.view.Scene3D;
 	
 	use namespace moja3d;
@@ -39,7 +40,7 @@ package net.morocoshi.moja3d.renderer
 	 */
 	public class RenderCollector 
 	{
-		public var context3D:Context3D;
+		public var context3D:ContextProxy;
 		public var renderer:Renderer;
 		public var renderElementList:Object;
 		public var camera:Camera3D;
@@ -135,7 +136,7 @@ package net.morocoshi.moja3d.renderer
 		 * 
 		 * @param	context3D
 		 */
-		public function setContext3D(context3D:Context3D):void 
+		public function setContext3D(context3D:ContextProxy):void 
 		{
 			this.context3D = context3D;
 		}

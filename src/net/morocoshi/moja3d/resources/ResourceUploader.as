@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
 	import net.morocoshi.moja3d.events.Event3D;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * リソースを一括でuploadする
@@ -19,7 +20,7 @@ package net.morocoshi.moja3d.resources
 		{
 		}
 		
-		public function upload(context3D:Context3D, resources:Vector.<Resource>, async:Boolean, complete:Function = null):void
+		public function upload(context3D:ContextProxy, resources:Vector.<Resource>, async:Boolean, complete:Function = null):void
 		{
 			completeCallback = complete;
 			

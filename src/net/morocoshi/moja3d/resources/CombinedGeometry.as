@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3D;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.objects.Surface;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	/**
 	 * ...
 	 * @author tencho
@@ -46,7 +47,7 @@ package net.morocoshi.moja3d.resources
 			return result;
 		}
 		
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 			for each (var item:Geometry in geometries) 
 			{

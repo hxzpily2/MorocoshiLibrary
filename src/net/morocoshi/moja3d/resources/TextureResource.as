@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Point;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
 	 * テクスチャリソース基本
@@ -34,7 +35,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		override public function upload(context3D:Context3D, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 			throw new Error("継承してください！");
 		}
@@ -45,7 +46,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	width
 		 * @param	height
 		 */
-		public function createTexture(context3D:Context3D, width:int, height:int):void 
+		public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
 			throw new Error("継承してください！");
 		}

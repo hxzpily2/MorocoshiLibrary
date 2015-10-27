@@ -54,7 +54,7 @@ package net.morocoshi.moja3d.view
 		public var view:Viewport;
 		public var renderer:Renderer;
 		public var stage3D:Stage3D;
-		public var context3D:Context3D;
+		public var context3D:ContextProxy;
 		public var camera:Camera3D;
 		
 		public var driverInfo:DriverInfo;
@@ -93,6 +93,7 @@ package net.morocoshi.moja3d.view
 			viewRect = new Rectangle(0, 0, 0, 0);
 			renderer = new Renderer();
 			renderer.scene = this;
+			context3D = new ContextProxy();
 			collector = new RenderCollector();
 			collector.renderer = renderer;
 			
@@ -216,11 +217,11 @@ package net.morocoshi.moja3d.view
 		
 		private function stage3D_contextCreateHandler(e:Event):void 
 		{
-			context3D = stage3D.context3D;
-			context3D.enableErrorChecking = false;
+			context3D.context = stage3D.context3D;
+			context3D.context.enableErrorChecking = false;
 			
-			driverInfo = new DriverInfo(context3D.driverInfo);
-			_stats.setDriverInfo(driverInfo);
+			context3D.driverInfo = new DriverInfo(context3D.context.driverInfo);
+			_stats.setDriverInfo(context3D.driverInfo);
 			
 			var dummyPattern:BitmapData = new BitmapData(64, 64, false, 0x222222);
 			dummyPattern.fillRect(new Rectangle(0, 0, 32, 32), 0x808080);
@@ -292,7 +293,7 @@ package net.morocoshi.moja3d.view
 			dispatchEvent(new Event3D(Event3D.PRE_RENDER));
 			
 			//Stage3Dが破棄されている場合があるかもしれない
-			if (stage3D == null || context3D == null || context3D.driverInfo == DriverInfo.DISPOSED)
+			if (stage3D == null || context3D == null || context3D.context.driverInfo == DriverInfo.DISPOSED)
 			{
 				return;
 			}
@@ -316,7 +317,7 @@ package net.morocoshi.moja3d.view
 			//背景
 			if (view.updateBackBuffer)
 			{
-				context3D.configureBackBuffer(view.width, view.height, view.antiAlias, true);
+				context3D.context.configureBackBuffer(view.width, view.height, view.antiAlias, true);
 				view.updateBackBuffer = false;
 			}
 			
@@ -515,9 +516,9 @@ package net.morocoshi.moja3d.view
 				dispatchEvent(new Event3D(Event3D.CONTEXT_PRE_PRESENT));
 				if (collector.captureDestination)
 				{
-					context3D.drawToBitmapData(collector.captureDestination);
+					context3D.context.drawToBitmapData(collector.captureDestination);
 				}
-				context3D.present();
+				context3D.context.present();
 				collector.resetStats();
 			}
 			
