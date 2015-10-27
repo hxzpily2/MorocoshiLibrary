@@ -189,6 +189,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set rotationX(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_rotationX == value) return;
 			
 			_rotationX = value;
@@ -205,6 +206,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set rotationY(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_rotationY == value) return;
 			
 			_rotationY = value;
@@ -221,6 +223,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set rotationZ(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_rotationZ == value) return;
 			
 			_rotationZ = value;
@@ -237,6 +240,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set scaleX(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_scaleX == value) return;
 			
 			_scaleX = value;
@@ -253,6 +257,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set scaleY(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_scaleY == value) return;
 			
 			_scaleY = value;
@@ -269,6 +274,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set scaleZ(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_scaleZ == value) return;
 			
 			_scaleZ = value;
@@ -285,6 +291,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set x(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_x == value) return;
 			
 			_x = value;
@@ -300,6 +307,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set y(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_y == value) return;
 			
 			_y = value;
@@ -315,6 +323,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set z(value:Number):void 
 		{
+			if (decomposeMatrixOrder) decomposeMatrix();
 			if (_z == value) return;
 			
 			_z = value;

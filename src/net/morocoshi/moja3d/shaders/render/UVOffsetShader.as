@@ -124,7 +124,7 @@ package net.morocoshi.moja3d.shaders.render
 		public function set scaleV(value:Number):void 
 		{
 			_scaleV = value;
-			offsetConst.w = _offsetV;
+			offsetConst.w = _scaleV;
 		}
 		
 		override public function clone():MaterialShader 
