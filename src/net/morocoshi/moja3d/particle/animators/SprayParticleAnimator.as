@@ -2,8 +2,10 @@ package net.morocoshi.moja3d.particle.animators
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
-	import net.morocoshi.moja3d.particle.range.ParticleRange;
+	
+	use namespace moja3d;
 	
 	/**
 	 * エミッターのZ軸方向に初速を加えます。Z軸を中心にした広がりを指定可能。（例：噴水やスプレー等）
@@ -22,6 +24,18 @@ package net.morocoshi.moja3d.particle.animators
 		{
 			super();
 			type = ParticleAnimatorType.SPRAY;
+		}
+		
+		public function setSprayIntensity(min:Number, max:Number = NaN):void 
+		{
+			sprayIntensityMin = min;
+			sprayIntensityMax = isNaN(max)? min : max;
+		}
+		
+		public function setSprayRange(min:Number, max:Number = NaN):void 
+		{
+			sprayRangeMin = min;
+			sprayRangeMax = isNaN(max)? min : max;
 		}
 		
 		override public function getEmitVelocity(emitter:ParticleEmitter):Vector3D 

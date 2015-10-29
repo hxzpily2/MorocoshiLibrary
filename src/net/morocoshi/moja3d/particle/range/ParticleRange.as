@@ -1,11 +1,8 @@
 package net.morocoshi.moja3d.particle.range 
 {
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.objects.Object3D;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
-	import net.morocoshi.moja3d.particle.ParticleSystem;
 	
 	use namespace moja3d;
 	
@@ -17,7 +14,6 @@ package net.morocoshi.moja3d.particle.range
 	public class ParticleRange
 	{
 		public var type:String;
-		//public var system:ParticleSystem;
 		
 		public function ParticleRange() 
 		{
@@ -31,10 +27,23 @@ package net.morocoshi.moja3d.particle.range
 		 * @param	z
 		 * @return
 		 */
-		public function getRandomPosition(emitter:ParticleEmitter):Vector3D
+		public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void
 		{
-			var v:Vector3D = new Vector3D(emitter.position.x, emitter.position.y, emitter.position.z);
-			return v;
+			particle.x = emitter.position.x;
+			particle.y = emitter.position.y;
+			particle.z = emitter.position.z;
+		}
+		
+		public function clone():ParticleRange 
+		{
+			var result:ParticleRange = new ParticleRange();
+			cloneProperties(result);
+			return result;
+		}
+		
+		public function cloneProperties(target:ParticleRange):void 
+		{
+			target.type = type;
 		}
 		
 		public function parse(xml:XML):void
@@ -54,13 +63,13 @@ package net.morocoshi.moja3d.particle.range
 		//
 		//--------------------------------------------------------------------------
 		
-		public function randomInt(min:int, max:int):int
+		protected function randomInt(min:int, max:int):int
 		{
 			if (min == max) return min;
 			return min + int(Math.random() * (max - min + 1));
 		}
 		
-		public function random(min:Number, max:Number):Number
+		protected function random(min:Number, max:Number):Number
 		{
 			if (min == max) return min;
 			return min + Math.random() * (max - min);

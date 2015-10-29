@@ -15,22 +15,19 @@ package net.morocoshi.moja3d.particle.animators
 		public var type:String;
 		public var scaleMin:Number = 1;
 		public var scaleMax:Number = 1;
-		public var velocityMin:Vector3D = new Vector3D(0, 0, 0);
-		public var velocityMax:Vector3D = new Vector3D(0, 0, 0);
 		public var lifeMin:Number = 1;
 		public var lifeMax:Number = 1;
-		public var alphaKeyList:Vector.<AlphaKey> = new Vector.<AlphaKey>;
 		public var rotationMin:Number = 0;
 		public var rotationMax:Number = 0;
 		public var spinSpeedMin:Number = 0;
 		public var spinSpeedMax:Number = 0;
 		public var scaleSpeedMin:Number = 0;
 		public var scaleSpeedMax:Number = 0;
-		public var gravity:Vector3D = new Vector3D(0, 0, 0);
 		public var friction:Number = 1;
-		
-		/**アニメーター更新時にパーティクルの数だけ呼ばれる。引数はParticle3D。ここでパーティクルの動きを弄れる*/
-		public var onUpdate:Function;
+		public var velocityMin:Vector3D = new Vector3D(0, 0, 0);
+		public var velocityMax:Vector3D = new Vector3D(0, 0, 0);
+		public var gravity:Vector3D = new Vector3D(0, 0, 0);
+		public var alphaKeyList:Vector.<AlphaKey> = new Vector.<AlphaKey>;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -67,34 +64,34 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function setScale(min:Number, max:Number):void
+		public function setScale(min:Number, max:Number = NaN):void
 		{
 			scaleMin = min;
-			scaleMax = max;
+			scaleMax = isNaN(max)? min : max;
 		}
 		
-		public function setLife(min:Number, max:Number):void 
+		public function setLife(min:Number, max:Number = NaN):void 
 		{
 			lifeMin = min;
-			lifeMax = max;
+			lifeMax = isNaN(max)? min : max;
 		}
 		
-		public function setRotation(min:Number, max:Number):void 
+		public function setRotation(min:Number, max:Number = NaN):void 
 		{
 			rotationMin = min;
-			rotationMax = max;
+			rotationMax = isNaN(max)? min : max;
 		}
 		
-		public function setSpinSpeed(min:Number, max:Number):void 
+		public function setSpinSpeed(min:Number, max:Number = NaN):void 
 		{
 			spinSpeedMin = min;
-			spinSpeedMax = max;
+			spinSpeedMax = isNaN(max)? min : max;
 		}
 		
-		public function setScaleSpeed(min:Number, max:Number):void 
+		public function setScaleSpeed(min:Number, max:Number = NaN):void 
 		{
 			scaleSpeedMin = min;
-			scaleSpeedMax = max;
+			scaleSpeedMax = isNaN(max)? min : max;
 		}
 		
 		public function removeAllAlphaKey():void
@@ -102,7 +99,7 @@ package net.morocoshi.moja3d.particle.animators
 			alphaKeyList.length = 0;
 		}
 		
-		public function addAlphaKey(ratio:Number, value:Number, sort:Boolean):void
+		public function addAlphaKey(ratio:Number, value:Number, sort:Boolean = true):void
 		{
 			var key:AlphaKey = new AlphaKey(ratio, value);
 			alphaKeyList.push(key);
@@ -230,20 +227,52 @@ package net.morocoshi.moja3d.particle.animators
 		
 		public function updateParticle(particle:ParticleCell):void 
 		{
-			particle.velocity.incrementBy(gravity);
-			particle.velocity.x *= friction;
-			particle.velocity.y *= friction;
-			particle.velocity.z *= friction;
-			particle.x += particle.velocity.x;
-			particle.y += particle.velocity.y;
-			particle.z += particle.velocity.z;
+			var t1:Number = particle.time;
+			var t2:Number = particle.prevTime;
+			var tt1:Number = t1 - t2;
+			var tt2:Number = (t1 * t1) - (t2 * t2);
+			particle.prevTime = particle.time;
+			var f:Number = (friction == 1)? 1 : Math.pow(friction, t1);
+			particle.x += (particle.velocity.x * tt1 + gravity.x * tt2) * f;
+			particle.y += (particle.velocity.y * tt1 + gravity.y * tt2) * f;
+			particle.z += (particle.velocity.z * tt1 + gravity.z * tt2) * f;
 			var scale:Number = getCurrentScale(particle);
-			particle.width = 100 * scale;
-			particle.height = 100 * scale;
+			particle.width = particle.initialWidth * scale;
+			particle.height = particle.initialHeight * scale;
 			particle.alpha = getCurrentAlpha(particle);
 			particle.rotation = getCurrentRotation(particle);
-			
-			if (onUpdate != null) onUpdate(particle);
+		}
+		
+		public function clone():ParticleAnimator 
+		{
+			var result:ParticleAnimator = new ParticleAnimator();
+			cloneProperties(result);
+			return result;
+		}
+		
+		public function cloneProperties(target:ParticleAnimator):void
+		{
+			target.type = type;
+			target.scaleMin = scaleMin;
+			target.scaleMax = scaleMax;
+			target.lifeMin = lifeMin;
+			target.lifeMax = lifeMax;
+			target.rotationMin = rotationMin;
+			target.rotationMax = rotationMax;
+			target.spinSpeedMin = spinSpeedMin;
+			target.spinSpeedMax = spinSpeedMax;
+			target.scaleSpeedMin = scaleSpeedMin;
+			target.scaleSpeedMax = scaleSpeedMax;
+			target.friction = friction;
+			target.velocityMin = velocityMin.clone();
+			target.velocityMax = velocityMax.clone();
+			target.gravity = gravity.clone();
+			target.alphaKeyList = new Vector.<AlphaKey>;
+			var n:int = alphaKeyList.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				target.alphaKeyList.push(alphaKeyList[i].clone());
+			}
 		}
 		
 		public function parse(xml:XML):void

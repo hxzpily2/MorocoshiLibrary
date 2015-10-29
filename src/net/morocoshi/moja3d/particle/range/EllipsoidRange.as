@@ -1,8 +1,11 @@
 package net.morocoshi.moja3d.particle.range 
 {
-	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	
+	use namespace moja3d;
 	
 	/**
 	 * 楕円体の領域に発生させる
@@ -33,9 +36,9 @@ package net.morocoshi.moja3d.particle.range
 			this.equally = equally;
 		}
 		
-		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
-			var v:Vector3D = super.getRandomPosition(emitter);
+			super.setRandomPosition(particle, emitter);
 			
 			var angle:Number = Math.acos(Math.random() * 2 - 1);
 			var unit:Number = Math.sin(angle);
@@ -45,10 +48,26 @@ package net.morocoshi.moja3d.particle.range
 			var tz:Number = Math.cos(angle) * radiusZ;
 			var intensity:Number = Math.random();
 			if (equally) intensity = Math.sqrt(intensity);
-			v.x += (emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz) * intensity;
-			v.y += (emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz) * intensity;
-			v.z += (emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz) * intensity;
-			return v;
+			particle.x += (emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz) * intensity;
+			particle.y += (emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz) * intensity;
+			particle.z += (emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz) * intensity;
+		}
+		
+		override public function clone():ParticleRange 
+		{
+			var result:EllipsoidRange = new EllipsoidRange();
+			cloneProperties(result);
+			return result;
+		}
+		
+		override public function cloneProperties(target:ParticleRange):void 
+		{
+			super.cloneProperties(target);
+			var range:EllipsoidRange = target as EllipsoidRange;
+			range.equally = equally;
+			range.radiusX = radiusX;
+			range.radiusY = radiusY;
+			range.radiusZ = radiusZ;
 		}
 		
 		override public function parse(xml:XML):void 

@@ -15,7 +15,7 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * カメラ
 	 * 
 	 * @author tencho
 	 */
@@ -50,19 +50,19 @@ package net.morocoshi.moja3d.objects
 		private var normal:Vector3D = new Vector3D();
 		private var sphere:Sphere;
 		private var _aspect:Number;
-		private var transformDirty:Boolean;
 		private var screenWidth:Number;
 		private var screenHeight:Number;
 		protected var _debug:Boolean;
 		private var initializedDebugPoint:Boolean;
 		private var _fovMode:String = FOVMode.VERTICAL;
+		private var _zoom:Number;
 		
 		public function Camera3D() 
 		{
 			_aspect = 1;
+			_zoom = 1;
 			screenWidth = -1;
 			screenHeight = -1;
-			transformDirty = true;
 			_orthographic = false;
 			_fovX = 80 / 180 * Math.PI;
 			_fovY = 60 / 180 * Math.PI;
@@ -212,6 +212,8 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function updateFrustumPoints(near:Number, far:Number):void
 		{
+			return;
+			
 			if (_orthographic == false)
 			{
 				var fov:Number = getVerticalFOV();
@@ -293,18 +295,36 @@ package net.morocoshi.moja3d.objects
 		{
 			var screenAsp:Number = screenWidth / screenHeight;
 			var fovAsp:Number = Math.tan(_fovX / 2) / Math.tan(_fovY / 2);
+			var result:Number;
 			switch(_fovMode)
 			{
 				case FOVMode.VERTICAL:
-					return _fovY;
+					result = _fovY;
+					break;
 				case FOVMode.HOLIZONTAL:
-					return Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					result = Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					break;
 				case FOVMode.INSCRIBED:
-					return screenAsp > fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					result = screenAsp > fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					break;
 				case FOVMode.CIRCUMSCRIBED:
-					return screenAsp < fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					result = screenAsp < fovAsp? _fovY : Math.atan((Math.tan(_fovX / 2) / screenAsp)) * 2;
+					break;
+				default:
+					result = _fovY;
 			}
-			return _fovY;
+			
+			if (_zoom != 1)
+			{
+				result = Math.atan((Math.tan(result / 2) / _zoom)) * 2;
+			}
+			
+			return result;
+		}
+		
+		override public function set scaleZ(value:Number):void 
+		{
+			super.scaleZ = 1;
 		}
 		
 		/**
@@ -318,7 +338,6 @@ package net.morocoshi.moja3d.objects
 			
 			this.screenWidth = screenWidth;
 			this.screenHeight = screenHeight;
-			transformDirty = true;
 		}
 		
 		/**
@@ -326,27 +345,22 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function checkPerspectiveUpdate():void 
 		{
-			///TODO: ここを消すべきか検討
-			//if (_orthographic) trace(this, worldMatrix.rawData);
-			//if (transformDirty == false && calculateMatrixOrder == false) return;
-			
 			//ここでworldMatrixを最新にしてる
 			calculteWorldMatrix();
 			
-			transformDirty = false;
 			var fov:Number;
 			
 			_aspect = getScreenAspect();
 			if (_orthographic)
 			{
-				perspectiveMatrix.orthoLH(_width, _height, _zNear, _zFar);
+				perspectiveMatrix.orthoLH(_width, _height, _zNear * _zoom, _zFar);
 			}
 			else
 			{
 				fov = getVerticalFOV();
-				perspectiveMatrix.perspectiveFieldOfViewLH(fov, _aspect, _zNear, _zFar);
+				perspectiveMatrix.perspectiveFieldOfViewLH(fov, _aspect, _zNear * _zoom, _zFar);
 			}
-			perspectiveMatrix.appendScale(-1, 1, 1);//@@@ここで座標系を変換してるけど、合ってるかあやしい
+			perspectiveMatrix.appendScale(-1, 1, 1);
 			viewMatrix.copyFrom(_worldMatrix);
 			viewMatrix.appendRotation(180, getWorldAxisY(true), _worldMatrix.position);
 			viewMatrix.invert();
@@ -362,8 +376,10 @@ package net.morocoshi.moja3d.objects
 				w = screenWidth / 2;
 				h = screenHeight / 2;
 				//焦点距離
-				var tan:Number = 1 / Math.tan(fov * 0.5);
+				var scaledFOV:Number = Math.atan(Math.tan(fov * 0.5) / scaleZ) * 2;
+				var tan:Number = 1 / Math.tan(scaledFOV * 0.5);
 				
+				//var t:Number = 1 / scaleZ;
 				cullingNormals[0].setTo(0, 0, -1);//near
 				cullingNormals[1].setTo(0, 0, 1);//far
 				cullingNormals[2].setTo(-tan, 0, -_aspect);//right
@@ -407,7 +423,7 @@ package net.morocoshi.moja3d.objects
 			
 			for (i = 0; i < 6; i++) 
 			{
-				TransformUtil.deltaTransformVector(cullingNormals[i], worldMatrix);
+				TransformUtil.deltaTransformVector(cullingNormals[i], _worldMatrix);
 				cullingNormals[i].normalize();
 			}
 			
@@ -456,7 +472,6 @@ package net.morocoshi.moja3d.objects
 		public function set fovX(value:Number):void
 		{
 			if (_fovX == value) return;
-			transformDirty = true;
 			
 			_fovX = value;
 			updateFrustum();
@@ -465,7 +480,6 @@ package net.morocoshi.moja3d.objects
 		public function set fovY(value:Number):void 
 		{
 			if (_fovY == value) return;
-			transformDirty = true;
 			
 			_fovY = value;
 			updateFrustum();
@@ -479,7 +493,6 @@ package net.morocoshi.moja3d.objects
 		public function set zNear(value:Number):void 
 		{
 			if (_zNear == value) return;
-			transformDirty = true;
 			
 			_zNear = value;
 			updateFrustum();
@@ -493,7 +506,6 @@ package net.morocoshi.moja3d.objects
 		public function set zFar(value:Number):void 
 		{
 			if (_zFar == value) return;
-			transformDirty = true;
 			
 			_zFar = value;
 			updateFrustum();
@@ -507,7 +519,6 @@ package net.morocoshi.moja3d.objects
 		public function set orthographic(value:Boolean):void 
 		{
 			if (_orthographic == value) return;
-			transformDirty = true;
 			
 			_orthographic = value;
 			updateFrustum();
@@ -521,7 +532,6 @@ package net.morocoshi.moja3d.objects
 		public function set width(value:Number):void 
 		{
 			if (_width == value) return;
-			transformDirty = true;
 			
 			_width = value;
 			updateFrustum();
@@ -535,7 +545,6 @@ package net.morocoshi.moja3d.objects
 		public function set height(value:Number):void 
 		{
 			if (_height == value) return;
-			transformDirty = true;
 			
 			_height = value;
 			updateFrustum();
@@ -557,6 +566,17 @@ package net.morocoshi.moja3d.objects
 		public function set fovMode(value:String):void 
 		{
 			_fovMode = value;
+		}
+		
+		public function get zoom():Number 
+		{
+			return _zoom;
+		}
+		
+		public function set zoom(value:Number):void 
+		{
+			_zoom = value;
+			updateFrustum();
 		}
 		
 	}

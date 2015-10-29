@@ -1,8 +1,11 @@
 package net.morocoshi.moja3d.particle.range 
 {
-	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	
+	use namespace moja3d;
 	
 	/**
 	 * 楕円（XY平面）の領域にパーティクルを発生させる
@@ -29,18 +32,34 @@ package net.morocoshi.moja3d.particle.range
 			type = ParticleRangeType.CIRCLE;
 		}
 		
-		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
-			var v:Vector3D = super.getRandomPosition(emitter);
+			super.setRandomPosition(particle, emitter);
+			
 			var angle:Number = Math.random() * Math.PI * 2;
 			var intensity:Number = Math.random();
 			if (equally) intensity = Math.sqrt(intensity);
 			var tx:Number = Math.cos(angle) * radiusX * intensity;
 			var ty:Number = Math.sin(angle) * radiusY * intensity;
-			v.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty;
-			v.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty;
-			v.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty;
-			return v;
+			particle.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty;
+			particle.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty;
+			particle.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty;
+		}
+		
+		override public function clone():ParticleRange 
+		{
+			var result:CircleRange = new CircleRange();
+			cloneProperties(result);
+			return result;
+		}
+		
+		override public function cloneProperties(target:ParticleRange):void 
+		{
+			super.cloneProperties(target);
+			var range:CircleRange = target as CircleRange;
+			range.equally = equally;
+			range.radiusX = radiusX;
+			range.radiusY = radiusY;
 		}
 		
 		override public function parse(xml:XML):void 

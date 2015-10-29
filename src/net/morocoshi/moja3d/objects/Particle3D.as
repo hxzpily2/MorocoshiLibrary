@@ -1,7 +1,5 @@
 package net.morocoshi.moja3d.objects 
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DCompareMode;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.particle.cells.ParticleData;
@@ -20,9 +18,10 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Particle3D extends Mesh
 	{
+		protected var particles:Vector.<ParticleData>;
+		private var context3D:ContextProxy;
 		private var surface:Surface;
 		private var particleShader:ParticleShader;
-		public var particles:Vector.<ParticleData>;
 		
 		public function Particle3D(material:Material) 
 		{
@@ -38,8 +37,15 @@ package net.morocoshi.moja3d.objects
 			afterViewShaderList.addShader(particleShader);
 		}
 		
-		public function update(context3D:ContextProxy):void
+		public function setContetx3D(context3D:ContextProxy):void
 		{
+			this.context3D = context3D;
+		}
+		
+		public function update():void
+		{
+			if (context3D == null) return;
+			
 			surface.numTriangles = particles.length * 2;
 			ParticleGeometry(_geometry).update(particles, context3D);
 		}

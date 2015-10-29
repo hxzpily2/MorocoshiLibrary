@@ -1,22 +1,13 @@
 package net.morocoshi.moja3d.particle 
 {
 	import flash.display.Sprite;
-	import flash.display3D.Context3D;
 	import flash.events.Event;
-	import flash.geom.Vector3D;
-	import flash.utils.getTimer;
-	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.common.timers.Stopwatch;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Particle3D;
-	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
-	import net.morocoshi.moja3d.particle.animators.ParticleAnimatorType;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
-	import net.morocoshi.moja3d.particle.range.ParticleRange;
-	import net.morocoshi.moja3d.particle.range.ParticleRangeType;
-	import net.morocoshi.moja3d.particle.wind.ParticleWind;
-	import net.morocoshi.moja3d.particle.wind.ParticleWindType;
-	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -30,51 +21,32 @@ package net.morocoshi.moja3d.particle
 		/**パーティクルの同時発生限界数（-1で無制限）*/
 		public var limit:int = -1;
 		
-		private var particleCache:Vector.<ParticleCell> = new Vector.<ParticleCell>;
 		public var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
 		
 		private var sprite:Sprite = new Sprite();
-		private var context3D:ContextProxy;
+		private var particleCache:Vector.<ParticleCell> = new Vector.<ParticleCell>;
+		private var prevTime:Number = -1;
+		public var timer:Stopwatch;
 		
-		//--------------------------------------------------------------------------
-		//
-		//  コンストラクタ
-		//
-		//--------------------------------------------------------------------------
-		
+		/**
+		 * 
+		 * @param	material
+		 */
 		public function ParticleSystem(material:Material = null) 
 		{
 			super(material);
+			timer = new Stopwatch();
+			timer.start();
 		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  getter/setter
-		//
-		//--------------------------------------------------------------------------
-		
-		
-		
-		//--------------------------------------------------------------------------
-		//
-		//  設定
-		//
-		//--------------------------------------------------------------------------
-		
-		public function setContetx3D(context3D:ContextProxy):void
-		{
-			this.context3D = context3D;
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  
-		//
-		//--------------------------------------------------------------------------
 		
 		public function addEmiter(emitter:ParticleEmitter):void
 		{
 			emitters.push(emitter);
+		}
+		
+		public function removeEmiter(emitter:ParticleEmitter):void
+		{
+			VectorUtil.deleteItem(emitters, emitter);
 		}
 		
 		/**
@@ -94,51 +66,8 @@ package net.morocoshi.moja3d.particle
 			sprite.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
 		}
 		
-		private function enterFrameHandler(e:Event):void 
-		{
-			if (context3D)
-			{
-				update(context3D);
-			}
-		}
-		
 		/**
-		 * パーティクルを1個生成する
-		 * @return
-		 */
-		public function emit():ParticleCell
-		{
-			if (limit != -1 && particles.length >= limit)
-			{
-				return null;
-			}
-			
-			var particle:ParticleCell;
-			//もしキャッシュにパーティクルがあればそれを再利用する
-			if (particleCache.length)
-			{
-				particle = particleCache.pop();
-			}
-			else
-			{
-				//キャッシュにない場合は新しく生成する
-				particle = new ParticleCell();
-			}
-			particle.latestIndex = 0;
-			particle.initTime = getTimer() / 1000;
-			particles.push(particle);
-				
-			return particle;
-		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  削除
-		//
-		//--------------------------------------------------------------------------
-		
-		/**
-		 * パーティクルを全削除して停止する。
+		 * パーティクルを全削除して全てのエミッタを停止する。
 		 */
 		public function disposeParticles():void
 		{
@@ -164,16 +93,43 @@ package net.morocoshi.moja3d.particle
 			particles.length = 0;
 		}
 		
-		//--------------------------------------------------------------------------
-		//
-		//  更新
-		//
-		//--------------------------------------------------------------------------
-		
-		override public function update(context3D:ContextProxy):void
+		/**
+		 * パーティクルを1個生成する
+		 * @return
+		 */
+		private function emit(time:Number):ParticleCell
 		{
-			//var step:Number = 33 / 1000;
-			var time:int = getTimer() / 1000;
+			if (limit != -1 && particles.length >= limit)
+			{
+				return null;
+			}
+			
+			var particle:ParticleCell;
+			//もしキャッシュにパーティクルがあればそれを再利用する
+			if (particleCache.length)
+			{
+				particle = particleCache.pop();
+			}
+			else
+			{
+				//キャッシュにない場合は新しく生成する
+				particle = new ParticleCell();
+			}
+			particle.latestIndex = 0;
+			particle.prevTime = 0;
+			particle.initTime = time;
+			particles.push(particle);
+			
+			return particle;
+		}
+		
+		override public function update():void
+		{
+			var time:Number = timer.time / 1000;
+			if (prevTime == -1)
+			{
+				prevTime = time;
+			}
 			
 			var i:int;
 			var n:int;
@@ -183,24 +139,28 @@ package net.morocoshi.moja3d.particle
 			for (i = 0; i < n; i++) 
 			{
 				var emitter:ParticleEmitter = emitters[i];
-				if (emitter.enabled == false) continue;
+				var birth:int = time / emitter.birthTime;
 				
-				emitter.totalTime = time;
-				var birth:int = emitter.totalTime / emitter.birthTime;
+				if (emitter.enabled == false)
+				{
+					emitter.lastBirth = birth;
+					continue;
+				}
+				
 				if (birth > emitter.lastBirth)
 				{
 					emitter.updateMatrix(this);
 					var length:int = birth - emitter.lastBirth;
 					for (var j:int = 0; j < length; j++) 
 					{
-						particle = emit();
+						var per:Number = (j + 1) / length;
+						particle = emit(time * (1 - per) + prevTime * per);
 						if (particle == null) continue;
 						
-						var position:Vector3D = emitter.getRandomPosition();
-						particle.x = position.x;
-						particle.y = position.y;
-						particle.z = position.z;
-						emitter.animator.emitParticle(particle, emitter);
+						particle.initialWidth = emitter.particleWidth;
+						particle.initialHeight = emitter.particleHeight;
+						emitter._range.setRandomPosition(particle, emitter);
+						emitter._animator.emitParticle(particle, emitter);
 					}
 					emitter.lastBirth = birth;
 				}
@@ -210,11 +170,7 @@ package net.morocoshi.moja3d.particle
 			for (i = 0; i < n; i++) 
 			{
 				particle = particles[i] as ParticleCell;
-				particle.update();
-				//風
-				//if (_wind) _wind.updateParticle(particle);
-				//重力、回転、アルファ変化
-				//animator.updateParticle(particle);
+				particle.animator.updateParticle(particle);
 				
 				if (particle.time >= particle.life)
 				{
@@ -224,12 +180,18 @@ package net.morocoshi.moja3d.particle
 					n--;
 					continue;
 				}
-				
-				particle.time = particle.initTime - time;
+				particle.time = time - particle.initTime;
 			}
 			
-			super.update(context3D);
+			super.update();
+			prevTime = time;
 		}
+		
+		private function enterFrameHandler(e:Event):void 
+		{
+			update();
+		}
+		
 		/*
 		public function parse(xml:XML):void
 		{
@@ -280,25 +242,8 @@ package net.morocoshi.moja3d.particle
 			xml.wind = _wind.toXML();
 			return xml;
 		}
-		
-		//--------------------------------------------------------------------------
-		//
-		//  内部処理
-		//
-		//--------------------------------------------------------------------------
-		
-		protected function randomInt(min:int, max:int):int
-		{
-			if (min == max) return min;
-			return min + int(Math.random() * (max - min + 1));
-		}
-		
-		protected function random(min:Number, max:Number):Number
-		{
-			if (min == max) return min;
-			return min + Math.random() * (max - min);
-		}
 		*/
+		
 	}
 
 }

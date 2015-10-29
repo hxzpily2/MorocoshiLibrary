@@ -2,9 +2,6 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import flash.display.BitmapDataChannel;
 	import net.morocoshi.moja3d.agal.AGALTexture;
-	import net.morocoshi.moja3d.materials.Mipmap;
-	import net.morocoshi.moja3d.materials.Smoothing;
-	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
@@ -26,7 +23,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		private var opacityTexture:AGALTexture;
 		
-		public function OpacityShader(opacity:TextureResource, mipmap:String = Mipmap.MIPLINEAR, smoothing:String = Smoothing.LINEAR, tiling:String = Tiling.WRAP)
+		public function OpacityShader(opacity:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap")
 		{
 			super();
 			

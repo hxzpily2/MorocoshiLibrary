@@ -13,12 +13,14 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
+	import net.morocoshi.moja3d.resources.ResourceUploader;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.core.BasicShader;
 	import net.morocoshi.moja3d.shaders.core.EndShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -424,6 +426,17 @@ package net.morocoshi.moja3d.materials
 		public function set opaquePassEnabled(value:Boolean):void 
 		{
 			_opaquePassEnabled = value;
+		}
+		
+		/**
+		 * 必要素材をContext3Dに転送する
+		 * @param	context3D	upload先
+		 * @param	async	非同期でuploadするか
+		 * @param	complete	非同期uploadする場合の完了イベント
+		 */
+		public function upload(context3D:ContextProxy, async:Boolean, complete:Function = null):void 
+		{
+			new ResourceUploader().upload(context3D, getResources(), async, complete);
 		}
 		
 	}

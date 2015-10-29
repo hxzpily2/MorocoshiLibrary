@@ -8,6 +8,7 @@ package net.morocoshi.moja3d.shaders.render
 	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ColorTransformShader extends MaterialShader 
@@ -24,7 +25,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _blueMultiplier:Number;
 		private var _alphaMultiplier:Number;
 		
-		public function ColorTransformShader() 
+		public function ColorTransformShader(colorTransform:ColorTransform = null) 
 		{
 			super();
 			
@@ -41,6 +42,11 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			if (colorTransform)
+			{
+				applyFrom(colorTransform);
+			}
 		}
 		
 		override public function getKey():String 

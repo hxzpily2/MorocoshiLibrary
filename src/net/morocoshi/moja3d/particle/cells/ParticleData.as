@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.particle.cells
 {
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ParticleData 

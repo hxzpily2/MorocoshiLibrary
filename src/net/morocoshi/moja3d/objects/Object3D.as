@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.objects 
 {
-	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix3D;
@@ -539,10 +538,7 @@ package net.morocoshi.moja3d.objects
 			target.calculateBoundsOrder = calculateBoundsOrder;
 			target.decomposeMatrixOrder = decomposeMatrixOrder;
 			target.recomposeMatrixOrder = recomposeMatrixOrder;
-			if (boundingBox)
-			{
-				target.boundingBox = boundingBox.clone();
-			}
+			target.boundingBox = boundingBox? boundingBox.clone() : null;
 		}
 		
 		public function cloneProperties(target:Object3D):void
@@ -566,10 +562,7 @@ package net.morocoshi.moja3d.objects
 			target.calculateBoundsOrder = calculateBoundsOrder;
 			target.decomposeMatrixOrder = decomposeMatrixOrder;
 			target.recomposeMatrixOrder = recomposeMatrixOrder;
-			if (boundingBox)
-			{
-				target.boundingBox = boundingBox.clone();
-			}
+			target.boundingBox = boundingBox? boundingBox.clone() : null;
 		}
 		
 		/**

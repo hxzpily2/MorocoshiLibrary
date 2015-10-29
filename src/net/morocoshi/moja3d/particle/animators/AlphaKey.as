@@ -16,6 +16,11 @@ package net.morocoshi.moja3d.particle.animators
 			this.value = value;
 		}
 		
+		public function clone():AlphaKey 
+		{
+			return new AlphaKey(ratio, value);
+		}
+		
 	}
 
 }

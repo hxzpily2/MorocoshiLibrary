@@ -1,8 +1,11 @@
 package net.morocoshi.moja3d.particle.range 
 {
-	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	
+	use namespace moja3d;
 	
 	/**
 	 * 直方体の領域にパーティクルを発生させる
@@ -31,18 +34,32 @@ package net.morocoshi.moja3d.particle.range
 			this.sizeZ = sizeZ;
 		}
 		
-		override public function getRandomPosition(emitter:ParticleEmitter):Vector3D 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
-			var v:Vector3D = super.getRandomPosition(emitter);
+			super.setRandomPosition(particle, emitter);
 			
 			var tx:Number = random(-sizeX / 2, sizeX / 2);
 			var ty:Number = random(-sizeY / 2, sizeY / 2);
 			var tz:Number = random(-sizeZ / 2, sizeZ / 2);
-			v.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz;
-			v.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz;
-			v.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz;
-			
-			return v;
+			particle.x += emitter.xAxis.x * tx + emitter.yAxis.x * ty + emitter.zAxis.x * tz;
+			particle.y += emitter.xAxis.y * tx + emitter.yAxis.y * ty + emitter.zAxis.y * tz;
+			particle.z += emitter.xAxis.z * tx + emitter.yAxis.z * ty + emitter.zAxis.z * tz;
+		}
+		
+		override public function clone():ParticleRange 
+		{
+			var result:CubeRange = new CubeRange();
+			cloneProperties(result);
+			return result;
+		}
+		
+		override public function cloneProperties(target:ParticleRange):void 
+		{
+			super.cloneProperties(target);
+			var range:CubeRange = target as CubeRange;
+			range.sizeX = sizeX;
+			range.sizeY = sizeY;
+			range.sizeZ = sizeZ;
 		}
 		
 		override public function parse(xml:XML):void 

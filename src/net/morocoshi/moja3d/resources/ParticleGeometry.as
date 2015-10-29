@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import net.morocoshi.common.math.transform.AngleUtil;
 	import net.morocoshi.moja3d.particle.cells.ParticleData;
 	import net.morocoshi.moja3d.view.ContextProxy;
@@ -94,6 +93,7 @@ package net.morocoshi.moja3d.resources
 				offset += 4;
 			}
 			
+			dispose();
 			upload(context3D, false);
 		}
 		
