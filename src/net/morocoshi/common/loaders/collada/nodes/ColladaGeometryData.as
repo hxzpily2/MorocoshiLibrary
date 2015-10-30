@@ -1,5 +1,6 @@
 package net.morocoshi.common.loaders.collada.nodes 
 {
+	import flash.geom.Matrix3D;
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.loaders.collada.ColladaParseOption;
 	import net.morocoshi.common.loaders.collada.ColladaUtil;
@@ -113,6 +114,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			if (option.exportUV && getList(TEXCOORD).length > 0) types.push(TEXCOORD);
 			if (option.exportTangent4 && getList(TANGENT4).length > 0) types.push(TANGENT4);
 			if (option.exportVertexColor && getList(COLOR).length > 0) types.push(COLOR);
+			
 			if (jointList1.length)
 			{
 				types.push(JOINT);
@@ -254,7 +256,7 @@ package net.morocoshi.common.loaders.collada.nodes
 			}
 		}
 		
-		public function parseJointMatrix(xml:XML, collector:ColladaCollector):void 
+		public function parseJointMatrix(xml:XML, collector:ColladaCollector, skinShapeMatrix:Matrix3D):void 
 		{
 			for each(var input:XML in xml.input)
 			{
@@ -267,7 +269,9 @@ package net.morocoshi.common.loaders.collada.nodes
 					for (var i:int = 0; i < n; i++) 
 					{
 						var key:String = sourceLink[JOINT][i];
-						collector.jointMatrixMap[key] = ColladaUtil.ArrayToMatrix3D(data[i]);
+						var m:Matrix3D = ColladaUtil.ArrayToMatrix3D(data[i]);
+						m.prepend(skinShapeMatrix);
+						collector.jointMatrixMap[key] = m;
 					}
 					return;
 				}

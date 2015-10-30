@@ -10,13 +10,14 @@ package net.morocoshi.moja3d.resources
 	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.common.loaders.tfp.TFPHolder;
 	import net.morocoshi.common.loaders.tfp.TFPLoader;
+	import net.morocoshi.moja3d.view.ContextProxy;
 	/**
 	 * ...
 	 * @author tencho
 	 */
 	public class TextureResourceLoader extends EventDispatcher
 	{
-		private var context3D:Context3D;
+		private var context3D:ContextProxy;
 		private var resourceList:Vector.<Resource>;
 		private var basePath:String;
 		private var asset:TFPHolder;
@@ -26,7 +27,7 @@ package net.morocoshi.moja3d.resources
 			resourceList = new Vector.<Resource>;
 		}
 		
-		public function upload(basePath:String, context3D:Context3D, resources:Vector.<Resource>, cacheEnabled:Boolean):void
+		public function upload(basePath:String, context3D:ContextProxy, resources:Vector.<Resource>, cacheEnabled:Boolean):void
 		{
 			basePath = basePath.split("\\").join("/");
 			if (basePath.charAt(basePath.length - 1) != "/")

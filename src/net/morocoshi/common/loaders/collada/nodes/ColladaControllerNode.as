@@ -63,7 +63,7 @@ package net.morocoshi.common.loaders.collada.nodes
 				weightData.linkMap(semantic, XMLUtil.getAttrString(input, "source", "").substr(1), collector);
 			}
 			maxOffset++;
-			weightData.parseJointMatrix(skin.joints[0], collector);
+			weightData.parseJointMatrix(skin.joints[0], collector, shapeMatrix);
 			
 			//ボーン情報がないならスキップ
 			if (maxOffset <= 0)
@@ -104,6 +104,8 @@ package net.morocoshi.common.loaders.collada.nodes
 				}
 				var tempWeight:Array = [];
 				var tempJoint:Array = [];
+				var zeroWeight:Array = [];
+				var zeroJoint:Array = [];
 				var ws:Array = dataList["WEIGHT"];
 				var js:Array = dataList["JOINT"];
 				for (var g:int = 0; g < ws.length; g++) 
@@ -113,6 +115,17 @@ package net.morocoshi.common.loaders.collada.nodes
 						tempWeight.push(ws[g]);
 						tempJoint.push(js[g]);
 					}
+					else if(zeroWeight.length == 0)
+					{
+						zeroWeight.push(ws[g]);
+						zeroJoint.push(js[g]);
+					}
+				}
+				if (tempWeight.length  == 0)
+				{
+					tempWeight = zeroWeight;
+					tempJoint = zeroJoint;
+					collector.addMiscLog("noWright", "合計のウェイトが0の頂点があります！");
 				}
 				dataList["WEIGHT"] = tempWeight;
 				dataList["JOINT"] = tempJoint;
@@ -124,6 +137,7 @@ package net.morocoshi.common.loaders.collada.nodes
 				{
 					swap.push( { weight:tempWeight[iw], joint:tempJoint[iw] } );
 				}
+				
 				swap.sortOn("weight", Array.NUMERIC | Array.DESCENDING);
 				
 				//ウェイトが4つを超えていたら
@@ -143,10 +157,14 @@ package net.morocoshi.common.loaders.collada.nodes
 					tempWeight.push(swap[iw].weight);
 					tempJoint.push(swap[iw].joint);
 				}
+				
 				var scale:Number = 1 / totalWeight;
-				for (iw = 0; iw < tempWeight.length; iw++) 
+				if (totalWeight != 0)
 				{
-					tempWeight[iw] = tempWeight[iw] * scale;
+					for (iw = 0; iw < tempWeight.length; iw++) 
+					{
+						tempWeight[iw] = tempWeight[iw] * scale;
+					}
 				}
 				
 				//8つに足りない枠は一番ウェイトが重いジョイントを重み0で埋める
@@ -156,6 +174,10 @@ package net.morocoshi.common.loaders.collada.nodes
 				var zero:int = weightLimit - weightCount;
 				for (k = 0; k < zero; k++) 
 				{
+					if (swap[0].joint === undefined)
+					{
+						collector.addMiscLog("jointError", "ジョイントデータのパースがなんだかおかしいです！");
+					}
 					dataList["JOINT"].push(swap[0].joint);
 					dataList["WEIGHT"].push(0);
 				}

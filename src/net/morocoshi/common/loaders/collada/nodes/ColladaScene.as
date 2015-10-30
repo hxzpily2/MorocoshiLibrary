@@ -74,7 +74,7 @@ package net.morocoshi.common.loaders.collada.nodes
 					object.parse(node, collector);
 					if (object.type == ColladaObjectNode.TYPE_SKIN)
 					{
-						object.matrix = getControllerByID(object.instanceLink).shapeMatrix;
+						//object.matrix = getControllerByID(object.instanceLink).shapeMatrix;
 					}
 					root.addChild(object);
 				}
