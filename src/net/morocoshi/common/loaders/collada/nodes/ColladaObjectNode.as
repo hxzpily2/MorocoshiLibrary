@@ -146,9 +146,10 @@ package net.morocoshi.common.loaders.collada.nodes
 				jointMatrix = collector.jointMatrixMap[sid];
 			}
 			
-			if (xml..user_properties[0])
+			var extra:XML = xml.extra[0];
+			if (extra && extra..user_properties[0])
 			{
-				parseUserProp(String(xml..user_properties[0]));
+				parseUserProp(String(extra..user_properties[0]));
 			}
 			
 			if (xml.instance_light[0])

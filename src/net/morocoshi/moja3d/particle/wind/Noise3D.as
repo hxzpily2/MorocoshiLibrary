@@ -15,8 +15,9 @@ package net.morocoshi.moja3d.particle.wind
 		public var segment:Vector.<int>;
 		private var vector3:Array;
 		
-		private var min:Vector.<Number> = new Vector.<Number>;
-		private var max:Vector.<Number> = new Vector.<Number>;
+		private var min:Vector.<int> = new Vector.<int>(3, true);
+		private var max:Vector.<int> = new Vector.<int>(3, true);
+		private var per:Vector.<Number> = new Vector.<Number>(3, true);
 		private var ab:Vector3D = new Vector3D();
 		private var cd:Vector3D = new Vector3D();
 		private var ef:Vector3D = new Vector3D();
@@ -76,11 +77,8 @@ package net.morocoshi.moja3d.particle.wind
 			}
 		}
 		
-		public function noize(x:Number, y:Number, z:Number):Vector3D
+		public function noize(x:Number, y:Number, z:Number, output:Vector3D = null):Vector3D
 		{
-			var min:Vector.<Number> = new Vector.<Number>;
-			var max:Vector.<Number> = new Vector.<Number>;
-			var per:Vector.<Number> = new Vector.<Number>;
 			for (var i:int = 0; i < 3; i++) 
 			{
 				var number:Number = arguments[i] / size[i];
@@ -107,7 +105,7 @@ package net.morocoshi.moja3d.particle.wind
 			interpolate(ab, cd, abcd, per[1]);
 			interpolate(ef, gh, efgh, per[1]);
 			
-			var result:Vector3D = new Vector3D();
+			var result:Vector3D = output || new Vector3D();
 			interpolate(abcd, efgh, result, per[2]);
 			return result;
 		}
