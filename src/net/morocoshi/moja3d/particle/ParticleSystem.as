@@ -8,6 +8,8 @@ package net.morocoshi.moja3d.particle
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Particle3D;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
+	import net.morocoshi.moja3d.particle.cells.ParticleData;
+	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	
 	use namespace moja3d;
 	
@@ -22,9 +24,10 @@ package net.morocoshi.moja3d.particle
 		public var limit:int = -1;
 		
 		public var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
+		public var wind:ParticleWind;
+		private var _enabled:Boolean;
 		
 		private var sprite:Sprite = new Sprite();
-		private var particleCache:Vector.<ParticleCell> = new Vector.<ParticleCell>;
 		private var prevTime:Number = -1;
 		public var timer:Stopwatch;
 		
@@ -37,6 +40,7 @@ package net.morocoshi.moja3d.particle
 			super(material);
 			timer = new Stopwatch();
 			timer.start();
+			_enabled = true;
 		}
 		
 		public function addEmiter(emitter:ParticleEmitter):void
@@ -85,12 +89,12 @@ package net.morocoshi.moja3d.particle
 		 */
 		public function removeAllParticles():void 
 		{
-			var n:int = particles.length;
-			for (var i:int = 0; i < n; i++) 
+			while (particleList.root) 
 			{
-				particleCache.push(particles[i]);
+				var item:ParticleData = particleList.root;
+				particleList.remove(item);
+				particleCache.add(item);
 			}
-			particles.length = 0;
 		}
 		
 		/**
@@ -99,26 +103,25 @@ package net.morocoshi.moja3d.particle
 		 */
 		private function emit(time:Number):ParticleCell
 		{
-			if (limit != -1 && particles.length >= limit)
+			if (limit != -1 && particleList.length >= limit)
 			{
 				return null;
 			}
 			
 			var particle:ParticleCell;
-			//もしキャッシュにパーティクルがあればそれを再利用する
-			if (particleCache.length)
+			if (particleCache.root)
 			{
-				particle = particleCache.pop();
+				particle = particleCache.root as ParticleCell;
+				particleCache.remove(particleCache.root);
 			}
 			else
 			{
-				//キャッシュにない場合は新しく生成する
 				particle = new ParticleCell();
 			}
 			particle.latestIndex = 0;
 			particle.prevTime = 0;
 			particle.initTime = time;
-			particles.push(particle);
+			particleList.add(particle);
 			
 			return particle;
 		}
@@ -160,27 +163,32 @@ package net.morocoshi.moja3d.particle
 						particle.initialWidth = emitter.particleWidth;
 						particle.initialHeight = emitter.particleHeight;
 						emitter._range.setRandomPosition(particle, emitter);
+						particle.animator = emitter._animator;
+						particle.wind = emitter._wind || wind;
 						emitter._animator.emitParticle(particle, emitter);
 					}
 					emitter.lastBirth = birth;
 				}
 			}
 			
-			n = particles.length;
-			for (i = 0; i < n; i++) 
+			particle = particleList.root as ParticleCell;
+			while (particle) 
 			{
-				particle = particles[i] as ParticleCell;
+				particle.time = time - particle.initTime;
 				particle.animator.updateParticle(particle);
+				if (particle.wind) particle.wind.updateParticle(particle);
 				
 				if (particle.time >= particle.life)
 				{
-					var p:ParticleCell = particles.splice(i, 1)[0];
-					particleCache.push(p);
-					i--;
-					n--;
+					var next:ParticleCell = particle.next as ParticleCell;
+					particleList.remove(particle);
+					particleCache.add(particle);
+					particle = next;
 					continue;
 				}
-				particle.time = time - particle.initTime;
+				
+				particle.prevTime = particle.time;
+				particle = particle.next as ParticleCell;
 			}
 			
 			super.update();
@@ -190,6 +198,16 @@ package net.morocoshi.moja3d.particle
 		private function enterFrameHandler(e:Event):void 
 		{
 			update();
+		}
+		
+		public function get enabled():Boolean 
+		{
+			return _enabled;
+		}
+		
+		public function set enabled(value:Boolean):void 
+		{
+			_enabled = value;
 		}
 		
 		/*

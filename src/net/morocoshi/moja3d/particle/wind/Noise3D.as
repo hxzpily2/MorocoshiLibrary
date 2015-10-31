@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.particle.wind 
 {
-	import flash.geom.Point;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.math.random.MT;
 	
@@ -11,6 +10,7 @@ package net.morocoshi.moja3d.particle.wind
 	 */
 	public class Noise3D 
 	{
+		public var seed:int;
 		public var size:Vector.<Number>;
 		public var segment:Vector.<int>;
 		private var vector3:Array;
@@ -38,6 +38,8 @@ package net.morocoshi.moja3d.particle.wind
 		 */
 		public function init(seed:int, x:int, y:int, z:int):void
 		{
+			this.seed = seed;
+			
 			var mt:MT = new MT();
 			mt.initialize(seed);
 			
@@ -107,6 +109,33 @@ package net.morocoshi.moja3d.particle.wind
 			
 			var result:Vector3D = new Vector3D();
 			interpolate(abcd, efgh, result, per[2]);
+			return result;
+		}
+		
+		public function clone():Noise3D 
+		{
+			var result:Noise3D = new Noise3D();
+			result.seed = seed;
+			result.segment = segment.concat();
+			result.size = size.concat();
+			
+			result.vector3 = [];
+			
+			var nx:int = vector3.length;
+			var ny:int = vector3[0].length;
+			var nz:int = vector3[0][0].length;
+			for (var ix:int = 0; ix < nx; ix++) 
+			{
+				result.vector3[ix] = [];
+				for (var iy:int = 0; iy < ny; iy++)
+				{
+					result.vector3[ix][iy] = [];
+					for (var iz:int = 0; iz < nz; iz++) 
+					{
+						result.vector3[ix][iy][iz] = vector3[ix][iy][iz].clone();
+					}
+				}
+			}
 			return result;
 		}
 		

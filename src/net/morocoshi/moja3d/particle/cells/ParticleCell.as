@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.particle.cells 
 {
-	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
+	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	
 	/**
 	 * パーティクルシステム用のSprite3D
@@ -21,6 +21,8 @@ package net.morocoshi.moja3d.particle.cells
 		public var initialHeight:Number = 1;
 		/**経過時間*/
 		public var time:Number = 0;
+		/***/
+		public var prevTime:Number = 0;
 		/**寿命*/
 		public var life:Number = 0;
 		/**回転速度*/
@@ -28,13 +30,17 @@ package net.morocoshi.moja3d.particle.cells
 		/**スケール加算速度*/
 		public var scaleSpeed:Number = 0;
 		/**加速度*/
-		public var velocity:Vector3D = new Vector3D();
+		public var vx:Number = 0;
+		public var vy:Number = 0;
+		public var vz:Number = 0;
+		
 		/**最後にチェックしたアルファキー用インデックス*/
 		public var latestIndex:int = 0;
+		
 		/***/
 		public var animator:ParticleAnimator;
-		
-		public var prevTime:Number = 0;
+		/***/
+		public var wind:ParticleWind;
 		
 		public function ParticleCell()
 		{

@@ -17,14 +17,20 @@ package net.morocoshi.moja3d.particle.wind
 			type = ParticleWindType.NONE;
 		}
 		
-		public function getVelocity(particle:ParticleCell):Vector3D
-		{
-			return new Vector3D();
-		}
-		
 		public function updateParticle(particle:ParticleCell):void 
 		{
-			particle.velocity.incrementBy(getVelocity(particle));
+		}
+		
+		public function clone():ParticleWind
+		{
+			var result:ParticleWind = new ParticleWind();
+			cloneProperties(result);
+			return result;
+		}
+		
+		public function cloneProperties(target:ParticleWind):void 
+		{
+			target.type = type;
 		}
 		
 		public function parse(xml:XML):void

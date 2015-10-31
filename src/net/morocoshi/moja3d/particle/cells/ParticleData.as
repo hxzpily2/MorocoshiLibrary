@@ -18,6 +18,8 @@ package net.morocoshi.moja3d.particle.cells
 		public var v1:Number = 1;
 		public var alpha:Number = 1;
 		public var rotation:Number = 0;
+		public var next:ParticleData;
+		public var prev:ParticleData;
 		
 		public function ParticleData() 
 		{

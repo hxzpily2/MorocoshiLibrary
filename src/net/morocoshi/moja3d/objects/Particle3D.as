@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.objects
 {
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.particle.cells.ParticleData;
+	import net.morocoshi.moja3d.particle.cells.ParticleList;
 	import net.morocoshi.moja3d.resources.ParticleGeometry;
 	import net.morocoshi.moja3d.shaders.particle.ParticleShader;
 	import net.morocoshi.moja3d.shaders.render.VertexColorShader;
@@ -18,7 +18,8 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Particle3D extends Mesh
 	{
-		protected var particles:Vector.<ParticleData>;
+		protected var particleList:ParticleList;
+		protected var particleCache:ParticleList;
 		private var context3D:ContextProxy;
 		private var surface:Surface;
 		private var particleShader:ParticleShader;
@@ -27,8 +28,9 @@ package net.morocoshi.moja3d.objects
 		{
 			super();
 			
+			particleList = new ParticleList();
+			particleCache = new ParticleList();
 			geometry = new ParticleGeometry();
-			particles = new Vector.<ParticleData>;
 			surface = new Surface(material, 0, 0);
 			surfaces.push(surface);
 			particleShader = new ParticleShader(_geometry);
@@ -46,8 +48,8 @@ package net.morocoshi.moja3d.objects
 		{
 			if (context3D == null) return;
 			
-			surface.numTriangles = particles.length * 2;
-			ParticleGeometry(_geometry).update(particles, context3D);
+			surface.numTriangles = particleList.length * 2;
+			ParticleGeometry(_geometry).update(particleList, context3D);
 		}
 		
 		public function get material():Material 

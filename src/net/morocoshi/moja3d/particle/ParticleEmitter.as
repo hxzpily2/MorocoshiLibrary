@@ -6,11 +6,13 @@ package net.morocoshi.moja3d.particle
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
 	import net.morocoshi.moja3d.particle.range.ParticleRange;
+	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	
 	use namespace moja3d;
 	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ParticleEmitter extends Object3D 
@@ -30,7 +32,7 @@ package net.morocoshi.moja3d.particle
 		moja3d var _animator:ParticleAnimator;
 		moja3d var _range:ParticleRange = new ParticleRange();
 		moja3d var _birthRate:Number = 1;
-		//moja3d var _wind:ParticleWind;
+		moja3d var _wind:ParticleWind;
 		
 		/**birthRateの逆数。パーティクルを生成する時間の間隔*/
 		moja3d var birthTime:Number = 1;
@@ -61,6 +63,7 @@ package net.morocoshi.moja3d.particle
 			var emitter:ParticleEmitter = target as ParticleEmitter;
 			emitter.animator = animator;
 			emitter.range = range;
+			emitter.wind = wind;
 			emitter.particleWidth = particleWidth;
 			emitter.particleHeight = particleHeight;
 			emitter.birthTime = birthTime;
@@ -73,6 +76,7 @@ package net.morocoshi.moja3d.particle
 			var emitter:ParticleEmitter = target as ParticleEmitter;
 			emitter.animator = animator.clone();
 			emitter.range = range.clone();
+			emitter.wind = wind? wind.clone() : null;
 			emitter.particleWidth = particleWidth;
 			emitter.particleHeight = particleHeight;
 			emitter.birthTime = birthTime;
@@ -139,6 +143,16 @@ package net.morocoshi.moja3d.particle
 			_birthRate = value;
 			lastBirth = 0;
 			birthTime = 1 / _birthRate;
+		}
+		
+		public function get wind():ParticleWind 
+		{
+			return _wind;
+		}
+		
+		public function set wind(value:ParticleWind):void 
+		{
+			_wind = value;
 		}
 		
 	}

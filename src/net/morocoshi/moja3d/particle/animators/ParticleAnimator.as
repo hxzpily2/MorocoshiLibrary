@@ -48,14 +48,38 @@ package net.morocoshi.moja3d.particle.animators
 		
 		public function emitParticle(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
-			particle.animator = this;
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
-			particle.velocity = getEmitVelocity(emitter);
+			var velocity:Vector3D = getEmitVelocity(emitter);
+			particle.vx = velocity.x;
+			particle.vy = velocity.y;
+			particle.vz = velocity.z;
 			particle.spinSpeed = getEmitSpinSpeed();
 			particle.scaleSpeed = getEmitScaleSpeed();
 			particle.time = 0;
 			particle.life = getEmitLife();
+		}
+		
+		/**
+		 * パーティクル位置の更新
+		 * @param	particle
+		 */
+		public function updateParticle(particle:ParticleCell):void 
+		{
+			var t1:Number = particle.time;
+			var t2:Number = particle.prevTime;
+			var tt1:Number = t1 - t2;
+			var tt2:Number = (t1 * t1) - (t2 * t2);
+			var f:Number = (friction == 1)? 1 : Math.pow(friction, t1);
+			particle.x += (particle.vx * tt1 + gravity.x * tt2) * f;
+			particle.y += (particle.vy * tt1 + gravity.y * tt2) * f;
+			particle.z += (particle.vz * tt1 + gravity.z * tt2) * f;
+			var scale:Number = particle.initialScale + (particle.time) * particle.scaleSpeed;
+			if (scale < 0) scale = 0;
+			particle.width = particle.initialWidth * scale;
+			particle.height = particle.initialHeight * scale;
+			particle.rotation = particle.initialRotation + (particle.time) * particle.spinSpeed;
+			particle.alpha = getCurrentAlpha(particle);
 		}
 		
 		//--------------------------------------------------------------------------
@@ -221,27 +245,9 @@ package net.morocoshi.moja3d.particle.animators
 		
 		//--------------------------------------------------------------------------
 		//
-		//  更新処理
+		//  
 		//
 		//--------------------------------------------------------------------------
-		
-		public function updateParticle(particle:ParticleCell):void 
-		{
-			var t1:Number = particle.time;
-			var t2:Number = particle.prevTime;
-			var tt1:Number = t1 - t2;
-			var tt2:Number = (t1 * t1) - (t2 * t2);
-			particle.prevTime = particle.time;
-			var f:Number = (friction == 1)? 1 : Math.pow(friction, t1);
-			particle.x += (particle.velocity.x * tt1 + gravity.x * tt2) * f;
-			particle.y += (particle.velocity.y * tt1 + gravity.y * tt2) * f;
-			particle.z += (particle.velocity.z * tt1 + gravity.z * tt2) * f;
-			var scale:Number = getCurrentScale(particle);
-			particle.width = particle.initialWidth * scale;
-			particle.height = particle.initialHeight * scale;
-			particle.alpha = getCurrentAlpha(particle);
-			particle.rotation = getCurrentRotation(particle);
-		}
 		
 		public function clone():ParticleAnimator 
 		{

@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.resources
 {
 	import net.morocoshi.common.math.transform.AngleUtil;
 	import net.morocoshi.moja3d.particle.cells.ParticleData;
+	import net.morocoshi.moja3d.particle.cells.ParticleList;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
@@ -41,7 +42,7 @@ package net.morocoshi.moja3d.resources
 			super.upload(context3D, async, complete);
 		}
 		
-		public function update(particles:Vector.<ParticleData>, context3D:ContextProxy):void
+		public function update(particleList:ParticleList, context3D:ContextProxy):void
 		{
 			vertices.length = 0;
 			sizes.length = 0;
@@ -50,10 +51,10 @@ package net.morocoshi.moja3d.resources
 			vertexIndices.length = 0;
 			
 			var offset:int = 0;
-			var n:int = particles.length;
-			for (var i:int = 0; i < n; i++) 
+			//var n:int = particles.length;
+			//var i:int = 0;
+			for (var p:ParticleData = particleList.root; p; p = p.next) 
 			{
-				var p:ParticleData = particles[i];
 				var px:Number = p.x;
 				var py:Number = p.y;
 				var pz:Number = p.z;

@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.particle.wind 
 {
 	import flash.geom.Vector3D;
-	import net.morocoshi.common.text.XMLUtil;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	
 	/**
@@ -11,7 +10,6 @@ package net.morocoshi.moja3d.particle.wind
 	 */
 	public class TurbulenceWind extends ParticleWind 
 	{
-		public var seed:int = 1;
 		public var noise:Noise3D;
 		public var intensityXMin:Number = -1;
 		public var intensityYMin:Number = -1;
@@ -19,38 +17,51 @@ package net.morocoshi.moja3d.particle.wind
 		public var intensityXMax:Number = 1;
 		public var intensityYMax:Number = 1;
 		public var intensityZMax:Number = 1;
-		public var size:Number = 100;
-		public var segment:int = 5;
 		
 		public function TurbulenceWind() 
 		{
 			super();
-			noise = new Noise3D();
-			updateNoise();
 			type = ParticleWindType.TURBULENCE;
+			noise = new Noise3D();
 		}
 		
-		public function updateNoise():void 
+		public function setNoise(seed:int, size:Number, segment:int):void 
 		{
 			noise.init(seed, segment, segment, segment);
 			noise.setSize(size, size, size);
 		}
 		
-		override public function getVelocity(particle:ParticleCell):Vector3D 
+		public function setIntensityX(min:Number, max:Number = NaN):void
 		{
-			var v:Vector3D = noise.noize(particle.x, particle.y, particle.z);
-			v.x *= (intensityXMax - intensityXMin);
-			v.y *= (intensityYMax - intensityYMin);
-			v.z *= (intensityZMax - intensityZMin);
-			v.x += intensityXMin;
-			v.y += intensityYMin;
-			v.z += intensityZMin;
-			return v;
+			intensityXMin = min;
+			intensityXMax = isNaN(max)? min : max;
+		}
+		
+		public function setIntensityY(min:Number, max:Number = NaN):void
+		{
+			intensityYMin = min;
+			intensityYMax = isNaN(max)? min : max;
+		}
+		
+		public function setIntensityZ(min:Number, max:Number = NaN):void
+		{
+			intensityZMin = min;
+			intensityZMax = isNaN(max)? min : max;
+		}
+		
+		override public function updateParticle(particle:ParticleCell):void 
+		{
+			var t:Number = particle.time - particle.prevTime;
+			var power:Vector3D = noise.noize(particle.x, particle.y, particle.z);
+			particle.vx += t * ((intensityXMax - intensityXMin) * power.x + intensityXMin);
+			particle.vy += t * ((intensityYMax - intensityYMin) * power.y + intensityYMin);
+			particle.vz += t * ((intensityZMax - intensityZMin) * power.z + intensityZMin);
 		}
 		
 		override public function parse(xml:XML):void 
 		{
 			super.parse(xml);
+			/*
 			seed = XMLUtil.getNodeNumber(xml.seed, 1);
 			intensityXMin = XMLUtil.getAttrNumber(xml.intensityX, "min", -1);
 			intensityXMax = XMLUtil.getAttrNumber(xml.intensityX, "max", 1);
@@ -60,22 +71,52 @@ package net.morocoshi.moja3d.particle.wind
 			intensityZMax = XMLUtil.getAttrNumber(xml.intensityZ, "max", 1);
 			size = XMLUtil.getNodeNumber(xml.size, 100);
 			segment = XMLUtil.getNodeNumber(xml.segment, 5);
-			updateNoise();
+			updateNoise();*/
 		}
 		
 		override public function toXML():XML 
 		{
 			var xml:XML = super.toXML();
-			xml.seed = seed;
+			//xml.seed = seed;
 			xml.intensityX.@min = intensityXMin;
 			xml.intensityX.@max = intensityXMax;
 			xml.intensityY.@min = intensityYMin;
 			xml.intensityY.@max = intensityYMax;
 			xml.intensityZ.@min = intensityZMin;
 			xml.intensityZ.@max = intensityZMax;
-			xml.size = size;
-			xml.segment = segment;
+			//xml.size = size;
+			//xml.segment = segment;
 			return xml;
+		}
+		
+		public function setIntensity(intensity:Number):void 
+		{
+			intensityXMin = -intensity;
+			intensityXMax = intensity;
+			intensityYMin = -intensity;
+			intensityYMax = intensity;
+			intensityZMin = -intensity;
+			intensityZMax = intensity;
+		}
+		
+		override public function clone():ParticleWind 
+		{
+			var result:TurbulenceWind = new TurbulenceWind();
+			cloneProperties(result);
+			return result;
+		}
+		
+		override public function cloneProperties(target:ParticleWind):void 
+		{
+			super.cloneProperties(target);
+			var wind:TurbulenceWind = target as TurbulenceWind;
+			wind.intensityXMin = intensityXMin;
+			wind.intensityXMax = intensityXMax;
+			wind.intensityYMin = intensityYMin;
+			wind.intensityYMax = intensityYMax;
+			wind.intensityZMin = intensityZMin;
+			wind.intensityZMax = intensityZMax;
+			wind.noise = noise.clone();
 		}
 		
 	}
