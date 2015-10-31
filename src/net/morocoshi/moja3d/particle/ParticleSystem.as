@@ -144,7 +144,7 @@ package net.morocoshi.moja3d.particle
 				var emitter:ParticleEmitter = emitters[i];
 				var birth:int = time / emitter.birthTime;
 				
-				if (emitter.enabled == false)
+				if (emitter.enabled == false || _enabled == false)
 				{
 					emitter.lastBirth = birth;
 					continue;
