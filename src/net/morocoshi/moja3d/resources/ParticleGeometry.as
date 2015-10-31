@@ -28,7 +28,7 @@ package net.morocoshi.moja3d.resources
 			addVertices(VertexAttribute.POSITION, 3, vertices);
 			addVertices(VertexAttribute.UV, 2, uvs);
 			addVertices(VertexAttribute.VERTEXCOLOR, 4, colors);
-			addVertices(VertexAttribute.SIZE, 2, sizes);
+			addVertices(VertexAttribute.SIZE, 3, sizes);
 			vertexIndices = new Vector.<uint>;
 		}
 		
@@ -55,6 +55,7 @@ package net.morocoshi.moja3d.resources
 			//var i:int = 0;
 			for (var p:ParticleData = particleList.root; p; p = p.next) 
 			{
+				var pr:Number = p.rotation;
 				var px:Number = p.x;
 				var py:Number = p.y;
 				var pz:Number = p.z;
@@ -69,26 +70,7 @@ package net.morocoshi.moja3d.resources
 				var alpha:Number = p.alpha;
 				vertices.push(px, py, pz, px, py, pz, px, py, pz, px, py, pz);
 				uvs.push(u0, v0, u1, v0, u0, v1, u1, v1);
-				if (p.rotation != 0)
-				{
-					var degree:int = ((p.rotation * AngleUtil.TABLESCALE | 0) % 3600 + 3600) % 3600;
-					var cos:Number = AngleUtil.cosTable[degree];
-					var sin:Number = AngleUtil.sinTable[degree];
-					var ax:Number = w0 * cos - h0 * sin;
-					var ay:Number = w0 * sin + h0 * cos;
-					var bx:Number = w1 * cos - h0 * sin;
-					var by:Number = w1 * sin + h0 * cos;
-					var cx:Number = w0 * cos - h1 * sin;
-					var cy:Number = w0 * sin + h1 * cos;
-					var dx:Number = w1 * cos - h1 * sin;
-					var dy:Number = w1 * sin + h1 * cos;
-					sizes.push(ax, ay, bx, by, cx, cy, dx, dy);
-				}
-				else
-				{
-					sizes.push(w0, h0, w1, h0, w0, h1, w1, h1);
-				}
-				
+				sizes.push(w0, h0, pr, w1, h0, pr, w0, h1, pr, w1, h1, pr);
 				colors.push(1, 1, 1, alpha, 1, 1, 1, alpha, 1, 1, 1, alpha, 1, 1, 1, alpha);
 				vertexIndices.push(offset, offset + 2, offset + 1, offset + 1, offset + 2, offset + 3);
 				offset += 4;

@@ -53,7 +53,15 @@ package net.morocoshi.moja3d.shaders.particle
 			
 			var va:String = "va" + geometry.getAttributeIndex(VertexAttribute.SIZE);
 			vertexCode.addCode(
-				"$pos.xy += " + va + ".xy"
+				"var $cos",
+				"$cos.x = cos(" + va + ".z, )",
+				"$cos.z = sin(" + va + ".z, )",
+				"$cos.y = neg($cos.z)",
+				"$cos.w = $cos.x",
+				//x:+cos, y:-sin, z:+sin, w:+cos
+				"$cos.xyzw *= " + va + ".xyxy",
+				"$cos.xz += $cos.yw",
+				"$pos.xy += $cos.xz"
 			);
 		}
 		

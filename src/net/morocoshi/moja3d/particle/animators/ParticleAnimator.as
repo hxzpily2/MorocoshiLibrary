@@ -74,7 +74,7 @@ package net.morocoshi.moja3d.particle.animators
 			particle.x += (particle.vx * tt1 + gravity.x * tt2) * f;
 			particle.y += (particle.vy * tt1 + gravity.y * tt2) * f;
 			particle.z += (particle.vz * tt1 + gravity.z * tt2) * f;
-			var scale:Number = particle.initialScale + (particle.time) * particle.scaleSpeed;
+			var scale:Number = (particle.initialScale + (particle.time) * particle.scaleSpeed) * 0.5;
 			if (scale < 0) scale = 0;
 			particle.width = particle.initialWidth * scale;
 			particle.height = particle.initialHeight * scale;
