@@ -206,8 +206,9 @@ package net.morocoshi.moja3d.animation
 		
 		public function capture():void 
 		{
+			if (valid == false) return;
+			
 			var target:Object3D = targetList.length == 0? null : targetList[0];
-			//var target:Object3D = targetList[0];
 			
 			switch(type)
 			{
