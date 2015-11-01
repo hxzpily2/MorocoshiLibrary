@@ -9,7 +9,6 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.shaders.render.NormalMapShader;
 	import net.morocoshi.moja3d.shaders.render.OpacityShader;
 	import net.morocoshi.moja3d.shaders.render.TextureShader;
-	import net.morocoshi.moja3d.shaders.render.UVOffsetShader;
 	import net.morocoshi.moja3d.shaders.render.VertexColorShader;
 	
 	/**
@@ -19,15 +18,16 @@ package net.morocoshi.moja3d.materials
 	 */
 	public class ParserMaterial extends Material 
 	{
-		/**
-		 * マテリアルアニメーション
-		 */
+		/**マテリアルアニメーション*/
 		public var animation:KeyframeAnimation;
-		/**
-		 * パースに使用した各種マテリアル情報
-		 */
+		/**パースに使用した各種マテリアル情報*/
 		public var rawData:M3DMaterial;
 		
+		/**
+		 * 
+		 * @param	rawData
+		 * @param	animation
+		 */
 		public function ParserMaterial(rawData:M3DMaterial, animation:KeyframeAnimation) 
 		{
 			super();

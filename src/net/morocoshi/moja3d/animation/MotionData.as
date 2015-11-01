@@ -42,24 +42,38 @@ package net.morocoshi.moja3d.animation
 		 * 親を含む全ての子オブジェクトをチェックし、アニメーションIDが一致するものをそれぞれのアニメーションデータに関連付ける。
 		 * @param	object	チェックするルートオブジェクト。このオブジェクトが持つ全ての子をチェックする。
 		 */
-		public function setObject(object:Object3D):void 
+		public function linkObject(object:Object3D):void 
 		{
 			for (var key:String in animation) 
 			{
 				var anm:KeyframeAnimation = animation[key];
 				if (object.animationID == key)
 				{
-					anm.setObject(object);
+					anm.linkObject(object);
 					continue;
 				}
 				var child:Object3D = object.getChildByAnimationID(key, true);
 				if (child)
 				{
-					anm.setObject(child);
+					anm.linkObject(child);
 				}
-				else
+			}
+		}
+		
+		public function unlinkObject(object:Object3D):void
+		{
+			for (var key:String in animation) 
+			{
+				var anm:KeyframeAnimation = animation[key];
+				if (object.animationID == key)
 				{
-					anm.valid = false;
+					anm.unlinkObject(object);
+					continue;
+				}
+				var child:Object3D = object.getChildByAnimationID(key, true);
+				if (child)
+				{
+					anm.unlinkObject(child);
 				}
 			}
 		}

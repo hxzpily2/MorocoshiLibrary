@@ -1,8 +1,10 @@
 package net.morocoshi.moja3d.animation 
 {
 	import net.morocoshi.moja3d.moja3d;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class AnimationPlayer 

@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.animation
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.math.transform.AngleUtil;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.shaders.render.UVOffsetShader;
@@ -39,7 +40,7 @@ package net.morocoshi.moja3d.animation
 		/**MOTIONLESS_MATRIX用*/
 		public var defaultMatrix:Matrix3D;
 		/**動かす対象*/
-		public var target:Object3D;
+		public var targetList:Vector.<Object3D>;
 		/**ターゲット指定などがされていて有効なアニメーションかどうか*/
 		public var valid:Boolean;
 		/**モーションブレンド用のブレンド直前の姿勢情報*/
@@ -50,6 +51,7 @@ package net.morocoshi.moja3d.animation
 		public function KeyframeAnimation(type:String = TYPE_CURVE) 
 		{
 			this.type = type;
+			targetList = new Vector.<Object3D>;
 			valid = false;
 			blendRatio = 1;
 			capturedTransform = { };
@@ -89,36 +91,50 @@ package net.morocoshi.moja3d.animation
 		public function initMaterialShader():void
 		{
 			uvOffsetShader = new UVOffsetShader(0, 0, 1, 1);
+			updateValid();
 		}
 		
 		/**
-		 * このアニメーションを適用するObject3Dを指定する。
+		 * このアニメーションを適用するObject3Dを追加する。
 		 * アニメーションの無いノードのデフォルト値はこのメソッドを呼んだ時点のObject3Dのパラメータを使う。
 		 * @param	object
 		 */
-		public function setObject(object:Object3D):void
+		public function linkObject(object:Object3D):void
 		{
-			target = object;
-			valid = (target != null);
+			if (object == null) return;
+			if (VectorUtil.attachItemDiff(targetList, object) == false) return;
+			
+			updateValid();
 			
 			if (position)
 			{
-				position.defaultValue.x = target.x;
-				position.defaultValue.y = target.y;
-				position.defaultValue.z = target.z;
+				position.defaultValue.x = object.x;
+				position.defaultValue.y = object.y;
+				position.defaultValue.z = object.z;
 			}
 			if (rotation)
 			{
-				rotation.defaultValue.x = target.rotationX;
-				rotation.defaultValue.y = target.rotationY;
-				rotation.defaultValue.z = target.rotationZ;
+				rotation.defaultValue.x = object.rotationX;
+				rotation.defaultValue.y = object.rotationY;
+				rotation.defaultValue.z = object.rotationZ;
 			}
 			if (scale)
 			{
-				scale.defaultValue.x = target.scaleX;
-				scale.defaultValue.y = target.scaleY;
-				scale.defaultValue.z = target.scaleZ;
+				scale.defaultValue.x = object.scaleX;
+				scale.defaultValue.y = object.scaleY;
+				scale.defaultValue.z = object.scaleZ;
 			}
+		}
+		
+		public function unlinkObject(object:Object3D):void
+		{
+			VectorUtil.deleteItem(targetList, object);
+			updateValid();
+		}
+		
+		private function updateValid():void
+		{
+			valid = targetList.length > 0 || uvOffsetShader != null;
 		}
 		
 		/**
@@ -142,6 +158,7 @@ package net.morocoshi.moja3d.animation
 		{
 			if (valid == false) return;
 			
+			var target:Object3D;
 			var ratio:Number = 1 - blendRatio;
 			switch(type)
 			{
@@ -163,29 +180,15 @@ package net.morocoshi.moja3d.animation
 					setCurveMatrix(time);
 					break;
 				case TYPE_MOTIONLESS_MATRIX:
-					if (target)
+					for each (target in targetList)
 					{
-						if (blendRatio == 1)
-						{
-							target.matrix = defaultMatrix;
-						}
-						else
-						{
-							target.matrix = Matrix3D.interpolate(capturedTransform.matrix, defaultMatrix, blendRatio);
-						}
+						target.matrix = (blendRatio == 1)? defaultMatrix : Matrix3D.interpolate(capturedTransform.matrix, defaultMatrix, blendRatio);
 					}
 					break;
 				case TYPE_MATRIX:
-					if (target)
+					for each (target in targetList)
 					{
-						if (blendRatio == 1)
-						{
-							target.matrix = matrix.getMatrix3D(time);
-						}
-						else
-						{
-							target.matrix = Matrix3D.interpolate(capturedTransform.matrix, matrix.getMatrix3D(time), blendRatio);
-						}
+						target.matrix = (blendRatio == 1)? matrix.getMatrix3D(time) : Matrix3D.interpolate(capturedTransform.matrix, matrix.getMatrix3D(time), blendRatio);
 					}
 					break;
 			}
@@ -203,7 +206,7 @@ package net.morocoshi.moja3d.animation
 		
 		public function capture():void 
 		{
-			if (target == null) return;
+			var target:Object3D = targetList[0];
 			
 			switch(type)
 			{
@@ -323,63 +326,66 @@ package net.morocoshi.moja3d.animation
 		private function setCurveMatrix(time:Number):void
 		{
 			var ratio:Number = 1 - blendRatio;
-			if (position)
+			for each (var target:Object3D in targetList) 
 			{
-				var pos:Vector3D = position.getVector3D(time);
-				if (blendRatio == 1)
+				if (position)
 				{
-					target.x = pos.x;
-					target.y = pos.y;
-					target.z = pos.z;
-				}
-				else
-				{
-					target.x = capturedTransform.x * ratio + pos.x * blendRatio;
-					target.y = capturedTransform.y * ratio + pos.y * blendRatio;
-					target.z = capturedTransform.z * ratio + pos.z * blendRatio;
-				}
-			}
-			if (rotation)
-			{
-				var rot:Vector3D = rotation.getVector3D(time);
-				var radian:Number = Math.PI / 180;
-				if (blendRatio == 1)
-				{
-					target.rotationX = rot.x * radian;
-					target.rotationY = rot.y * radian;
-					target.rotationZ = rot.z * radian;
-				}
-				else
-				{
-					var rx:Number = rot.x * radian;
-					var ry:Number = rot.y * radian;
-					var rz:Number = rot.z * radian;
-					if (fixRotation)
+					var pos:Vector3D = position.getVector3D(time);
+					if (blendRatio == 1)
 					{
-						fixRotation = false;
-						capturedTransform.rotationX = AngleUtil.toNearRadian(capturedTransform.rotationX, rx);
-						capturedTransform.rotationY = AngleUtil.toNearRadian(capturedTransform.rotationY, ry);
-						capturedTransform.rotationZ = AngleUtil.toNearRadian(capturedTransform.rotationZ, rz);
+						target.x = pos.x;
+						target.y = pos.y;
+						target.z = pos.z;
 					}
-					target.rotationX = capturedTransform.rotationX * ratio + rx * blendRatio;
-					target.rotationY = capturedTransform.rotationY * ratio + ry * blendRatio;
-					target.rotationZ = capturedTransform.rotationZ * ratio + rz * blendRatio;
+					else
+					{
+						target.x = capturedTransform.x * ratio + pos.x * blendRatio;
+						target.y = capturedTransform.y * ratio + pos.y * blendRatio;
+						target.z = capturedTransform.z * ratio + pos.z * blendRatio;
+					}
 				}
-			}
-			if (scale)
-			{
-				var scl:Vector3D = scale.getVector3D(time);
-				if (blendRatio == 1)
+				if (rotation)
 				{
-					target.scaleX = scl.x;
-					target.scaleY = scl.y;
-					target.scaleZ = scl.z;
+					var rot:Vector3D = rotation.getVector3D(time);
+					var radian:Number = Math.PI / 180;
+					if (blendRatio == 1)
+					{
+						target.rotationX = rot.x * radian;
+						target.rotationY = rot.y * radian;
+						target.rotationZ = rot.z * radian;
+					}
+					else
+					{
+						var rx:Number = rot.x * radian;
+						var ry:Number = rot.y * radian;
+						var rz:Number = rot.z * radian;
+						if (fixRotation)
+						{
+							fixRotation = false;
+							capturedTransform.rotationX = AngleUtil.toNearRadian(capturedTransform.rotationX, rx);
+							capturedTransform.rotationY = AngleUtil.toNearRadian(capturedTransform.rotationY, ry);
+							capturedTransform.rotationZ = AngleUtil.toNearRadian(capturedTransform.rotationZ, rz);
+						}
+						target.rotationX = capturedTransform.rotationX * ratio + rx * blendRatio;
+						target.rotationY = capturedTransform.rotationY * ratio + ry * blendRatio;
+						target.rotationZ = capturedTransform.rotationZ * ratio + rz * blendRatio;
+					}
 				}
-				else
+				if (scale)
 				{
-					target.scaleX = capturedTransform.scaleX * ratio + scl.x * blendRatio;
-					target.scaleY = capturedTransform.scaleY * ratio + scl.y * blendRatio;
-					target.scaleZ = capturedTransform.scaleZ * ratio + scl.z * blendRatio;
+					var scl:Vector3D = scale.getVector3D(time);
+					if (blendRatio == 1)
+					{
+						target.scaleX = scl.x;
+						target.scaleY = scl.y;
+						target.scaleZ = scl.z;
+					}
+					else
+					{
+						target.scaleX = capturedTransform.scaleX * ratio + scl.x * blendRatio;
+						target.scaleY = capturedTransform.scaleY * ratio + scl.y * blendRatio;
+						target.scaleZ = capturedTransform.scaleZ * ratio + scl.z * blendRatio;
+					}
 				}
 			}
 		}

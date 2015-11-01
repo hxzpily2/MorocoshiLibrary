@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.animation 
 {
 	import flash.events.EventDispatcher;
+	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.timers.Stopwatch;
 	import net.morocoshi.moja3d.objects.Object3D;
 	
@@ -11,7 +12,7 @@ package net.morocoshi.moja3d.animation
 	 */
 	public class MotionController extends EventDispatcher
 	{
-		public var object:Object3D;
+		public var objectList:Vector.<Object3D>;
 		public var motions:Object;
 		
 		//ブレンドモード用タイマー
@@ -36,6 +37,7 @@ package net.morocoshi.moja3d.animation
 		public function MotionController() 
 		{
 			motions = { };
+			objectList = new Vector.<Object3D>;
 			blendTimer = new Stopwatch();
 			motionTimer = new Stopwatch();
 			
@@ -58,11 +60,29 @@ package net.morocoshi.moja3d.animation
 				throw new Error("MotionController.setObject()にnullを渡す事はできません！");
 			}
 			
-			this.object = object;
+			//既に登録済みのオブジェクトだったら処理を進めない
+			if (VectorUtil.attachItemDiff(objectList, object) == false) return;
+			
 			for (var key:String in motions) 
 			{
 				var motion:MotionData = motions[key];
-				motion.setObject(object);
+				motion.linkObject(object);
+			}
+		}
+		
+		public function removeObject(object:Object3D):void
+		{
+			if (object == null)
+			{
+				throw new Error("MotionController.removeObject()にnullを渡す事はできません！");
+			}
+			
+			VectorUtil.deleteItem(objectList, object);
+			
+			for (var key:String in motions) 
+			{
+				var motion:MotionData = motions[key];
+				motion.unlinkObject(object);
 			}
 		}
 		
@@ -96,9 +116,10 @@ package net.morocoshi.moja3d.animation
 			motionData.setInterpolationEnabled(_interpolationEnabled);
 			motionData.loop = false;
 			motions[motionID] = motionData;
-			if (object)
+			
+			for each (var object:Object3D in objectList) 
 			{
-				motionData.setObject(object);
+				motionData.linkObject(object);
 			}
 		}
 		
@@ -116,7 +137,7 @@ package net.morocoshi.moja3d.animation
 				motion = motions[motionKey];
 				for (animationKey in motion.animation) 
 				{
-					exists[animationKey] = KeyframeAnimation(motion.animation[animationKey]).target;
+					exists[animationKey] = KeyframeAnimation(motion.animation[animationKey]).targetList;
 				}
 			}
 			for (motionKey in motions) 
@@ -126,7 +147,7 @@ package net.morocoshi.moja3d.animation
 				{
 					if (motion.animation[animationKey] || exists[animationKey] == null) continue;
 					var animation:KeyframeAnimation = new KeyframeAnimation(KeyframeAnimation.TYPE_MOTIONLESS_MATRIX);
-					animation.setObject(exists[animationKey]);
+					animation.linkObject(exists[animationKey]);
 					motion.animation[animationKey] = animation;
 				}
 			}

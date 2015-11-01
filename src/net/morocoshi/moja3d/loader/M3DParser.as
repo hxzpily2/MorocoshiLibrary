@@ -454,7 +454,7 @@ package net.morocoshi.moja3d.loader
 					if (objectM3D.animation)
 					{
 						var anm:KeyframeAnimation = toKeyAnimation(objectM3D.animation);
-						anm.setObject(objectA3D);
+						anm.linkObject(objectA3D);
 						///animatedObjectLink[anm] = objectA3D;
 						keyAnimations.push(anm);
 						animationPlayer.keyAnimations.push(anm);
@@ -554,8 +554,9 @@ package net.morocoshi.moja3d.loader
 			var result:MotionData = new MotionData();
 			for each(var animation:KeyframeAnimation in keyAnimations)
 			{
-				if (animation.target == null) continue;
-				var key:String = animation.target.animationID || animation.target.name;
+				//TODO: マテリアルアニメーションの場合はどうする？
+				if (animation.targetList.length == 0) continue;
+				var key:String = animation.targetList[0].animationID || animation.targetList[0].name;
 				result.animation[key] = animation;
 			}
 			return result.clone();
