@@ -2,8 +2,11 @@ package net.morocoshi.moja3d.particle.animators
 {
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	
+	use namespace moja3d;
 	
 	/**
 	 * パーティクルの動きを管理する基本クラス
@@ -12,21 +15,37 @@ package net.morocoshi.moja3d.particle.animators
 	 */
 	public class ParticleAnimator 
 	{
+		/***/
 		public var type:String;
+		/**最小初期スケール*/
 		public var scaleMin:Number = 1;
+		/**最大初期スケール*/
 		public var scaleMax:Number = 1;
+		/**最小寿命（秒）*/
 		public var lifeMin:Number = 1;
+		/**最大寿命（秒）*/
 		public var lifeMax:Number = 1;
+		/**最小初期角度（ラジアン）*/
 		public var rotationMin:Number = 0;
+		/**最大初期角度（ラジアン）*/
 		public var rotationMax:Number = 0;
+		/**最小回転速度（ラジアン）。パーティクルの角度が発生1秒後にこの数値分までオフセットされる*/
 		public var spinSpeedMin:Number = 0;
+		/**最大回転速度（ラジアン）。パーティクルの角度が発生1秒後にこの数値分までオフセットされる*/
 		public var spinSpeedMax:Number = 0;
+		/**最小スケーリング速度。パーティクルのスケールが発生1秒後にこの数値分までオフセットされる*/
 		public var scaleSpeedMin:Number = 0;
+		/**最大スケーリング速度。パーティクルのスケールが発生1秒後にこの数値分までオフセットされる*/
 		public var scaleSpeedMax:Number = 0;
+		/**空気抵抗係数。1で抵抗なし。0に近づくほど抵抗が強くなる。*/
 		public var friction:Number = 1;
+		/**初速ベクトル（速度のベクトルはxyz成分それぞれにおいてvelocityMin～velocityMaxの範囲でランダムに決定される）*/
 		public var velocityMin:Vector3D = new Vector3D(0, 0, 0);
+		/**初速ベクトル（速度のベクトルはxyz成分それぞれにおいてvelocityMin～velocityMaxの範囲でランダムに決定される）*/
 		public var velocityMax:Vector3D = new Vector3D(0, 0, 0);
+		/**重力加速度*/
 		public var gravity:Vector3D = new Vector3D(0, 0, 0);
+		/**アルファアニメーションをキーフレームで管理したもの。キーフレーム情報はaddAlphaKey()でも追加できます。キーフレーム数が0だとアルファは常に1になります。*/
 		public var alphaKeyList:Vector.<AlphaKey> = new Vector.<AlphaKey>;
 		
 		//--------------------------------------------------------------------------
@@ -46,7 +65,7 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function emitParticle(particle:ParticleCell, emitter:ParticleEmitter):void 
+		moja3d function emitParticle(particle:ParticleCell, emitter:ParticleEmitter):void 
 		{
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
@@ -64,7 +83,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル位置の更新
 		 * @param	particle
 		 */
-		public function updateParticle(particle:ParticleCell):void 
+		moja3d function updateParticle(particle:ParticleCell):void 
 		{
 			var t1:Number = particle.time;
 			var t2:Number = particle.prevTime;
@@ -88,49 +107,79 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
+		/**
+		 * パーティクルの初期スケールの最小値と最大値を設定する
+		 * @param	min
+		 * @param	max	省略するとminと同じになる
+		 */
 		public function setScale(min:Number, max:Number = NaN):void
 		{
 			scaleMin = min;
 			scaleMax = isNaN(max)? min : max;
 		}
 		
+		/**
+		 * パーティクルの寿命（秒）の最小値と最大値を設定する
+		 * @param	min
+		 * @param	max	省略するとminと同じになる
+		 */
 		public function setLife(min:Number, max:Number = NaN):void 
 		{
 			lifeMin = min;
 			lifeMax = isNaN(max)? min : max;
 		}
 		
+		/**
+		 * パーティクルの初期回転角（ラジアン）の最小値と最大値を設定する
+		 * @param	min
+		 * @param	max	省略するとminと同じになる
+		 */
 		public function setRotation(min:Number, max:Number = NaN):void 
 		{
 			rotationMin = min;
 			rotationMax = isNaN(max)? min : max;
 		}
 		
+		/**
+		 * 回転速度（ラジアン）の最小値と最大値を設定する。パーティクルの角度が発生1秒後にこの数値分までオフセットされる
+		 * @param	min
+		 * @param	max	省略するとminと同じになる
+		 */
 		public function setSpinSpeed(min:Number, max:Number = NaN):void 
 		{
 			spinSpeedMin = min;
 			spinSpeedMax = isNaN(max)? min : max;
 		}
 		
+		/**
+		 * スケーリング速度の最小値と最大値を設定する。パーティクルのスケールが発生1秒後にこの数値分までオフセットされる
+		 * @param	min
+		 * @param	max	省略するとminと同じになる
+		 */
 		public function setScaleSpeed(min:Number, max:Number = NaN):void 
 		{
 			scaleSpeedMin = min;
 			scaleSpeedMax = isNaN(max)? min : max;
 		}
 		
-		public function removeAllAlphaKey():void
-		{
-			alphaKeyList.length = 0;
-		}
-		
-		public function addAlphaKey(ratio:Number, value:Number, sort:Boolean = true):void
+		/**
+		 * アルファ変化アニメーション用キーフレームを追加する
+		 * @param	ratio	キーフレームの時間。パーティクル発生時(0)～パーティクル消滅時(1)の範囲で設定
+		 * @param	value	アルファ値
+		 */
+		public function addAlphaKey(ratio:Number, value:Number):void
 		{
 			var key:AlphaKey = new AlphaKey(ratio, value);
 			alphaKeyList.push(key);
-			if (sort)
-			{
-				alphaKeyList.sort(keySort);
-			}
+			alphaKeyList.sort(keySort);
+		}
+		
+		/**
+		 * 全てのアルファアニメーション用キーフレームを削除する
+		 */
+		public function removeAllAlphaKey():void
+		{
+			alphaKeyList.length = 0;
 		}
 		
 		private function keySort(a:AlphaKey, b:AlphaKey):int 
@@ -148,17 +197,17 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル生成時の回転速度を取得
 		 * @return
 		 */
-		public function getEmitSpinSpeed():Number 
+		moja3d function getEmitSpinSpeed():Number 
 		{
 			return random(spinSpeedMin, spinSpeedMax);
 		}
 		
-		public function getEmitScaleSpeed():Number 
+		moja3d function getEmitScaleSpeed():Number 
 		{
 			return random(scaleSpeedMin, scaleSpeedMax);
 		}
 		
-		public function getEmitRotation():Number 
+		moja3d function getEmitRotation():Number 
 		{
 			return random(rotationMin, rotationMax);
 		}
@@ -167,7 +216,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル生成時の加速度を取得
 		 * @return
 		 */
-		public function getEmitVelocity(emitter:ParticleEmitter):Vector3D
+		protected function getEmitVelocity(emitter:ParticleEmitter):Vector3D
 		{
 			var vx:Number = random(velocityMin.x, velocityMax.x);
 			var vy:Number = random(velocityMin.y, velocityMax.y);
@@ -179,7 +228,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル生成時のライフを取得
 		 * @return
 		 */
-		public function getEmitLife():Number
+		moja3d function getEmitLife():Number
 		{
 			return random(lifeMin, lifeMax);
 		}
@@ -188,7 +237,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル生成時のスケールを取得
 		 * @return
 		 */
-		public function getEmitScale():Number 
+		moja3d function getEmitScale():Number 
 		{
 			return random(scaleMin, scaleMax);
 		}
@@ -199,14 +248,14 @@ package net.morocoshi.moja3d.particle.animators
 		//
 		//--------------------------------------------------------------------------
 		
-		public function getCurrentScale(particle:ParticleCell):Number
+		moja3d function getCurrentScale(particle:ParticleCell):Number
 		{
 			var scale:Number = particle.initialScale + (particle.time) * particle.scaleSpeed;
 			if (scale < 0) scale = 0;
 			return scale;
 		}
 		
-		public function getCurrentAlpha(particle:ParticleCell):Number 
+		moja3d function getCurrentAlpha(particle:ParticleCell):Number 
 		{
 			if (!alphaKeyList.length) return 1;
 			if (alphaKeyList.length == 1)
@@ -238,7 +287,7 @@ package net.morocoshi.moja3d.particle.animators
 			return alphaMax.value;// particle.initialAlpha * (1 - particle.progress);
 		}
 		
-		public function getCurrentRotation(particle:ParticleCell):Number 
+		moja3d function getCurrentRotation(particle:ParticleCell):Number 
 		{
 			return particle.initialRotation + (particle.time) * particle.spinSpeed;
 		}
@@ -309,7 +358,7 @@ package net.morocoshi.moja3d.particle.animators
 			{
 				var ratio:Number = XMLUtil.getAttrNumber(node, "ratio", 0);
 				var value:Number = XMLUtil.getAttrNumber(node, "value", 1);
-				addAlphaKey(ratio, value, false);
+				addAlphaKey(ratio, value);
 			}
 			alphaKeyList.sort(keySort);
 		}

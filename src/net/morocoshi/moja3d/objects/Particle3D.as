@@ -24,6 +24,10 @@ package net.morocoshi.moja3d.objects
 		private var surface:Surface;
 		private var particleShader:ParticleShader;
 		
+		/**
+		 * 
+		 * @param	material
+		 */
 		public function Particle3D(material:Material) 
 		{
 			super();
@@ -39,6 +43,10 @@ package net.morocoshi.moja3d.objects
 			afterViewShaderList.addShader(particleShader);
 		}
 		
+		/**
+		 * パーティクル用ジオメトリをuploadするContextProxyを設定する
+		 * @param	context3D
+		 */
 		public function setContetx3D(context3D:ContextProxy):void
 		{
 			this.context3D = context3D;

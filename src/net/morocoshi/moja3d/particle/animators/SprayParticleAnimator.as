@@ -38,7 +38,7 @@ package net.morocoshi.moja3d.particle.animators
 			sprayRangeMax = isNaN(max)? min : max;
 		}
 		
-		override public function getEmitVelocity(emitter:ParticleEmitter):Vector3D 
+		override protected function getEmitVelocity(emitter:ParticleEmitter):Vector3D 
 		{
 			var v:Vector3D = new Vector3D();
 			var intensity:Number = random(sprayIntensityMin, sprayIntensityMax);

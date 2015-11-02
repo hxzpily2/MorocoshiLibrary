@@ -11,7 +11,7 @@ package net.morocoshi.moja3d.particle
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * パーティクル発生装置。ParticleSystemにaddEmitter()することで機能します。
 	 * 
 	 * @author tencho
 	 */
@@ -19,9 +19,9 @@ package net.morocoshi.moja3d.particle
 	{
 		/**エミッタが稼働しているか*/
 		public var enabled:Boolean = true;
-		/**パーティクルの幅*/
+		/**パーティクルのデフォルトの幅*/
 		public var particleWidth:Number = 1;
-		/**パーティクルの高さ*/
+		/**パーティクルのデフォルトの高さ*/
 		public var particleHeight:Number = 1;
 		
 		moja3d var position:Vector3D = new Vector3D();
@@ -83,7 +83,7 @@ package net.morocoshi.moja3d.particle
 			emitter.enabled = enabled;
 		}
 		
-		public function updateMatrix(system:ParticleSystem):void 
+		moja3d function updateMatrix(system:ParticleSystem):void 
 		{
 			var systemMatrix:Matrix3D = system.worldMatrix.clone();
 			var emitterMatrix:Matrix3D = worldMatrix.clone();
@@ -118,7 +118,7 @@ package net.morocoshi.moja3d.particle
 		}
 		
 		/**
-		 * パーティクル発生範囲を管理するクラス
+		 * パーティクル発生範囲
 		 */
 		public function get range():ParticleRange 
 		{
@@ -145,6 +145,9 @@ package net.morocoshi.moja3d.particle
 			birthTime = 1 / _birthRate;
 		}
 		
+		/**
+		 * このエミッタが生成するパーティクルにだけ影響する風エフェクト
+		 */
 		public function get wind():ParticleWind 
 		{
 			return _wind;

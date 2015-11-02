@@ -21,15 +21,16 @@ package net.morocoshi.moja3d.particle
 	public class ParticleSystem extends Particle3D
 	{
 		/**パーティクルの同時発生限界数（-1で無制限）*/
-		public var limit:int = -1;
-		
-		public var emitters:Vector.<ParticleEmitter> = new Vector.<ParticleEmitter>;
+		public var limit:int;
+		/**全てのパーティクルに影響する風エフェクト*/
 		public var wind:ParticleWind;
-		private var _enabled:Boolean;
+		public var emitters:Vector.<ParticleEmitter>;
 		
-		private var sprite:Sprite = new Sprite();
-		private var prevTime:Number = -1;
-		public var timer:Stopwatch;
+		private var sprite:Sprite;
+		private var timer:Stopwatch;
+		private var _enabled:Boolean;
+		private var prevTime:Number;
+		private var _autoUpdate:Boolean;
 		
 		/**
 		 * 
@@ -38,50 +39,47 @@ package net.morocoshi.moja3d.particle
 		public function ParticleSystem(material:Material = null) 
 		{
 			super(material);
+			sprite = new Sprite();
+			emitters = new Vector.<ParticleEmitter>;
+			_autoUpdate = false;
+			limit = -1;
+			prevTime = -1;
 			timer = new Stopwatch();
-			timer.start();
 			_enabled = true;
 		}
 		
-		public function addEmiter(emitter:ParticleEmitter):void
+		/**
+		 * エミッタを追加する。同一インスタンスのエミッタは追加できない。追加に成功すればtrueが返る
+		 * @param	emitter
+		 */
+		public function addEmiter(emitter:ParticleEmitter):Boolean
 		{
-			emitters.push(emitter);
+			return VectorUtil.attachItemDiff(emitters, emitter);
 		}
 		
-		public function removeEmiter(emitter:ParticleEmitter):void
+		/**
+		 * エミッタを削除する。削除に成功すればtrueが返る
+		 * @param	emitter
+		 */
+		public function removeEmiter(emitter:ParticleEmitter):Boolean
 		{
-			VectorUtil.deleteItem(emitters, emitter);
+			return VectorUtil.deleteItem(emitters, emitter);
 		}
 		
 		/**
 		 * パーティクル発生開始
-		 * @param	birthRate
 		 */
-		public function startAutoUpdate():void
+		public function play():void
 		{
-			sprite.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+			timer.start();
 		}
 		
 		/**
 		 * パーティクルの停止
 		 */
-		public function stopAutoUpdate():void
+		public function stop():void
 		{
-			sprite.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
-		}
-		
-		/**
-		 * パーティクルを全削除して全てのエミッタを停止する。
-		 */
-		public function disposeParticles():void
-		{
-			for each (var emitter:ParticleEmitter in emitters) 
-			{
-				emitter.enabled = false;
-			}
-			stopAutoUpdate();
-			removeAllParticles();
-			particleCache.length = 0;
+			timer.stop();
 		}
 		
 		/**
@@ -200,6 +198,9 @@ package net.morocoshi.moja3d.particle
 			update();
 		}
 		
+		/**
+		 * パーティクルが発生するかどうか
+		 */
 		public function get enabled():Boolean 
 		{
 			return _enabled;
@@ -208,6 +209,34 @@ package net.morocoshi.moja3d.particle
 		public function set enabled(value:Boolean):void 
 		{
 			_enabled = value;
+		}
+		
+		public function get timeScale():Number 
+		{
+			return timer.speed;
+		}
+		
+		public function set timeScale(value:Number):void
+		{
+			timer.speed = value;
+		}
+		
+		public function get autoUpdate():Boolean
+		{
+			return _autoUpdate;
+		}
+		
+		public function set autoUpdate(value:Boolean):void
+		{
+			_autoUpdate = value;
+			if (_autoUpdate)
+			{
+				sprite.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+			}
+			else
+			{
+				sprite.removeEventListener(Event.ENTER_FRAME, enterFrameHandler);
+			}
 		}
 		
 		/*
