@@ -2,6 +2,8 @@ package net.morocoshi.moja3d.objects
 {
 	import flash.display3D.Context3D;
 	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
+	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
@@ -25,6 +27,8 @@ package net.morocoshi.moja3d.objects
 		public var bones:Vector.<Bone>;
 		
 		public var skinShaderList:Vector.<SkinShader>;
+		/**メッシュ変形前の境界ボックス*/
+		private var rawBounds:BoundingBox;
 		
 		public function Skin() 
 		{
@@ -49,6 +53,72 @@ package net.morocoshi.moja3d.objects
 		override public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
 		{
 			super.upload(context3D, hierarchy, async, complete);
+		}
+		
+		override public function calculateBounds():void 
+		{
+			super.calculateBounds();
+			rawBounds = boundingBox.clone();
+		}
+		
+		/**
+		 * スキンメッシュの現在の姿勢で境界ボックスを更新する。ボーンの初期姿勢からのずれで計算するため実際のメッシュより大きく設定される傾向にあります。
+		 */
+		public function updateSkinBounds():void
+		{
+			var rawMin:Vector3D = rawBounds.getMinPoint();
+			var rawMax:Vector3D = rawBounds.getMaxPoint();
+			var minX:Number = Number.MAX_VALUE;
+			var minY:Number = Number.MAX_VALUE;
+			var minZ:Number = Number.MAX_VALUE;
+			var maxX:Number = -Number.MAX_VALUE;
+			var maxY:Number = -Number.MAX_VALUE;
+			var maxZ:Number = -Number.MAX_VALUE;
+			var skinMatrix:Matrix3D = worldMatrix.clone();
+			skinMatrix.invert();
+			for each(var bone:Bone in bones)
+			{
+				var m:Matrix3D = bone.worldMatrix.clone();
+				m.append(skinMatrix);
+				m.prepend(bone.initialMatrix);
+				var min:Vector3D = m.transformVector(rawMin.clone());
+				var max:Vector3D = m.transformVector(rawMax.clone());
+				if (minX > min.x) minX = min.x;
+				if (minY > min.y) minY = min.y;
+				if (minZ > min.z) minZ = min.z;
+				if (minX > max.x) minX = max.x;
+				if (minY > max.y) minY = max.y;
+				if (minZ > max.z) minZ = max.z;
+				if (maxX < min.x) maxX = min.x;
+				if (maxY < min.y) maxY = min.y;
+				if (maxZ < min.z) maxZ = min.z;
+				if (maxX < max.x) maxX = max.x;
+				if (maxY < max.y) maxY = max.y;
+				if (maxZ < max.z) maxZ = max.z;
+			}
+			boundingBox.minX = minX;
+			boundingBox.minY = minY;
+			boundingBox.minZ = minZ;
+			boundingBox.maxX = maxX;
+			boundingBox.maxY = maxY;
+			boundingBox.maxZ = maxZ;
+			updateBounds();
+		}
+		
+		override public function referenceProperties(target:Object3D):void
+		{
+			super.referenceProperties(target);
+			
+			var skin:Skin = target as Skin;
+			skin.rawBounds = rawBounds? rawBounds.clone() : null;
+		}
+		
+		override public function cloneProperties(target:Object3D):void 
+		{
+			super.cloneProperties(target);
+			
+			var skin:Skin = target as Skin;
+			skin.rawBounds = rawBounds? rawBounds.clone() : null;
 		}
 		
 		override public function clone():Object3D 
@@ -113,7 +183,6 @@ package net.morocoshi.moja3d.objects
 					skinShader.setSkinGeometry(geom);
 					skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
 					skinShaderList.push(skinShader);
-					//skinGeom.shaderList.updateConstantList();
 				}
 			}
 			else
@@ -122,11 +191,7 @@ package net.morocoshi.moja3d.objects
 				skinShader.setSkinGeometry(_geometry as SkinGeometry);
 				skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
 				skinShaderList.push(skinShader);
-				//SkinGeometry(_geometry).skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
-				//SkinGeometry(_geometry).shaderList.updateConstantList();
 			}
-			//skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
-			//startShaderList.updateConstantList();
 			var combinedGeom:CombinedGeometry = geometry as CombinedGeometry;
 			if (combinedGeom)
 			{

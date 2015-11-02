@@ -49,7 +49,7 @@ package net.morocoshi.moja3d.objects
 		//public var depthMask:Boolean;
 		
 		static moja3d var globalSeed:int;
-		private var seed:String;
+		moja3d var seed:String;
 		
 		public function Mesh() 
 		{
@@ -126,14 +126,6 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * 現在の姿勢を考慮してバウンディング球を更新する。レンダリング時の処理に比べて重いので注意。
-		 */
-		public function updateBounds():void
-		{
-			boundingBox.transformByMatrix(worldMatrix, true);
-		}
-		
-		/**
 		 * 境界ボックスを包む境界球を計算するための下準備をする。
 		 * この処理はジオメトリを生成した直後か、ジオメトリが変形した時に呼び出します。
 		 * 全頂点を包む境界ボックスを求めるので負荷に注意。
@@ -146,9 +138,7 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			geometry.calculateBounds(boundingBox);
-			boundingBox.localX = (boundingBox.minX + boundingBox.maxX) / 2;
-			boundingBox.localY = (boundingBox.minY + boundingBox.maxY) / 2;
-			boundingBox.localZ = (boundingBox.minZ + boundingBox.maxZ) / 2;
+			boundingBox.updateCenterPoint();
 		}
 		
 		/**

@@ -272,6 +272,26 @@ package net.morocoshi.moja3d.bounds
 			return new Vector3D((minX + maxX) * 0.5, (minY + maxY) * 0.5, (minZ + maxZ) * 0.5);
 		}
 		
+		/**
+		 * minXYZとmaxXYZからlocalXYZを求める
+		 */
+		public function updateCenterPoint():void 
+		{
+			localX = (minX + maxX) / 2;
+			localY = (minY + maxY) / 2;
+			localZ = (minZ + maxZ) / 2;
+		}
+		
+		public function getMinPoint():Vector3D 
+		{
+			return new Vector3D(minX, minY, minZ);
+		}
+		
+		public function getMaxPoint():Vector3D 
+		{
+			return new Vector3D(maxX, maxY, maxZ);
+		}
+		
 	}
 
 }

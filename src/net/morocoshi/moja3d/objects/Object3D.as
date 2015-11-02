@@ -10,6 +10,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.moja3d.agal.Program3DPreloader;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.config.Global3D;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -51,6 +52,8 @@ package net.morocoshi.moja3d.objects
 		/**子以下をレンダリング対象に含めるか*/
 		public var renderChildren:Boolean;
 		private var _inCameraView:Boolean;
+		private var _showBoundingBox:Boolean;
+		private var boundingCube:Mesh;
 		
 		private var _colorTransform:ColorTransform;
 		moja3d var worldColorTransform:ColorTransform;
@@ -109,6 +112,7 @@ package net.morocoshi.moja3d.objects
 			sortPriority = 0;
 			_visible = true;
 			renderChildren = true;
+			_showBoundingBox = false;
 			flip = 1;
 			
 			castShadowEnabled = LightSetting._defaultCastShadow;
@@ -391,11 +395,47 @@ package net.morocoshi.moja3d.objects
 			return new Vector3D(x, y, z);
 		}
 		
+		public function getTreePath():String
+		{
+			var path:String = "";
+			var current:Object3D = this;
+			while (current)
+			{
+				var id:String = current.toString();
+				if (current is Mesh) id += Mesh(current).seed;
+				path = id + "/" + path;
+				current = current.parent;
+			}
+			return path;
+		}
+		
+		
 		//--------------------------------------------------------------------------
 		//
 		//  計算
 		//
 		//--------------------------------------------------------------------------
+		
+		/**
+		 * 現在の姿勢を考慮してバウンディング球を更新する。レンダリング時の処理に比べて重いので注意。
+		 */
+		public function updateBounds():void
+		{
+			if (boundingBox == null) return;
+			
+			boundingBox.updateCenterPoint();
+			boundingBox.transformByMatrix(getPerfectWorldMatrix(), true);
+			
+			if (boundingCube)
+			{
+				boundingCube.x = boundingBox.localX;
+				boundingCube.y = boundingBox.localY;
+				boundingCube.z = boundingBox.localZ;
+				boundingCube.scaleX = boundingBox.maxX - boundingBox.minX;
+				boundingCube.scaleY = boundingBox.maxY - boundingBox.minY;
+				boundingCube.scaleZ = boundingBox.maxZ - boundingBox.minZ;
+			}
+		}
 		
 		/**
 		 * 境界ボックスを包む境界球を計算するための下準備をする。このメソッドはMeshでoverrideしています。
@@ -1058,6 +1098,49 @@ package net.morocoshi.moja3d.objects
 		public function get inCameraView():Boolean 
 		{
 			return _inCameraView;
+		}
+		
+		/**
+		 * 境界ボックスの領域を表示するか
+		 */
+		public function get showBoundingBox():Boolean 
+		{
+			return _showBoundingBox;
+		}
+		
+		public function set showBoundingBox(value:Boolean):void 
+		{
+			if (_showBoundingBox == value) return;
+			
+			_showBoundingBox = value;
+			
+			if (boundingBox == null) return;
+			
+			if (_showBoundingBox == false)
+			{
+				if (boundingCube)
+				{
+					boundingCube.remove();
+				}
+				return;
+			}
+			
+			if (boundingCube == null)
+			{
+				boundingCube = Global3D.boundingCube.reference() as Mesh;
+			}
+			
+			if (boundingCube.parent == null)
+			{
+				addChild(boundingCube);
+			}
+			
+			boundingCube.x = boundingBox.localX;
+			boundingCube.y = boundingBox.localY;
+			boundingCube.z = boundingBox.localZ;
+			boundingCube.scaleX = boundingBox.maxX - boundingBox.minX;
+			boundingCube.scaleY = boundingBox.maxY - boundingBox.minY;
+			boundingCube.scaleZ = boundingBox.maxZ - boundingBox.minZ;
 		}
 		
 		/**

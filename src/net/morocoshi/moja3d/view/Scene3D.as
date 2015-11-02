@@ -6,7 +6,6 @@ package net.morocoshi.moja3d.view
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.display.Stage3D;
-	import flash.display3D.Context3D;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -22,6 +21,7 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.common.ui.mouse.MouseDrag3D;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.billboard.BillboardManager;
+	import net.morocoshi.moja3d.config.Global3D;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.dialogs.SoftwareDialog;
 	import net.morocoshi.moja3d.events.Event3D;
@@ -233,6 +233,7 @@ package net.morocoshi.moja3d.view
 			renderer.dummyTexture = new ImageTextureResource(dummyPattern);
 			renderer.dummyTexture.upload(context3D, false);
 			
+			Global3D.boundingCube.upload(context3D, false, false);
 			collector.filterGeometry.upload(context3D, false);
 			collector.planeGeometry.upload(context3D, false);
 			collector.reflectiveWater.setContext3D(context3D);
@@ -304,7 +305,7 @@ package net.morocoshi.moja3d.view
 			dispatchEvent(new Event3D(Event3D.PRE_RENDER));
 			
 			//Stage3Dが破棄されている場合があるかもしれない
-			if (stage3D == null || context3D == null || context3D.context.driverInfo == DriverInfo.DISPOSED)
+			if (stage3D == null || context3D.context == null || context3D.context.driverInfo == DriverInfo.DISPOSED)
 			{
 				return;
 			}

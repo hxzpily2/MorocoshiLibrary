@@ -26,10 +26,10 @@ package net.morocoshi.moja3d.objects
 			_fadeStart = fadeStart;
 			_fadeEnd = fadeEnd;
 			boundingBox = new BoundingBox();
-			updateBounds();
+			updateLightBounds();
 		}
 		
-		private function updateBounds():void 
+		private function updateLightBounds():void 
 		{
 			boundingBox.setSphere(Math.max(_fadeStart, _fadeEnd));
 		}
@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.objects
 		public function set fadeStart(value:Number):void 
 		{
 			_fadeStart = value;
-			updateBounds();
+			updateLightBounds();
 		}
 		
 		public function get fadeEnd():Number 
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.objects
 		public function set fadeEnd(value:Number):void 
 		{
 			_fadeEnd = value;
-			updateBounds();
+			updateLightBounds();
 		}
 		
 	}
