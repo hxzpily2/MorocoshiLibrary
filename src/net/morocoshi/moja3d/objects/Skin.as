@@ -26,7 +26,7 @@ package net.morocoshi.moja3d.objects
 		 */
 		public var bones:Vector.<Bone>;
 		
-		public var skinShaderList:Vector.<SkinShader>;
+		moja3d var skinShaderList:Vector.<SkinShader>;
 		/**メッシュ変形前の境界ボックス*/
 		private var rawBounds:BoundingBox;
 		
@@ -42,17 +42,6 @@ package net.morocoshi.moja3d.objects
 			
 			bones = new Vector.<Bone>;
 			skinShaderList = new Vector.<SkinShader>;
-		}
-		/*
-		override public function set geometry(value:Geometry):void 
-		{
-			super.geometry = value;
-			skinShader.setGeometry(value);
-		}
-		*/
-		override public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
-		{
-			super.upload(context3D, hierarchy, async, complete);
 		}
 		
 		override public function calculateBounds():void 
@@ -133,7 +122,7 @@ package net.morocoshi.moja3d.objects
 				skin.addChild(current.clone());
 			}
 			
-			skin.calculateBones();
+			skin.collectBones();
 			
 			return skin;
 		}
@@ -150,14 +139,19 @@ package net.morocoshi.moja3d.objects
 				skin.addChild(current.reference());
 			}
 			
-			skin.calculateBones();
+			skin.collectBones();
 			
 			return skin;
 		}
 		
-		public function calculateBones():void
+		/**
+		 * スキン内にあるボーンオブジェクトを収集して必要なシェーダーを生成する
+		 */
+		public function collectBones():void
 		{
 			bones.length = 0;
+			skinShaderList.length = 0;
+			
 			var task:Vector.<Object3D> = new <Object3D>[this];
 			while (task.length)
 			{
@@ -200,11 +194,6 @@ package net.morocoshi.moja3d.objects
 					surface.linkSurfaces(combinedSurfacesList);
 				}
 			}
-		}
-		
-		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
-		{
-			return super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
 		}
 		
 		override protected function calculate(collector:RenderCollector):void 

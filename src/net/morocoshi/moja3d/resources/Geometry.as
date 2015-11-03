@@ -123,10 +123,9 @@ package net.morocoshi.moja3d.resources
 		{
 			if (isUploaded == true) return;
 			
-			dispose();
-			
 			if (vertexIndices.length > 524287)
 			{
+				dispose();
 				return;
 			}
 			

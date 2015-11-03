@@ -20,7 +20,14 @@ package net.morocoshi.moja3d.resources
 		{
 		}
 		
-		public function upload(context3D:ContextProxy, resources:Vector.<Resource>, async:Boolean, complete:Function = null):void
+		/**
+		 * 
+		 * @param	context3D
+		 * @param	resources
+		 * @param	async
+		 * @param	complete
+		 */
+		public function upload(context3D:ContextProxy, resources:Vector.<Resource>, async:Boolean = false, complete:Function = null):void
 		{
 			completeCallback = complete;
 			

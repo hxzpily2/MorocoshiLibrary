@@ -485,7 +485,7 @@ package net.morocoshi.moja3d.loader
 					//SKIN初期化
 					if (objectA3D is Skin)
 					{
-						Skin(objectA3D).calculateBones();
+						Skin(objectA3D).collectBones();
 					}
 				}
 			}
