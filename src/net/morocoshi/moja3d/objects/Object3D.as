@@ -1164,13 +1164,18 @@ package net.morocoshi.moja3d.objects
 			_next = null;
 		}
 		
-		public function addChildFix(object:Object3D):Object3D
+		/**
+		 * ワールド空間における姿勢を維持したまま子に追加する
+		 * @param	object
+		 * @return
+		 */
+		public function addChildFixedly(object:Object3D):Object3D
 		{
-			var m1:Matrix3D = worldMatrix.clone();
-			var m2:Matrix3D = object.worldMatrix.clone();
-			m1.invert();
-			m2.append(m1);
-			object.matrix = m2;
+			var newMatrix:Matrix3D = object.worldMatrix.clone();
+			var invertedMatrix:Matrix3D = worldMatrix.clone();
+			invertedMatrix.invert();
+			newMatrix.append(invertedMatrix);
+			object.matrix = newMatrix;
 			return addChild(object);
 		}
 		
