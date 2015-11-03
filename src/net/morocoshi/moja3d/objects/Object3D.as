@@ -424,7 +424,7 @@ package net.morocoshi.moja3d.objects
 			if (boundingBox == null) return;
 			
 			boundingBox.updateCenterPoint();
-			boundingBox.transformByMatrix(getPerfectWorldMatrix(), true);
+			boundingBox.transformByMatrix(worldMatrix, true);
 			
 			if (boundingCube)
 			{
@@ -485,23 +485,30 @@ package net.morocoshi.moja3d.objects
 			//親が変化していない場合
 			if (startObject == null)
 			{
-				if (calculateMatrixOrder == false)
-				{
-					return;
-				}
-				if (parent == null)
+				if (calculateMatrixOrder == false) return;
+				
+				if (_parent == null)
 				{
 					_worldMatrix.copyFrom(matrix);
 					return;
 				}
 				
-				_worldMatrix.copyFrom(parent._worldMatrix);
+				_worldMatrix.copyFrom(_parent._worldMatrix);
 				_worldMatrix.prepend(matrix);
 				return;
 			}
 			
 			//親が変化してる
-			_worldMatrix.copyFrom(startObject._worldMatrix);
+			if (startObject._parent == null)
+			{
+				_worldMatrix.copyFrom(startObject.matrix);
+			}
+			else
+			{
+				startObject = startObject._parent;
+				_worldMatrix.copyFrom(startObject._worldMatrix);
+			}
+			
 			startObject = startObject.notifyChild;
 			while (startObject)
 			{
@@ -1049,7 +1056,7 @@ package net.morocoshi.moja3d.objects
 		 * 重いが確実に正確なワールド姿勢を計算して返す。弄る場合はcloneすること！
 		 * @return
 		 */
-		moja3d function getPerfectWorldMatrix():Matrix3D
+		moja3d function ___getPerfectWorldMatrix():Matrix3D
 		{
 			var target:Object3D = this._parent;
 			var m3d:Matrix3D = matrix.clone();
@@ -1157,11 +1164,22 @@ package net.morocoshi.moja3d.objects
 			_next = null;
 		}
 		
+		public function addChildFix(object:Object3D):Object3D
+		{
+			var m1:Matrix3D = worldMatrix.clone();
+			var m2:Matrix3D = object.worldMatrix.clone();
+			m1.invert();
+			m2.append(m1);
+			object.matrix = m2;
+			return addChild(object);
+		}
+		
 		/**
 		 * 子に追加する（リンクリストの先頭に追加）
 		 * @param	object
 		 * @return
 		 */
+		
 		public function addChild(object:Object3D):Object3D 
 		{
 			if (object == null)

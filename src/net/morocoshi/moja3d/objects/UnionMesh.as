@@ -36,13 +36,13 @@ package net.morocoshi.moja3d.objects
 		
 		public function update(context3D:ContextProxy = null):void
 		{
-			var containerMatrix:Matrix3D = getPerfectWorldMatrix().clone();
+			var containerMatrix:Matrix3D = worldMatrix.clone();
 			containerMatrix.invert();
 			var unionMap:Dictionary = new Dictionary();
 			for each(var mesh:Mesh in getChildren(false, true, Mesh))
 			{
 				var geom:Geometry = mesh.geometry;
-				var matrix:Matrix3D = mesh.getPerfectWorldMatrix().clone();
+				var matrix:Matrix3D = mesh.worldMatrix.clone();
 				matrix.append(containerMatrix);
 				var rawData:Vector.<Number> = matrix.rawData;
 				
