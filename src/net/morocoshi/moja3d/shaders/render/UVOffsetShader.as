@@ -77,9 +77,9 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			vertexCode.addCode(
-				"$uv.xy += @offsetUV.xy",
 				"$uv.xy *= @offsetUV.zw",
-				"#uv = $uv"//UV
+				"$uv.xy += @offsetUV.xy",
+				"#uv = $uv.xy"//UV
 			);
 		}
 		
