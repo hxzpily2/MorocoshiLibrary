@@ -35,6 +35,8 @@ package net.morocoshi.moja3d.resources
 		//レンダリング用テクスチャの場合
 		override public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
+			if (uploadEnabled == false) return;
+			
 			if (width > limitW) width = limitW;
 			if (height > limitH) height = limitH;
 			
