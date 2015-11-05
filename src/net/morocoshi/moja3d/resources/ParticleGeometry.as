@@ -32,14 +32,14 @@ package net.morocoshi.moja3d.resources
 			vertexIndices = new Vector.<uint>;
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
 		{
 			if (vertexIndices.length == 0)
 			{
 				dispose();
-				return;
+				return false;
 			}
-			super.upload(context3D, async, complete);
+			return super.upload(context3D, async, complete);
 		}
 		
 		public function update(particleList:ParticleList, context3D:ContextProxy):void

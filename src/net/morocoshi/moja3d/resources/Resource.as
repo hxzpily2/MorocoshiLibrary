@@ -41,18 +41,21 @@ package net.morocoshi.moja3d.resources
 			return resource;
 		}
 		
-		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void
+		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean
 		{
+			if (uploadEnabled == false || isUploaded == true) return false;
+			
 			if (async == true)
 			{
 				throw new Error("非同期アップロードは現在調査中のため使えません！");
 			}
 			
-			if (uploadEnabled == false) return;
-			
+			dispose();
 			isUploaded = true;
 			this.context3D = context3D;
 			context3D.addUploadItem(this);
+			
+			return true;
 		}
 		
 		public function dispose():void 

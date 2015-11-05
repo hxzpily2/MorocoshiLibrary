@@ -47,12 +47,13 @@ package net.morocoshi.moja3d.resources
 			return result;
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
 		{
 			for each (var item:Geometry in geometries) 
 			{
 				item.upload(context3D, async, complete);
 			}
+			return true;
 		}
 		
 		override public function dispose():void 

@@ -35,9 +35,10 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
 		{
-			throw new Error("継承してください！");
+			return super.upload(context3D, async, complete);
+			//throw new Error("継承してください！");
 		}
 		
 		/**

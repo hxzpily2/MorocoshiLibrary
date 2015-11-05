@@ -119,17 +119,15 @@ package net.morocoshi.moja3d.resources
 		 * @param	async
 		 * @param	complete
 		 */
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void
+		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean
 		{
-			if (isUploaded == true) return;
+			if (super.upload(context3D, async, complete) == false) return false;
 			
 			if (vertexIndices.length > 524287)
 			{
 				dispose();
-				return;
+				return false;
 			}
-			
-			super.upload(context3D, async, complete);
 			
 			var i:int;
 			var n:int;
@@ -141,13 +139,13 @@ package net.morocoshi.moja3d.resources
 				if (verticesList[i] == null)
 				{
 					dispose();
-					return;
+					return false;
 				}
 				var numVertices:int = verticesList[i].length / numAttribute;
 				if (numVertices > 65535)
 				{
 					dispose();
-					return;
+					return false;
 				}
 				var vertexBuffer:VertexBuffer3D = context3D.context.createVertexBuffer(numVertices, numAttribute);
 				vertexBufferList[i] = vertexBuffer;
@@ -162,13 +160,15 @@ package net.morocoshi.moja3d.resources
 			catch (e:Error)
 			{
 				dispose();
-				return;
+				return false;
 			}
 			
 			if (complete != null)
 			{
 				complete(this);
 			}
+			
+			return true;
 		}
 		
 		override public function dispose():void 
