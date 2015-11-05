@@ -12,6 +12,7 @@ package net.morocoshi.moja3d.resources
 	 */
 	public class Resource extends EventDispatcher
 	{
+		private var context3D:ContextProxy;
 		public var name:String;
 		public var isUploaded:Boolean;
 		public var isReady:Boolean;
@@ -45,11 +46,17 @@ package net.morocoshi.moja3d.resources
 				throw new Error("非同期アップロードは現在調査中のため使えません！");
 			}
 			isUploaded = true;
+			this.context3D = context3D;
+			context3D.addUploadItem(this);
 		}
 		
 		public function dispose():void 
 		{
 			isUploaded = false;
+			if (context3D)
+			{
+				context3D.removeUploadItem(this);
+			}
 		}
 		
 		override public function toString():String 

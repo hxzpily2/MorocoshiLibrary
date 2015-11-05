@@ -213,7 +213,7 @@ package net.morocoshi.moja3d.animation
 		 * @param	frame
 		 * @param	frameRate
 		 */
-		public function setFrame(frame:int, frameRate:Number = 30):void
+		public function setFrame(frame:Number, frameRate:Number = 30):void
 		{
 			motionTimer.time = 1000 / frameRate * (frame - 1);
 		}
@@ -223,12 +223,12 @@ package net.morocoshi.moja3d.animation
 		 * @param	frameRate
 		 * @return
 		 */
-		public function getFrame(frameRate:Number = 30):int
+		public function getFrame(frameRate:Number = 30):Number
 		{
 			if (current == null) return 1;
 			
 			var length:Number = current.timeLength;
-			return int((motionTimer.time / 1000) % length * frameRate) + 1;
+			return ((motionTimer.time / 1000) % length * frameRate) + 1;
 		}
 		
 		/**
