@@ -238,16 +238,14 @@ package net.morocoshi.moja3d.view
 			collector.planeGeometry.upload(context3D, false);
 			collector.reflectiveWater.setContext3D(context3D);
 			
-			for each(var resource:Resource in root.getResources(true))
-			{
-				resource.dispose();
-				resource.upload(context3D, false);
-			}
-			
 			if (dispatchedComplete == false)
 			{
 				dispatchedComplete = true;
 				dispatchEvent(new Event(Event.COMPLETE));
+			}
+			else
+			{
+				context3D.reupload();
 			}
 		}
 		

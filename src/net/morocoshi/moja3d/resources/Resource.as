@@ -12,6 +12,8 @@ package net.morocoshi.moja3d.resources
 	 */
 	public class Resource extends EventDispatcher
 	{
+		static public var uploadEnabled:Boolean = true;
+		
 		private var context3D:ContextProxy;
 		public var name:String;
 		public var isUploaded:Boolean;
@@ -45,6 +47,9 @@ package net.morocoshi.moja3d.resources
 			{
 				throw new Error("非同期アップロードは現在調査中のため使えません！");
 			}
+			
+			if (uploadEnabled == false) return;
+			
 			isUploaded = true;
 			this.context3D = context3D;
 			context3D.addUploadItem(this);
