@@ -434,7 +434,7 @@ package net.morocoshi.moja3d.materials
 		 * @param	async	非同期でuploadするか
 		 * @param	complete	非同期uploadする場合の完了イベント
 		 */
-		public function upload(context3D:ContextProxy, async:Boolean, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
 		{
 			new ResourceUploader().upload(context3D, getResources(), async, complete);
 		}
