@@ -24,7 +24,7 @@ package net.morocoshi.common.ui.mouse
 		/**ドラッグが可能か*/
 		public var dragEnabled:Boolean;
 		/**ホイールズームが可能か*/
-		public var wheelEnabled:Boolean;
+		private var _wheelEnabled:Boolean;
 		
 		private var _eventObject:InteractiveObject;
 		private var _clickPoint:Point;
@@ -51,7 +51,7 @@ package net.morocoshi.common.ui.mouse
 			rotation = new DragParam();
 			angle = new DragParam();
 			dragEnabled = true;
-			wheelEnabled = true;
+			_wheelEnabled = true;
 			_position = new Vector3D();
 			_gazePosition = new Vector3D();
 		}
@@ -82,6 +82,24 @@ package net.morocoshi.common.ui.mouse
 		public function set isMouseDown(value:Boolean):void 
 		{
 			_isMouseDown = value;
+		}
+		
+		public function get wheelEnabled():Boolean 
+		{
+			return _wheelEnabled;
+		}
+		
+		public function set wheelEnabled(value:Boolean):void 
+		{
+			_wheelEnabled = value;
+			if (_eventObject)
+			{
+				_eventObject.addEventListener(MouseEvent.MOUSE_WHEEL, onMsWheel);
+			}
+			else
+			{
+				_eventObject.removeEventListener(MouseEvent.MOUSE_WHEEL, onMsWheel);
+			}
 		}
 		
 		//--------------------------------------------------------------------------

@@ -196,11 +196,13 @@ package net.morocoshi.moja3d.objects
 			}
 		}
 		
+		private var invertSkin:Matrix3D = new Matrix3D();
 		override protected function calculate(collector:RenderCollector):void 
 		{
 			//スキン姿勢の逆行列の計算
-			var invertSkin:Matrix3D = _worldMatrix.clone();
+			invertSkin.copyFrom(_worldMatrix);
 			invertSkin.invert();
+			
 			for each (var item:SkinShader in skinShaderList) 
 			{
 				item.updateBoneConstants(invertSkin);

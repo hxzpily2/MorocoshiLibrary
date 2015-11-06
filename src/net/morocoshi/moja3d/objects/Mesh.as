@@ -215,7 +215,7 @@ package net.morocoshi.moja3d.objects
 			super.referenceProperties(target);
 			
 			var mesh:Mesh = target as Mesh;
-			mesh._zbias = _zbias;
+			mesh.zbias = _zbias;
 			mesh.geometry = geometry;
 			
 			referenceSurfaces(mesh);
@@ -226,7 +226,7 @@ package net.morocoshi.moja3d.objects
 			super.cloneProperties(target);
 			
 			var mesh:Mesh = target as Mesh;
-			mesh._zbias = _zbias;
+			mesh.zbias = _zbias;
 			mesh.geometry = geometry.clone() as Geometry;
 			
 			referenceSurfaces(mesh);
