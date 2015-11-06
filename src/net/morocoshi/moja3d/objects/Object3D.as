@@ -155,7 +155,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function set matrix(value:Matrix3D):void
 		{
-			_matrix.rawData = value.rawData;
+			_matrix.copyFrom(value);
 			calculateMatrixOrder = true;
 			calculateBoundsOrder = true;
 			recomposeMatrixOrder = false;
@@ -179,7 +179,7 @@ package net.morocoshi.moja3d.objects
 				transformList[2].x = _scaleX;
 				transformList[2].y = _scaleY;
 				transformList[2].z = _scaleZ;
-				_matrix.rawData = recompose(transformList);
+				_matrix.copyRawDataFrom(recompose(transformList));
 				recomposeMatrixOrder = false;
 			}
 			return _matrix;
@@ -881,7 +881,7 @@ package net.morocoshi.moja3d.objects
 				//親がいれば親のワールド姿勢に自分のローカル姿勢を乗算する
 				if (_parent)
 				{
-					_worldMatrix.rawData = append(matrix, _parent._worldMatrix);
+					_worldMatrix.copyRawDataFrom(append(matrix, _parent._worldMatrix));
 				}
 				else
 				{
