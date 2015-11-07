@@ -354,7 +354,11 @@ package net.morocoshi.moja3d.materials
 			var result:Material = new Material();
 			result.name = name;
 			result.culling = culling;
-			result.shadowThreshold = shadowThreshold;
+			result.blendMode = blendMode;
+			result._opaquePassEnabled = _opaquePassEnabled;
+			result._alphaPassEnabled = _alphaPassEnabled;
+			result.alphaThreshold = _alphaThreshold;
+			result.shadowThreshold = _shadowThreshold;
 			result.shaderList = shaderList.reference();
 			result.reflectShaderList = reflectShaderList? reflectShaderList.reference() : null;
 			return result;
@@ -370,9 +374,9 @@ package net.morocoshi.moja3d.materials
 			result.name = name;
 			result.culling = culling;
 			result.blendMode = blendMode;
+			result._opaquePassEnabled = _opaquePassEnabled;
+			result._alphaPassEnabled = _alphaPassEnabled;
 			result.alphaThreshold = _alphaThreshold;
-			result.opaquePassEnabled = _opaquePassEnabled;
-			result.alphaPassEnabled = _alphaPassEnabled;
 			result.shadowThreshold = _shadowThreshold;
 			result.shaderList = shaderList.clone(cloneResources);
 			result.reflectShaderList = reflectShaderList? reflectShaderList.clone(cloneResources) : null;
