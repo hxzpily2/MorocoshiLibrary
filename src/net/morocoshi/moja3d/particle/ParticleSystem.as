@@ -155,12 +155,12 @@ package net.morocoshi.moja3d.particle
 					for (var j:int = 0; j < length; j++) 
 					{
 						var per:Number = (j + 1) / length;
-						particle = emit(time * (1 - per) + prevTime * per);
+						particle = emit(time * per + prevTime * (1 - per));
 						if (particle == null) continue;
 						
 						particle.initialWidth = emitter.particleWidth;
 						particle.initialHeight = emitter.particleHeight;
-						emitter._range.setRandomPosition(particle, emitter);
+						emitter._range.setRandomPosition(particle, emitter, per);
 						particle.animator = emitter._animator;
 						particle.wind = emitter._wind || wind;
 						emitter._animator.emitParticle(particle, emitter);

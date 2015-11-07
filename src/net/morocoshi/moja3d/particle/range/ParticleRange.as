@@ -27,11 +27,12 @@ package net.morocoshi.moja3d.particle.range
 		 * @param	z
 		 * @return
 		 */
-		public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void
+		public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter, per:Number):void
 		{
-			particle.x = emitter.position.x;
-			particle.y = emitter.position.y;
-			particle.z = emitter.position.z;
+			var per2:Number = 1 - per;
+			particle.x = emitter.position.x * per + emitter.prevPosition.x * per2;
+			particle.y = emitter.position.y * per + emitter.prevPosition.y * per2;
+			particle.z = emitter.position.z * per + emitter.prevPosition.z * per2;
 		}
 		
 		public function clone():ParticleRange 

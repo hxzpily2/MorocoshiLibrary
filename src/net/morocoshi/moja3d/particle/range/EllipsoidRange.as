@@ -36,9 +36,9 @@ package net.morocoshi.moja3d.particle.range
 			this.equally = equally;
 		}
 		
-		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter, per:Number):void 
 		{
-			super.setRandomPosition(particle, emitter);
+			super.setRandomPosition(particle, emitter, per);
 			
 			var angle:Number = Math.acos(Math.random() * 2 - 1);
 			var unit:Number = Math.sin(angle);

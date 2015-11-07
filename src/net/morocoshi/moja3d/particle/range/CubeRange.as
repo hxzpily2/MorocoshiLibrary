@@ -34,9 +34,9 @@ package net.morocoshi.moja3d.particle.range
 			this.sizeZ = sizeZ;
 		}
 		
-		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter, per:Number):void 
 		{
-			super.setRandomPosition(particle, emitter);
+			super.setRandomPosition(particle, emitter, per);
 			
 			var tx:Number = random(-sizeX / 2, sizeX / 2);
 			var ty:Number = random(-sizeY / 2, sizeY / 2);

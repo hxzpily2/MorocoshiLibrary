@@ -32,9 +32,9 @@ package net.morocoshi.moja3d.particle.range
 			type = ParticleRangeType.CIRCLE;
 		}
 		
-		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter):void 
+		override public function setRandomPosition(particle:ParticleCell, emitter:ParticleEmitter, per:Number):void 
 		{
-			super.setRandomPosition(particle, emitter);
+			super.setRandomPosition(particle, emitter, per);
 			
 			var angle:Number = Math.random() * Math.PI * 2;
 			var intensity:Number = Math.random();

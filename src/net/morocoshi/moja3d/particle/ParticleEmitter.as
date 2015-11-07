@@ -24,6 +24,7 @@ package net.morocoshi.moja3d.particle
 		/**パーティクルのデフォルトの高さ*/
 		public var particleHeight:Number = 1;
 		
+		moja3d var prevPosition:Vector3D;
 		moja3d var position:Vector3D = new Vector3D();
 		moja3d var xAxis:Vector3D = new Vector3D(1, 0, 0);
 		moja3d var yAxis:Vector3D = new Vector3D(0, 1, 0);
@@ -99,6 +100,18 @@ package net.morocoshi.moja3d.particle
 			zAxis.x = rawData[8];
 			zAxis.y = rawData[9];
 			zAxis.z = rawData[10];
+			
+			if (prevPosition == null)
+			{
+				prevPosition = new Vector3D(rawData[12], rawData[13], rawData[14]);
+			}
+			else
+			{
+				prevPosition.x = position.x;
+				prevPosition.y = position.y;
+				prevPosition.z = position.z;
+			}
+			
 			position.x = rawData[12];
 			position.y = rawData[13];
 			position.z = rawData[14];
