@@ -34,7 +34,7 @@ package net.morocoshi.moja3d.objects
 			requiredAttribute.push(VertexAttribute.NORMAL);
 		}
 		
-		public function update(context3D:ContextProxy = null):void
+		public function updateSurface(context3D:ContextProxy = null):void
 		{
 			var containerMatrix:Matrix3D = worldMatrix.clone();
 			containerMatrix.invert();
@@ -157,6 +157,11 @@ package net.morocoshi.moja3d.objects
 		
 		override public function getResources(hierarchy:Boolean, filter:Class = null):Vector.<Resource> 
 		{
+			if (renderChildren)
+			{
+				return super.getResources(hierarchy, filter);
+			}
+			
 			if (filter == null)
 			{
 				filter = Resource;
@@ -233,7 +238,7 @@ package net.morocoshi.moja3d.objects
 			}
 			object.remove();
 			
-			union.update(null);
+			union.updateSurface(null);
 			union.calculateBounds();
 			
 			return union;

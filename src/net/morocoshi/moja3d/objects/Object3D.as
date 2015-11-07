@@ -585,6 +585,7 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.renderChildren = renderChildren;
 			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
@@ -618,6 +619,7 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.renderChildren = renderChildren;
 			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
