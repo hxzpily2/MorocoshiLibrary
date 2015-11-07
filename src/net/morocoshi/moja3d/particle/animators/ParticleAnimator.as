@@ -70,9 +70,9 @@ package net.morocoshi.moja3d.particle.animators
 			particle.initialScale = getEmitScale();
 			particle.initialRotation = getEmitRotation();
 			var velocity:Vector3D = getEmitVelocity(emitter);
-			particle.vx = velocity.x;
-			particle.vy = velocity.y;
-			particle.vz = velocity.z;
+			particle.vx = emitter.xAxis.x * velocity.x + emitter.yAxis.x * velocity.y + emitter.zAxis.x * velocity.z;
+			particle.vy = emitter.xAxis.y * velocity.x + emitter.yAxis.y * velocity.y + emitter.zAxis.y * velocity.z;
+			particle.vz = emitter.xAxis.z * velocity.x + emitter.yAxis.z * velocity.y + emitter.zAxis.z * velocity.z;
 			particle.spinSpeed = getEmitSpinSpeed();
 			particle.scaleSpeed = getEmitScaleSpeed();
 			particle.time = 0;
