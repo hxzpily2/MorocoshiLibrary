@@ -567,6 +567,15 @@ package net.morocoshi.moja3d.objects
 		public function referenceProperties(target:Object3D):void
 		{
 			target.name = name;
+			target._x = _x;
+			target._y = _y;
+			target._z = _z;
+			target._scaleX = _scaleX;
+			target._scaleY = _scaleY;
+			target._scaleZ = _scaleZ;
+			target._rotationX = _rotationX;
+			target._rotationY = _rotationY;
+			target._rotationZ = _rotationZ;
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
@@ -591,6 +600,15 @@ package net.morocoshi.moja3d.objects
 		public function cloneProperties(target:Object3D):void
 		{
 			target.name = name;
+			target._x = _x;
+			target._y = _y;
+			target._z = _z;
+			target._scaleX = _scaleX;
+			target._scaleY = _scaleY;
+			target._scaleZ = _scaleZ;
+			target._rotationX = _rotationX;
+			target._rotationY = _rotationY;
+			target._rotationZ = _rotationZ;
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
