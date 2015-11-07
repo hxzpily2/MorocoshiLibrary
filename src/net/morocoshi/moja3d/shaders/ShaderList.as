@@ -643,6 +643,8 @@ package net.morocoshi.moja3d.shaders
 		private function createProgram(context3D:ContextProxy, info:AGALInfo, rootVertex:AGALCode, rootFragment:AGALCode):Program3D 
 		{
 			var program:Program3D = context3D.context.createProgram();
+			_vertexCode.codeLines.length = 0;
+			_fragmentCode.codeLines.length = 0;
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 
 			{

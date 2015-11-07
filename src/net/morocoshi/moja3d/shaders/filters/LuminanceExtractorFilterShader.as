@@ -20,6 +20,8 @@ package net.morocoshi.moja3d.shaders.filters
 		
 		public function LuminanceExtractorFilterShader(min:Number, max:Number, mask:int = -1) 
 		{
+			super();
+			
 			_min = min;
 			_max = max;
 			_mask = mask;
