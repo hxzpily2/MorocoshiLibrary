@@ -76,7 +76,7 @@ package net.morocoshi.moja3d.shaders.filters
 		
 		override public function getKey():String 
 		{
-			return "DrawMaskShader:";
+			return "DrawMaskShader:" + items.length + "_" + _blendMode;
 		}
 		
 		override protected function updateAlphaMode():void
@@ -130,7 +130,7 @@ package net.morocoshi.moja3d.shaders.filters
 					"$image.x = max($image.x, $image.z)",
 					"$image.xyz = @color" + i + ".xyz * $image.xxx"
 				);
-				switch(blendMode)
+				switch(_blendMode)
 				{
 					case BlendMode.ADD: fragmentCode.addCode("$output.xyz += $image.xyz"); break;
 					case BlendMode.SUBTRACT: fragmentCode.addCode("$output.xyz -= $image.xyz"); break;
