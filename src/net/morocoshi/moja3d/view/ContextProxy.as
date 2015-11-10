@@ -31,7 +31,6 @@ package net.morocoshi.moja3d.view
 				item.dispose();
 				item.upload(this);
 			}
-			uploadItem = new Dictionary();
 		}
 		
 		public function addUploadItem(resource:Resource):void 

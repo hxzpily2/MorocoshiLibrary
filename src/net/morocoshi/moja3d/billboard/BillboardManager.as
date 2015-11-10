@@ -1,6 +1,8 @@
 package net.morocoshi.moja3d.billboard 
 {
 	import flash.geom.Vector3D;
+	import flash.utils.Dictionary;
+	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.Object3D;
@@ -16,11 +18,13 @@ package net.morocoshi.moja3d.billboard
 	{
 		private var items:Vector.<BillboardItem>;
 		private var tempVector:Vector3D;
+		private var itemMap:Dictionary;
 		
 		public function BillboardManager() 
 		{
 			items = new Vector.<BillboardItem>;
 			tempVector = new Vector3D();
+			itemMap = new Dictionary();
 		}
 		
 		/**
@@ -36,7 +40,32 @@ package net.morocoshi.moja3d.billboard
 		{
 			var item:BillboardItem = new BillboardItem(object, pivot, plane, frontAxis, topAxis);
 			items.push(item);
+			itemMap[object] = item;
 			return item;
+		}
+		
+		/**
+		 * オブジェクトのビルボード化を解除する
+		 * @param	object
+		 * @return
+		 */
+		public function removeObject(object:Object3D):Boolean
+		{
+			var item:BillboardItem = itemMap[object];
+			if (item == null) return false;
+			
+			delete itemMap[item];
+			
+			return VectorUtil.deleteItem(items, item);
+		}
+		
+		/**
+		 * 全てのビルボード化を解除する
+		 */
+		public function removeAllObject():void 
+		{
+			items.length = 0;
+			itemMap = new Dictionary();
 		}
 		
 		public function lookAtCamera(camera:Camera3D, upAxis:Vector3D = null):void
@@ -52,6 +81,8 @@ package net.morocoshi.moja3d.billboard
 			for (var i:int = 0; i < n; i++) 
 			{
 				var item:BillboardItem = items[i];
+				if (item.enabled == false) continue;
+				
 				if (item.plane)
 				{
 					item.lookAt(look, upAxis);
@@ -66,11 +97,6 @@ package net.morocoshi.moja3d.billboard
 					item.lookAt(tempVector, upAxis);
 				}
 			}
-		}
-		
-		public function removeAllObject():void 
-		{
-			items.length = 0;
 		}
 		
 	}

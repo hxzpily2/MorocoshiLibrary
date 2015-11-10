@@ -16,6 +16,9 @@ package net.morocoshi.moja3d.billboard
 	{
 		private var tempLook:Vector3D;
 		private var tempUp:Vector3D;
+		
+		public var enabled:Boolean;
+		
 		public var object:Object3D;
 		public var pivot:Boolean;
 		public var frontAxis:String;
@@ -32,6 +35,7 @@ package net.morocoshi.moja3d.billboard
 		 */
 		public function BillboardItem(object:Object3D, pivot:Boolean, plane:Boolean, frontAxis:String, topAxis:String) 
 		{
+			enabled = true;
 			tempLook = new Vector3D();
 			tempUp = new Vector3D();
 			this.object = object;

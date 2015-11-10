@@ -245,6 +245,8 @@ package net.morocoshi.moja3d.view
 			}
 			else
 			{
+				viewRect = new Rectangle(0, 0, 0, 0);
+				view.updateBackBuffer = true;
 				context3D.reupload();
 			}
 		}

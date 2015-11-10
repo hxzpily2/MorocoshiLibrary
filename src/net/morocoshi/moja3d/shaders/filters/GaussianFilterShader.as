@@ -1,11 +1,9 @@
 package net.morocoshi.moja3d.shaders.filters 
 {
-	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -110,7 +108,7 @@ package net.morocoshi.moja3d.shaders.filters
 				offsetConstant.push(offsetID + ".z");
 				offsetConstant.push(offsetID + ".w");
 			}
-			scaleConst = fragmentCode.addConstantsFromArray("@gaussianScale", [_scale, 0, 0, 0]);
+			scaleConst = fragmentCode.addConstantsFromArray("@gaussianScale", [_scale / _segments, 0, 0, 0]);
 		}
 			
 		override protected function updateShaderCode():void 
@@ -125,8 +123,10 @@ package net.morocoshi.moja3d.shaders.filters
 				"var $uvp",
 				"var $blur",
 				"var $size",
-				"$size.xy = @viewSize.xy",
-				"$size.xy /= @gaussianScale.xx",
+				"$size.y = @gaussianScale.x",
+				"$size.x = @viewSize.y",
+				"$size.x /= @viewSize.x",
+				"$size.x *= @gaussianScale.x",
 				
 				"$uvp.xy = #uv.xy",
 				"$output.xyz = @0_0_0"
@@ -141,7 +141,7 @@ package net.morocoshi.moja3d.shaders.filters
 					fragmentCode.addCode("$size." + xy + " = neg($size." + xy + ")");
 				}
 				fragmentCode.addCode(
-					"$step.x = " + offsetConstant[index] + " / $size." + xy,
+					"$step.x = " + offsetConstant[index] + " * $size." + xy,
 					"$uvp." + xy + " = #uv." + xy + " + $step.x",
 					"$blur = tex($uvp.xy, fs0, " + tag + ")",
 					"$blur *= " + weightConstant[index],
@@ -166,7 +166,7 @@ package net.morocoshi.moja3d.shaders.filters
 			if (_scale == value) return;
 			
 			_scale = value;
-			scaleConst.x = _scale;
+			scaleConst.x = _scale / _segments;
 		}
 		
 		public function get dispersion():Number 
@@ -192,6 +192,7 @@ package net.morocoshi.moja3d.shaders.filters
 			if (_segments == value) return;
 			
 			_segments = value;
+			scaleConst.x = _scale / _segments;
 			updateConstants();
 			updateShaderCode();
 		}
