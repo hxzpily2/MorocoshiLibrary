@@ -70,7 +70,7 @@ package net.morocoshi.moja3d.shaders.depth
 			vertexCode.addCode(
 				"global $pos",
 				"$pos = va" + geometry.getAttributeIndex(VertexAttribute.POSITION),
-				"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
+				//"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
 				"var $temp"
 			);
 			

@@ -16,6 +16,10 @@ package net.morocoshi.moja3d.shaders.scale9
 	{
 		private var constant:AGALConstant;
 		private var geometry:Geometry;
+		private var _x1:Number = 0;
+		private var _x2:Number = 0;
+		private var _y1:Number = 0;
+		private var _y2:Number = 0;
 		
 		public function Scale9Shader(geometry:Geometry) 
 		{
@@ -47,7 +51,7 @@ package net.morocoshi.moja3d.shaders.scale9
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			constant = vertexCode.addConstantsFromArray("@scale9", [-4, 4, -4, 4]);
+			constant = vertexCode.addConstantsFromArray("@scale9", [_x1, _x2, _y1, _y2]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -78,6 +82,46 @@ package net.morocoshi.moja3d.shaders.scale9
 		{
 			var shader:Scale9Shader = new Scale9Shader(geometry);
 			return shader;
+		}
+		
+		public function get x1():Number 
+		{
+			return _x1;
+		}
+		
+		public function set x1(value:Number):void 
+		{
+			constant.x = _x1 = value;
+		}
+		
+		public function get x2():Number 
+		{
+			return _x2;
+		}
+		
+		public function set x2(value:Number):void 
+		{
+			constant.y = _x2 = value;
+		}
+		
+		public function get y1():Number 
+		{
+			return _y1;
+		}
+		
+		public function set y1(value:Number):void 
+		{
+			constant.z = _y1 = value;
+		}
+		
+		public function get y2():Number 
+		{
+			return _y2;
+		}
+		
+		public function set y2(value:Number):void 
+		{
+			constant.w = _y2 = value;
 		}
 		
 	}

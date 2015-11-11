@@ -5,7 +5,8 @@ package net.morocoshi.moja3d.shaders.core
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 半透明ピクセルのみ描画する
+	 * 
 	 * @author tencho
 	 */
 	public class AlphaPassShader extends MaterialShader 

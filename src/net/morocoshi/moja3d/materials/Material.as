@@ -17,6 +17,7 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.core.BasicShader;
 	import net.morocoshi.moja3d.shaders.core.EndShader;
+	import net.morocoshi.moja3d.shaders.core.ModelTransformShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
@@ -215,6 +216,8 @@ package net.morocoshi.moja3d.materials
 					var renderShader:ShaderList = new ShaderList();
 					renderShader.name = mesh.name;
 					renderShader.addShader(new BasicShader(geometry));
+					if (mesh.beforeMatrixShaderList) renderShader.attach(mesh.beforeMatrixShaderList);
+					renderShader.addShader(new ModelTransformShader(geometry));
 					if (mesh.startShaderList) renderShader.attach(mesh.startShaderList);
 					if (skinShader) renderShader.addShader(skinShader);
 					renderShader.attach(shaderList, geometry);
@@ -285,6 +288,8 @@ package net.morocoshi.moja3d.materials
 					
 					var reflectShader:ShaderList = new ShaderList();
 					reflectShader.addShader(new BasicShader(geometry));
+					if (mesh.beforeMatrixShaderList) reflectShader.attach(mesh.beforeMatrixShaderList);
+					reflectShader.addShader(new ModelTransformShader(geometry));
 					reflectShader.addShader(collector.reflectiveWater.killShader);
 					if (mesh.startShaderList) reflectShader.attachExtra(mesh.startShaderList, phase);
 					if (skinShader) reflectShader.addShader(skinShader);
@@ -326,6 +331,8 @@ package net.morocoshi.moja3d.materials
 				AGALCache.shader[maskKey] = shaderData;
 				var result:ShaderList = new ShaderList();
 				result.addShader(new BasicShader(geometry));
+				if (mesh.beforeMatrixShaderList) result.attach(mesh.beforeMatrixShaderList);
+				result.addShader(new ModelTransformShader(geometry));
 				if (mesh.startShaderList) result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
 				if (skinShader) result.addShader(skinShader.getExtraShader(RenderPhase.MASK));
 				result.attach(collector.getMaskShaderList(mask));

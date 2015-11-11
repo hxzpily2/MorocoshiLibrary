@@ -34,6 +34,7 @@ package net.morocoshi.moja3d.objects
 		public var endShaderList:ShaderList;
 		public var zBiasShader:ZBiasShader;
 		public var afterViewShaderList:ShaderList;
+		public var beforeMatrixShaderList:ShaderList;
 		
 		private var _key:String;
 		private var _zbias:Number;

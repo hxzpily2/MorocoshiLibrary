@@ -1,12 +1,12 @@
 package net.morocoshi.moja3d.shaders.core 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 不透明ピクセルのみ描画する
+	 * 
 	 * @author tencho
 	 */
 	public class OpaquePassShader extends MaterialShader 

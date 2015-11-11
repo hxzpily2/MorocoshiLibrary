@@ -4,20 +4,20 @@ package net.morocoshi.moja3d.shaders.core
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthBasicShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthMatrixShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * 最初に追加する基本シェーダー
+	 * モデル行列変換
 	 * 
 	 * @author tencho
 	 */
-	public class MatrixShader extends MaterialShader 
+	public class ModelTransformShader extends MaterialShader 
 	{
-		private var depthShader:DepthBasicShader;
+		private var depthShader:DepthMatrixShader;
 		private var geometry:Geometry;
 		
-		public function MatrixShader(geometry:Geometry) 
+		public function ModelTransformShader(geometry:Geometry) 
 		{
 			super();
 			this.geometry = geometry;
@@ -30,7 +30,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getKey():String 
 		{
-			var key:String = "MatrixShader:";
+			var key:String = "ModelTransformShader:";
 			key += "_" + int(geometry.hasAttribute(VertexAttribute.NORMAL));
 			return key;
 		}
@@ -72,21 +72,17 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			return new MatrixShader(geometry);
+			return new ModelTransformShader(geometry);
 		}
-		/*
+		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
 			if (phase == RenderPhase.DEPTH)
 			{
-				if (depthShader == null)
-				{
-					depthShader = new DepthBasicShader(geometry);
-				}
-				return depthShader;
+				return depthShader || (depthShader = new DepthMatrixShader(geometry));
 			}
 			return null;
 		}
-		*/
-
+		
+	}
 }

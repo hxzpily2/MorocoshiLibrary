@@ -1,19 +1,23 @@
-package net.morocoshi.moja3d.shaders.core 
+package net.morocoshi.moja3d.shaders.depth 
 {
+	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ビュー行列変換
+	 * 深度テクスチャ描画用の基本シェーダー
 	 * 
 	 * @author tencho
 	 */
-	public class ViewTransformShader extends MaterialShader 
+	public class DepthMatrixShader extends MaterialShader 
 	{
+		private var geometry:Geometry;
 		
-		public function ViewTransformShader() 
+		public function DepthMatrixShader(geometry:Geometry) 
 		{
 			super();
+			this.geometry = geometry;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -23,7 +27,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getKey():String 
 		{
-			return "ViewTransformShader:";
+			return "DepthMatrixShader:";
 		}
 		
 		override protected function updateAlphaMode():void
@@ -46,17 +50,16 @@ package net.morocoshi.moja3d.shaders.core
 		{
 			super.updateShaderCode();
 			
-			vertexConstants.viewMatrix = true;
+			vertexConstants.modelMatrix = true;
+			
 			vertexCode.addCode(
-				//position
-				"#wpos = $wpos",
-				"$pos.xyz = m34($pos, @viewMatrix)"//ビュー行列で変換
+				"$pos.xyz = m34($pos, @modelMatrix)"//モデル行列で変換
 			);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new ViewTransformShader();
+			return new DepthMatrixShader(geometry);
 		}
 		
 	}

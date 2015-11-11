@@ -8,7 +8,7 @@ package net.morocoshi.moja3d.shaders.core
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * 最初に追加する基本シェーダー
+	 * 基本シェーダー
 	 * 
 	 * @author tencho
 	 */
@@ -69,9 +69,9 @@ package net.morocoshi.moja3d.shaders.core
 				"global $pos",
 				"global $wpos",
 				//position
-				"$pos = va" + geometry.getAttributeIndex(VertexAttribute.POSITION),
-				"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
-				"$wpos = $pos"
+				"$pos = va" + geometry.getAttributeIndex(VertexAttribute.POSITION)
+				//"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
+				//"$wpos = $pos"
 			);
 			fragmentCode.addCode(
 				
@@ -95,8 +95,8 @@ package net.morocoshi.moja3d.shaders.core
 			{
 				vertexCode.addCode(
 					"global $normal",
-					"$normal.xyz = va" + geometry.getAttributeIndex(VertexAttribute.NORMAL) + ".xyz",
-					"$normal.xyz = m33($normal.xyz, @modelMatrix)"
+					"$normal.xyz = va" + geometry.getAttributeIndex(VertexAttribute.NORMAL) + ".xyz"
+					//"$normal.xyz = m33($normal.xyz, @modelMatrix)"
 				);
 				//正規化された法線
 				fragmentCode.addCode(
@@ -136,11 +136,7 @@ package net.morocoshi.moja3d.shaders.core
 		{
 			if (phase == RenderPhase.DEPTH)
 			{
-				if (depthShader == null)
-				{
-					depthShader = new DepthBasicShader(geometry);
-				}
-				return depthShader;
+				return depthShader || (depthShader = new DepthBasicShader(geometry));
 			}
 			return null;
 		}
