@@ -49,6 +49,8 @@ package net.morocoshi.moja3d.filters
 		public function AuraFilter3D(density:Number, intensity:Number, blur:Number, segments:int, dispersion:Number, lowLV:int, noiseTexture:TextureResource, noiseX:Number, noiseY:Number, noiseScale:Number, scrollU:Number, scrollV:Number) 
 		{
 			super();
+			
+			hasMaskElement = true;
 			_lowLV = lowLV;
 			_scrollU = scrollU;
 			_scrollV = scrollV;

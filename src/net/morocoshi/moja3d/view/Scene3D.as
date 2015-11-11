@@ -401,26 +401,32 @@ package net.morocoshi.moja3d.view
 			//有効なフィルタを抽出
 			validFilters.length = 0;
 			n = filters? filters.length : 0;
+			var needMask:Boolean = false;
 			for (i = 0; i < n; i++) 
 			{
 				var filter:Filter3D = filters[i];
 				if (filter.enabled && !(filter.hasMaskElement && collector.hasMaskElement == false))
 				{
 					validFilters.push(filter);
+					if (filter.hasMaskElement) needMask = true;
 				}
 			}
 			
 			//マスク画像のレンダリング
-			if (collector.hasMaskElement)
+			if (needMask)
 			{
-				fillMaskTextureOrder = true;
-				renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
+				if (collector.hasMaskElement)
+				{
+					fillMaskTextureOrder = true;
+					renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
+				}
+				else if (fillMaskTextureOrder == true)
+				{
+					fillMaskTextureOrder = false;
+					postEffect.maskTexture.fillColor(context3D, 0x0);
+				}
 			}
-			else if (fillMaskTextureOrder == true)
-			{
-				fillMaskTextureOrder = false;
-				postEffect.maskTexture.fillColor(context3D, 0x0);
-			}
+			
 			
 			//光の投影
 			if (collector.hasLightElement)
