@@ -95,7 +95,8 @@ package net.morocoshi.moja3d.shaders.core
 			{
 				vertexCode.addCode(
 					"global $normal",
-					"$normal.xyz = m33(va" + geometry.getAttributeIndex(VertexAttribute.NORMAL) + ".xyz, @modelMatrix)"
+					"$normal.xyz = va" + geometry.getAttributeIndex(VertexAttribute.NORMAL) + ".xyz",
+					"$normal.xyz = m33($normal.xyz, @modelMatrix)"
 				);
 				//正規化された法線
 				fragmentCode.addCode(
