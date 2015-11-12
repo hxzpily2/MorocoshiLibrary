@@ -97,7 +97,14 @@ package net.morocoshi.moja3d.primitives
 			surfaces.push(new Surface(topMaterial, 0, tri));
 			if (twoSides)
 			{
-				surfaces.push(new Surface(bottomMaterial, tri * 3, tri));
+				if (topMaterial == bottomMaterial)
+				{
+					surfaces[0].numTriangles *= 2;
+				}
+				else
+				{
+					surfaces.push(new Surface(bottomMaterial, tri * 3, tri));
+				}
 			}
 			
 			scale9Shader = new Scale9Shader(geometry);
