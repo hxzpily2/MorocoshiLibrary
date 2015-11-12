@@ -158,8 +158,10 @@ package net.morocoshi.moja3d.primitives
 		
 		private function updateScale9():void 
 		{
-			var x1:Number = _scale9Grid.left / scaleX;
-			var x2:Number = (baseWidth - _scale9Grid.right) / scaleX;
+			var sx:Number = Math.abs(scaleX);
+			var sy:Number = Math.abs(scaleY);
+			var x1:Number = _scale9Grid.left / sx;
+			var x2:Number = (baseWidth - _scale9Grid.right) / sx;
 			if (x1 + x2 > baseWidth)
 			{
 				var tx1:Number = baseWidth * x1 / (x1 + x2);
@@ -167,8 +169,8 @@ package net.morocoshi.moja3d.primitives
 				x1 = tx1;
 				x2 = tx2;
 			}
-			var y1:Number = _scale9Grid.top / scaleY;
-			var y2:Number = (baseHeight - _scale9Grid.bottom) / scaleY;
+			var y1:Number = _scale9Grid.top / sy;
+			var y2:Number = (baseHeight - _scale9Grid.bottom) / sy;
 			if (y1 + y2 > baseHeight)
 			{
 				var ty1:Number = baseHeight * y1 / (y1 + y2);
