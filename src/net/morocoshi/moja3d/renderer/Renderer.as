@@ -73,6 +73,7 @@ package net.morocoshi.moja3d.renderer
 		public function renderScene(collector:RenderCollector, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
 		{
 			var context:Context3D = collector.context3D.context;
+			var cameraMatrix:Matrix3D;
 			
 			frame++;
 			if (camera)
@@ -92,7 +93,7 @@ package net.morocoshi.moja3d.renderer
 				collector.fragmentConstant.projMatrix.matrix = camera.perspectiveMatrix;
 				
 				//カメラのワールド座標
-				var cameraMatrix:Matrix3D = camera.worldMatrix;
+				cameraMatrix = camera.worldMatrix;
 				collector.vertexConstant.cameraPosition.x = cameraMatrix.rawData[12];
 				collector.vertexConstant.cameraPosition.y = cameraMatrix.rawData[13];
 				collector.vertexConstant.cameraPosition.z = cameraMatrix.rawData[14];
@@ -171,6 +172,8 @@ package net.morocoshi.moja3d.renderer
 				renderLayer(RenderLayer.OVERLAY, collector, camera, drawTextures);
 			}
 			
+			context = null;
+			cameraMatrix = null;
 		}
 		
 		private function setDepthTest(context:Context3D, depthMask:Boolean, passCompareMode:String):void 
@@ -188,15 +191,17 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function sortItem(layer:int, collector:RenderCollector, camera:Camera3D):void
 		{
+			var data:Vector.<Number>;
 			var item:RenderElement = collector.renderElementList[layer];
 			while (item)
 			{
 				//カメラ平面からの距離をチェックする
-				var data:Vector.<Number> = item.matrix.rawData;
+				data = item.matrix.rawData;
 				item.distance = camera.getDistanceXYZ(data[12], data[13], data[14]) - item.sortPriority;
 				item = item.next;
 			}
 			collector.renderElementList[layer] = elementSort.sort(collector.renderElementList[layer]);
+			data = null;
 		}
 		
 		private var defaltPassCompareMode:String;
@@ -213,6 +218,9 @@ package net.morocoshi.moja3d.renderer
 		 */
 		public function renderLayer(layer:int, collector:RenderCollector, camera:Camera3D, drawTextures:Array):void
 		{
+			var textureList:Vector.<AGALTexture>;
+			var textureResource:TextureResource;
+			var agalTex:AGALTexture;
 			var context:Context3D = collector.context3D.context;
 			var timer:int = getTimer();
 			
@@ -238,7 +246,7 @@ package net.morocoshi.moja3d.renderer
 				}
 				
 				//テクスチャ
-				var textureList:Vector.<AGALTexture> = collector.fragmentCode.textureList.concat(item.shaderList.fragmentCode.textureList);
+				textureList = collector.fragmentCode.textureList.concat(item.shaderList.fragmentCode.textureList);
 				if (drawTextures)
 				{
 					var m:int = drawTextures.length;
@@ -251,13 +259,13 @@ package net.morocoshi.moja3d.renderer
 				n = textureList.length;
 				for (i = 0; i < n; i++) 
 				{
-					var agalTex:AGALTexture = textureList[i];
+					agalTex = textureList[i];
 					if (agalTex.enabled == false)
 					{
 						continue;
 					}
 					
-					var textureResource:TextureResource = agalTex.texture;
+					textureResource = agalTex.texture;
 					//テクスチャがnullならダミーテクスチャを使う
 					textureResource = (textureResource && textureResource.isUploaded && textureResource.isReady)? textureResource : dummyTexture;
 					context.setTextureAt(textureCount, textureResource.texture);
@@ -288,17 +296,6 @@ package net.morocoshi.moja3d.renderer
 				item.shaderList.fragmentCode.applyProgramConstants(context, fragmentIndex);
 				
 				//描画
-				//if (item.passCompareMode)
-				//{
-				//	tempPassCompareMode = defaltPassCompareMode;
-				//	tempDepthMask = defaltDepthMask;
-				//	context3D.setDepthTest(item.depthMask, item.passCompareMode);
-				//}
-				//else if (tempPassCompareMode)
-				//{
-				//	context3D.setDepthTest(tempDepthMask, tempPassCompareMode);
-				//	tempPassCompareMode = "";
-				//}
 				context.drawTriangles(item.indexBuffer, item.firstIndex, item.numTriangles);
 				
 				//バッファをクリアする
@@ -310,6 +307,11 @@ package net.morocoshi.moja3d.renderer
 				
 				item = item.next;
 			}
+			
+			context = null;
+			agalTex = null;
+			textureList = null;
+			textureResource = null;
 		}
 		
 		public function renderFilter(collector:RenderCollector, sourceTextures:Array, targetTexture:RenderTextureResource, antiAlias:int):void 

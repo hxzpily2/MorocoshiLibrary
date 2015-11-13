@@ -38,7 +38,6 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
-	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.stats.MojaStats;
 	
@@ -341,10 +340,14 @@ package net.morocoshi.moja3d.view
 			//シャドウライトを視野台を包むように自動移動
 			if (collector.hasShadowElement || collector.hasLightElement)
 			{
+				var shadowLight:Light3D;
+				var point:Vector3D;
+				var invertedMatrix:Matrix3D;
+				
 				var numShadow:int = collector.sunShadowList.length;
 				for (i = 0; i < numShadow; i++) 
 				{
-					var shadowLight:Light3D = collector.sunShadowList[i];
+					shadowLight = collector.sunShadowList[i];
 					for (var j:int = 0; j < 2; j++) 
 					{
 						var isMain:Boolean = (j == 0);
@@ -354,7 +357,7 @@ package net.morocoshi.moja3d.view
 						{
 							if (shadowLight.autoShadowBounds)
 							{
-								var invertedMatrix:Matrix3D = shadow.parent.worldMatrix.clone();
+								invertedMatrix = shadow.parent.worldMatrix.clone();
 								invertedMatrix.invert();
 								invertedMatrix.prepend(camera.worldMatrix);
 								
@@ -372,7 +375,7 @@ package net.morocoshi.moja3d.view
 								var numPoints:int = camera.frustumPoints.length;
 								for (var k:int = 0; k < numPoints; k++)
 								{
-									var point:Vector3D = camera.frustumPoints[k];
+									point = camera.frustumPoints[k];
 									TransformUtil.transformVector(point, invertedMatrix);
 									if(minX > point.x) minX = point.x;
 									if(minY > point.y) minY = point.y;
@@ -395,22 +398,27 @@ package net.morocoshi.moja3d.view
 							}
 						}
 					}
-				}	
+				}
+				shadowLight = null;
+				invertedMatrix = null;
+				point = null;
 			}
 			
 			//有効なフィルタを抽出
 			validFilters.length = 0;
-			n = filters? filters.length : 0;
 			var needMask:Boolean = false;
+			var filter:Filter3D;
+			n = filters? filters.length : 0;
 			for (i = 0; i < n; i++) 
 			{
-				var filter:Filter3D = filters[i];
+				filter = filters[i];
 				if (filter.enabled && !(filter.hasMaskElement && collector.hasMaskElement == false))
 				{
 					validFilters.push(filter);
 					if (filter.hasMaskElement) needMask = true;
 				}
 			}
+			filter = null;
 			
 			//マスク画像のレンダリング
 			if (needMask)
@@ -467,11 +475,12 @@ package net.morocoshi.moja3d.view
 			var hasReflectElement:Boolean = collector.reflectiveWater.hasReflectElement;
 			if (hasReflectElement)
 			{
+				var reflectionResource:RenderTextureResource;
 				var reflectionData:Object = collector.reflectiveWater.agalTextures;
 				for (var waterHeight:* in reflectionData) 
 				{
 					waterHeight = Number(waterHeight);
-					var reflectionResource:RenderTextureResource = reflectionData[waterHeight];
+					reflectionResource = reflectionData[waterHeight];
 					//反射用Killシェーダのパラメータを水面の高さに合わせる
 					collector.reflectiveWater.killShader.height = waterHeight;
 					collector.reflectiveWater.killShader.reverse = cameraZ < waterHeight;
@@ -501,6 +510,8 @@ package net.morocoshi.moja3d.view
 					collector.collect(rootObject, reflectCamera, this, RenderPhase.REFLECT);
 					renderer.renderScene(collector, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
 				}
+				reflectionData = null;
+				reflectionResource = null;
 			}
 			
 			//最終結果
@@ -511,6 +522,7 @@ package net.morocoshi.moja3d.view
 			}
 			var targetTexture:RenderTextureResource = (validFilters.length > 0)? postEffect.renderTexture : texture;
 			renderer.renderScene(collector, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
+			targetTexture = null;
 			
 			//ポストエフェクト
 			n = validFilters.length;

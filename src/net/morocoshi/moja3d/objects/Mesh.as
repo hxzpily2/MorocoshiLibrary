@@ -44,10 +44,6 @@ package net.morocoshi.moja3d.objects
 		/**RenderElementインスタンスのキャッシュ（new回数を抑える用）*/
 		private var renderElements:Vector.<RenderElement>;
 		private var elementCount:int;
-		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
-		//public var passCompareMode:String;
-		/**レンダリング時のContext3D.setDepthTest()を個別設定する場合の値*/
-		//public var depthMask:Boolean;
 		
 		static moja3d var globalSeed:int;
 		moja3d var seed:String;
@@ -59,8 +55,6 @@ package net.morocoshi.moja3d.objects
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;
-			//depthMask = true;
-			//passCompareMode = "";
 			layer = RenderLayer.OPAQUE;
 			geometry = new Geometry();
 			surfaces = new Vector.<Surface>;
@@ -119,7 +113,8 @@ package net.morocoshi.moja3d.objects
 			var mesh:Mesh = new Mesh();
 			cloneProperties(mesh);
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				mesh.addChild(current.clone());
 			}
@@ -163,7 +158,8 @@ package net.morocoshi.moja3d.objects
 			referenceProperties(mesh);
 			
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				mesh.addChild(current.reference());
 			}
@@ -192,13 +188,15 @@ package net.morocoshi.moja3d.objects
 				mesh.surfaces.push(surface);
 			}
 			
+			surface = null;
 			if (combinedSurfacesList == null) return;
 			
+			var combinedSurfaces:Vector.<Surface>;
 			mesh.combinedSurfacesList = new Vector.<Vector.<Surface>>;
 			n = combinedSurfacesList.length;		
 			for (i = 0; i < n; i++) 
 			{
-				var combinedSurfaces:Vector.<Surface> = new Vector.<Surface>;
+				combinedSurfaces = new Vector.<Surface>;
 				mesh.combinedSurfacesList.push(combinedSurfaces);
 				m = combinedSurfacesList[i].length;
 				for (j = 0; j < m; j++)
@@ -209,6 +207,9 @@ package net.morocoshi.moja3d.objects
 					combinedSurfaces.push(surface);
 				}
 			}
+			
+			surface = null;
+			combinedSurfaces = null;
 		}
 		
 		override public function referenceProperties(target:Object3D):void
@@ -240,12 +241,18 @@ package net.morocoshi.moja3d.objects
 				filter = Resource;
 			}
 			
+			var material:Material;
+			var geometryItem:Geometry;
+			var resourceList:Vector.<Resource>;
+			var resource:Resource;
+			
 			var result:Vector.<Resource> = super.getResources(hierarchy, filter);
+			
 			if (_geometry)
 			{
 				if (_geometry is CombinedGeometry)
 				{
-					for each(var geometryItem:Geometry in CombinedGeometry(_geometry).geometries)
+					for each(geometryItem in CombinedGeometry(_geometry).geometries)
 					{
 						if (geometryItem is filter) result.push(geometryItem);
 					}
@@ -255,17 +262,18 @@ package net.morocoshi.moja3d.objects
 					result.push(_geometry);
 				}
 			}
+			
 			var n:int = surfaces.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var material:Material = surfaces[i]._material;
+				material = surfaces[i]._material;
 				if (material)
 				{
-					var resourceList:Vector.<Resource> = material.getResources();
+					resourceList = material.getResources();
 					var numResource:int = resourceList.length;
 					for (var j:int = 0; j < numResource; j++) 
 					{
-						var resource:Resource = resourceList[j];
+						resource = resourceList[j];
 						if (resource is filter)
 						{
 							result.push(resource);
@@ -273,6 +281,12 @@ package net.morocoshi.moja3d.objects
 					}
 				}
 			}
+			
+			resourceList = null;
+			geometryItem = null;
+			resource = null;
+			material = null;
+			
 			return result;
 		}
 		
@@ -295,7 +309,11 @@ package net.morocoshi.moja3d.objects
 				var nn:int = combined.geometries.length;
 				for (var ii:int = 0; ii < nn; ii++) 
 				{
-					if (combined.geometries[ii].isUploaded == false) return false;
+					if (combined.geometries[ii].isUploaded == false)
+					{
+						combined = null;
+						return false;
+					}
 				}
 			}
 			
@@ -311,26 +329,45 @@ package net.morocoshi.moja3d.objects
 				for (var i:int = 0; i < n; i++) 
 				{
 					skinShader = skin? skin.skinShaderList[i] : null;
-					if (!collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader)) return false;
+					if (!collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader))
+					{
+						combined = null;
+						skinShader = null;
+						return false;
+					}
 				}
 			}
 			else
 			{
 				skinShader = skin? skin.skinShaderList[0] : null;
-				if (!collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader)) return false;
+				if (!collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader))
+				{
+					combined = null;
+					skinShader = null;
+					return false;
+				}
 			}
+			
+			combined = null;
+			skinShader = null;
 			
 			return true;
 		}
 		
 		private function collectSurfaces(collector:RenderCollector, surfaceList:Vector.<Surface>, geom:Geometry, mask:int, worldFlip:int, skinShader:MaterialShader):Boolean 
 		{
+			var surface:Surface;
+			var material:Material;
+			var checkShader:ShaderList;
+			var shaderList:ShaderList;
+			var element:RenderElement;
+			
 			//サーフェイスの数繰り返す
 			var n:int = surfaceList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var surface:Surface = surfaceList[i];
-				var material:Material = surface._material;
+				surface = surfaceList[i];
+				material = surface._material;
 				//マテリアルが貼られていない、もしくはポリゴンが無ければスキップ
 				if (material == null || surface.numTriangles == 0) continue;
 				
@@ -348,7 +385,7 @@ package net.morocoshi.moja3d.objects
 				if (checkMode)
 				{
 					//反射要素があれば収集するが、カメラが無い＝preloadPrograms時はスキップする
-					var checkShader:ShaderList = collector.opaquePassShaderList || collector.alphaPassShaderList;
+					checkShader = collector.opaquePassShaderList || collector.alphaPassShaderList;
 					if (checkShader && checkShader.reflectShader)
 					{
 						if (collector.camera)
@@ -387,12 +424,12 @@ package net.morocoshi.moja3d.objects
 				//不透明要素＆半透明要素をそれぞれレンダリング要素として収集する
 				for (var j:int = 0; j < 2; j++) 
 				{
-					var shaderList:ShaderList = (j == 0)? collector.opaquePassShaderList : collector.alphaPassShaderList;
+					shaderList = (j == 0)? collector.opaquePassShaderList : collector.alphaPassShaderList;
 					if (shaderList == null) continue;
 					
 					elementCount++;
 					var shaderLayer:uint = (j == 0)? RenderLayer.OPAQUE : RenderLayer.TRANSPARENT;
-					var element:RenderElement = (renderElements.length > elementCount)? renderElements[elementCount] : null;
+					element = (renderElements.length > elementCount)? renderElements[elementCount] : null;
 					if (element == null)
 					{
 						element = renderElements[elementCount] = new RenderElement();
@@ -405,8 +442,6 @@ package net.morocoshi.moja3d.objects
 					element.vertexBufferList = geom.vertexBufferList;
 					element.indexBuffer = geom.indexBuffer;
 					element.culling = material.culling;
-					//element.depthMask = depthMask;
-					//element.passCompareMode = passCompareMode;
 					element.sourceFactor = material.sourceFactor;
 					element.destinationFactor = material.destinationFactor;
 					//マイナススケールでフリップしていた場合は表示を反転する
@@ -423,6 +458,12 @@ package net.morocoshi.moja3d.objects
 				}
 				
 			}
+			
+			surface = null;
+			material = null;
+			checkShader = null;
+			shaderList = null;
+			element = null;
 			
 			return true;
 		}

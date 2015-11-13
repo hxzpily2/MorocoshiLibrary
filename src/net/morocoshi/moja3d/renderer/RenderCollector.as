@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.renderer 
 {
 	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTriangleFace;
 	import flash.utils.Dictionary;
@@ -162,6 +161,7 @@ package net.morocoshi.moja3d.renderer
 			var shadow:Shadow = camera as Shadow;
 			var w:Number = shadow? shadow.width : scene.view.width;
 			var h:Number = shadow? shadow.height : scene.view.height;
+			shadow = null;
 			camera.setScreenSize(w, h);
 			camera.checkPerspectiveUpdate();
 			
@@ -186,12 +186,18 @@ package net.morocoshi.moja3d.renderer
 		{
 			var i:int;
 			var n:int;
+			var shadowConst:ShadowConstant
+			var mainShadow:Shadow
+			var wideShadow:Shadow
+			var light:DirectionalLightConstant;
+			var omniLight:OmniLightConstant;
+			var shader:ShadowShader;
 			
 			//収集した影ライト数だけ定数を更新する
 			n = LightSetting._numDirectionalShadow;
 			for (i = 0; i < n; i++)
 			{
-				var shadowConst:ShadowConstant = shadowConstantList[i];
+				shadowConst = shadowConstantList[i];
 				//@@@ここあってる？
 				if (sunShadowList.length <= i)
 				{
@@ -204,10 +210,10 @@ package net.morocoshi.moja3d.renderer
 				}
 				
 				//全影シェーダーの定数をライト影で更新
-				for each(var shader:ShadowShader in shadowShaderLink)
+				for each(shader in shadowShaderLink)
 				{
-					var mainShadow:Shadow = sunShadowList[i]._mainShadow;
-					var wideShadow:Shadow = sunShadowList[i]._wideShadow;
+					mainShadow = sunShadowList[i]._mainShadow;
+					wideShadow = sunShadowList[i]._wideShadow;
 					
 					if (shader.syncLight)
 					{
@@ -245,7 +251,7 @@ package net.morocoshi.moja3d.renderer
 			//収集したライト数だけ定数を更新する
 			for (i = 0; i < LightSetting._numDirectionalLights; i++) 
 			{
-				var light:DirectionalLightConstant = sunLightConstantList[i];
+				light = sunLightConstantList[i];
 				if (sunLightList.length <= i)
 				{
 					light.clear();
@@ -256,7 +262,7 @@ package net.morocoshi.moja3d.renderer
 			
 			for (i = 0; i < LightSetting._numOmniLights; i++) 
 			{
-				var omniLight:OmniLightConstant = omniLightConstantList[i];
+				omniLight = omniLightConstantList[i];
 				if (omniLightList.length <= i)
 				{
 					omniLight.clear();
@@ -264,6 +270,13 @@ package net.morocoshi.moja3d.renderer
 				}
 				omniLight.applyFrom(omniLightList[i]);
 			}
+			
+			shadowConst = null;
+			mainShadow = null;
+			wideShadow = null;
+			light = null;
+			omniLight = null;
+			shader = null;
 		}
 		
 		public function resetStats():void
@@ -414,6 +427,7 @@ package net.morocoshi.moja3d.renderer
 			}
 			item.next = list;
 			renderElementList[item.layer] = item;
+			list = null;
 		}
 		
 		private var element:RenderElement;
@@ -452,11 +466,14 @@ package net.morocoshi.moja3d.renderer
 		{
 			var i:int;
 			var n:int;
+			var shadow:ShadowConstant;
+			var omniLight:OmniLightConstant;
+			var sunLight:DirectionalLightConstant;
 			
 			n = shadowConstantList.length;
 			for (i = 0; i < n; i++) 
 			{
-				var shadow:ShadowConstant = shadowConstantList[i];
+				shadow = shadowConstantList[i];
 				shadow.setVertexEnabled(vertex.shadow && renderPhase != RenderPhase.DEPTH);
 				shadow.setFragmentEnabled(fragment.shadow && renderPhase != RenderPhase.DEPTH);
 			}
@@ -464,7 +481,7 @@ package net.morocoshi.moja3d.renderer
 			n = sunLightConstantList.length;
 			for (i = 0; i < n; i++) 
 			{
-				var sunLight:DirectionalLightConstant = sunLightConstantList[i];
+				sunLight = sunLightConstantList[i];
 				sunLight.setVertexEnabled(vertex.lights);
 				sunLight.setFragmentEnabled(fragment.lights);
 			}
@@ -472,10 +489,14 @@ package net.morocoshi.moja3d.renderer
 			n = omniLightConstantList.length;
 			for (i = 0; i < n; i++) 
 			{
-				var omniLight:OmniLightConstant = omniLightConstantList[i];
+				omniLight = omniLightConstantList[i];
 				omniLight.setVertexEnabled(vertex.lights);
 				omniLight.setFragmentEnabled(fragment.lights);
 			}
+			
+			sunLight = null;
+			omniLight = null;
+			shadow = null;
 		}
 		
 		public function getMaskShaderList(mask:uint):ShaderList 

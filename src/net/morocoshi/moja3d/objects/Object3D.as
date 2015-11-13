@@ -75,10 +75,13 @@ package net.morocoshi.moja3d.objects
 		moja3d var _matrix:Matrix3D;
 		moja3d var _worldMatrix:Matrix3D;
 		moja3d var _alpha:Number;
-		private var transformList:Vector.<Vector3D>;
-		private var rawData:Vector.<Number> = new Vector.<Number>(16, true);
 		/**worldMatrix計算用に使う一時変数*/
 		private var notifyChild:Object3D;
+		
+		private var transformList:Vector.<Vector3D>;
+		private var rawData:Vector.<Number> = new Vector.<Number>(16, true);
+		private var decomposedData:Vector.<Vector3D>;
+		
 		
 		/**これがtrueだとupdate()時に一度だけ色情報が計算される*/
 		moja3d var calculateColorOrder:Boolean;
@@ -445,24 +448,6 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * Matrix3Dを分解してxyz～にする
-		 */
-		private function decomposeMatrix():void
-		{
-			var data:Vector.<Vector3D> = _matrix.decompose();
-			_x = data[0].x;
-			_y = data[0].y;
-			_z = data[0].z;
-			_rotationX = data[1].x;
-			_rotationY = data[1].y;
-			_rotationZ = data[1].z;
-			_scaleX = data[2].x;
-			_scaleY = data[2].y;
-			_scaleZ = data[2].z;
-			decomposeMatrixOrder = false;
-		}
-		
-		/**
 		 * レンダリング直前に親が変形していれば再計算する必要がある。親をたどっていき、姿勢変化しているもっとも遠い親を特定する。
 		 */
 		public function calculteWorldMatrix():void 
@@ -481,6 +466,7 @@ package net.morocoshi.moja3d.objects
 				target = target._parent;
 			}
 			notifyChild = null;
+			child = null;
 			
 			//親が変化していない場合
 			if (startObject == null)
@@ -545,7 +531,8 @@ package net.morocoshi.moja3d.objects
 			var object:Object3D = new Object3D();
 			referenceProperties(object);
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				object.addChild(current.reference());
 			}
@@ -557,7 +544,8 @@ package net.morocoshi.moja3d.objects
 			var object:Object3D = new Object3D();
 			cloneProperties(object);
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				object.addChild(current.clone());
 			}
@@ -641,7 +629,8 @@ package net.morocoshi.moja3d.objects
 			if (hierarchy)
 			{
 				//子を再帰的に
-				for (var current:Object3D = _children; current; current = current._next)
+				var current:Object3D;
+				for (current = _children; current; current = current._next)
 				{
 					current.createShader(hierarchy);
 				}
@@ -660,7 +649,8 @@ package net.morocoshi.moja3d.objects
 			if (hierarchy)
 			{
 				//子を再帰的に
-				for (var current:Object3D = _children; current; current = current._next)
+				var current:Object3D;
+				for (current = _children; current; current = current._next)
 				{
 					result = result.concat(current.getResources(hierarchy, filter));
 				}
@@ -695,13 +685,15 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function dispose(hierarchy:Boolean):void 
 		{
-			for each(var resource:Resource in getResources(hierarchy))
+			var resource:Resource;
+			for each(resource in getResources(hierarchy))
 			{
 				if (resource.autoDispose)
 				{
 					resource.dispose();
 				}
 			}
+			resource = null;
 		}
 		
 		/**
@@ -711,10 +703,12 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function setAutoResourceDispose(autoDispose:Boolean, hierarchy:Boolean):void
 		{
-			for each(var resource:Resource in getResources(hierarchy))
+			var resource:Resource;
+			for each(resource in getResources(hierarchy))
 			{
 				resource.autoDispose = autoDispose;
 			}
+			resource = null;
 		}
 		
 		public function removeChildren():void
@@ -747,7 +741,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getWorldAxisX(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = worldMatrix.rawData;
+			rawData = worldMatrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[0], rawData[1], rawData[2]);
 			if (normalized)
 			{
@@ -758,7 +752,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getWorldAxisY(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = worldMatrix.rawData;
+			rawData = worldMatrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[4], rawData[5], rawData[6]);
 			if (normalized)
 			{
@@ -769,7 +763,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getWorldAxisZ(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = worldMatrix.rawData;
+			rawData = worldMatrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[8], rawData[9], rawData[10]);
 			if (normalized)
 			{
@@ -780,7 +774,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getLocalAxisX(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = matrix.rawData;
+			rawData = matrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[0], rawData[1], rawData[2]);
 			if (normalized)
 			{
@@ -791,7 +785,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getLocalAxisY(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = matrix.rawData;
+			rawData = matrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[4], rawData[5], rawData[6]);
 			if (normalized)
 			{
@@ -802,7 +796,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function getLocalAxisZ(normalized:Boolean):Vector3D
 		{
-			var rawData:Vector.<Number> = matrix.rawData;
+			rawData = matrix.rawData;
 			var look:Vector3D = new Vector3D(rawData[8], rawData[9], rawData[10]);
 			if (normalized)
 			{
@@ -972,7 +966,8 @@ package net.morocoshi.moja3d.objects
 			//子を再帰的に収集する
 			if (skipChildren == false)
 			{
-				for (var current:Object3D = _children; current; current = current._next)
+				var current:Object3D;
+				for (current = _children; current; current = current._next)
 				{
 					//非表示の子は計算はしないが、親が姿勢変化していた場合は通知しておく
 					if (current._visible == false)
@@ -994,7 +989,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * レンダリング要素収集時に毎回に何かを再計算する場合に使用
+		 * レンダリング要素収集時に毎回何かを再計算する場合に使用
 		 * @param	collector
 		 */
 		protected function collecting(collector:RenderCollector):void 
@@ -1043,7 +1038,8 @@ package net.morocoshi.moja3d.objects
 		public function get numChildren():int
 		{
 			var count:int = 0;
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				count++;
 			}
@@ -1057,19 +1053,6 @@ package net.morocoshi.moja3d.objects
 		{
 			calculteWorldMatrix();
 			return _worldMatrix;
-			/*
-			 * これは負荷の高い元の正確なコード。calculteWorldMatrixにミスがなければ削除していい
-			var target:Object3D = this._parent;
-			var m3d:Matrix3D = matrix.clone();
-			while (target)
-			{
-				m3d.append(target.matrix);
-				target = target._parent;
-			}
-			_worldMatrix = m3d;
-			
-			return _worldMatrix;
-			*/
 		}
 		
 		/**
@@ -1196,6 +1179,8 @@ package net.morocoshi.moja3d.objects
 			invertedMatrix.invert();
 			newMatrix.append(invertedMatrix);
 			object.matrix = newMatrix;
+			invertedMatrix = null;
+			newMatrix = null;
 			return addChild(object);
 		}
 		
@@ -1224,7 +1209,6 @@ package net.morocoshi.moja3d.objects
 			}
 			_lastChild = object;
 			object.calculateMatrixOrder = true;
-			//object.recomposeMatrixOrder = true;
 			return object;
 		}
 		
@@ -1236,7 +1220,8 @@ package net.morocoshi.moja3d.objects
 		public function getChildAt(num:int):Object3D 
 		{
 			var count:int = -1;
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				count++;
 				if (num == count) return current;
@@ -1252,7 +1237,9 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function getChildByName(name:String, hierarchy:Boolean = false):Object3D 
 		{
-			for (var current:Object3D = _children; current; current = current._next)
+			var result:Object3D;
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				if (name == current.name)
 				{
@@ -1260,7 +1247,7 @@ package net.morocoshi.moja3d.objects
 				}
 				if (hierarchy)
 				{
-					var result:Object3D = current.getChildByName(name, hierarchy);
+					result = current.getChildByName(name, hierarchy);
 					if (result) return result;
 				}
 			}
@@ -1276,7 +1263,9 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function getChildByAnimationID(id:String, hierarchy:Boolean = true):Object3D 
 		{
-			for (var current:Object3D = _children; current; current = current._next)
+			var result:Object3D;
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				if (id == current.animationID)
 				{
@@ -1284,7 +1273,7 @@ package net.morocoshi.moja3d.objects
 				}
 				if (hierarchy)
 				{
-					var result:Object3D = current.getChildByAnimationID(id, hierarchy);
+					result = current.getChildByAnimationID(id, hierarchy);
 					if (result) return result;
 				}
 			}
@@ -1329,7 +1318,10 @@ package net.morocoshi.moja3d.objects
 			
 			var result:Vector.<Object3D> = new <Object3D>[];
 			
-			for (var current:Object3D = _children; current; current = current._next)
+			var currentChildren:Vector.<Object3D>;
+			var child:Object3D;
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				if (current is filter)
 				{
@@ -1340,11 +1332,11 @@ package net.morocoshi.moja3d.objects
 					continue;
 				}
 				
-				var currentChildren:Vector.<Object3D> = current.getChildren(false, hierarchy, filter);
+				currentChildren = current.getChildren(false, hierarchy, filter);
 				var n:int = currentChildren.length;
 				for (var i:int = 0; i < n; i++) 
 				{
-					var child:Object3D = currentChildren[i];
+					child = currentChildren[i];
 					if (child is filter)
 					{
 						result.push(child);
@@ -1359,7 +1351,7 @@ package net.morocoshi.moja3d.objects
 			
 			return result;
 		}
-				
+		
 		/**
 		 * XYZのスケールを一括で設定
 		 * @param	scale
@@ -1398,11 +1390,12 @@ package net.morocoshi.moja3d.objects
 		//  Matrix計算
 		//
 		//--------------------------------------------------------------------------
-		
+		private var va:Vector.<Number>;
+		private var vb:Vector.<Number>;
 		private function append(a:Matrix3D, b:Matrix3D):Vector.<Number>
 		{
-			var va:Vector.<Number> = a.rawData;
-			var vb:Vector.<Number> = b.rawData;
+			va = a.rawData;
+			vb = b.rawData;
 			rawData[0]  = vb[0] * va[0]  + vb[4] * va[1]  + vb[8]  * va[2]  + vb[12] * va[3];
 			rawData[1]  = vb[1] * va[0]  + vb[5] * va[1]  + vb[9]  * va[2]  + vb[13] * va[3];
 			rawData[2]  = vb[2] * va[0]  + vb[6] * va[1]  + vb[10] * va[2]  + vb[14] * va[3];
@@ -1424,10 +1417,9 @@ package net.morocoshi.moja3d.objects
 		
 		private function recompose(components:Vector.<Vector3D>):Vector.<Number>
 		{
-			var scale:Vector.<Number> = new Vector.<Number>(16, true);
-			scale[0] = scale[1] = scale[2] = components[2].x;
-			scale[4] = scale[5] = scale[6] = components[2].y;
-			scale[8] = scale[9] = scale[10] = components[2].z;
+			var sx:Number = components[2].x;
+			var sy:Number = components[2].y;
+			var sz:Number = components[2].z;
 			
 			var cosx:Number = Math.cos(components[1].x);
 			var cosy:Number = Math.cos(components[1].y);
@@ -1436,17 +1428,17 @@ package net.morocoshi.moja3d.objects
 			var siny:Number = Math.sin(components[1].y);
 			var sinz:Number = Math.sin(components[1].z);
 			
-			rawData[0] = cosy * cosz * scale[0];
-			rawData[1] = cosy * sinz * scale[1];
-			rawData[2] = -siny * scale[2];
+			rawData[0] = cosy * cosz * sx;
+			rawData[1] = cosy * sinz * sx;
+			rawData[2] = -siny * sx;
 			rawData[3] = 0;
-			rawData[4] = (sinx * siny * cosz - cosx * sinz) * scale[4];
-			rawData[5] = (sinx * siny * sinz + cosx * cosz) * scale[5];
-			rawData[6] = sinx * cosy * scale[6];
+			rawData[4] = (sinx * siny * cosz - cosx * sinz) * sy;
+			rawData[5] = (sinx * siny * sinz + cosx * cosz) * sy;
+			rawData[6] = sinx * cosy * sy;
 			rawData[7] = 0;
-			rawData[8] = (cosx * siny * cosz + sinx * sinz) * scale[8];
-			rawData[9] = (cosx * siny * sinz - sinx * cosz) * scale[9];
-			rawData[10] = cosx * cosy * scale[10];
+			rawData[8] = (cosx * siny * cosz + sinx * sinz) * sz;
+			rawData[9] = (cosx * siny * sinz - sinx * cosz) * sz;
+			rawData[10] = cosx * cosy * sz;
 			rawData[11] = 0;
 			rawData[12] = components[0].x;
 			rawData[13] = components[0].y;
@@ -1458,6 +1450,24 @@ package net.morocoshi.moja3d.objects
 			if (components[2].z == 0) rawData[10] = 1e-15;
 			
 			return rawData;
+		}
+		
+		/**
+		 * Matrix3Dを分解してxyz～にする
+		 */
+		private function decomposeMatrix():void
+		{
+			decomposedData = _matrix.decompose();
+			_x = decomposedData[0].x;
+			_y = decomposedData[0].y;
+			_z = decomposedData[0].z;
+			_rotationX = decomposedData[1].x;
+			_rotationY = decomposedData[1].y;
+			_rotationZ = decomposedData[1].z;
+			_scaleX = decomposedData[2].x;
+			_scaleY = decomposedData[2].y;
+			_scaleZ = decomposedData[2].z;
+			decomposeMatrixOrder = false;
 		}
 		
 		override public function toString():String 
