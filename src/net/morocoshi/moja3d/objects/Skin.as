@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.objects 
 {
-	import flash.display3D.Context3D;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
@@ -10,7 +9,6 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.shaders.skin.SkinShader;
-	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
 	
@@ -21,9 +19,7 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Skin extends Mesh 
 	{
-		/**
-		 * このスキン内にあるボーンオブジェクトのリスト
-		 */
+		/**このスキン内にあるボーンオブジェクトのリスト*/
 		public var bones:Vector.<Bone>;
 		
 		moja3d var skinShaderList:Vector.<SkinShader>;
@@ -100,6 +96,7 @@ package net.morocoshi.moja3d.objects
 			
 			var skin:Skin = target as Skin;
 			skin.rawBounds = rawBounds? rawBounds.clone() : null;
+			skin = null;
 		}
 		
 		override public function cloneProperties(target:Object3D):void 
@@ -108,6 +105,7 @@ package net.morocoshi.moja3d.objects
 			
 			var skin:Skin = target as Skin;
 			skin.rawBounds = rawBounds? rawBounds.clone() : null;
+			skin = null;
 		}
 		
 		override public function clone():Object3D 
@@ -117,7 +115,8 @@ package net.morocoshi.moja3d.objects
 			cloneProperties(skin);
 			
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				skin.addChild(current.clone());
 			}
@@ -134,7 +133,8 @@ package net.morocoshi.moja3d.objects
 			referenceProperties(skin);
 			
 			//子を再帰的にコピーする
-			for (var current:Object3D = _children; current; current = current._next)
+			var current:Object3D;
+			for (current = _children; current; current = current._next)
 			{
 				skin.addChild(current.reference());
 			}
@@ -152,13 +152,18 @@ package net.morocoshi.moja3d.objects
 			bones.length = 0;
 			skinShaderList.length = 0;
 			
+			var current:Object3D;
+			var bone:Bone;
+			var skinShader:SkinShader;
+			var geom:SkinGeometry;
+			
 			var task:Vector.<Object3D> = new <Object3D>[this];
 			while (task.length)
 			{
-				var current:Object3D = task.pop()._children;
+				current = task.pop()._children;
 				while (current)
 				{
-					var bone:Bone = current as Bone;
+					bone = current as Bone;
 					if (bone && bone.hasWeight)
 					{
 						bones.push(bone);
@@ -168,10 +173,9 @@ package net.morocoshi.moja3d.objects
 				}
 			}
 			
-			var skinShader:SkinShader;
 			if (_geometry is CombinedGeometry)
 			{
-				for each(var geom:SkinGeometry in CombinedGeometry(_geometry).geometries)
+				for each(geom in CombinedGeometry(_geometry).geometries)
 				{
 					skinShader = new SkinShader();
 					skinShader.setSkinGeometry(geom);
@@ -194,6 +198,12 @@ package net.morocoshi.moja3d.objects
 					surface.linkSurfaces(combinedSurfacesList);
 				}
 			}
+			
+			combinedGeom = null;
+			skinShader = null;
+			task = null;
+			bone = null;
+			geom = null;
 		}
 		
 		private var invertSkin:Matrix3D = new Matrix3D();
@@ -203,10 +213,12 @@ package net.morocoshi.moja3d.objects
 			invertSkin.copyFrom(_worldMatrix);
 			invertSkin.invert();
 			
-			for each (var item:SkinShader in skinShaderList) 
+			var item:SkinShader;
+			for each (item in skinShaderList) 
 			{
 				item.updateBoneConstants(invertSkin);
 			}
+			item = null;
 		}
 		
 	}

@@ -1,31 +1,27 @@
 package net.morocoshi.moja3d.resources 
 {
 	import flash.display.BitmapData;
-	import flash.display.Loader;
-	import flash.display.LoaderInfo;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.display3D.Context3D;
-	import flash.events.Event;
 	import flash.events.TimerEvent;
-	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
 	import flash.media.SoundTransform;
 	import flash.media.Video;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
-	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
+	import net.morocoshi.moja3d.view.ContextProxy;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class VideoTextureResource extends ImageTextureResource 
 	{
 		private var _movieClip:MovieClip;
 		private var sprite:Sprite;
-		private var context3D:Context3D;
+		private var context3D:ContextProxy;
 		private var completeCallback:Function;
 		private var _autoCapture:Boolean;
 		private var _netStream:NetStream;
@@ -60,7 +56,7 @@ package net.morocoshi.moja3d.resources
 			updateTimer();
 		}
 		
-		public function setContext3D(context3D:Context3D):void
+		public function setContext3D(context3D:ContextProxy):void
 		{
 			this.context3D = context3D;
 		}

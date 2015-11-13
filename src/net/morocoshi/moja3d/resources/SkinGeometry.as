@@ -23,6 +23,7 @@ package net.morocoshi.moja3d.resources
 			
 			var geometry:SkinGeometry = target as SkinGeometry;
 			geometry.boneIDList = boneIDList.concat();
+			geometry = null;
 		}
 		
 		override public function clone():Resource 

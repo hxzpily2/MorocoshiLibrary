@@ -131,6 +131,9 @@ package net.morocoshi.moja3d.resources
 			
 			var i:int;
 			var n:int;
+			
+			var vertexBuffer:VertexBuffer3D;
+			
 			n = numAttributeList.length;
 			for (i = 0; i < n; i++) 
 			{
@@ -139,18 +142,21 @@ package net.morocoshi.moja3d.resources
 				if (verticesList[i] == null)
 				{
 					dispose();
+					vertexBuffer = null;
 					return false;
 				}
 				var numVertices:int = verticesList[i].length / numAttribute;
 				if (numVertices > 65535)
 				{
 					dispose();
+					vertexBuffer = null;
 					return false;
 				}
-				var vertexBuffer:VertexBuffer3D = context3D.context.createVertexBuffer(numVertices, numAttribute);
+				vertexBuffer = context3D.context.createVertexBuffer(numVertices, numAttribute);
 				vertexBufferList[i] = vertexBuffer;
 				vertexBuffer.uploadFromVector(verticesList[i], 0, numVertices);
 			}
+			vertexBuffer = null;
 			
 			try
 			{
@@ -215,6 +221,7 @@ package net.morocoshi.moja3d.resources
 			{
 				geometry.verticesList.push(verticesList[i].concat());
 			}
+			geometry = null;
 		}
 		
 		override public function clone():Resource 
@@ -237,6 +244,7 @@ package net.morocoshi.moja3d.resources
 			{
 				result.push(new Vector3D(points[i], points[i + 1], points[i + 2]));
 			}
+			points = null;
 			return result;
 		}
 		
@@ -274,6 +282,8 @@ package net.morocoshi.moja3d.resources
 			boundingBox.maxX = maxX;
 			boundingBox.maxY = maxY;
 			boundingBox.maxZ = maxZ;
+			
+			items = null;
 		}
 		
 		private function getVertexFormat(num:int):String 

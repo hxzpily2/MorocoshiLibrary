@@ -2,7 +2,6 @@ package net.morocoshi.moja3d.resources
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.utils.ByteArray;
 	import net.morocoshi.moja3d.resources.ExternalTextureResource;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -70,7 +69,7 @@ package net.morocoshi.moja3d.resources
 		}
 		
 		/**
-		 * 拡張子を抜いたフォルダ+ファイル名を取得
+		 * 拡張子を抜いたフォルダ＋ファイル名を取得
 		 * @param	path
 		 * @return
 		 */
