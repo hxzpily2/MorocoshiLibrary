@@ -179,12 +179,13 @@ package net.morocoshi.common.math.transform
 			return new Matrix3D(_q);
 		}
 		
+		static private var rawData:Vector.<Number>;
 		static public function transformVector(vector:Vector3D, matrix:Matrix3D):void
 		{
-			var data:Vector.<Number> = matrix.rawData;
-			var vx:Number = data[0] * vector.x + data[4] * vector.y + data[8]  * vector.z + data[12];
-			var vy:Number = data[1] * vector.x + data[5] * vector.y + data[9]  * vector.z + data[13];
-			var vz:Number = data[2] * vector.x + data[6] * vector.y + data[10] * vector.z + data[14];
+			rawData = matrix.rawData;
+			var vx:Number = rawData[0] * vector.x + rawData[4] * vector.y + rawData[8]  * vector.z + rawData[12];
+			var vy:Number = rawData[1] * vector.x + rawData[5] * vector.y + rawData[9]  * vector.z + rawData[13];
+			var vz:Number = rawData[2] * vector.x + rawData[6] * vector.y + rawData[10] * vector.z + rawData[14];
 			vector.x = vx;
 			vector.y = vy;
 			vector.z = vz;
@@ -192,10 +193,10 @@ package net.morocoshi.common.math.transform
 		
 		static public function deltaTransformVector(vector:Vector3D, matrix:Matrix3D):void
 		{
-			var data:Vector.<Number> = matrix.rawData;
-			var vx:Number = data[0] * vector.x + data[4] * vector.y + data[8]  * vector.z;
-			var vy:Number = data[1] * vector.x + data[5] * vector.y + data[9]  * vector.z;
-			var vz:Number = data[2] * vector.x + data[6] * vector.y + data[10] * vector.z;
+			rawData = matrix.rawData;
+			var vx:Number = rawData[0] * vector.x + rawData[4] * vector.y + rawData[8]  * vector.z;
+			var vy:Number = rawData[1] * vector.x + rawData[5] * vector.y + rawData[9]  * vector.z;
+			var vz:Number = rawData[2] * vector.x + rawData[6] * vector.y + rawData[10] * vector.z;
 			vector.x = vx;
 			vector.y = vy;
 			vector.z = vz;
@@ -231,7 +232,7 @@ package net.morocoshi.common.math.transform
 		 */
 		static public function lookAtPivotXYZ(matrix:Matrix3D, x:Number, y:Number, z:Number, frontAxis:String, pivotAxis:String, applyScale:Boolean = true):void
 		{
-			var rawData:Vector.<Number> = matrix.rawData;
+			rawData = matrix.rawData;
 			
 			switch(pivotAxis)
 			{
@@ -363,12 +364,28 @@ package net.morocoshi.common.math.transform
 					errorLookAt();
 			}
 			
-			matrix.rawData = new <Number>[
+			rawData[0] = xAxis.x;
+			rawData[1] = xAxis.y;
+			rawData[2] = xAxis.z;
+			rawData[3] = 0;
+			rawData[4] = yAxis.x;
+			rawData[5] = yAxis.y;
+			rawData[6] = yAxis.z;
+			rawData[7] = 0;
+			rawData[8] = zAxis.x;
+			rawData[9] = zAxis.y;
+			rawData[10] = zAxis.z;
+			rawData[11] = 0;
+			rawData[15] = 1;
+			
+			matrix.copyRawDataFrom(rawData);
+			/*
+			= new <Number>[
 				xAxis.x, xAxis.y, xAxis.z, 0,
 				yAxis.x, yAxis.y, yAxis.z, 0,
 				zAxis.x, zAxis.y, zAxis.z, 0,
 				rawData[12], rawData[13], rawData[14], 1
-			];
+			];*/
 		}
 		
 		static public function lookAtXYZ(matrix:Matrix3D, x:Number, y:Number, z:Number, frontAxis:String, topAxis:String, upAxis:Vector3D = null, applyScale:Boolean = true):void
@@ -386,7 +403,7 @@ package net.morocoshi.common.math.transform
 				localUpAxis.z = upAxis.z;
 			}
 			
-			var rawData:Vector.<Number> = matrix.rawData;
+			rawData = matrix.rawData;
 			
 			front.x = x - rawData[12];
 			front.y = y - rawData[13];
@@ -603,12 +620,27 @@ package net.morocoshi.common.math.transform
 				zAxis.scaleBy(scale.length);
 			}
 			
-			matrix.rawData = new <Number>[
+			rawData[0] = xAxis.x;
+			rawData[1] = xAxis.y;
+			rawData[2] = xAxis.z;
+			rawData[3] = 0;
+			rawData[4] = yAxis.x;
+			rawData[5] = yAxis.y;
+			rawData[6] = yAxis.z;
+			rawData[7] = 0;
+			rawData[8] = zAxis.x;
+			rawData[9] = zAxis.y;
+			rawData[10] = zAxis.z;
+			rawData[11] = 0;
+			rawData[15] = 1;
+			
+			matrix.copyRawDataFrom(rawData);
+			/*= new <Number>[
 				xAxis.x, xAxis.y, xAxis.z, 0,
 				yAxis.x, yAxis.y, yAxis.z, 0,
 				zAxis.x, zAxis.y, zAxis.z, 0,
 				rawData[12], rawData[13], rawData[14], 1
-			];
+			];*/
 		}
 		
 		static private function setAxisF(axis:Vector3D, from:Vector3D):void 

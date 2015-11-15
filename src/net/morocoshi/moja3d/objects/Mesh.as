@@ -434,7 +434,7 @@ package net.morocoshi.moja3d.objects
 					{
 						element = renderElements[elementCount] = new RenderElement();
 					}
-					element.name = String(this) + geom.indexBuffer;
+					//element.name = String(this) + geom.indexBuffer;
 					element.firstIndex = surface.firstIndex;
 					element.numTriangles = surface.numTriangles;
 					element.matrix = _worldMatrix;

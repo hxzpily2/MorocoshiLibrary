@@ -105,6 +105,7 @@ package net.morocoshi.moja3d.shaders
 		
 		public function getKey():String
 		{
+			throw new Error("継承してください！");
 			return String(this);
 		}
 		

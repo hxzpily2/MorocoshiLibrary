@@ -390,7 +390,9 @@ package net.morocoshi.moja3d.objects
 		public function getWorldPosition():Vector3D
 		{
 			var point:Vector3D = new Vector3D(x, y, z);
-			return parent? parent.worldMatrix.transformVector(point) : point;
+			if (parent) TransformUtil.transformVector(point, parent.worldMatrix);
+			
+			return point;
 		}
 		
 		public function getPosition():Vector3D 
