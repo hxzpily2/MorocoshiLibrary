@@ -26,6 +26,19 @@ package net.morocoshi.moja3d.agal
 			fragmentColor = fragmentCode.addConstantsFromArray("@lightColor" + index, [0, 0, 0, 0]);
 		}
 		
+		public function dispose():void 
+		{
+			vertexAxis.dispose();
+			vertexColor.dispose();
+			fragmentAxis.dispose();
+			fragmentColor.dispose();
+			
+			vertexAxis = null;
+			vertexColor = null;
+			fragmentAxis = null;
+			fragmentColor = null;
+		}
+		
 		public function clear():void
 		{
 			fragmentAxis.vector[0] = vertexAxis.vector[0] = 1;

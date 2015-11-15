@@ -30,6 +30,21 @@ package net.morocoshi.moja3d.agal
 			fragmentWideTexture = fragmentCode.addTexture("&shadowMap" + index + "_1", null, null);
 		}
 		
+		public function dispose():void 
+		{
+			shadowMainViewConst.dispose();
+			shadowWideViewConst.dispose();
+			fragmentConst.dispose();
+			//fragmentMainTexture.dispose();
+			//fragmentWideTexture.dispose();
+			
+			shadowMainViewConst = null;
+			shadowWideViewConst = null;
+			fragmentConst = null;
+			fragmentMainTexture = null;
+			fragmentWideTexture = null;
+		}
+		
 		public function clear():void
 		{
 			fragmentConst.x = 0;

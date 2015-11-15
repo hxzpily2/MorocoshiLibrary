@@ -109,6 +109,16 @@ package net.morocoshi.moja3d.agal
 			vector[3] = alpha;
 		}
 		
+		public function dispose():void
+		{
+			id = null;
+			type = null;
+			matrix = null;
+			vector = null;
+			if (bytes) bytes.clear();
+			bytes = null;
+		}
+		
 		public function clone():AGALConstant 
 		{
 			var constant:AGALConstant = new AGALConstant();

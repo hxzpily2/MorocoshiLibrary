@@ -17,7 +17,7 @@ package net.morocoshi.moja3d.agal
 		public var viewSize:AGALConstant;
 		public var ambient:AGALConstant;
 		public var number:AGALConstant;
-		public var reflectionMap:AGALTexture;
+		//public var reflectionMap:AGALTexture;
 		
 		static public const MODEL_MATRIX:String = "@modelMatrix";
 		static public const VIEW_MATRIX:String = "@viewMatrix";
@@ -50,6 +50,27 @@ package net.morocoshi.moja3d.agal
 			viewSize.enabled = using.viewSize;
 			ambient.enabled = using.ambient;
 			number.enabled = using.number;
+		}
+		
+		public function dispose():void 
+		{
+			modelMatrix.dispose();
+			viewMatrix.dispose();
+			projMatrix.dispose();
+			cameraPosition.dispose();
+			clipping.dispose();
+			viewSize.dispose();
+			ambient.dispose();
+			number.dispose();
+			
+			modelMatrix = null;
+			viewMatrix = null;
+			projMatrix = null;
+			cameraPosition = null;
+			clipping = null;
+			viewSize = null;
+			ambient = null;
+			number = null;
 		}
 		
 	}

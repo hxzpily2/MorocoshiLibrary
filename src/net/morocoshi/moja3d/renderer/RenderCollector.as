@@ -315,11 +315,28 @@ package net.morocoshi.moja3d.renderer
 			vertexCode.clearAll();
 			fragmentCode.clearAll();
 			
-			vertexConstant = new BasicConstant(vertexCode);
-			fragmentConstant = new BasicConstant(fragmentCode);
+			if (vertexConstant) vertexConstant.dispose();
+			if (fragmentConstant) fragmentConstant.dispose();
 			
+			vertexConstant = new BasicConstant(vertexCode);
+			fragmentConstant = new BasicConstant(fragmentCode);			
 			
 			//ライトの上限数だけ生成
+			for each (var item1:DirectionalLightConstant in sunLightConstantList) 
+			{
+				item1.dispose();
+				item1 = null;
+			}
+			for each (var item2:OmniLightConstant in omniLightConstantList) 
+			{
+				item2.dispose();
+				item2 = null;
+			}
+			for each (var item3:ShadowConstant in shadowConstantList) 
+			{
+				item3.dispose();
+				item3 = null;
+			}
 			sunLightConstantList.length = 0;
 			omniLightConstantList.length = 0;
 			shadowConstantList.length = 0;
