@@ -57,6 +57,28 @@ package net.morocoshi.moja3d.animation
 			capturedTransform = { };
 		}
 		
+		public function clear():void
+		{
+			if (position) position.clear();
+			if (rotation) rotation.clear();
+			if (scale) scale.clear();
+			if (material) material.clear();
+			if (matrix) matrix.clear();
+			
+			matrix = null;
+			material = null;
+			position = null;
+			rotation = null;
+			scale = null;
+			
+			type = null;
+			uvOffsetShader = null;
+			defaultRotation = null;
+			defaultMatrix = null;
+			targetList = null;
+			capturedTransform = null;
+		}
+		
 		public function setStartTime(time:Number):void 
 		{
 			if (rotation) rotation.setStartTime(time);

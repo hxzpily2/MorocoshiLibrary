@@ -36,6 +36,15 @@ package net.morocoshi.moja3d.animation
 			loop = true;
 		}
 		
+		public function clear():void
+		{
+			timeList = null;
+			valueList = null;
+			tangentList = null;
+			if (rawData) rawData.clear();
+			rawData = null;
+		}
+		
 		/**
 		 * スプラインカーブ用のキーフレームリストを渡して曲線上にキーフレームを生成させる。
 		 * @param	curveList

@@ -28,14 +28,31 @@ package net.morocoshi.moja3d.resources
 		 */
 		public function dispose():void
 		{
-			for each(var ba:ByteArray in imageFile)
+			var image:*;
+			for each(image in imageFile)
 			{
-				ba.clear();
+				if (image is BitmapData)
+				{
+					BitmapData(image).dispose();
+				}
+				if (image is ByteArray)
+				{
+					ByteArray(image).clear();
+				}
 			}
-			for each(var bd:BitmapData in imagePath) 
+			for each(image in imagePath)
 			{
-				bd.dispose();
+				if (image is BitmapData)
+				{
+					BitmapData(image).dispose();
+				}
+				if (image is ByteArray)
+				{
+					ByteArray(image).clear();
+				}
 			}
+			image = null;
+			
 			imageFile = { };
 			imagePath = { };
 		}

@@ -38,6 +38,13 @@ package net.morocoshi.moja3d.animation
 			loop = true;
 		}
 		
+		public function clear():void
+		{
+			timeList = null;
+			matrixList = null;
+			tangentList = null;
+		}
+		
 		public function addKey(time:Number, matrix:Matrix3D, tangent:int):void
 		{
 			timeList.push(time);

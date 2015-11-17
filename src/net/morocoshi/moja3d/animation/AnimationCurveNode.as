@@ -19,6 +19,17 @@ package net.morocoshi.moja3d.animation
 			defaultValue = new Vector3D();
 		}
 		
+		public function clear():void
+		{
+			if (x) x.clear();
+			if (y) y.clear();
+			if (z) z.clear();
+			x = null;
+			y = null;
+			z = null;
+			defaultValue = null;
+		}
+		
 		public function reset():void
 		{
 			if (x) x.reset();

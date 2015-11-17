@@ -25,6 +25,21 @@ package net.morocoshi.moja3d.animation
 			animation = { };
 		}
 		
+		public function clear():void
+		{
+			var anm:KeyframeAnimation;
+			if (animation)
+			{
+				for (var key:String in animation) 
+				{
+					anm = animation[key];
+					anm.clear();
+				}
+			}
+			anm = null;
+			animation = null;
+		}
+		
 		public function clone():MotionData 
 		{
 			var result:MotionData = new MotionData();

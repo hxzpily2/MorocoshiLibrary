@@ -26,6 +26,20 @@ package net.morocoshi.moja3d.animation
 			_interpolationEnabled = true;
 		}
 		
+		public function clear():void
+		{
+			var animation:KeyframeAnimation;
+			if (keyAnimations)
+			{
+				for each(animation in keyAnimations)
+				{
+					animation.clear();
+				}
+			}
+			animation = null;
+			keyAnimations = null;
+		}
+		
 		public function setTime(time:Number):void
 		{
 			var n:int = keyAnimations.length;

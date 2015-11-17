@@ -14,6 +14,12 @@ package net.morocoshi.moja3d.animation
 		{
 		}
 		
+		public function clear():void
+		{
+			offsetU = null;
+			offsetV = null;
+		}
+		
 		public function reset():void
 		{
 			if (offsetU) offsetU.reset();

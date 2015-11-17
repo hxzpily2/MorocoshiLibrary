@@ -15,6 +15,11 @@ package net.morocoshi.moja3d.loader.animation
 		{
 		}
 		
+		public function clear():void
+		{
+			keyList = null;
+		}
+		
 	}
 
 }

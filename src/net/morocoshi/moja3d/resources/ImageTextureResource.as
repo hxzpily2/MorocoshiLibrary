@@ -316,6 +316,29 @@ package net.morocoshi.moja3d.resources
 			return result;
 		}
 		
+		/**
+		 * dispose()した上でbitmapDataやATFデータなどを完全に消去する。元に戻せないので注意。
+		 */
+		public function clear():void 
+		{
+			dispose();
+			if (_bitmapData)
+			{
+				_bitmapData.dispose();
+				_bitmapData = null;
+			}
+			
+			if (_atf)
+			{
+				if (_atf.data)
+				{
+					_atf.data.clear();
+					_atf.data = null;
+				}
+				_atf = null;
+			}
+		}
+		
 		public function get hasAlpha():Boolean
 		{
 			return _hasAlpha;

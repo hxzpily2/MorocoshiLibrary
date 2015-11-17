@@ -63,6 +63,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.ExternalTextureResource;
 	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.LineGeometry;
 	import net.morocoshi.moja3d.resources.LineSegment;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -123,18 +124,13 @@ package net.morocoshi.moja3d.loader
 		 * 画像リソースのセット
 		 */
 		public var resourcePack:ResourcePack;
-		/**
-		 * 引数にM3DMaterialが渡されるのでMaterialインスタンスを返すようにする
-		 */
-		//public var onConvertMaterial:Function;
 		
 		private var _userData:Dictionary;
+		private var includeTo:Object3D;
+		
 		private var materialA3DLink:Dictionary;
 		private var objectM3DLink:Dictionary;
 		private var materialM3DLink:Dictionary;
-		private var scene:M3DScene;
-		private var includeTo:Object3D;
-		
 		private var geometryA3DLink:Object;
 		private var geometryM3DLink:Object;
 		
@@ -152,9 +148,88 @@ package net.morocoshi.moja3d.loader
 		
 		public function M3DParser() 
 		{
-			//onConvertMaterial = toMaterial;
 			forMotionData = false;
 			animationPlayer = new AnimationPlayer();
+		}
+		
+		/**
+		 * 全てのリソースをdispose()し、画像データを破棄し、すべての参照をnullにする
+		 */
+		public function clear():void
+		{
+			var material:ParserMaterial;
+			var resource:Resource;
+			var object:Object3D;
+			var geom:Geometry;
+			var animation:KeyframeAnimation;
+			
+			if (motion)
+			{
+				motion.clear();
+			}
+			
+			if (resourcePack)
+			{
+				resourcePack.dispose();
+			}
+			
+			if (materials)
+			{
+				for each (material in materials) 
+				{
+					for each(resource in material.getResources())
+					{
+						if (resource is ImageTextureResource)
+						{
+							ImageTextureResource(resource).clear();
+						}
+					}
+				}
+			}
+			
+			if (geometries)
+			{
+				for each(geom in geometries)
+				{
+					geom.dispose();
+				}
+			}
+			
+			if (objects)
+			{
+				for each (object in objects) 
+				{
+					object.dispose(false);
+				}
+			}
+			
+			if (keyAnimations)
+			{
+				for each(animation in keyAnimations)
+				{
+					animation.clear();
+				}
+			}
+			
+			if (animationPlayer)
+			{
+				animationPlayer.clear();
+			}
+			
+			animation = null;
+			object = null;
+			material = null;
+			geom = null;
+			
+			objects = null;
+			geometries = null;
+			materials = null;
+			resourcePack = null;
+			animationPlayer = null;
+			keyAnimations = null;
+			_userData = null;
+			includeTo = null;
+			motion = null;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -349,7 +424,7 @@ package net.morocoshi.moja3d.loader
 		
 		private function parseM3DScene(scene:M3DScene):void
 		{
-			this.scene = scene;
+			//this.scene = scene;
 			
 			var i:int;
 			var n:int;
