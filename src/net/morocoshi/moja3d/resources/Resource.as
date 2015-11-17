@@ -58,6 +58,11 @@ package net.morocoshi.moja3d.resources
 			return true;
 		}
 		
+		public function clear():void 
+		{
+			dispose();
+		}
+		
 		public function dispose():void 
 		{
 			isUploaded = false;

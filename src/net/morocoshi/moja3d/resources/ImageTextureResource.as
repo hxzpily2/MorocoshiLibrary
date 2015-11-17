@@ -319,9 +319,9 @@ package net.morocoshi.moja3d.resources
 		/**
 		 * dispose()した上でbitmapDataやATFデータなどを完全に消去する。元に戻せないので注意。
 		 */
-		public function clear():void 
+		override public function clear():void 
 		{
-			dispose();
+			super.clear();
 			if (_bitmapData)
 			{
 				_bitmapData.dispose();

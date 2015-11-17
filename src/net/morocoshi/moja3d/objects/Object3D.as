@@ -699,6 +699,23 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
+		 * このオブジェクトが使用しているリソースを収集し、autoDispose=trueのものをすべて破棄する。画像リソースの場合はBitmapDataも破棄する。
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に収集するかどうか
+		 */
+		public function clear(hierarchy:Boolean):void 
+		{
+			var resource:Resource;
+			for each(resource in getResources(hierarchy))
+			{
+				if (resource.autoDispose)
+				{
+					resource.clear();
+				}
+			}
+			resource = null;
+		}
+		
+		/**
 		 * このオブジェクトが使用しているリソースを収集し、autoDisposeの値を一括で変更する。
 		 * @param	value	一括設定したいautoDisposeの値
 		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に適用するかどうか

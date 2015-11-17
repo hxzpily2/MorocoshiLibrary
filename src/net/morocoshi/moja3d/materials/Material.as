@@ -157,6 +157,17 @@ package net.morocoshi.moja3d.materials
 			}
 		}
 		
+		public function clear():void 
+		{
+			for each(var resource:Resource in getResources())
+			{
+				if (resource.autoDispose)
+				{
+					resource.clear();
+				}
+			}
+		}
+		
 		/**
 		 * Sprite2D用のShaderListを取得
 		 * @param	collector
