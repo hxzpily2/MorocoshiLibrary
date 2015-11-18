@@ -201,24 +201,33 @@ package net.morocoshi.moja3d.resources
 		override public function dispose():void 
 		{
 			super.dispose();
+			
 			var i:int;
 			var n:int;
 			
-			n = vertexBufferList.length;
-			for (i = 0; i < n; i++) 
+			if (vertexBufferList)
 			{
-				if (vertexBufferList[i])
+				n = vertexBufferList.length;
+				for (i = 0; i < n; i++) 
 				{
-					vertexBufferList[i].dispose();
+					if (vertexBufferList[i])
+					{
+						vertexBufferList[i].dispose();
+					}
 				}
+				vertexBufferList.length = 0;
 			}
+			
 			if (indexBuffer)
 			{
 				indexBuffer.dispose();
+				indexBuffer = null;
 			}
-			indexBuffer = null;
-			vertexBufferList.length = 0;
-			vertexBufferFormatList.length = 0;
+			
+			if (vertexBufferFormatList)
+			{
+				vertexBufferFormatList.length = 0;
+			}
 		}
 		
 		override public function cloneProperties(target:Resource):void 
