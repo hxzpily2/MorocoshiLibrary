@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.objects 
 {
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
-	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.TriangleFace;
 	import net.morocoshi.moja3d.moja3d;
@@ -19,7 +19,7 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * ポリゴンメッシュオブジェクト
 	 * 
 	 * @author tencho
 	 */
@@ -165,6 +165,83 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			return mesh;
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			layer = 0;
+			var surface:Surface;
+			if (surfaces)
+			{
+				
+				for each(surface in surfaces)
+				{
+					surface.finaly();
+				}
+				DataUtil.deleteVector(surfaces);
+				surfaces = null;
+			}
+			if (combinedSurfacesList)
+			{
+				for each(var surfaceList:Vector.<Surface> in combinedSurfacesList)
+				{
+					if (surfaceList)
+					{
+						for each(surface in surfaceList)
+						{
+							surface.finaly();
+						}
+						DataUtil.deleteVector(surfaceList);
+						surfaceList = null;
+					}
+				}
+				DataUtil.deleteVector(combinedSurfacesList);
+				combinedSurfacesList = null;
+			}
+			surface = null;
+			
+			if (startShaderList)
+			{
+				startShaderList.finaly();
+				startShaderList = null;
+			}
+			if (endShaderList)
+			{
+				endShaderList.finaly();
+				endShaderList = null;
+			}
+			if (afterViewShaderList)
+			{
+				afterViewShaderList.finaly();
+				afterViewShaderList = null;
+			}
+			if (beforeMatrixShaderList)
+			{
+				beforeMatrixShaderList.finaly();
+				beforeMatrixShaderList = null;
+			}
+			
+			zBiasShader = null;
+			_geometry = null;
+			_key = null;
+			seed = null;
+			
+			if (renderElements)
+			{
+				var element:RenderElement;
+				for each(element in renderElements)
+				{
+					element.finaly();
+				}
+				element = null;
+				DataUtil.deleteVector(renderElements);
+				renderElements = null;
+			}
+			
+			elementCount = 0;
+			_zbias = 0;
 		}
 		
 		/**

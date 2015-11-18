@@ -162,23 +162,15 @@ package net.morocoshi.moja3d.materials
 			}
 		}
 		
-		/**
-		 * このマテリアルが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。関連する画像データなどは破棄しない。
-		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
-		 */
-		public function clear(force:Boolean = false):void 
+		public function finaly():void
 		{
-			for each(var resource:Resource in getResources())
-			{
-				if (force || resource.autoDispose)
-				{
-					resource.clear();
-				}
-			}
-			
 			name = null;
 			culling = null;
-			shaderList = null;
+			if (shaderList)
+			{
+				shaderList.finaly();
+				shaderList = null;
+			}
 			reflectShaderList = null;
 			sourceFactor = null;
 			destinationFactor = null;
@@ -188,6 +180,25 @@ package net.morocoshi.moja3d.materials
 			opaquePassConst = null;
 			alphaPassConst = null;
 			seed = null;
+		}
+		
+		/**
+		 * このマテリアルが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。関連する画像データなどは破棄しない。
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
+		 */
+		public function clear(force:Boolean = false):void 
+		{
+			var resource:Resource;
+			for each(resource in getResources())
+			{
+				if (force || resource.autoDispose)
+				{
+					resource.clear();
+				}
+			}
+			resource = null;
+			
+			finaly();
 		}
 		
 		/**

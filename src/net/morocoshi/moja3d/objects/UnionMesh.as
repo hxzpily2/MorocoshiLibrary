@@ -1,8 +1,8 @@
 package net.morocoshi.moja3d.objects 
 {
-	import flash.display3D.Context3D;
 	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
@@ -32,6 +32,14 @@ package net.morocoshi.moja3d.objects
 			requiredAttribute.push(VertexAttribute.POSITION);
 			requiredAttribute.push(VertexAttribute.UV);
 			requiredAttribute.push(VertexAttribute.NORMAL);
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			DataUtil.deleteVector(requiredAttribute);
+			requiredAttribute = null;
 		}
 		
 		public function updateSurface(context3D:ContextProxy = null):void

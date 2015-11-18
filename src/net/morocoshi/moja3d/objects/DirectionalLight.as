@@ -1,16 +1,9 @@
 package net.morocoshi.moja3d.objects 
 {
-	import net.morocoshi.moja3d.materials.preset.FillMaterial;
-	import net.morocoshi.moja3d.materials.TriangleFace;
-	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.primitives.Cube;
-	
-	use namespace moja3d;
-	
 	/**
-	 * ...
+	 * 平行光源
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class DirectionalLight extends Light3D 
 	{

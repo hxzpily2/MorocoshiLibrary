@@ -5,10 +5,11 @@ package net.morocoshi.moja3d.renderer
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Matrix3D;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	/**
-	 * ...
+	 * レンダリング要素
 	 * 
 	 * @author tencho
 	 */
@@ -23,8 +24,6 @@ package net.morocoshi.moja3d.renderer
 		public var culling:String;
 		public var layer:uint;
 		
-		//public var passCompareMode:String;
-		//public var depthMask:Boolean;
 		public var sourceFactor:String;
 		public var destinationFactor:String;
 		public var useRefrectionTexture:Boolean;
@@ -50,6 +49,31 @@ package net.morocoshi.moja3d.renderer
 			destinationFactor = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA;
 			vertexBufferList = new Vector.<VertexBuffer3D>;
 			vertexBufferFormatList = new Vector.<String>;
+		}
+		
+		/**
+		 * メモリ解放
+		 */
+		public function finaly():void
+		{
+			next = null;
+			prev = null;
+			name = null;
+			sortPriority = 0;
+			matrix = null;
+			culling = null;
+			layer = 0;
+			sourceFactor = null;
+			destinationFactor = null;
+			DataUtil.deleteVector(vertexBufferList);
+			DataUtil.deleteVector(vertexBufferFormatList);
+			vertexBufferList = null;
+			vertexBufferFormatList = null;
+			indexBuffer = null;
+			firstIndex = 0;
+			numTriangles = 0;
+			shaderList = null;
+			distance = 0;
 		}
 		
 		/**

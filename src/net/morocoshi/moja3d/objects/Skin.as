@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.objects
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -38,6 +39,17 @@ package net.morocoshi.moja3d.objects
 			
 			bones = new Vector.<Bone>;
 			skinShaderList = new Vector.<SkinShader>;
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			DataUtil.deleteVector(bones);
+			DataUtil.deleteVector(skinShaderList);
+			bones = null;
+			skinShaderList = null;
+			rawBounds = null;
 		}
 		
 		override public function calculateBounds():void 

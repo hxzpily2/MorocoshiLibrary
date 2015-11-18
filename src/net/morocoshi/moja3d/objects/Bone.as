@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.objects
 {
 	import flash.geom.Matrix3D;
 	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -10,14 +11,14 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * ボーンオブジェクト
 	 * 
 	 * @author tencho
 	 */
 	public class Bone extends Object3D 
 	{
 		private var tempMatrix:Matrix3D;
-		/**ボーンのワールド初期姿勢(___計算簡略化のためにinvertしておきたいけど、今はデバッグで使うのでこのままで)*/
+		/**ボーンのワールド初期姿勢*/
 		public var initialMatrix:Matrix3D;
 		public var invertSkinMatrix:Matrix3D;
 		public var hasWeight:Boolean;
@@ -37,6 +38,24 @@ package net.morocoshi.moja3d.objects
 			shadowConstants = new Vector.<AGALConstant>;
 			reflectConstants = new Vector.<AGALConstant>;
 			maskConstants = new Vector.<AGALConstant>;
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			tempMatrix = null;
+			initialMatrix = null;
+			invertSkinMatrix = null;
+			index = 0;
+			DataUtil.deleteVector(renderConstants);
+			DataUtil.deleteVector(shadowConstants);
+			DataUtil.deleteVector(reflectConstants);
+			DataUtil.deleteVector(maskConstants);
+			renderConstants = null;
+			shadowConstants = null;
+			reflectConstants = null;
+			maskConstants = null;
 		}
 		
 		override public function reference():Object3D 

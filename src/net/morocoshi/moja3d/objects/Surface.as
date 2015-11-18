@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.objects 
 {
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
@@ -55,6 +56,30 @@ package net.morocoshi.moja3d.objects
 			}
 		}
 		
+		/**
+		 * メモリ解放
+		 */
+		public function finaly():void
+		{
+			firstIndex = 0;
+			numTriangles = 0;
+			_material = null;
+			layer = 0;
+			if (linkedSurfaceList)
+			{
+				for each(var surface:Surface in linkedSurfaceList)
+				{
+					surface.finaly();
+				}
+				DataUtil.deleteVector(linkedSurfaceList);
+				linkedSurfaceList = null;
+			}
+		}
+		
+		/**
+		 * 
+		 * @param	surfacesList
+		 */
 		public function linkSurfaces(surfacesList:Vector.<Vector.<Surface>>):void
 		{
 			linkedSurfaceList = new Vector.<Surface>;

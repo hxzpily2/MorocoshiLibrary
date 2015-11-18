@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 光源の基本クラス
 	 * 
 	 * @author tencho
 	 */
@@ -28,10 +28,23 @@ package net.morocoshi.moja3d.objects
 		{
 			super();
 			
-			autoShadowBounds = !true;
+			autoShadowBounds = false;
 			this.intensity = intensity;
 			this.specularPower = specularPower;
 			setColor(rgb);
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			r = 0;
+			g = 0;
+			b = 0;
+			intensity = 0;
+			specularPower = 0;
+			_mainShadow = null;
+			_wideShadow = null;
 		}
 		
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 

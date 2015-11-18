@@ -1,10 +1,9 @@
 package net.morocoshi.moja3d.shaders 
 {
-	import flash.display3D.Context3D;
-	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Program3D;
 	import flash.utils.ByteArray;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALInfo;
@@ -26,7 +25,7 @@ package net.morocoshi.moja3d.shaders
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * シェーダーリスト管理
 	 * 
 	 * @author tencho
 	 */
@@ -96,6 +95,30 @@ package net.morocoshi.moja3d.shaders
 					addShader(list[i]);
 				}
 			}
+		}
+		
+		/**
+		 * メモリ解放
+		 */
+		public function finaly():void 
+		{
+			removeAllShader();
+			
+			_alphaMode = 0;
+			_vertexCode = null;
+			_fragmentCode = null;
+			_reflectShader = null;
+			_shadowShader = null;
+			_lightShader = null;
+			_key = null;
+			name = null;
+			vertexUsingConstants = null;
+			fragmentUsingConstants = null;
+			
+			DataUtil.deleteVector(shaders);
+			DataUtil.deleteVector(tickShaderList);
+			shaders = null;
+			tickShaderList = null;
 		}
 		
 		//--------------------------------------------------------------------------

@@ -3,7 +3,7 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	
 	/**
-	 * ...
+	 * 点光源
 	 * 
 	 * @author tencho
 	 */
@@ -27,6 +27,14 @@ package net.morocoshi.moja3d.objects
 			_fadeEnd = fadeEnd;
 			boundingBox = new BoundingBox();
 			updateLightBounds();
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			_fadeStart = 0;
+			_fadeEnd = 0;
 		}
 		
 		private function updateLightBounds():void 

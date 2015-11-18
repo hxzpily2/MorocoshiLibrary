@@ -24,7 +24,7 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 基本のオブジェクト
 	 * 
 	 * @author tencho
 	 */
@@ -701,22 +701,10 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
-		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
-		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
+		 * メモリ解放
 		 */
-		public function clear(hierarchy:Boolean, force:Boolean = false):void 
+		public function finaly():void
 		{
-			var resource:Resource;
-			for each(resource in getResources(hierarchy))
-			{
-				if (force || resource.autoDispose)
-				{
-					resource.clear();
-				}
-			}
-			resource = null;
-			
 			DataUtil.deleteObject(userData);
 			DataUtil.deleteVector(transformList);
 			DataUtil.deleteVector(decomposedData);
@@ -736,14 +724,33 @@ package net.morocoshi.moja3d.objects
 			_matrix = null;
 			_worldMatrix = null;
 			notifyChild = null;
+		}
+		
+		/**
+		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
+		 */
+		public function clear(hierarchy:Boolean, force:Boolean = false):void 
+		{
+			var resource:Resource;
+			for each(resource in getResources(hierarchy))
+			{
+				if (force || resource.autoDispose)
+				{
+					resource.clear();
+				}
+			}
+			resource = null;
 			
 			remove();
-			
 			_parent = null;
 			_children = null;
 			_lastChild = null;
 			_next = null;
 			_prev = null;
+			
+			finaly();
 		}
 		
 		/**

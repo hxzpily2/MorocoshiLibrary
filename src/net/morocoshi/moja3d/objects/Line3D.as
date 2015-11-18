@@ -1,7 +1,8 @@
 package net.morocoshi.moja3d.objects 
 {
 	/**
-	 * ...
+	 * ラインオブジェクト
+	 * 
 	 * @author tencho
 	 */
 	public class Line3D extends Mesh 

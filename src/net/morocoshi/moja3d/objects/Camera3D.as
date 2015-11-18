@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.objects
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.moja3d.adobe.PerspectiveMatrix3D;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
@@ -88,6 +89,35 @@ package net.morocoshi.moja3d.objects
 				cullingNormals[i] = new Vector3D();
 				cullingPoints[i] = new Vector3D();
 			}
+		}
+		
+		override public function finaly():void 
+		{
+			super.finaly();
+			
+			_fovY = 0;
+			_fovX = 0;
+			_zNear = 0;
+			_zFar = 0;
+			_width = 0;
+			_height = 0;
+			perspectiveMatrix = null;
+			viewMatrix = null;
+			DataUtil.deleteVector(cullingNormals);
+			DataUtil.deleteVector(cullingPoints);
+			DataUtil.deleteVector(frustumPoints);
+			DataUtil.deleteVector(debugPoints);
+			cullingNormals = null;
+			cullingPoints = null;
+			frustumPoints = null;
+			debugPoints = null;
+			normal = null;
+			sphere = null;
+			_aspect = 0;
+			screenWidth = 0;
+			screenHeight = 0;
+			_fovMode = null;
+			_zoom = 0;
 		}
 		
 		public function get debug():Boolean 
