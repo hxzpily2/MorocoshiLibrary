@@ -155,7 +155,7 @@ package net.morocoshi.moja3d.loader
 		/**
 		 * 全てのリソースをdispose()し、画像データを破棄し、すべての参照をnullにする
 		 */
-		public function clear():void
+		public function clear(force:Boolean = false):void
 		{
 			var material:ParserMaterial;
 			var resource:Resource;
@@ -177,13 +177,7 @@ package net.morocoshi.moja3d.loader
 			{
 				for each (material in materials) 
 				{
-					for each(resource in material.getResources())
-					{
-						if (resource is ImageTextureResource)
-						{
-							ImageTextureResource(resource).clear();
-						}
-					}
+					material.clear(force);
 				}
 			}
 			
@@ -191,7 +185,10 @@ package net.morocoshi.moja3d.loader
 			{
 				for each(geom in geometries)
 				{
-					geom.dispose();
+					if (force || geom.autoDispose)
+					{
+						geom.clear();
+					}
 				}
 			}
 			
@@ -199,7 +196,7 @@ package net.morocoshi.moja3d.loader
 			{
 				for each (object in objects) 
 				{
-					object.clear(false);
+					object.clear(false, force);
 				}
 			}
 			
