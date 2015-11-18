@@ -35,6 +35,8 @@ package net.morocoshi.moja3d.agal
 			Mesh.globalSeed = 0;
 			program = { };
 			shader = { };
+			vertexConstant = { };
+			fragmentConstant = { };
 		}
 		
 		static public function dispose():void
