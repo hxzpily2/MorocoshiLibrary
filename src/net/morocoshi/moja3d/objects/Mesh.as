@@ -167,6 +167,24 @@ package net.morocoshi.moja3d.objects
 			return mesh;
 		}
 		
+		override public function clear(hierarchy:Boolean, force:Boolean = false):void 
+		{
+			if (surfaces)
+			{
+				var surface:Surface;
+				for each(surface in surfaces)
+				{
+					if (surface._material)
+					{
+						surface._material.clear(force);
+					}
+				}
+				surface = null;
+			}
+			
+			super.clear(hierarchy, force);
+		}
+		
 		override public function finaly():void 
 		{
 			super.finaly();
@@ -175,7 +193,6 @@ package net.morocoshi.moja3d.objects
 			var surface:Surface;
 			if (surfaces)
 			{
-				
 				for each(surface in surfaces)
 				{
 					surface.finaly();
