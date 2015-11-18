@@ -17,6 +17,7 @@ package net.morocoshi.common.loaders.tfp
 	import net.morocoshi.common.loaders.tfp.events.ITFPFileErrorEvent;
 	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.common.loaders.tfp.events.TFPEventUtil;
+	import net.morocoshi.common.math.list.VectorUtil;
 	
 	[Event(name = "complete", type = "flash.events.Event")]
 	[Event(name = "progress", type = "flash.events.ProgressEvent")]
@@ -669,6 +670,7 @@ package net.morocoshi.common.loaders.tfp
 			}
 			else
 			{
+				loadingFileList.push(file);
 				file.load(urlRequest, URLLoaderClass);
 			}
 		}
@@ -682,7 +684,7 @@ package net.morocoshi.common.loaders.tfp
 			var file:FileData = e.currentTarget as FileData;
 			removeAllFileEvents(file);
 			errorEventList.push(e);
-			
+			VectorUtil.deleteItem(loadingFileList, file);
 			numComplete++;
 			loadStockFile();
 		}
@@ -695,6 +697,7 @@ package net.morocoshi.common.loaders.tfp
 			removeAllFileEvents(file);
 			library.files = library.files.concat(file.fileList);
 			numComplete++;
+			VectorUtil.deleteItem(loadingFileList, file);
 			loadStockFile();
 		}
 		
