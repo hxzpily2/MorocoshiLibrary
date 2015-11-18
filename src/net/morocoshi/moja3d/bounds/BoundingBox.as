@@ -144,9 +144,10 @@ package net.morocoshi.moja3d.bounds
 			result.maxY = -Number.MAX_VALUE;
 			result.maxZ = -Number.MAX_VALUE;
 			
+			var b:BoundingBox;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var b:BoundingBox = items[i];
+				b = items[i];
 				if (b.minX < result.minX) result.minX = b.minX;
 				if (b.minY < result.minY) result.minY = b.minY;
 				if (b.minZ < result.minZ) result.minZ = b.minZ;
@@ -154,6 +155,7 @@ package net.morocoshi.moja3d.bounds
 				if (b.maxY > result.maxY) result.maxY = b.maxY;
 				if (b.maxZ > result.maxZ) result.maxZ = b.maxZ;
 			}
+			b = null;
 			
 			return result;
 		}
@@ -176,9 +178,11 @@ package net.morocoshi.moja3d.bounds
 			var maxX:Number = -Number.MAX_VALUE;
 			var maxY:Number = -Number.MAX_VALUE;
 			var maxZ:Number = -Number.MAX_VALUE;
+			
+			var b:BoundingBox;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var b:BoundingBox = items[i];
+				b = items[i];
 				var r:Number = Math.sqrt(b.radius2);
 				if (b.worldX - r < minX) minX = b.worldX - r;
 				if (b.worldY - r < minY) minY = b.worldY - r;
@@ -187,6 +191,7 @@ package net.morocoshi.moja3d.bounds
 				if (b.worldY + r > maxY) maxY = b.worldY + r;
 				if (b.worldZ + r > maxZ) maxZ = b.worldZ + r;
 			}
+			b = null;
 			
 			var result:BoundingBox = new BoundingBox();
 			result.minX = minX;
@@ -208,15 +213,22 @@ package net.morocoshi.moja3d.bounds
 			var objectList:Vector.<Object3D> = object.getChildren(true, true, Mesh);
 			var boundsList:Vector.<BoundingBox> = new Vector.<BoundingBox>;
 			
+			var mesh:Mesh;
 			var n:int = objectList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var mesh:Mesh = objectList[i] as Mesh;
+				mesh = objectList[i] as Mesh;
 				//mesh.updateBounds();
 				boundsList.push(mesh.boundingBox);
 			}
 			
-			return BoundingBox.getUniondSphereBox(boundsList);
+			var result:BoundingBox = BoundingBox.getUniondSphereBox(boundsList);
+			
+			objectList = null;
+			boundsList = null;
+			mesh = null;
+			
+			return result;
 		}
 		
 		public function toAABB3D():AABB3D 

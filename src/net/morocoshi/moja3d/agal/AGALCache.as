@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.agal 
 {
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.shaders.core.ViewTransformShader;
@@ -33,6 +34,10 @@ package net.morocoshi.moja3d.agal
 		static public function clear():void
 		{
 			Mesh.globalSeed = 0;
+			DataUtil.deleteObject(program);
+			DataUtil.deleteObject(shader);
+			DataUtil.deleteObject(vertexConstant);
+			DataUtil.deleteObject(fragmentConstant);
 			program = { };
 			shader = { };
 			vertexConstant = { };
