@@ -174,6 +174,19 @@ package net.morocoshi.moja3d.materials
 					resource.clear();
 				}
 			}
+			
+			name = null;
+			culling = null;
+			shaderList = null;
+			reflectShaderList = null;
+			sourceFactor = null;
+			destinationFactor = null;
+			_alphaThreshold = 0;
+			_shadowThreshold = 0;
+			depthEndShader = null;
+			opaquePassConst = null;
+			alphaPassConst = null;
+			seed = null;
 		}
 		
 		/**

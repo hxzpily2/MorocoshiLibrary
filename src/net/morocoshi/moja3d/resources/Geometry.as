@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
@@ -175,6 +176,26 @@ package net.morocoshi.moja3d.resources
 			}
 			
 			return true;
+		}
+		
+		override public function clear():void 
+		{
+			super.clear();
+			
+			DataUtil.deleteVector(vertexBufferList);
+			DataUtil.deleteVector(vertexBufferFormatList);
+			DataUtil.deleteVector(vertexIndices);
+			DataUtil.deleteVector(numAttributeList);
+			DataUtil.deleteVector(verticesList);
+			DataUtil.deleteObject(attributeIndex);
+			
+			verticesList = null;
+			numAttributeList = null;
+			vertexIndices = null;
+			vertexBufferFormatList = null;
+			vertexBufferList = null;
+			indexBuffer = null;
+			attributeIndex = null;
 		}
 		
 		override public function dispose():void 

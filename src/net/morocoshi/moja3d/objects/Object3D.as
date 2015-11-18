@@ -738,13 +738,12 @@ package net.morocoshi.moja3d.objects
 			notifyChild = null;
 			
 			remove();
-			/*
+			
 			_parent = null;
 			_children = null;
 			_lastChild = null;
 			_next = null;
 			_prev = null;
-			*/
 		}
 		
 		/**
