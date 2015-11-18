@@ -199,7 +199,7 @@ package net.morocoshi.moja3d.loader
 			{
 				for each (object in objects) 
 				{
-					object.dispose(false);
+					object.clear(false);
 				}
 			}
 			

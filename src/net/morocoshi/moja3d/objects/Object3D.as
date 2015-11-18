@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.common.graphics.Palette;
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
@@ -715,6 +716,35 @@ package net.morocoshi.moja3d.objects
 				}
 			}
 			resource = null;
+			
+			DataUtil.deleteObject(userData);
+			DataUtil.deleteVector(transformList);
+			DataUtil.deleteVector(decomposedData);
+			DataUtil.deleteVector(rawData);
+			userData = null;
+			transformList = null;
+			decomposedData = null;
+			rawData = null;
+			
+			name = null;
+			animationID = null;
+			boundingBox = null;
+			boundingCube = null;
+			_colorTransform = null;
+			worldColorTransform = null;
+			colorTransformShader = null;
+			_matrix = null;
+			_worldMatrix = null;
+			notifyChild = null;
+			
+			remove();
+			/*
+			_parent = null;
+			_children = null;
+			_lastChild = null;
+			_next = null;
+			_prev = null;
+			*/
 		}
 		
 		/**
