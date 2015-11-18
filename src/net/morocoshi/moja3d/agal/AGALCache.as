@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.agal
 	import net.morocoshi.moja3d.shaders.core.ViewTransformShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteBasicShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteEndShader;
+	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	use namespace moja3d;
 	
@@ -35,10 +36,26 @@ package net.morocoshi.moja3d.agal
 		{
 			Mesh.globalSeed = 0;
 			DataUtil.deleteObject(program);
-			DataUtil.deleteObject(shader);
 			DataUtil.deleteObject(vertexConstant);
 			DataUtil.deleteObject(fragmentConstant);
 			program = { };
+			var key:String;
+			for (key in shader)
+			{
+				var item:Object = shader[key];
+				if (item.opaque)
+				{
+					item.opaque.finaly();
+				}
+				if (item.alpha)
+				{
+					item.alpha.finaly();
+				}
+				DataUtil.deleteObject(item);
+				item = null;
+			}
+			key = null;
+			DataUtil.deleteObject(shader);
 			shader = { };
 			vertexConstant = { };
 			fragmentConstant = { };
