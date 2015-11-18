@@ -123,6 +123,7 @@ package net.morocoshi.moja3d.materials
 		public function getResources():Vector.<Resource> 
 		{
 			var result:Vector.<Resource> = new Vector.<Resource>;
+			if (shaderList == null) return result;
 			
 			var textureList:Vector.<AGALTexture> = new Vector.<AGALTexture>;
 			VectorUtil.attachListDiff(textureList, shaderList.vertexCode.textureList);
