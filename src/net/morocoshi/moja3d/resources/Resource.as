@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.moja3d.view.ContextProxy;
@@ -58,11 +57,17 @@ package net.morocoshi.moja3d.resources
 			return true;
 		}
 		
+		/**
+		 * Context3Dにuploadしたリソースをdispose()しつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
+		 */
 		public function clear():void 
 		{
 			dispose();
 		}
 		
+		/**
+		 * Context3Dにuploadしたリソースをdispose()する。関連する画像データなどは破棄しない。
+		 */
 		public function dispose():void 
 		{
 			isUploaded = false;

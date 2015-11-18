@@ -682,15 +682,16 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが使用しているリソースを収集し、autoDispose=trueのものをすべて破棄する。
-		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に収集するかどうか
+		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。関連する画像データなどは破棄しない。
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
 		 */
-		public function dispose(hierarchy:Boolean):void 
+		public function dispose(hierarchy:Boolean, force:Boolean = false):void 
 		{
 			var resource:Resource;
 			for each(resource in getResources(hierarchy))
 			{
-				if (resource.autoDispose)
+				if (force || resource.autoDispose)
 				{
 					resource.dispose();
 				}
@@ -699,15 +700,16 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが使用しているリソースを収集し、autoDispose=trueのものをすべて破棄する。画像リソースの場合はBitmapDataも破棄する。
-		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に収集するかどうか
+		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
+		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
 		 */
-		public function clear(hierarchy:Boolean):void 
+		public function clear(hierarchy:Boolean, force:Boolean = false):void 
 		{
 			var resource:Resource;
 			for each(resource in getResources(hierarchy))
 			{
-				if (resource.autoDispose)
+				if (force || resource.autoDispose)
 				{
 					resource.clear();
 				}

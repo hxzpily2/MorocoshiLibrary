@@ -146,22 +146,30 @@ package net.morocoshi.moja3d.materials
 			return result;
 		}
 		
-		public function dispose():void 
+		/**
+		 * このマテリアルが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
+		 */
+		public function dispose(force:Boolean = false):void 
 		{
 			for each(var resource:Resource in getResources())
 			{
-				if (resource.autoDispose)
+				if (force || resource.autoDispose)
 				{
 					resource.dispose();
 				}
 			}
 		}
 		
-		public function clear():void 
+		/**
+		 * このマテリアルが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。関連する画像データなどは破棄しない。
+		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
+		 */
+		public function clear(force:Boolean = false):void 
 		{
 			for each(var resource:Resource in getResources())
 			{
-				if (resource.autoDispose)
+				if (force || resource.autoDispose)
 				{
 					resource.clear();
 				}
