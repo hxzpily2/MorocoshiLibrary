@@ -40,20 +40,28 @@ package net.morocoshi.moja3d.agal
 			DataUtil.deleteObject(fragmentConstant);
 			program = { };
 			var key:String;
+			var item:*;
 			for (key in shader)
 			{
-				var item:Object = shader[key];
-				if (item.opaque)
+				item = shader[key];
+				if (item is ShaderList)
 				{
-					item.opaque.finaly();
+					ShaderList(item).finaly();
 				}
-				if (item.alpha)
+				else
 				{
-					item.alpha.finaly();
+					if (item.opaque)
+					{
+						item.opaque.finaly();
+					}
+					if (item.alpha)
+					{
+						item.alpha.finaly();
+					}
+					DataUtil.deleteObject(item);
 				}
-				DataUtil.deleteObject(item);
-				item = null;
 			}
+			item = null;
 			key = null;
 			DataUtil.deleteObject(shader);
 			shader = { };
