@@ -1,6 +1,8 @@
 package net.morocoshi.moja3d.shaders.depth 
 {
+	import flash.events.Event;
 	import net.morocoshi.moja3d.agal.AGALTexture;
+	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -14,7 +16,6 @@ package net.morocoshi.moja3d.shaders.depth
 	{
 		public var opacityTexture:AGALTexture;
 		private var _opacity:TextureResource;
-		//private var thresholdConst:AGALConstant;
 		private var _smoothing:String;
 		private var _mipmap:String;
 		private var _tiling:String;
@@ -34,6 +35,26 @@ package net.morocoshi.moja3d.shaders.depth
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+		}
+		
+		public function get opacity():TextureResource 
+		{
+			return _opacity;
+		}
+		
+		public function set opacity(value:TextureResource):void 
+		{
+			if (_opacity) _opacity.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			_opacity = value;
+			if (opacityTexture) opacityTexture.texture = _opacity;
+			if (_opacity) _opacity.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			
+			updateAlphaMode();
+		}
+		
+		private function image_parsedHandler(e:Event):void 
+		{
+			updateAlphaMode();
 		}
 		
 		override public function getKey():String 
@@ -67,8 +88,7 @@ package net.morocoshi.moja3d.shaders.depth
 			fragmentCode.addCode(
 				"var $temp",
 				"$temp.xyzw = tex(#uv.xy, &opacityDepth " + tag + ")",
-				//_colorChannelで指定したチャンネルを透過情報として拾う
-				"$alpha.x *= $temp." + rgba
+				"$alpha.x *= $temp." + rgba//_colorChannelで指定したチャンネルを透過情報として拾う
 			);
 		}
 		
@@ -82,17 +102,6 @@ package net.morocoshi.moja3d.shaders.depth
 			return new DepthOpacityShader(cloneTexture(_opacity), _colorChannel, _smoothing, _mipmap, _tiling);
 		}
 		
-		/*
-		public function get alpha():Number 
-		{
-			return _alpha;
-		}
-		
-		public function set alpha(value:Number):void 
-		{
-			thresholdConst.x = _alpha = value;
-		}
-		*/
 	}
 
 }

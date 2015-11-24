@@ -3,9 +3,6 @@ package net.morocoshi.moja3d.shaders.render
 	import flash.display.BitmapDataChannel;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.events.Event3D;
-	import net.morocoshi.moja3d.materials.Mipmap;
-	import net.morocoshi.moja3d.materials.Smoothing;
-	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
@@ -31,7 +28,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var opacityTexture:AGALTexture;
 		private var depthShader:DepthOpacityShader;
 		
-		public function TextureShader(diffuse:TextureResource, opacity:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
+		public function TextureShader(diffuse:TextureResource, opacity:TextureResource = null, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
 		{
 			super();
 			
@@ -43,7 +40,7 @@ package net.morocoshi.moja3d.shaders.render
 			}
 			
 			this.diffuse = diffuse;
-			_opacity = opacity;
+			this.opacity = opacity;
 			_mipmap = mipmap;
 			_smoothing = smoothing;
 			_tiling = tiling;
@@ -110,19 +107,11 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			//関連付けられていたパースイベントを解除しておく
 			if (_diffuse) _diffuse.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			
-			//テクスチャリソースの差し替え
-			_diffuse = value;
+			_diffuse = value;//テクスチャリソースの差し替え
 			if (diffuseTexture)　diffuseTexture.texture = _diffuse;
-			
 			//新しいパースイベントを関連付ける
 			if (_diffuse)　_diffuse.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
-			updateAlphaMode();
-		}
-		
-		private function image_parsedHandler(e:Event3D):void 
-		{
 			updateAlphaMode();
 		}
 		
@@ -133,12 +122,20 @@ package net.morocoshi.moja3d.shaders.render
 		
 		public function set opacity(value:TextureResource):void 
 		{
-			opacityTexture.texture = _opacity = value;
-			depthShader.opacityTexture.texture = _opacity;
+			//関連付けられていたパースイベントを解除しておく
+			if (_opacity) _opacity.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			_opacity = value;//テクスチャリソースの差し替え
+			if (opacityTexture) opacityTexture.texture = _opacity;
+			if (depthShader) depthShader.opacity = _opacity;
+			//新しいパースイベントを関連付ける
+			if (_opacity) _opacity.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
 			updateAlphaMode();
-			updateTexture();
-			updateShaderCode();
+		}
+		
+		private function image_parsedHandler(e:Event3D):void 
+		{
+			updateAlphaMode();
 		}
 		
 		public function get mipmap():String 

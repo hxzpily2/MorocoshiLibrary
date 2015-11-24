@@ -85,6 +85,8 @@ package net.morocoshi.moja3d.renderer
 		public var info:AGALInfo;
 		/**これにBitmapDataが指定されていればここにキャプチャする*/
 		public var captureDestination:BitmapData;
+		/**マスクフィルターが存在するか*/
+		moja3d var existMaskFilter:Boolean;
 		
 		/**
 		 * レンダリング時にシーン内のものを色々と収集する

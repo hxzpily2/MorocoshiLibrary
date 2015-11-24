@@ -318,6 +318,25 @@ package net.morocoshi.moja3d.view
 				collector.reflectiveWater.setSize(view.width, view.height);
 			}
 			
+			
+			//有効なフィルタを抽出
+			validFilters.length = 0;
+			var needMask:Boolean = false;
+			var filter:Filter3D;
+			n = filters? filters.length : 0;
+			for (i = 0; i < n; i++) 
+			{
+				filter = filters[i];
+				if (filter.enabled)//&& !(filter.hasMaskElement && collector.hasMaskElement == false)
+				{
+					validFilters.push(filter);
+					if (filter.hasMaskElement) needMask = true;
+				}
+			}
+			collector.existMaskFilter = needMask;
+			filter = null;
+			
+			
 			var i:int;
 			var n:int;
 			var shadow:Shadow;
@@ -404,21 +423,6 @@ package net.morocoshi.moja3d.view
 				point = null;
 			}
 			
-			//有効なフィルタを抽出
-			validFilters.length = 0;
-			var needMask:Boolean = false;
-			var filter:Filter3D;
-			n = filters? filters.length : 0;
-			for (i = 0; i < n; i++) 
-			{
-				filter = filters[i];
-				if (filter.enabled && !(filter.hasMaskElement && collector.hasMaskElement == false))
-				{
-					validFilters.push(filter);
-					if (filter.hasMaskElement) needMask = true;
-				}
-			}
-			filter = null;
 			
 			//マスク画像のレンダリング
 			if (needMask)

@@ -503,11 +503,11 @@ package net.morocoshi.moja3d.objects
 						collector.hasLightElement = true;
 					}
 					//マスクがあれば追加する
-					if (mask != -1 || renderMask != -1)
+					if (collector.existMaskFilter && (mask != -1 || renderMask != -1))
 					{
 						var maskColor:uint = ((mask == -1)? 0 : mask) | ((renderMask == -1)? 0 : renderMask);
 						collector.hasMaskElement = true;
-						material.getMaskShaderList(collector, this, geom, maskColor, skinShader);
+						material.collectMaskShaderList(collector, this, geom, maskColor, skinShader);
 					}
 					else
 					{

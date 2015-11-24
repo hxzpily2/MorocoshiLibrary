@@ -20,6 +20,7 @@ package net.morocoshi.moja3d.filters
 		public function MaskPreviewFilter3D() 
 		{
 			super();
+			hasMaskElement = true;
 			
 			shaderList = new ShaderList();
 			shaderList.addShader(new BasicFilterShader());

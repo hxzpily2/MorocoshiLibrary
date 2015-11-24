@@ -61,7 +61,7 @@ package net.morocoshi.moja3d.materials
 		//
 		//--------------------------------------------------------------------------
 		
-		public function Material() 
+		public function Material(shaders:Array = null) 
 		{
 			name = "";
 			seed = String(++globalSeed);
@@ -73,6 +73,15 @@ package net.morocoshi.moja3d.materials
 			_shadowThreshold = 0.9;
 			depthEndShader = new DepthEndShader(_shadowThreshold);
 			blendMode = BlendMode.NORMAL;
+			
+			if (shaders != null)
+			{
+				var n:int = shaders.length;
+				for (var i:int = 0; i < n; i++) 
+				{
+					shaderList.addShader(shaders[i]);
+				}
+			}
 		}
 		
 		//--------------------------------------------------------------------------
@@ -359,7 +368,8 @@ package net.morocoshi.moja3d.materials
 			collector.alphaPassShaderList = (_alphaPassEnabled && shaderData)? shaderData.alpha : null;
 		}
 		
-		public function getMaskShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, mask:uint, skinShader:MaterialShader):void
+		//public function getMaskShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, mask:uint, skinShader:MaterialShader):void
+		public function collectMaskShaderList(collector:RenderCollector, mesh:Mesh, geometry:Geometry, mask:uint, skinShader:MaterialShader):void
 		{
 			var skinKey:String = skinShader? skinShader.getKey() : "none";
 			var maskKey:String = seed + "/" + skinKey + "/" + mesh.key + "/mask";
