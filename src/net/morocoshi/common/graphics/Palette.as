@@ -44,11 +44,17 @@ package net.morocoshi.common.graphics
 		 * @param	alpha
 		 * @return
 		 */
-		static public function getMultiplyColor(rgb:uint, alpha:Number = 1):ColorTransform 
+		static public function getMultiplyColor(rgb:uint, density:Number, alpha:Number):ColorTransform 
 		{
 			var r:Number = (rgb >>> 16 & 0xFF) / 0xFF;
 			var g:Number = (rgb >>> 8 & 0xFF) / 0xFF;
 			var b:Number = (rgb & 0xFF) / 0xFF;
+			if (density != 1)
+			{
+				r = r * density + (1 - density);
+				g = g * density + (1 - density);
+				b = b * density + (1 - density);
+			}
 			var ct:ColorTransform = new ColorTransform(r, g, b, alpha);
 			return ct;
 		}
