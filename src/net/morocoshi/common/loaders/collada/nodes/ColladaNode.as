@@ -2,13 +2,15 @@ package net.morocoshi.common.loaders.collada.nodes
 {
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
 	import net.morocoshi.common.text.XMLUtil;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ColladaNode 
 	{
-		/**<node>にidかnameどちらかの属性がある*/
+		/**＜node＞にidかnameどちらかの属性がある*/
 		public var existID:Boolean;
 		public var name:String;
 		public var id:String;
