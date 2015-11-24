@@ -53,8 +53,8 @@ package net.morocoshi.moja3d.primitives
 			var scale9s:Vector.<Number> = new Vector.<Number>;
 			var indices:Vector.<uint> = new Vector.<uint>;
 			var count:int = -1;
-			
-			min = new Point( -width * (1 - originX), -height * (1 - originY));
+			scale9Grid.y = height - scale9Grid.bottom;
+			min = new Point( -width * originX, -height * originY);
 			max = new Point(min.x + width, min.y + height);
 			var lineX:Array = [min.x, min.x + scale9Grid.left, min.x + scale9Grid.right, min.x + width];
 			var lineY:Array = [min.y, min.y + scale9Grid.top, min.y + scale9Grid.bottom, min.y + height];
@@ -65,7 +65,7 @@ package net.morocoshi.moja3d.primitives
 				count++;
 				vertices.push(lineX[ix], lineY[iy], 0);
 				colors.push(1, 1, 1, 1);
-				uvs.push(1 - (lineX[ix] - min.x) / width, (lineY[iy] - min.y) / height);
+				uvs.push((lineX[ix] - min.x) / width, 1 - (lineY[iy] - min.y) / height);
 				normals.push(0, 0, g == 0? 1 : -1);
 				tangent4.push(1, 0, 0, 1);
 				scale9s.push(int(ix == 1), int(ix == 2), int(iy == 1), int(iy == 2));

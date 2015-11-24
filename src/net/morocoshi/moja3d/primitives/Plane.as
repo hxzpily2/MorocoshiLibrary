@@ -29,11 +29,11 @@ package net.morocoshi.moja3d.primitives
 			for (var ix:int = 0; ix <= segmentsW; ix++)
 			{
 				count++;
-				var px:Number = ix / segmentsW * width - width * (1 - originX);
-				var py:Number = iy / segmentsH * height - height * (1 - originY);
+				var px:Number = ix / segmentsW * width - width * originX;
+				var py:Number = iy / segmentsH * height - height * originY;
 				vertices.push(px, py, 0);
 				colors.push(1, 1, 1, 1);
-				uvs.push(1 - ix / segmentsW, iy / segmentsH);
+				uvs.push(ix / segmentsW, 1 - iy / segmentsH);
 				normals.push(0, 0, g == 0? 1 : -1);
 				tangent4.push(1, 0, 0, 1);
 				if (ix < segmentsW && iy < segmentsH)
