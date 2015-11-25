@@ -2,16 +2,13 @@ package net.morocoshi.moja3d.filters
 {
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
-	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.filters.AddFilterShader;
-	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
-	import net.morocoshi.moja3d.shaders.filters.EndFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.GaussianFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.LuminanceExtractorFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	/**
-	 * ...
+	 * 輝度が一定範囲内のピクセルを発光させる。マスク指定で発光範囲を指定可能。
 	 * 
 	 * @author tencho
 	 */
@@ -41,6 +38,9 @@ package net.morocoshi.moja3d.filters
 		public function BloomFilter3D(min:Number, max:Number, alpha:Number, blur:Number, segments:int, dispersion:Number = 50, lowLV:int = 0, mask:int = -1) 
 		{
 			super();
+			
+			hasMaskElement = true;
+			
 			_mask = mask;
 			_lowLV = lowLV;
 			
@@ -48,25 +48,10 @@ package net.morocoshi.moja3d.filters
 			gaussianHShader = new GaussianFilterShader(true, blur, segments, dispersion);
 			gaussianVShader = new GaussianFilterShader(false, blur, segments, dispersion);
 			
-			shaderList0 = new ShaderList();
-			shaderList0.addShader(new BasicFilterShader());
-			shaderList0.addShader(luminanceShader);
-			shaderList0.addShader(new EndFilterShader());
-			
-			shaderList1 = new ShaderList();
-			shaderList1.addShader(new BasicFilterShader());
-			shaderList1.addShader(gaussianHShader);
-			shaderList1.addShader(new EndFilterShader());
-			
-			shaderList2 = new ShaderList();
-			shaderList2.addShader(new BasicFilterShader());
-			shaderList2.addShader(gaussianVShader);
-			shaderList2.addShader(new EndFilterShader());
-			
-			shaderList3 = new ShaderList();
-			shaderList3.addShader(new BasicFilterShader());
-			shaderList3.addShader(new AddFilterShader(alpha));
-			shaderList3.addShader(new EndFilterShader());
+			shaderList0 = createShaderList([luminanceShader]);
+			shaderList1 = createShaderList([gaussianHShader]);
+			shaderList2 = createShaderList([gaussianVShader]);
+			shaderList3 = createShaderList([new AddFilterShader(alpha)]);
 		}
 		
 		override public function render(manager:PostEffectManager):void 
@@ -99,15 +84,15 @@ package net.morocoshi.moja3d.filters
 			luminanceShader.max = value;
 		}
 		
-		public function get scale():Number 
+		public function get blur():Number 
 		{
-			return gaussianHShader.scale;
+			return gaussianHShader.blur;
 		}
 		
-		public function set scale(value:Number):void 
+		public function set blur(value:Number):void 
 		{
-			gaussianHShader.scale = value;
-			gaussianVShader.scale = value;
+			gaussianHShader.blur = value;
+			gaussianVShader.blur = value;
 		}
 		
 		public function get dispersion():Number 

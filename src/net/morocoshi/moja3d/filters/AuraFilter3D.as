@@ -11,7 +11,7 @@ package net.morocoshi.moja3d.filters
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	/**
-	 * ...
+	 * マスクが設定されたオブジェクトの周囲を発光させる。ノイズテクスチャで発光を歪ませる事も可能。
 	 * 
 	 * @author tencho
 	 */
@@ -90,13 +90,13 @@ package net.morocoshi.moja3d.filters
 		
 		public function get blur():Number 
 		{
-			return gaussianHShader.scale;
+			return gaussianHShader.blur;
 		}
 		
 		public function set blur(value:Number):void 
 		{
-			gaussianHShader.scale = value;
-			gaussianVShader.scale = value;
+			gaussianHShader.blur = value;
+			gaussianVShader.blur = value;
 		}
 		
 		public function get dispersion():Number 

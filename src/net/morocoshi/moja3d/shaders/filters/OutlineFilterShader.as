@@ -1,11 +1,9 @@
 package net.morocoshi.moja3d.shaders.filters 
 {
-	import adobe.utils.CustomActions;
-	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
+	import net.morocoshi.moja3d.renderer.MaskColor;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -29,7 +27,7 @@ package net.morocoshi.moja3d.shaders.filters
 			updateShaderCode();
 		}
 		
-		public function addElement(mask:String, color:uint, alpha:Number):void
+		public function addElement(mask:uint, color:uint, alpha:Number):void
 		{
 			elements.push(new OutlineFilterElement(mask, color, alpha));
 			updateConstants();
@@ -39,7 +37,11 @@ package net.morocoshi.moja3d.shaders.filters
 		override public function getKey():String 
 		{
 			var key:String = "";
-			elements.forEach(function(...args):void { key += args[0].getKey() + "_" } );
+			var n:int = elements.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				key += elements[i].getKey() + "_";
+			}
 			return "OutlineFilterShader:" + key;
 		}
 		
@@ -87,6 +89,15 @@ package net.morocoshi.moja3d.shaders.filters
 			{
 				var element:OutlineFilterElement = elements[i];
 				
+				var xyz:String;
+				switch(element.mask)
+				{
+					case MaskColor.RED: xyz = "x"; break;
+					case MaskColor.GREEN: xyz = "y"; break;
+					case MaskColor.BLUE: xyz = "z"; break;
+					default: xyz = "x";
+				}
+				
 				fragmentCode.addCode(
 					"$image.w = @outline1.y"//0にリセットしておく
 					
@@ -96,6 +107,7 @@ package net.morocoshi.moja3d.shaders.filters
 				for (var iy:int = 1; iy < xy.length - 1; iy++) 
 				{
 					if (ix == 0 && iy == 0) continue;
+					
 					fragmentCode.addCode(
 						"$uvp.x = " + xy[ix],
 						"$uvp.y = " + xy[iy],
@@ -103,14 +115,14 @@ package net.morocoshi.moja3d.shaders.filters
 						"$uvp.xy += #uv.xy",
 						//マスク画像
 						"$image.xyz = tex($uvp.xy, fs1, " + tag + ")",
-						"$image.w += $image." + element.mask
+						"$image.w += $image." + xyz
 					);
 				}
 				fragmentCode.addCode(
 					"$image.w = sat($image.w)",//0-1
 					//マスク画像でくりぬき
 					"$image.xyz = tex(#uv, fs1, " + tag + ")",
-					"$image.w -= $image." + element.mask,//境界線の描画判定0-1
+					"$image.w -= $image." + xyz,//境界線の描画判定0-1
 					
 					"$image.xyz = " + element.id + ".xyz",//境界線色
 					"$per.x = $image.w * " + element.id + ".w",//境界線アルファ

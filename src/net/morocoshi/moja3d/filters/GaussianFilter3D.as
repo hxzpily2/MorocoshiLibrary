@@ -1,13 +1,11 @@
 package net.morocoshi.moja3d.filters 
 {
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
-	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
-	import net.morocoshi.moja3d.shaders.filters.EndFilterShader;
 	import net.morocoshi.moja3d.shaders.filters.GaussianFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	/**
-	 * ...
+	 * ぼかしフィルタ
 	 * 
 	 * @author tencho
 	 */
@@ -17,40 +15,35 @@ package net.morocoshi.moja3d.filters
 		private var gaussianVShader:ShaderList;
 		private var gaussianH:GaussianFilterShader;
 		private var gaussianV:GaussianFilterShader;
+		private var lowLV:int;
 		
-		public function GaussianFilter3D(scale:Number, segments:int, dispersion:Number = 50) 
+		public function GaussianFilter3D(scale:Number, segments:int, dispersion:Number = 50, lowLV:int = 0) 
 		{
 			super();
 			
+			this.lowLV = lowLV;
 			gaussianH = new GaussianFilterShader(true, scale, segments, dispersion);
 			gaussianV = new GaussianFilterShader(false, scale, segments, dispersion);
 			
-			gaussianHShader = new ShaderList();
-			gaussianHShader.addShader(new BasicFilterShader());
-			gaussianHShader.addShader(gaussianH);
-			gaussianHShader.addShader(new EndFilterShader());
-			
-			gaussianVShader = new ShaderList();
-			gaussianVShader.addShader(new BasicFilterShader());
-			gaussianVShader.addShader(gaussianV);
-			gaussianVShader.addShader(new EndFilterShader());
+			gaussianHShader = createShaderList([gaussianH]);
+			gaussianVShader = createShaderList([gaussianV]);
 		}
 		
 		override public function render(manager:PostEffectManager):void 
 		{
-			manager.renderProcess(gaussianHShader);
-			manager.renderFinal(gaussianVShader);
+			manager.renderProcess(gaussianHShader, lowLV, [null]);
+			manager.renderFinal(gaussianVShader, lowLV);
 		}
 		
-		public function get scale():Number 
+		public function get blur():Number 
 		{
-			return gaussianH.scale;
+			return gaussianH.blur;
 		}
 		
-		public function set scale(value:Number):void 
+		public function set blur(value:Number):void 
 		{
-			gaussianH.scale = value;
-			gaussianV.scale = value;
+			gaussianH.blur = value;
+			gaussianV.blur = value;
 		}
 		
 		public function get dispersion():Number 

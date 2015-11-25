@@ -15,7 +15,7 @@ package net.morocoshi.moja3d.shaders.filters
 	public class GaussianFilterShader extends MaterialShader 
 	{
 		private var _horizontal:Boolean;
-		private var _scale:Number;
+		private var _blur:Number;
 		private var _segments:int;
 		private var _dispersion:Number;
 		
@@ -23,11 +23,11 @@ package net.morocoshi.moja3d.shaders.filters
 		private var offsetConstant:Vector.<String>;
 		private var scaleConst:AGALConstant;
 		
-		public function GaussianFilterShader(horizontal:Boolean, scale:Number, segments:int, dispersion:Number = 50)
+		public function GaussianFilterShader(horizontal:Boolean, blur:Number, segments:int, dispersion:Number = 50)
 		{
 			super();
 			
-			_scale = scale;
+			_blur = blur;
 			_dispersion = dispersion;
 			_segments = segments;
 			_horizontal = horizontal;
@@ -108,7 +108,7 @@ package net.morocoshi.moja3d.shaders.filters
 				offsetConstant.push(offsetID + ".z");
 				offsetConstant.push(offsetID + ".w");
 			}
-			scaleConst = fragmentCode.addConstantsFromArray("@gaussianScale", [_scale / _segments, 0, 0, 0]);
+			scaleConst = fragmentCode.addConstantsFromArray("@gaussianScale", [_blur / _segments, 0, 0, 0]);
 		}
 			
 		override protected function updateShaderCode():void 
@@ -152,21 +152,21 @@ package net.morocoshi.moja3d.shaders.filters
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:GaussianFilterShader = new GaussianFilterShader(_horizontal, _scale, _segments, _dispersion);
+			var shader:GaussianFilterShader = new GaussianFilterShader(_horizontal, _blur, _segments, _dispersion);
 			return shader;
 		}
 		
-		public function get scale():Number 
+		public function get blur():Number 
 		{
-			return _scale;
+			return _blur;
 		}
 		
-		public function set scale(value:Number):void 
+		public function set blur(value:Number):void 
 		{
-			if (_scale == value) return;
+			if (_blur == value) return;
 			
-			_scale = value;
-			scaleConst.x = _scale / _segments;
+			_blur = value;
+			scaleConst.x = _blur / _segments;
 		}
 		
 		public function get dispersion():Number 
@@ -192,7 +192,7 @@ package net.morocoshi.moja3d.shaders.filters
 			if (_segments == value) return;
 			
 			_segments = value;
-			scaleConst.x = _scale / _segments;
+			scaleConst.x = _blur / _segments;
 			updateConstants();
 			updateShaderCode();
 		}

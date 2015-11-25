@@ -3,8 +3,10 @@ package net.morocoshi.moja3d.filters
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
 	import net.morocoshi.moja3d.shaders.filters.OutlineFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	
 	/**
-	 * ...
+	 * マスクが設定されたオブジェクトにアウトラインをつける
+	 * 
 	 * @author tencho
 	 */
 	public class OutlineFilter3D extends Filter3D 
@@ -21,7 +23,7 @@ package net.morocoshi.moja3d.filters
 			shaderList = createShaderList([shader]);
 		}
 		
-		public function addElement(mask:String, color:uint, alpha:Number):void
+		public function addElement(mask:uint, color:uint, alpha:Number):void
 		{
 			shader.addElement(mask, color, alpha);
 		}
