@@ -1,11 +1,14 @@
 package net.morocoshi.moja3d.shaders.core 
 {
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.depth.DepthBasicShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * 基本シェーダー
@@ -30,18 +33,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getKey():String 
 		{
-			//TODO: ここのキーをジオメトリのアトリビュート追加順に対応させる
-			var key:String = "BasicShader:";
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.POSITION));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.UV));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.NORMAL));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.VERTEXCOLOR));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.TANGENT4));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX1));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEINDEX2));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEWEIGHT1));
-			key += "_" + int(geometry.hasAttribute(VertexAttribute.BONEWEIGHT2));
-			return key;
+			return "BasicShader:" + geometry.attributesKey;
 		}
 		
 		override protected function updateAlphaMode():void

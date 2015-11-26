@@ -8,7 +8,10 @@ package net.morocoshi.moja3d.resources
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.view.ContextProxy;
+	
+	use namespace moja3d;
 	
 	/**
 	 * メッシュジオメトリ
@@ -21,6 +24,7 @@ package net.morocoshi.moja3d.resources
 		public var numAttributeList:Vector.<int>;
 		public var vertexIndices:Vector.<uint>;
 		
+		moja3d var attributesKey:String;
 		public var vertexBufferFormatList:Vector.<String>;
 		public var vertexBufferList:Vector.<VertexBuffer3D>;
 		public var indexBuffer:IndexBuffer3D;
@@ -41,6 +45,8 @@ package net.morocoshi.moja3d.resources
 			
 			vertexBufferFormatList = new Vector.<String>;
 			vertexBufferList = new Vector.<VertexBuffer3D>;
+			
+			updateAttributeKey();
 		}
 		
 		override public function toString():String 
@@ -81,6 +87,25 @@ package net.morocoshi.moja3d.resources
 			verticesList.push(vertices);
 			numAttributeList.push(numAttribute);
 			attributeIndex[String(kind)] = verticesList.length - 1;
+			
+			updateAttributeKey();
+		}
+		
+		private function updateAttributeKey():void 
+		{
+			var list:Array = [];
+			for (var key:String in attributeIndex)
+			{
+				list.push( { index:attributeIndex[key], kind:key } );
+			}
+			list.sortOn("index", Array.NUMERIC);
+			
+			attributesKey = "";
+			var n:int = list.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				attributesKey += list[i].index + ":" + list[i].kind + "_";
+			}
 		}
 		
 		public function removeVertices(kind:int):void 
@@ -92,6 +117,8 @@ package net.morocoshi.moja3d.resources
 			numAttributeList.splice(index, 1);
 			
 			delete attributeIndex[String(kind)];
+			
+			updateAttributeKey();
 		}
 		
 		/**
