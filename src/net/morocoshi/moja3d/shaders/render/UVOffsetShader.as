@@ -76,11 +76,11 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$uv.xy *= @offsetUV.zw",
 				"$uv.xy += @offsetUV.xy",
 				"#uv = $uv.xy"//UV
-			);
+			]);
 		}
 		
 		public function get offsetU():Number 

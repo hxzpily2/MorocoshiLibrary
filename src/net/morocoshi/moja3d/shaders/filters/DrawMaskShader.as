@@ -113,27 +113,27 @@ package net.morocoshi.moja3d.shaders.filters
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
 			
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $rawImage",
 				"var $image",
 				"$rawImage.xyzw = tex(#uv.xy, fs" + textureIndex + ", " + tag + ")",
 				"$output.xyzw = @0_0_0_1"
-			);
+			]);
 			
 			var n:int = items.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$image.xyzw = $rawImage.xyzw",
 					"$image.xyz *= @mask" + i + ".xyz",
 					"$image.x = max($image.x, $image.y)",
 					"$image.x = max($image.x, $image.z)",
 					"$image.xyz = @color" + i + ".xyz * $image.xxx"
-				);
+				]);
 				switch(_blendMode)
 				{
-					case BlendMode.ADD: fragmentCode.addCode("$output.xyz += $image.xyz"); break;
-					case BlendMode.SUBTRACT: fragmentCode.addCode("$output.xyz -= $image.xyz"); break;
+					case BlendMode.ADD: fragmentCode.addCode(["$output.xyz += $image.xyz"]); break;
+					case BlendMode.SUBTRACT: fragmentCode.addCode(["$output.xyz -= $image.xyz"]); break;
 				}
 			}
 		}

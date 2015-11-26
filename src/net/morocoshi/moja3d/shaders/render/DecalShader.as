@@ -53,9 +53,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			vertexCode.addCode(
-				"$pos.z += @decal.x"
-			);
+			vertexCode.addCode(["$pos.z += @decal.x"]);
 		}
 		
 		override public function clone():MaterialShader 

@@ -84,7 +84,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.cameraPosition = true;
 			fragmentConstants.lights = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				//テクセルから視線へのベクトル（正規化）
 				"var $eye",
 				"var $light",
@@ -92,7 +92,7 @@ package net.morocoshi.moja3d.shaders.render
 				
 				"$eye.xyz = @cameraPosition.xyz - #wpos.xyz",
 				"$eye.xyz = nrm($eye.xyz)"
-			);
+			]);
 			
 			var xyz:String;
 			
@@ -102,7 +102,7 @@ package net.morocoshi.moja3d.shaders.render
 				var omniPosition:String = "@omniPosition" + i;
 				var omniData:String = "@omniData" + i;
 				var omniColor:String = "@omniColor" + i;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$light.xyz = " + omniPosition + ".xyz - #wpos.xyz",
 					"$light.xyz = pow($light.xyz, @2)",
 					"$light.w = $light.x + $light.y",
@@ -129,32 +129,32 @@ package net.morocoshi.moja3d.shaders.render
 					"$half.w *= " + omniData + ".z",//ライトのスペキュラ強度
 					"$half.w *= $light.w",//距離による減退
 					"$half.w *= $common." + xyz//影の強度
-				);
+				]);
 				
 				//ライトと法線の角度の関係を調べて、逆から当たっていたら強度を0にしたい
 				//ライトへのベクトルと法線ベクトルの向きが90を超えるなら強度を0に
 				if (_protectReverse)
 				{
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$light.w = dp3($light.xyz, $normal.xyz)",
 						"$light.w = sat($light.w)",//0-1
 						"$half.w *= $light.w"
-					);
+					]);
 				}
 				
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$half.xyz = $half.www * " + omniColor + ".xyz"//ライトカラー
-				);
+				]);
 				
 				if (_fresnel)
 				{
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$half.xyz *= $common.w"//フレネル反射
-					);
+					]);
 				}
 				
 				var code:String = _protectTransparent? "$output.xyz += $half.xyz" : "$output.xyzw += $half.xyzw";
-				fragmentCode.addCode(code);
+				fragmentCode.addCode([code]);
 			}
 			
 			for (i = 0; i < LightSetting._numDirectionalLights; i++) 
@@ -162,7 +162,7 @@ package net.morocoshi.moja3d.shaders.render
 				xyz = ["x", "y", "z"][i];
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					//テクセルからライトへのベクトル（正規化）
 					"$light.xyz = " + lightAxis + ".xyz",
 					"$light.xyz = nrm($light.xyz)",
@@ -178,32 +178,32 @@ package net.morocoshi.moja3d.shaders.render
 					"$half.w *= " + lightColor + ".w",//ライトの強度
 					"$half.w *= " + lightAxis + ".w",//ライトのスペキュラ強度
 					"$half.w *= $common." + xyz//影の強度
-				);
+				]);
 				
 				//ライトと法線の角度の関係を調べて、逆から当たっていたら強度を0にしたい
 				//ライトへのベクトルと法線ベクトルの向きが90を超えるなら強度を0に
 				if (_protectReverse)
 				{
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$light.w = dp3($light.xyz, $normal.xyz)",
 						"$light.w = sat($light.w)",//0-1
 						"$half.w *= $light.w"
-					);
+					]);
 				}
 				
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$half.xyz = $half.www * " + lightColor + ".xyz"//ライトカラー
-				);
+				]);
 				
 				if (_fresnel)
 				{
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$half.xyz *= $common.w"//フレネル反射
-					);
+					]);
 				}
 				
 				var code2:String = _protectTransparent? "$output.xyz += $half.xyz" : "$output.xyzw += $half.xyzw";
-				fragmentCode.addCode(code2);
+				fragmentCode.addCode([code2]);
 			}
 		}
 		

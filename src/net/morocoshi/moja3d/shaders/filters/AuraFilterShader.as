@@ -83,14 +83,12 @@ package net.morocoshi.moja3d.shaders.filters
 			
 			fragmentConstants.number = true;
 			fragmentConstants.viewSize = true;
-			fragmentCode.addCode(
-				
+			fragmentCode.addCode([
 				"var $glow",
 				"var $mask",
 				
 				"var $noise",
 				"var $uv1",
-				
 				
 				"$uv1.xy = #uv.xy",
 				"$uv1.xy *= @noise.xx",
@@ -118,11 +116,10 @@ package net.morocoshi.moja3d.shaders.filters
 				"$mask.x = max($mask.x, $glow.z)",
 				"$mask.x *= @noise.y",
 				"$mask.x += @1",
-				//"$glow.xyz *= @aura.xxx",
 				"$output.xyz = tex(#uv.xy, fs0 " + tag1 + ")",
 				"$output.xyz += $glow.xyz",
 				"$output.xyz *= $mask.xxx"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

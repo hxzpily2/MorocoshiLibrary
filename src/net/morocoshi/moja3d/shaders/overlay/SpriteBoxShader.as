@@ -50,16 +50,16 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
+			sizeConst = vertexCode.addConstantsFromArray("@spriteSize", [_x, _y, _width, _height]);
 		}
 		
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			sizeConst = vertexCode.addConstantsFromArray("@spriteSize", [_x, _y, _width, _height]);
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xy *= @spriteSize.zw",
 				"$pos.xy += @spriteSize.xy"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

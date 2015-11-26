@@ -47,13 +47,13 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = $output.x + $output.y",
 				"$temp.x += $output.z",
 				"$temp.x /= @grayscale.x",
 				"$output.xyz = $temp.xxx"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

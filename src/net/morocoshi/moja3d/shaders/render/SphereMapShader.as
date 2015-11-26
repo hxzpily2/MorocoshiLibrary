@@ -92,12 +92,12 @@ package net.morocoshi.moja3d.shaders.render
 			if (_applyNormal == false)
 			{
 				vertexConstants.viewMatrix = true;
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"var $cameraNormal",
 					"$cameraNormal.xyz = m33($normal.xyz, @viewMatrix)",//カメラ行列でワールド法線を変換
 					"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
 					"#cameraNormal = $cameraNormal"//視線空間での法線
-				);
+				]);
 			}
 			
 			fragmentConstants.number = true;
@@ -107,12 +107,11 @@ package net.morocoshi.moja3d.shaders.render
 				fragmentConstants.viewMatrix = true;
 			}
 			
-			fragmentCode.addCode(
-				"var $cameraNormal"
-			);
+			fragmentCode.addCode(["var $cameraNormal"]);
+			
 			var code:String = _applyNormal? "m33($normal.xyz, @viewMatrix)" : "#cameraNormal.xyz";
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, environmentTexture.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$cameraNormal.xyz = " + code,
 				"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
 				"$cameraNormal.xy *= @0.5_0.5",
@@ -120,30 +119,30 @@ package net.morocoshi.moja3d.shaders.render
 				"$cameraNormal.xy += @0.5_0.5",
 				"var $env",
 				"$env = tex($cameraNormal.xy, &sphere " + tag + ")"
-			);
+			]);
 			
 			if (_blendMode == BlendMode.ADD)
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$output.xyz += $env.xyz"
-				);
+				]);
 			}
 			else if (_blendMode == BlendMode.MULTIPLY)
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$env.xyz += @sphereBlend.yyy",
 					"$output.xyz *= $env.xyz"
-				);
+				]);
 			}
 			else
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$output.xyz *= @sphereBlend.yyy",
 					"$output.xyz += $env.xyz"
-				);
+				]);
 			}
 		}
 		
@@ -156,15 +155,15 @@ package net.morocoshi.moja3d.shaders.render
 			//V = r.y / M + 0.5
 			
 			//頂点シェーダー
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $cameraNormal",
 				"$cameraNormal.xyz = m33($normal.xyz, @viewMatrix)",//カメラ行列でワールド法線を変換
 				"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
 				"#cameraNormal = $cameraNormal"//カメラ空間での法線
-			);
+			]);
 			
 			//フラグメントシェーダー
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $cameraNormal",
 				"$cameraNormal.xyz = nrm(#cameraNormal.xyz)",
 				"$cameraNormal.xy = neg($cameraNormal.xy)",
@@ -196,30 +195,30 @@ package net.morocoshi.moja3d.shaders.render
 				
 				"var $env",
 				"$env = tex($ref.xy, &sphere <2d, linear, nomip, wrap>)"
-			);
+			]);
 			
 			if (_blendMode == BlendMode.ADD)
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$output.xyz += $env.xyz"
-				);
+				]);
 			}
 			else if (_blendMode == BlendMode.MULTIPLY)
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$env.xyz += @sphereBlend.yyy",
 					"$output.xyz *= $env.xyz"
-				);
+				]);
 			}
 			else
 			{
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$env.xyz *= @sphereBlend.xxx",
 					"$output.xyz *= @sphereBlend.yyy",
 					"$output.xyz += $env.xyz"
-				);
+				]);
 			}
 		}
 		

@@ -118,7 +118,7 @@ package net.morocoshi.moja3d.shaders.filters
 			fragmentConstants.number = true;
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $step",
 				"var $uvp",
 				"var $blur",
@@ -130,7 +130,7 @@ package net.morocoshi.moja3d.shaders.filters
 				
 				"$uvp.xy = #uv.xy",
 				"$output.xyz = @0_0_0"
-			)
+			])
 			
 			var xy:String = _horizontal? "x" : "y";
 			for (var i:int = -_segments + 1; i <= _segments - 1; i++) 
@@ -138,15 +138,15 @@ package net.morocoshi.moja3d.shaders.filters
 				var index:int = Math.abs(i);
 				if (i == 0)
 				{
-					fragmentCode.addCode("$size." + xy + " = neg($size." + xy + ")");
+					fragmentCode.addCode(["$size." + xy + " = neg($size." + xy + ")"]);
 				}
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$step.x = " + offsetConstant[index] + " * $size." + xy,
 					"$uvp." + xy + " = #uv." + xy + " + $step.x",
 					"$blur = tex($uvp.xy, fs0, " + tag + ")",
 					"$blur *= " + weightConstant[index],
 					"$output.xyz += $blur.xyz"
-				);
+				]);
 			}
 		}
 		

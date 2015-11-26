@@ -85,11 +85,11 @@ package net.morocoshi.moja3d.shaders.depth
 			
 			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
 			var rgba:String = { 1:"x", 2:"y", 4:"z", 8:"w" } [String(_colorChannel)];
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.xyzw = tex(#uv.xy, &opacityDepth " + tag + ")",
 				"$alpha.x *= $temp." + rgba//_colorChannelで指定したチャンネルを透過情報として拾う
-			);
+			]);
 		}
 		
 		override public function reference():MaterialShader

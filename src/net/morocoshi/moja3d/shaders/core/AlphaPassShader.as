@@ -53,7 +53,7 @@ package net.morocoshi.moja3d.shaders.core
 		{
 			super.updateShaderCode();
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				//透過がほぼ0のテクセルを消す
 				"$temp.x = $output.w - @threshold.y",
@@ -61,7 +61,7 @@ package net.morocoshi.moja3d.shaders.core
 				//透過がthreshold以上のテクセルを消す
 				"$temp.x = @threshold.x - $output.w",
 				"kil $temp.x"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

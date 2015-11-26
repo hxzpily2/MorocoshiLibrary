@@ -52,7 +52,7 @@ package net.morocoshi.moja3d.shaders.particle
 			super.updateShaderCode();
 			
 			var va:String = "va" + geometry.getAttributeIndex(VertexAttribute.SIZE);
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $cos",
 				"$cos.x = cos(" + va + ".z, )",
 				"$cos.z = sin(" + va + ".z, )",
@@ -62,7 +62,7 @@ package net.morocoshi.moja3d.shaders.particle
 				"$cos.xyzw *= " + va + ".xyxy",
 				"$cos.xz += $cos.yw",
 				"$pos.xy += $cos.xz"
-			);
+			]);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

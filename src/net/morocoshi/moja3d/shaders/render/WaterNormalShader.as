@@ -72,7 +72,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.number = true;
 			
 			var tag:String = "<2d, linear, nomip, repeat>";
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $tangent4",
 				"$tangent4.xyz = nrm(#tangent4.xyz)",
 				
@@ -110,7 +110,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$normal.xyz += $binormal.xyz",
 				"$normal.xyz += $tangent4.xyz",
 				"$normal.xyz = nrm($normal.xyz)"
-			);
+			]);
 		}
 		
 		public function get normalMap():TextureResource 

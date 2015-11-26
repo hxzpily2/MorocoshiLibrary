@@ -69,7 +69,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.number = true;
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.WRAP, texture.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $tangent4",
 				"$tangent4.xyz = nrm(#tangent4.xyz)",
 				
@@ -97,7 +97,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$normal.xyz += $binormal.xyz",
 				"$normal.xyz += $tangent4.xyz",
 				"$normal.xyz = nrm($normal.xyz)"
-			);
+			]);
 		}
 		
 		public function get resource():TextureResource 

@@ -46,9 +46,9 @@ package net.morocoshi.moja3d.shaders.overlay
 		{
 			super.updateShaderCode();
 			vertexConstants.viewSize = true;
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$uv.xy = $pos.xy / @viewSize.xy"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

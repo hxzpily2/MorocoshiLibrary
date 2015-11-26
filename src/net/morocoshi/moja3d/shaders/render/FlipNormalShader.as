@@ -5,7 +5,8 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 法線を反転
+	 * 
 	 * @author tencho
 	 */
 	public class FlipNormalShader extends MaterialShader 
@@ -45,9 +46,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			vertexCode.addCode(
-				"$normal.xyz = neg($normal.xyz)"
-			);
+			vertexCode.addCode(["$normal.xyz = neg($normal.xyz)"]);
 		}
 		
 		override public function clone():MaterialShader 

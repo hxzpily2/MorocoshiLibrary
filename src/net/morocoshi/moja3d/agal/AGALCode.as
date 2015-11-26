@@ -217,12 +217,12 @@ package net.morocoshi.moja3d.agal
 		//
 		//--------------------------------------------------------------------------
 		
-		public function addCode(...args):void
+		public function addCode(lines:Array):void
 		{
-			var n:int = args.length;
+			var n:int = lines.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				var code:String = args[i];
+				var code:String = lines[i];
 				//#xxxxxが含まれる場合は使用したvarying名を記憶しておく
 				if (code.indexOf("#") >= 0)
 				{

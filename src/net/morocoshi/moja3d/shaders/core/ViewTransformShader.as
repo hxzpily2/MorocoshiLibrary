@@ -47,11 +47,11 @@ package net.morocoshi.moja3d.shaders.core
 			super.updateShaderCode();
 			
 			vertexConstants.viewMatrix = true;
-			vertexCode.addCode(
+			vertexCode.addCode([
 				//position
 				"#wpos = $wpos",
 				"$pos.xyz = m34($pos, @viewMatrix)"//ビュー行列で変換
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

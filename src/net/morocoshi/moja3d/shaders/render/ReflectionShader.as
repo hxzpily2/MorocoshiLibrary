@@ -80,14 +80,14 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				//基本UV
 				"var $temp",
 				"var $baseUV",
 				"$baseUV.xy = #spos.xy / #spos.w",
 				"$baseUV.xy *= @0.5",
 				"$baseUV.xy += @0.5"
-			)
+			])
 			
 			//法線による反射の歪み
 			if (_noize > 0)
@@ -95,20 +95,20 @@ package net.morocoshi.moja3d.shaders.render
 				fragmentConstants.viewSize = true;
 				fragmentConstants.viewMatrix = true;
 			
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$temp.xyz = dp3($normal.xyz, @viewMatrix)",
 					"$temp.xy /= @viewSize.xy",
 					"$temp.xy *= @blur.ww",
 					"$baseUV.xy += $temp.xy"
-				)
+				])
 			}
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $result",
 				//基本画像
 				"$result.xyz = tex($baseUV.xy, &reflection " + tag + ")"
-			);
+			]);
 			
 			//ぼかし距離が0より上ならぼかし処理をいれる
 			if (_blur > 0)
@@ -116,7 +116,7 @@ package net.morocoshi.moja3d.shaders.render
 				fragmentConstants.viewSize = true;
 				
 				//ぼかし処理
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"var $uv2",
 					
 					//ぼかす距離
@@ -124,7 +124,7 @@ package net.morocoshi.moja3d.shaders.render
 					"$offset.xy = @blur.x",
 					"$offset.xy /= @viewSize.xy",
 					"$offset.zw = $offset.xy * @0.5"
-				);
+				]);
 				
 				var ofx:Array = ["- $offset.x", "- $offset.z", "", "+ $offset.z", "+ $offset.x"];
 				var ofy:Array = ["- $offset.y", "- $offset.w", "", "+ $offset.w", "+ $offset.y"];
@@ -143,11 +143,11 @@ package net.morocoshi.moja3d.shaders.render
 				{
 					var num:Number = 1;
 					tag = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$uv2.x = $baseUV.x" + ofx[ix],
 						"$uv2.y = $baseUV.y" + ofy[iy],
 						"$temp.xyz = tex($uv2.xy, &reflection " + tag + ")"
-					);
+					]);
 					/*
 					if (ix == start || iy == start || ix == end || iy == end)
 					{
@@ -155,36 +155,32 @@ package net.morocoshi.moja3d.shaders.render
 						fragmentCode.addCode("$temp.xyz *= @0.5");
 					}
 					*/
-					fragmentCode.addCode(
-						"$result.xyz += $temp.xyz"
-					);
+					fragmentCode.addCode(["$result.xyz += $temp.xyz"]);
 					total ++;
 				}
 				blurConst.z = total;
 				
 				//加算数で割る
-				fragmentCode.addCode(
-					"$result.xyz /= @blur.z"
-				);
+				fragmentCode.addCode(["$result.xyz /= @blur.z"]);
 			}
 			
 			if (_fresnel)
 			{
-				fragmentCode.addCode("$temp.w = @blur.y * $common.w");//元の反射率*フレネル反射
+				fragmentCode.addCode(["$temp.w = @blur.y * $common.w"]);//元の反射率*フレネル反射
 			}
 			else
 			{
-				fragmentCode.addCode("$temp.w = @blur.y");//元の反射率
+				fragmentCode.addCode(["$temp.w = @blur.y"]);//元の反射率
 			}
 			
 			//反射画像と元画像を反射率で合成（アルファも合成する）
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$temp.x = @1 - $temp.w",//1-最終反射率
 				"$output.xyzw *= $temp.x",
 				"$result.xyz *= $temp.w",
 				"$result.w = $temp.w",
 				"$output.xyzw += $result.xyzw"
-			);
+			]);
 		}
 		
 		public function get blur():Number 

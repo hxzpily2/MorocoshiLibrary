@@ -52,7 +52,7 @@ package net.morocoshi.moja3d.shaders.overlay
 			
 			vertexConstants.viewSize = true;
 			vertexCode.addConstantsFromArray("@offset", [2, -2, -1, 1]);
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
 				"#spos = $pos",
 				"$pos.xy /= @viewSize.xy",
@@ -60,10 +60,10 @@ package net.morocoshi.moja3d.shaders.overlay
 				"$pos.xy += @offset.zw",
 				"#uv = $uv",
 				"op = $pos"
-			);
-			fragmentCode.addCode(
+			]);
+			fragmentCode.addCode([
 				"oc = $output"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

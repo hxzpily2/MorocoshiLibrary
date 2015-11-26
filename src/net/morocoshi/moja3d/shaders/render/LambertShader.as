@@ -60,7 +60,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.lights = true;
 			fragmentConstants.cameraPosition = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $total",
 				"var $brightness",
 				
@@ -69,18 +69,18 @@ package net.morocoshi.moja3d.shaders.render
 				"$brightness.w = @1",
 				"$total.xyz = @ambientColor.xyz",
 				"$total.xyz *= @ambientColor.www"
-			);
+			]);
 			
 			var i:int;
 			
+			fragmentCode.addCode(["var $temp"]);
 			//点光源を加算
 			for (i = 0; i < LightSetting._numOmniLights; i++)
 			{
-				fragmentCode.addCode("var $temp");
 				var omniPosition:String = "@omniPosition" + i;
 				var omniData:String = "@omniData" + i;
 				var omniColor:String = "@omniColor" + i;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$temp.xyz = " + omniPosition + ".xyz - #wpos.xyz",
 					"$temp.xyz = pow($temp.xyz, @2)",
 					"$temp.x += $temp.y",
@@ -98,9 +98,9 @@ package net.morocoshi.moja3d.shaders.render
 					"$brightness.xyz *= $temp.xxx",//距離による強度
 					"$brightness.xyz *= " + omniColor + ".xyz",//明るさに光源カラーを乗算
 					"$brightness.xyz *= " + omniColor + ".www"//明るさに光源強度を乗算
-				)
+				])
 				//もし点光源の影を実装したらここに挿入する
-				fragmentCode.addCode("$total.xyz += $brightness.xyz");
+				fragmentCode.addCode(["$total.xyz += $brightness.xyz"]);
 			}
 			
 			//平行光源を加算
@@ -108,29 +108,25 @@ package net.morocoshi.moja3d.shaders.render
 			{
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$brightness.xyz = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
 					"$brightness.xyz = sat($brightness.xyz)",//0～1にする
 					"$brightness.xyz *= " + lightColor + ".xyz",//明るさに光源カラーを乗算
 					"$brightness.xyz *= " + lightColor + ".www"//明るさに光源強度を乗算
-				)
+				])
 				if (i < 2)
 				{
 					var xyz1:String = ["x", "y"][i];
-					fragmentCode.addCode("$brightness.xyz *= $common." + xyz1)//明るさに影の強度を乗算
+					fragmentCode.addCode(["$brightness.xyz *= $common." + xyz1])//明るさに影の強度を乗算
 				}
-				fragmentCode.addCode("$total.xyz += $brightness.xyz");
+				fragmentCode.addCode(["$total.xyz += $brightness.xyz"]);
 			}
 			
 			if (_useLightMap)
 			{
-				fragmentCode.addCode(
-					"$total.xyz += $common.zzz"
-				);
+				fragmentCode.addCode(["$total.xyz += $common.zzz"]);
 			}
-			fragmentCode.addCode(
-				"$output.xyz *= $total.xyz"
-			);
+			fragmentCode.addCode(["$output.xyz *= $total.xyz"]);
 		}
 		
 		override public function clone():MaterialShader 

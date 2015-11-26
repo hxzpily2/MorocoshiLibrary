@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -74,7 +73,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.cameraPosition = true;
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				//テクセルから視線へのベクトル（正規化）
 				"var $eye",
 				"$eye.xyz = @cameraPosition.xyz - #wpos.xyz",
@@ -112,7 +111,7 @@ package net.morocoshi.moja3d.shaders.render
 				"global $common",
 				"$common.w = $temp.x + @fres.z",//フレネル率にincrementRatioを加算
 				"$common.w = sat($common.w)"//0～1に収める
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

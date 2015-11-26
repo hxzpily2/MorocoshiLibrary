@@ -71,7 +71,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = @ringPosition.x - #wpos.x",
 				"$temp.y = @ringPosition.y - #wpos.y",
@@ -87,7 +87,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$temp.xyz = @ringColor.xyz",
 				"$temp.xyz *= $temp.www",
 				"$output.xyz += $temp.xyz"
-			);
+			]);
 		}
 		
 		public function get x():Number 

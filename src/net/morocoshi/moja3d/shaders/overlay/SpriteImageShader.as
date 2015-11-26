@@ -67,17 +67,17 @@ package net.morocoshi.moja3d.shaders.overlay
 			if (_ignoreTransparency)
 			{
 				fragmentConstants.number = true;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$output.xyz = tex(#uv, &diffuse " + tag + ")",
 					"$output.w = @1"
-				);
+				]);
 			}
 			else
 			{
 				fragmentConstants.number = true;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$output.xyzw = tex(#uv, &diffuse " + tag + ")"
-				);
+				]);
 			}
 			
 		}

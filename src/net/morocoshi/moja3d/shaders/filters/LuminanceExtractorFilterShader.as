@@ -58,7 +58,7 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $color",
 				"$color.x = $output.x",
 				"$color.x += $output.y",
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.shaders.filters
 				"$color.x -= @extValues.y",
 				"$color.x /= @extValues.z",
 				"$color.x = sat($color.x)"
-			);
+			]);
 			if (_mask != -1)
 			{
 				var xyz:String;
@@ -79,16 +79,16 @@ package net.morocoshi.moja3d.shaders.filters
 					default: throw new Error("maskの値が有効ではありません。MaskColor.RED/BLUE/GREENのどれかを指定してください。");
 				}
 				var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"var $maskImage",
 					"$maskImage = tex(#uv.xy, fs1, " + tag + ")",
 					"$color.x *= $maskImage." + xyz
-				);
+				]);
 			}
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$output.xyz *= $color.xxx"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

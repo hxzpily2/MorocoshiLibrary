@@ -61,8 +61,7 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, toonTexture.getSamplingOption());
-			fragmentCode.addCode(
-			);
+			fragmentCode.addCode([]);
 		}
 		
 		override public function clone():MaterialShader 

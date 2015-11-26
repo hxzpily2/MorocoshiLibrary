@@ -71,7 +71,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				
 				"$temp.x = #spos.w - @dFogData.x",
@@ -82,7 +82,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$temp.x += @dFogData.z",//r=近濃～遠濃
 				
 				"$output.w *= $temp.x"
-			);
+			]);
 		}
 		
 		public function get distanceNear():Number 

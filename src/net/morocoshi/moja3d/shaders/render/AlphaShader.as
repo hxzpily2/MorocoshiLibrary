@@ -5,7 +5,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 透過
 	 * 
 	 * @author tencho
 	 */
@@ -50,9 +50,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			fragmentCode.addCode(
-				"$output.w *= @alpha.x"
-			);
+			fragmentCode.addCode(["$output.w *= @alpha.x"]);
 		}
 		
 		override public function clone():MaterialShader 

@@ -76,13 +76,13 @@ package net.morocoshi.moja3d.shaders.filters
 			super.updateShaderCode();
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
 			fragmentConstants.viewSize = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $per",
 				"var $uvp",
 				"var $image",
 				//元画像
 				"$output.xyz = tex(#uv.xy, fs0, " + tag + ")"
-			);
+			]);
 			
 			var n:int = elements.length;
 			for (var i:int = 0; i < n; i++) 
@@ -98,17 +98,17 @@ package net.morocoshi.moja3d.shaders.filters
 					default: xyz = "x";
 				}
 				
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$image.w = @outline1.y"//0にリセットしておく
 					
-				);
+				]);
 				var xy:Array = ["@outline2.x", "@outline1.x", "@outline1.y", "@outline1.z", "@outline2.y"];
 				for (var ix:int = 1; ix < xy.length - 1; ix++) 
 				for (var iy:int = 1; iy < xy.length - 1; iy++) 
 				{
 					if (ix == 0 && iy == 0) continue;
 					
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$uvp.x = " + xy[ix],
 						"$uvp.y = " + xy[iy],
 						"$uvp.xy /= @viewSize.xy",
@@ -116,9 +116,9 @@ package net.morocoshi.moja3d.shaders.filters
 						//マスク画像
 						"$image.xyz = tex($uvp.xy, fs1, " + tag + ")",
 						"$image.w += $image." + xyz
-					);
+					]);
 				}
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$image.w = sat($image.w)",//0-1
 					//マスク画像でくりぬき
 					"$image.xyz = tex(#uv, fs1, " + tag + ")",
@@ -132,7 +132,7 @@ package net.morocoshi.moja3d.shaders.filters
 					"$output.xyz *= $per.y",
 					"$image.xyz *= $per.x",
 					"$output.xyz += $image.xyz"
-				);
+				]);
 			}
 		}
 		

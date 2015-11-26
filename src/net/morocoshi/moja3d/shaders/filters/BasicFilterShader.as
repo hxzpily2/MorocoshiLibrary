@@ -51,18 +51,18 @@ package net.morocoshi.moja3d.shaders.filters
 			super.updateShaderCode();
 			
 			vertexConstants.number = true;
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"op = va0",
 				"#uv = va1"
-			);
+			]);
 			
 			fragmentConstants.number = true;
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"global $output",
 				"$output = tex(#uv.xy, fs0, " + tag + ")",
 				"$output.w = @1"
-			);
+			]);
 		}
 		
 	}

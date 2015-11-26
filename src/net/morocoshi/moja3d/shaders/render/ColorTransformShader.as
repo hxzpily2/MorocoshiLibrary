@@ -68,18 +68,18 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
+			multiply = fragmentCode.addConstantsFromArray("@colorMultiply", [_redMultiplier, _greenMultiplier, _blueMultiplier, _alphaMultiplier]);
+			offset = fragmentCode.addConstantsFromArray("@colorOffset", [_redOffset / 0xff, _greenOffset / 0xff, _blueOffset / 0xff, _alphaOffset / 0xff]);
 		}
 		
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
 			
-			multiply = fragmentCode.addConstantsFromArray("@colorMultiply", [_redMultiplier, _greenMultiplier, _blueMultiplier, _alphaMultiplier]);
-			offset = fragmentCode.addConstantsFromArray("@colorOffset", [_redOffset / 0xff, _greenOffset / 0xff, _blueOffset / 0xff, _alphaOffset / 0xff]);
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$output.xyzw *= @colorMultiply.xyzw",
 				"$output.xyzw += @colorOffset.xyzw"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

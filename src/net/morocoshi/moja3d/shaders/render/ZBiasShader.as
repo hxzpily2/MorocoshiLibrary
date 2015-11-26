@@ -49,9 +49,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			vertexCode.addCode(
-				"$pos.w += @zbias.x"
-			);
+			vertexCode.addCode(["$pos.w += @zbias.x"]);
 		}
 		
 		override public function clone():MaterialShader 

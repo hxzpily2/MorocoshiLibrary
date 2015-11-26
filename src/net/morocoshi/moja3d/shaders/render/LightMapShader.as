@@ -72,12 +72,12 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, lightMapTexture.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $image",
 				"$image = tex(#uv, &lightMap " + tag + ")",
 				"$image.x *= @lightMapIntensity.x",
 				"$common.z = $image.x"
-			);
+			]);
 		}
 		
 		override public function reference():MaterialShader 

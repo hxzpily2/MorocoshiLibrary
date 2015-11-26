@@ -60,12 +60,12 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$uv.xy = $pos.xy",
 				"$uv.xy += @worldScale.xy",
 				"$uv.xy /= @worldScale.zw",
 				"#uv = $uv"//UV
-			);
+			]);
 		}
 		
 		public function get x():Number 

@@ -58,9 +58,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
-				"$output.xyzw = @fillColor"
-			);
+			fragmentCode.addCode(["$output.xyzw = @fillColor"]);
 		}
 		
 		public function get color():uint 

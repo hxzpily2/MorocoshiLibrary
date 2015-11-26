@@ -55,19 +55,19 @@ package net.morocoshi.moja3d.shaders.depth
 			vertexConstants.viewMatrix = true;
 			vertexConstants.projMatrix = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xyz = m34($pos, @viewMatrix)",//ビュー行列で変換
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
 				"#spos = $pos",//スクリーン座標
 				"op = $pos"
-			)
+			])
 			
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$alpha.x -= @depthThreshold.x",
 				"kil $alpha.x",
 				"oc = $output"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

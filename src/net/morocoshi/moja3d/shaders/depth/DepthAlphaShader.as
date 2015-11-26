@@ -50,9 +50,7 @@ package net.morocoshi.moja3d.shaders.depth
 		{
 			super.updateShaderCode();
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
-				"$alpha.x *= @depthAlpha.x"
-			);
+			fragmentCode.addCode(["$alpha.x *= @depthAlpha.x"]);
 		}
 		
 		override public function clone():MaterialShader 

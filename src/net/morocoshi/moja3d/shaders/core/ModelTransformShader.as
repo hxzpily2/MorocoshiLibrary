@@ -56,17 +56,17 @@ package net.morocoshi.moja3d.shaders.core
 			super.updateShaderCode();
 			
 			vertexConstants.modelMatrix = true;
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
 				"$wpos = $pos"
-			);
+			]);
 			
 			//Normal モデル行列で法線を変換
 			if (geometry.hasAttribute(VertexAttribute.NORMAL))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$normal.xyz = m33($normal.xyz, @modelMatrix)"
-				);
+				]);
 			}
 		}
 		

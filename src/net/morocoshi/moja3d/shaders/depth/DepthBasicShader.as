@@ -67,53 +67,53 @@ package net.morocoshi.moja3d.shaders.depth
 			vertexConstants.projMatrix = true;
 			vertexConstants.viewMatrix = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"global $pos",
 				"$pos = va" + geometry.getAttributeIndex(VertexAttribute.POSITION),
 				//"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
 				"var $temp"
-			);
+			]);
 			
 			//UV
 			if (geometry.hasAttribute(VertexAttribute.UV))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$temp = va" + geometry.getAttributeIndex(VertexAttribute.UV),
 					"#uv = $temp"
-				);
+				]);
 			}
 			
 			//Normal モデル行列で法線を変換
 			if (geometry.hasAttribute(VertexAttribute.NORMAL))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$temp = va" + geometry.getAttributeIndex(VertexAttribute.NORMAL),
 					"#normal = $temp"
-				);
+				]);
 			}
 			
 			//VertexColor
 			if (geometry.hasAttribute(VertexAttribute.VERTEXCOLOR))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"var $vcolor",
 					"$vcolor = va" + geometry.getAttributeIndex(VertexAttribute.VERTEXCOLOR),
 					"#vcolor = $vcolor"
-				);
+				]);
 			}
 			
 			//Tangent4
 			if (geometry.hasAttribute(VertexAttribute.TANGENT4))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$temp = va" + geometry.getAttributeIndex(VertexAttribute.TANGENT4),
 					"#tangent4 = $temp"
-				);
+				]);
 			}
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"global $alpha",
 				"global $output",
 				"var $temp",
@@ -141,7 +141,7 @@ package net.morocoshi.moja3d.shaders.depth
 				
 				"$output.w = @1",
 				"$alpha.x = @1"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

@@ -52,37 +52,31 @@ package net.morocoshi.moja3d.shaders.render
 			vertexConstants.ambient = true;
 			vertexConstants.lights = true;
 				
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $total",
 				"var $brightness",
 				
 				//環境光を加算
 				"$total.xyz = @ambientColor.xyz",
 				"$total.xyz *= @ambientColor.www"
-			);
+			]);
 			
 			for (var i:int = 0; i < LightSetting.numDirectionalLights; i++) 
 			{
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
 				//平行光源を加算
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$brightness.xyz = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
 					"$brightness.xyz = sat($brightness.xyz)",//0～1にする
 					"$brightness.xyz *= " + lightColor + ".xyz",//明るさに平行光源カラーを乗算
 					"$brightness.xyz *= " + lightColor + ".www",//明るさに平行光源強度を乗算
 					"$total.xyz += $brightness.xyz"
-				);
+				]);
 			}
 			
-			vertexCode.addCode(
-				"#light = $total.xyz"
-			);
-			
-			fragmentCode.addCode(
-				//光源量を乗算
-				"$output.xyz *= #light.xyz"
-			);
+			vertexCode.addCode(["#light = $total.xyz"]);
+			fragmentCode.addCode(["$output.xyz *= #light.xyz"]);//光源量を乗算
 		}
 		
 		override public function clone():MaterialShader 

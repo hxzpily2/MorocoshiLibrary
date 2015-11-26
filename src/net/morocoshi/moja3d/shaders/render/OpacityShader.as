@@ -67,11 +67,11 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $image",
 				"$image = tex(#uv, &opacityMap " + tag + ")",
 				"$output.w *= $image.x"
-			);
+			]);
 		}
 		
 		override public function reference():MaterialShader 

@@ -46,9 +46,7 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
-				"oc = $output"
-			);
+			fragmentCode.addCode(["oc = $output"]);
 		}
 		
 		override public function clone():MaterialShader 

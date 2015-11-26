@@ -56,25 +56,25 @@ package net.morocoshi.moja3d.shaders.core
 			
 			vertexConstants.projMatrix = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"#vpos = $pos",
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
 				"#spos = $pos",//スクリーン座標
 				"op = $pos.xyzw"//スクリーン座標
-			);
+			]);
 			
 			//ワールド法線
 			if (geometry.hasAttribute(VertexAttribute.NORMAL))
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$normal.xyz = nrm($normal.xyz)",
 					"#normal = $normal.xyz"
-				);
+				]);
 			}
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"oc = $output"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

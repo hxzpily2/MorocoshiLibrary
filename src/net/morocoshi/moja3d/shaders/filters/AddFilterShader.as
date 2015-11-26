@@ -57,14 +57,14 @@ package net.morocoshi.moja3d.shaders.filters
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $image1",
 				"var $image2",
 				"$image1 = tex(#uv.xy, fs0, " + tag + ")",
 				"$image2 = tex(#uv.xy, fs1, " + tag + ")",
 				"$image2.xyz *= @alpha.xxx",
 				"$output.xyz = $image1.xyz + $image2.xyz"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

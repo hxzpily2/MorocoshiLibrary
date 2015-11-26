@@ -110,7 +110,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.WRAP, patternTexture.getSamplingOption());
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $image",
 				"var $uvw",
 				"$uvw.xy = #wpos.xy / @size.xy",
@@ -130,7 +130,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$image.xyz *= $uvw.xxx",
 				"$image.xyz *= @size.zzz",
 				"$output.xyz += $image.xyz"
-			);
+			]);
 		}
 		
 		override public function reference():MaterialShader 

@@ -70,7 +70,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = #spos.x - @clipSize.x",
 				"$temp.y = #spos.y - @clipSize.y",
@@ -80,7 +80,7 @@ package net.morocoshi.moja3d.shaders.overlay
 				"kil $temp.x",
 				"kil $temp.y",
 				"kil $temp.w"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

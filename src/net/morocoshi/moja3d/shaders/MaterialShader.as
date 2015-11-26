@@ -208,7 +208,7 @@ package net.morocoshi.moja3d.shaders
 		
 		/**
 		 * シェーダーが有効かどうか。これを弄るとこのシェーダーの有無を反映した新しいProgram3Dが再生成されるので負荷に注意。
-		 * ___一部のシェーダーで切り替え時におかしくなるバグがあるので要対応。
+		 * TODO: 一部のシェーダーで切り替え時におかしくなるバグがあるので要対応。
 		 */
 		public function get enabled():Boolean 
 		{

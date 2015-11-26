@@ -61,7 +61,7 @@ package net.morocoshi.moja3d.shaders.scale9
 			var va:String = "va" + geometry.getAttributeIndex(VertexAttribute.SCALE9);
 			vertexConstants.number = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $split",
 				"$split.x = " + va + ".x +" + va + ".y",
 				"$split.y = " + va + ".z +" + va + ".w",
@@ -75,7 +75,7 @@ package net.morocoshi.moja3d.shaders.scale9
 				"$pos.x += $split.y",
 				"$pos.y += $split.z",
 				"$pos.y += $split.w"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

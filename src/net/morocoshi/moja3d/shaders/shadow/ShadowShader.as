@@ -130,12 +130,12 @@ package net.morocoshi.moja3d.shaders.shadow
 			var i:int;
 			var g:int;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $lightZ",
 				"var $result",
 				"var $power",
 				"$result.xy = @0_0"
-			);
+			]);
 			
 			for (i = 0; i < LightSetting._numDirectionalShadow; i++) 
 			{
@@ -149,11 +149,11 @@ package net.morocoshi.moja3d.shaders.shadow
 				{
 					var vf:String = "#shadowData" + i + "_" + g;
 					var lightView:String = "@shadowViewMatrix" + i + "_" + g;
-					vertexCode.addCode(
+					vertexCode.addCode([
 						"var $lightPos",
 						"$lightPos = m44($wpos, " + lightView + ")",//ライトビュー&プロジェクション行列で変換
 						vf + " = $lightPos"
-					);
+					]);
 				}
 				
 				//
@@ -188,7 +188,7 @@ package net.morocoshi.moja3d.shaders.shadow
 						}
 						
 						var tag:String = getTextureTag(Smoothing.NEAREST, Mipmap.NOMIP, Tiling.CLAMP, "");
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"var $zdepth",
 							//ライト空間でのデプス値
 							"$zdepth.x = " + vt + ".z / " + vt + ".w",
@@ -213,11 +213,11 @@ package net.morocoshi.moja3d.shaders.shadow
 							"$lightZ.x = sge($zdepth.x, $lightZ.x)",//明暗比較
 							
 							"$result." + xyz2 + " += $lightZ.x"
-						);
+						]);
 					}
 					if (_fadeType == ShadowFadeType.CLIP_BORDER)
 					{
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							//UVが0-1の外の影を消す
 							"$lightUV.xy = " + vt + ".xy / " + vt + ".w",
 							"$lightUV.xy = abs($lightUV.xy)",
@@ -225,11 +225,11 @@ package net.morocoshi.moja3d.shaders.shadow
 							"$lightUV.z += @S256.z",
 							"$power." + xyz2 + " = sge(@1, $lightUV.z)",
 							"$result." + xyz2 + " *= $power." + xyz2
-						);
+						]);
 					}
 					if (_fadeType == ShadowFadeType.DIAMOND_GRADIENT)
 					{
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							//UVが0-1の外の影を消す
 							"$lightUV.xy = " + vt + ".xy / " + vt + ".w",
 							"$lightUV.xy = abs($lightUV.xy)",
@@ -241,24 +241,24 @@ package net.morocoshi.moja3d.shaders.shadow
 							//"$lightUV.z += @S256.z",
 							//"$power." + xyz2 + " = sge(@1, $lightUV.z)",
 							"$result." + xyz2 + " *= $power." + xyz2
-						);
+						]);
 					}
 				}
 				
 				if (_fadeType == ShadowFadeType.CASCADE)
 				{
 					//カメラ平面からの距離
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$power.w = #spos.w"
-					);
+					]);
 					
 					//近い距離の割合0～1
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$power.x = $power.w - @shadowFade.x",
 						"$power.x /= @shadowFade.y",
 						"$power.x = sat($power.x)",
 						"$power.y = @1 - $power.x"
-					);
+					]);
 				}
 				
 				if (_useWideShadow)
@@ -266,7 +266,7 @@ package net.morocoshi.moja3d.shaders.shadow
 					//遠景の影がある場合
 					if (_fadeType == ShadowFadeType.CASCADE)
 					{
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							//遠い距離の割合0～1
 							"$power.z = $power.w - @shadowFade.z",
 							"$power.z /= @shadowFade.w",
@@ -277,39 +277,39 @@ package net.morocoshi.moja3d.shaders.shadow
 							"$result.xy *= $power.yx",
 							"$result.x += $result.y",//近遠クロスフェード
 							"$result.x *= $power.w"//遠景フェードを乗算
-						);
+						]);
 					}
 					if (_fadeType == ShadowFadeType.CLIP_BORDER || _fadeType == ShadowFadeType.DIAMOND_GRADIENT)
 					{
 						//近遠クロスフェード
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$result.xy /= @shadowBlurNum.xy",//ぼかし加算分割る
 							//"$result.xy *= $power.yx",
 							"$result.z = @1 - $power.x",
 							"$result.y *= $result.z",
 							"$result.x += $result.y"
 							//"$result.x *= $power.w"//遠景フェードを乗算
-						);
+						]);
 					}
 				}
 				else
 				{
 					//近景の影のみの場合
-					fragmentCode.addCode(
+					fragmentCode.addCode([
 						"$result.x /= @shadowBlurNum.x"//ぼかし加算分割る
-					);
+					]);
 					if (_fadeType == ShadowFadeType.CASCADE)
 					{
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$result.x *= $power.y"//近景フェードを乗算
-						);
+						]);
 					}
 				}
 				
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$result.x *= @S256.w",//影の強度
 					"$common." + xyz + " = @1 - $result.x"
-				);
+				]);
 			}
 		}
 		

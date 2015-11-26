@@ -80,7 +80,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.number = true;
 			fragmentConstants.cameraPosition = true;
 			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resource.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"var $eye",
 				//視点からテクセルへのベクトル
@@ -93,35 +93,35 @@ package net.morocoshi.moja3d.shaders.render
 				"$eye.xyz = nrm($eye.xyz)",
 				
 				"$temp.xyz = tex($eye.xyz, &cube " + tag + ")"
-			);
+			]);
 			if (_fresnel)
 			{
 				//反射
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$eye.x = @cubeReflection.x * $common.w",
 					"$eye.y = @1 - $eye.x"
-				);
+				]);
 				switch(_blendMode)
 				{
 					case BlendMode.MULTIPLY:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$temp.xyz *= $eye.x",
 							"$temp.xyz += $eye.yyy",
 							"$output.xyz *= $temp.xyz"
-						);
+						]);
 						break;
 					case BlendMode.ADD:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$temp.xyz *= $eye.x",
 							"$output.xyz += $temp.xyz"
-						);
+						]);
 						break;
 					default:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$output.xyz *= $eye.y",
 							"$temp.xyz *= $eye.x",
 							"$output.xyz += $temp.xyz"
-						);
+						]);
 						break;
 				}
 			}
@@ -130,24 +130,24 @@ package net.morocoshi.moja3d.shaders.render
 				switch(_blendMode)
 				{
 					case BlendMode.MULTIPLY:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$temp.xyz *= @cubeReflection.x",
 							"$temp.xyz += @cubeReflection.yyy",
 							"$output.xyz *= $temp.xyz"
-						);
+						]);
 						break;
 					case BlendMode.ADD:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$temp.xyz *= @cubeReflection.x",
 							"$output.xyz += $temp.xyz"
-						);
+						]);
 						break;
 					default:
-						fragmentCode.addCode(
+						fragmentCode.addCode([
 							"$output.xyz *= @cubeReflection.y",
 							"$temp.xyz *= @cubeReflection.x",
 							"$output.xyz += $temp.xyz"
-						);
+						]);
 						break;
 				}
 			}

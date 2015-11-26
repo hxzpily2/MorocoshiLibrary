@@ -65,14 +65,14 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.cameraPosition = true;
 			
 			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resource.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $eye",
 				//視点からテクセルへのベクトル
 				"$eye.xyz = #wpos.xzy - @cameraPosition.xzy",
 				"$eye.xyz = nrm($eye.xyz)",
 				
 				"$output.xyzw = tex($eye.xyz, &cube " + tag + ")"
-			);
+			]);
 			
 		}
 		

@@ -1,12 +1,12 @@
 package net.morocoshi.moja3d.shaders.overlay 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class SpriteFillShader extends MaterialShader 
@@ -52,9 +52,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			fragmentCode.addCode(
-				"$output.xyzw = @rgba.xyzw"
-			);
+			fragmentCode.addCode(["$output.xyzw = @rgba.xyzw"]);
 		}
 		
 		override public function clone():MaterialShader 

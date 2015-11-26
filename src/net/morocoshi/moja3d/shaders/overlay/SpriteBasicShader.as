@@ -51,7 +51,7 @@ package net.morocoshi.moja3d.shaders.overlay
 			
 			vertexConstants.modelMatrix = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"global $pos",
 				"global $uv",
 				
@@ -60,13 +60,13 @@ package net.morocoshi.moja3d.shaders.overlay
 				
 				//uv
 				"$uv = va1"
-			);
+			]);
 			
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				//最終出力
 				"global $output"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

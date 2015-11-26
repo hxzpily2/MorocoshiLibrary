@@ -69,14 +69,14 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.ambient = true;
 			fragmentConstants.lights = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $total",
 				"var $brightness",
 				
 				//環境光を加算
 				"$total.xyz = @ambientColor.xyz",
 				"$total.xyz *= @ambientColor.www"
-			);
+			]);
 			
 			for (var i:int = 0; i < LightSetting.numDirectionalLights; i++) 
 			{
@@ -84,7 +84,7 @@ package net.morocoshi.moja3d.shaders.render
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
 				//平行光源を加算
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$brightness.xyz = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
 					
 					//ハーフランバート
@@ -97,12 +97,12 @@ package net.morocoshi.moja3d.shaders.render
 					"$brightness.xyz *= " + lightColor + ".www",//明るさに平行光源強度を乗算
 					"$brightness.xyz *= $common." + xyz,//明るさに影の強度を乗算
 					"$total.xyz += $brightness.xyz"
-				);
+				]);
 			}
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$output.xyz *= $total.xyz"
-			);
+			]);
 		}
 		
 		private function updateVertexShader():void 
@@ -111,21 +111,21 @@ package net.morocoshi.moja3d.shaders.render
 			vertexConstants.ambient = true;
 			vertexConstants.lights = true;
 				
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $total",
 				"var $brightness",
 				
 				//環境光を加算
 				"$total.xyz = @ambientColor.xyz",
 				"$total.xyz *= @ambientColor.www"
-			);
+			]);
 			
 			for (var i:int = 0; i < LightSetting.numDirectionalLights; i++) 
 			{
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
 				//平行光源を加算
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$brightness.xyz = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
 					
 					//ハーフランバート
@@ -137,17 +137,17 @@ package net.morocoshi.moja3d.shaders.render
 					"$brightness.xyz *= " + lightColor + ".xyz",//明るさに平行光源カラーを乗算
 					"$brightness.xyz *= " + lightColor + ".www",//明るさに平行光源強度を乗算
 					"$total.xyz += $brightness.xyz"
-				);
+				]);
 			}
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"#light = $total.xyz"
-			);
+			]);
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				//光源量を乗算
 				"$output.xyz *= #light.xyz"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

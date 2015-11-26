@@ -130,17 +130,17 @@ package net.morocoshi.moja3d.shaders.shadow
 			super.updateShaderCode();
 			
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"var $size"
-			);
+			]);
 			var shadowTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, texture.getSamplingOption());
 			var n:int = shadowUnitList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
 				var va1:String = "@unitPosition" + i;
 				var va2:String = "@unitData" + i;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"$temp.xyw = " + va1 + ".xyz - #wpos.xyz",
 					"$size.xyzw = @circleSize.xyzw",
 					"$size *= " + va2 + ".w",
@@ -159,7 +159,7 @@ package net.morocoshi.moja3d.shaders.shadow
 					"$temp.x *= $temp.w",
 					"$temp.x = @1 - $temp.x",
 					"$output.xyz *= $temp.xxx"
-				);
+				]);
 			}
 		}
 		

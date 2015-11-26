@@ -82,19 +82,19 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			
 			var diffuseTag:String = getTextureTag(_smoothing, _mipmap, _tiling, diffuseTexture.getSamplingOption());
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"$output.xyzw = tex(#uv, &diffuse " + diffuseTag + ")"
-			);
+			]);
 			
 			if (_opacity)
 			{
 				var opacityTag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
 				fragmentConstants.number = true;
-				fragmentCode.addCode(
+				fragmentCode.addCode([
 					"var $topacity",
 					"$topacity.xyzw = tex(#uv, &opacity " + opacityTag + ")",
 					"$output.w *= $topacity.x"//v0:opacity画像の赤成分をアルファに
-				);
+				]);
 			}
 		}
 		

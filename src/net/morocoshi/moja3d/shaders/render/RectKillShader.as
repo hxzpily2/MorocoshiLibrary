@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = @killRect.y - #wpos.x",
 				"kil $temp.x",
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.shaders.render
 				"kil $temp.x",
 				"$temp.x = #wpos.y - @killRect.z",
 				"kil $temp.x"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

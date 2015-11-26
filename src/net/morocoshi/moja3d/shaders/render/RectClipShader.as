@@ -70,7 +70,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			fragmentConstants.viewSize = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $screen",
 				//スクリーン位置（0-1）
 				"$screen.xy = #spos.xy / #spos.w",
@@ -83,7 +83,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$screen.xy = @rectClip.zw - $screen.xy",
 				"kil $screen.x",
 				"kil $screen.y"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

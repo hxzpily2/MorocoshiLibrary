@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
 	/**
 	 * 高度フォグ
 	 * 
@@ -75,7 +76,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $fogRatio",
 				"var $blendColor",
 				
@@ -92,7 +93,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$blendColor.w = @1 - $fogRatio.x",//@hFogDist.w - 
 				"$output.xyz *= $blendColor.www",
 				"$output.xyz += $blendColor.xyz"
-			);
+			]);
 		}
 		
 		public function get bottom():Number 

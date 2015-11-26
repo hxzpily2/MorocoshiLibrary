@@ -64,59 +64,30 @@ package net.morocoshi.moja3d.shaders.render
 			{
 				switch(_colorBlend)
 				{
-					case BlendMode.ADD:
-						fragmentCode.addCode(
-							"$output.xyzw += #vcolor.xyzw"
-						);
-						break;
-					case BlendMode.SUBTRACT:
-						fragmentCode.addCode(
-							"$output.xyzw -= #vcolor.xyzw"
-						);
-						break;
-					case BlendMode.MULTIPLY:
-						fragmentCode.addCode(
-							"$output.xyzw *= #vcolor.xyzw"
-						);
-						break;
-					case BlendMode.NORMAL:
-						fragmentCode.addCode(
-							"$output.xyzw = #vcolor.xyzw"
-						);
-						break;
-					default:
-						fragmentCode.addCode(
-							"$output.xyzw = #vcolor.xyzw"
-						);
+					case BlendMode.ADD:			fragmentCode.addCode(["$output.xyzw += #vcolor.xyzw"]); break;
+					case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.xyzw -= #vcolor.xyzw"]); break;
+					case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.xyzw *= #vcolor.xyzw"]); break;
+					case BlendMode.NORMAL:		fragmentCode.addCode(["$output.xyzw = #vcolor.xyzw"]); break;
+					default:					fragmentCode.addCode(["$output.xyzw = #vcolor.xyzw"]);
 				}
 				return;
 			}
 			
 			switch(_colorBlend)
 			{
-				case BlendMode.ADD:
-					fragmentCode.addCode("$output.xyz += #vcolor.xyz");	break;
-				case BlendMode.SUBTRACT:
-					fragmentCode.addCode("$output.xyz -= #vcolor.xyz");	break;
-				case BlendMode.MULTIPLY:
-					fragmentCode.addCode("$output.xyz *= #vcolor.xyz"); break;
-				case BlendMode.NORMAL:
-					fragmentCode.addCode("$output.xyz = #vcolor.xyz"); break;
-				default:
-					fragmentCode.addCode("$output.xyz = #vcolor.xyz");
+				case BlendMode.ADD:			fragmentCode.addCode(["$output.xyz += #vcolor.xyz"]); break;
+				case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.xyz -= #vcolor.xyz"]); break;
+				case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.xyz *= #vcolor.xyz"]); break;
+				case BlendMode.NORMAL:		fragmentCode.addCode(["$output.xyz = #vcolor.xyz"]); break;
+				default:					fragmentCode.addCode(["$output.xyz = #vcolor.xyz"]);
 			}
 			switch(_alphaBlend)
 			{
-				case BlendMode.ADD:
-					fragmentCode.addCode("$output.w += #vcolor.w");	break;
-				case BlendMode.SUBTRACT:
-					fragmentCode.addCode("$output.w -= #vcolor.w");	break;
-				case BlendMode.MULTIPLY:
-					fragmentCode.addCode("$output.w *= #vcolor.w"); break;
-				case BlendMode.NORMAL:
-					fragmentCode.addCode("$output.w = #vcolor.w"); break;
-				default:
-					fragmentCode.addCode("$output.w = #vcolor.w");
+				case BlendMode.ADD:			fragmentCode.addCode(["$output.w += #vcolor.w"]); break;
+				case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.w -= #vcolor.w"]); break;
+				case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.w *= #vcolor.w"]); break;
+				case BlendMode.NORMAL:		fragmentCode.addCode(["$output.w = #vcolor.w"]); break;
+				default:					fragmentCode.addCode(["$output.w = #vcolor.w"]);
 			}
 		}
 		

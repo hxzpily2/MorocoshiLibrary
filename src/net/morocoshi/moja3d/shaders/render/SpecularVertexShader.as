@@ -78,7 +78,7 @@ package net.morocoshi.moja3d.shaders.render
 			vertexConstants.cameraPosition = true;
 			vertexConstants.lights = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				//テクセルから視線へのベクトル（正規化）
 				"var $specular",
 				"var $light",
@@ -90,13 +90,13 @@ package net.morocoshi.moja3d.shaders.render
 				//"$specular.xyz = @0_0_0",
 				"$eye.xyz = @cameraPosition.xyz - $wpos.xyz",
 				"$eye.xyz = nrm($eye.xyz)"
-			);
+			]);
 			
 			for (i = 0; i < LightSetting.numDirectionalLights; i++) 
 			{
 				lightAxis = "@lightAxis" + i;
 				lightColor = "@lightColor" + i;
-				vertexCode.addCode(
+				vertexCode.addCode([
 					//テクセルからライトへのベクトル（正規化）
 					"$light.xyz = " + lightAxis + ".xyz",
 					"$light.xyz = nrm($light.xyz)",
@@ -111,30 +111,30 @@ package net.morocoshi.moja3d.shaders.render
 					"$half.w *= @specularPower.y",//スペキュラ強度
 					"$half.w *= " + lightColor + ".w",//ライトの強度
 					"$half.w *= " + lightAxis + ".w"//ライトのスペキュラ強度
-				);
+				]);
 				
 				//ライトへのベクトルと法線ベクトルの向きが90を超えるなら強度を0に
 				//ライトと法線の角度の関係を調べて、逆から当たっていたら強度を0にしたい		
 				if (_protectReverse)
 				{
-					vertexCode.addCode(
+					vertexCode.addCode([
 						"$light.w = dp3($light.xyz, $normal.xyz)",
 						"$light.w = sat($light.w)",//0-1
 						"$half.w *= $light.w"
-					);
+					]);
 				}
 				
-				vertexCode.addCode(
+				vertexCode.addCode([
 					"$half.xyz = $half.www * " + lightColor + ".xyz",//ライトカラー
 					"$specular.xyzw += $half.xyzw"
-				);
+				]);
 			}
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"#specular = $specular"
-			);
+			]);
 			
 			var code:String = _protectTransparent? "$output.xyz += #specular.xyz" : "$output.xyzw += #specular.xyzw";
-			fragmentCode.addCode(code);
+			fragmentCode.addCode([code]);
 		}
 		
 		public function get alpha():Number 

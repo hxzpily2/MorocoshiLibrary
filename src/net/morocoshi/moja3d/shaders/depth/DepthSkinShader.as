@@ -104,12 +104,12 @@ package net.morocoshi.moja3d.shaders.depth
 			if (numBones == 0) return;
 			
 			vertexConstants.number = true;
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"var $temp",
 				"var $index",
 				"var $tempPosition",
 				"$tempPosition = @0_0_0"
-			);
+			]);
 			
 			var boneIndex1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEINDEX1);
 			var boneWeight1:String = "va" + geometry.getAttributeIndex(VertexAttribute.BONEWEIGHT1);
@@ -118,7 +118,7 @@ package net.morocoshi.moja3d.shaders.depth
 			var xyzw:Array = ["x", "y", "z", "w"];
 			for (i = 0; i < 4; i++) 
 			{
-				vertexCode.addCode(
+				vertexCode.addCode([
 					//使用インデックス＝ボーンインデックス*4+開始インデックス
 					"$index.x = " + boneIndex1 + "." + xyzw[i] + " * @skinData.y",
 					"$index.x += @skinData.x",
@@ -126,7 +126,7 @@ package net.morocoshi.moja3d.shaders.depth
 					"$temp.xyz = m44($pos, vc[$index.x])",//元の座標を行列変換
 					"$temp.xyz *= " + boneWeight1 + "." + xyzw[i],//ウェイトを乗算
 					"$tempPosition.xyz += $temp.xyz"
-				);
+				]);
 			}
 			
 			var bone2:Boolean = geometry.hasAttribute(VertexAttribute.BONEINDEX2) && geometry.hasAttribute(VertexAttribute.BONEWEIGHT2);
@@ -137,7 +137,7 @@ package net.morocoshi.moja3d.shaders.depth
 				
 				for (i = 0; i < 4; i++)
 				{
-					vertexCode.addCode(
+					vertexCode.addCode([
 						//使用インデックス＝ボーンインデックス*4+開始インデックス
 						"$index.x = " + boneIndex2 + "." + xyzw[i] + " * @skinData.y",
 						"$index.x += @skinData.x",
@@ -145,13 +145,13 @@ package net.morocoshi.moja3d.shaders.depth
 						"$temp.xyzw = m44($pos.xyzw, vc[$index.x])",//元の座標を行列変換
 						"$temp.xyz *= " + boneWeight2 + "." + xyzw[i],//ウェイトを乗算
 						"$tempPosition.xyz += $temp.xyz"
-					);
+					]);
 				}	
 			}
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xyz = $tempPosition.xyz"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

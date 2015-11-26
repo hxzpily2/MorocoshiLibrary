@@ -79,7 +79,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				
 				"$temp.x = #spos.w - @dFogData.x",
@@ -94,7 +94,7 @@ package net.morocoshi.moja3d.shaders.render
 				
 				"$output.xyz *= $temp.www",
 				"$output.xyz += $temp.xyz"
-			);
+			]);
 		}
 		
 		public function get color():uint 

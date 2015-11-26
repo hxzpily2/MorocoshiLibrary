@@ -50,12 +50,12 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = $output.w - @threshold.x",
 				"kil $temp.x",
 				"$output.w = @threshold.y"
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 

@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.number = true;
 			
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				//@kil.yが1か0かで$temp.zwが_heightか0になる
 				"$temp.z = @kill.y",
@@ -77,7 +77,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$temp.x += $temp.w",
 				
 				"kil $temp.x"
-			);
+			]);
 		}
 		
 		public function get height():Number 

@@ -1,10 +1,11 @@
-package net.morocoshi.moja3d.shaders.shadow {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
+package net.morocoshi.moja3d.shaders.shadow
+{
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ShadowMaskShader extends MaterialShader 
@@ -46,11 +47,11 @@ package net.morocoshi.moja3d.shaders.shadow {
 			super.updateShaderCode();
 			
 			fragmentConstants.number = true;
-			fragmentCode.addCode(
+			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = @1 - $common.x",
 				"$output.a *= $temp.x"
-			)
+			]);
 		}
 		
 		override public function clone():MaterialShader 

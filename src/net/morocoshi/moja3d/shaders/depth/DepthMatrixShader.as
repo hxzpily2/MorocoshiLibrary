@@ -52,9 +52,9 @@ package net.morocoshi.moja3d.shaders.depth
 			
 			vertexConstants.modelMatrix = true;
 			
-			vertexCode.addCode(
+			vertexCode.addCode([
 				"$pos.xyz = m34($pos, @modelMatrix)"//モデル行列で変換
-			);
+			]);
 		}
 		
 		override public function clone():MaterialShader 
