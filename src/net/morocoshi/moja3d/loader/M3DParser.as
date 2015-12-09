@@ -46,6 +46,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
+	import net.morocoshi.moja3d.loader.objects.M3DSkinContainer;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.ParserMaterial;
 	import net.morocoshi.moja3d.moja3d;
@@ -58,6 +59,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.objects.Skin;
+	import net.morocoshi.moja3d.objects.SkinContainer;
 	import net.morocoshi.moja3d.objects.Surface;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
@@ -555,9 +557,9 @@ package net.morocoshi.moja3d.loader
 					objectA3D = objects[i];
 					
 					//SKIN初期化
-					if (objectA3D is Skin)
+					if (objectA3D is SkinContainer)
 					{
-						Skin(objectA3D).collectBones();
+						SkinContainer(objectA3D).collectBones();
 					}
 				}
 			}
@@ -746,6 +748,7 @@ package net.morocoshi.moja3d.loader
 				case m3d is M3DBone: result = toBone(m3d as M3DBone); break;
 				case m3d is M3DLight: result = toLight(m3d as M3DLight); break;
 				case m3d is M3DLine: result = toLine(m3d as M3DLine); break;
+				case m3d is M3DSkinContainer: result = toSkinContainer(m3d as M3DSkinContainer); break;
 				default: result = new Object3D();
 			}
 			if (result == null)
@@ -785,6 +788,12 @@ package net.morocoshi.moja3d.loader
 			if (isNaN(m3d.zFar) == false) camera.zFar = m3d.zFar;
 			
 			return camera;
+		}
+		
+		private function toSkinContainer(m3d:M3DSkinContainer):SkinContainer
+		{
+			var result:SkinContainer = new SkinContainer();
+			return result;
 		}
 		
 		private function toBone(m3d:M3DBone):Bone
@@ -982,6 +991,7 @@ package net.morocoshi.moja3d.loader
 			ClassAliasUtil.register(M3DObject);
 			ClassAliasUtil.register(M3DMesh);
 			ClassAliasUtil.register(M3DSkin);
+			ClassAliasUtil.register(M3DSkinContainer);
 			ClassAliasUtil.register(M3DBillboard);
 			ClassAliasUtil.register(M3DLine);
 			ClassAliasUtil.register(M3DLight);

@@ -110,22 +110,10 @@ package net.morocoshi.moja3d.objects
 		
 		public function addConstant(constant:AGALConstant, phase:String):void 
 		{
-			if (phase == RenderPhase.NORMAL)
-			{
-				renderConstants.push(constant);
-			}
-			if (phase == RenderPhase.MASK)
-			{
-				maskConstants.push(constant);
-			}
-			if (phase == RenderPhase.DEPTH)
-			{
-				shadowConstants.push(constant);
-			}
-			if (phase == RenderPhase.REFLECT)
-			{
-				reflectConstants.push(constant);
-			}
+			if (phase == RenderPhase.NORMAL) renderConstants.push(constant);
+			if (phase == RenderPhase.MASK) maskConstants.push(constant);
+			if (phase == RenderPhase.DEPTH) shadowConstants.push(constant);
+			if (phase == RenderPhase.REFLECT) reflectConstants.push(constant);
 		}
 		
 		/**
@@ -141,13 +129,11 @@ package net.morocoshi.moja3d.objects
 			tempMatrix.prepend(invertSkinMatrix);
 			
 			var constant:AGALConstant;
-			for each (constant in renderConstants)
-			{
-				constant.matrix = tempMatrix;
-			}
+			for each (constant in renderConstants) constant.matrix = tempMatrix;
 			for each (constant in shadowConstants) constant.matrix = tempMatrix;
 			for each (constant in maskConstants) constant.matrix = tempMatrix;
 			for each (constant in reflectConstants) constant.matrix = tempMatrix;
+			constant = null;
 		}
 		
 		override public function toString():String 

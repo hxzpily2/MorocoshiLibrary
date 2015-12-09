@@ -2,6 +2,7 @@ package net.morocoshi.common.loaders.collada.nodes
 {
 	import flash.geom.Matrix3D;
 	import net.morocoshi.common.loaders.collada.ColladaCollector;
+	import net.morocoshi.common.math.list.VectorUtil;
 	
 	/**
 	 * 全オブジェクト情報
@@ -110,7 +111,7 @@ package net.morocoshi.common.loaders.collada.nodes
 					
 					for each(var cc:ColladaControllerNode in controllers)
 					{
-						if (geometry.id == cc.skinLink.substr(1))
+						if (cc.skinLink && geometry.id == cc.skinLink.substr(1))
 						{
 							geometry.data.attachSkinData(cc.weightData, cc.numWeight);
 						}
@@ -139,6 +140,24 @@ package net.morocoshi.common.loaders.collada.nodes
 				}
 			}
 			
+		}
+		
+		public function getObjectBySID(sid:String):ColladaObjectNode
+		{
+			var stock:Vector.<ColladaObjectNode> = root.childlen.concat();
+			
+			while (stock.length)
+			{
+				var current:ColladaObjectNode = stock.pop();
+				if (current.childlen.length > 0)
+				{
+					stock = stock.concat(current.childlen);
+				}
+				
+				if (current.sid == sid) return current;
+			}
+			
+			return null;
 		}
 		
 		public function getControllerByID(id:String):ColladaControllerNode
@@ -197,8 +216,9 @@ package net.morocoshi.common.loaders.collada.nodes
 		public function fixJointHierarchy():void 
 		{
 			var skins:Vector.<ColladaObjectNode> = new Vector.<ColladaObjectNode>;
-			var joints:Vector.<ColladaObjectNode> = new Vector.<ColladaObjectNode>;
+			var rootJoints:Vector.<ColladaObjectNode> = new Vector.<ColladaObjectNode>;
 			
+			var skinLink:Object = { };
 			//ルートジョイントをリストアップ
 			var stock:Vector.<ColladaObjectNode> = root.childlen.concat();
 			while (stock.length)
@@ -211,20 +231,67 @@ package net.morocoshi.common.loaders.collada.nodes
 				if (current.type == ColladaObjectNode.TYPE_SKIN)
 				{
 					skins.push(current);
+					var jointNames:Array = getControllerByID(current.instanceLink).weightData.getJoineNames();
+					var skinContainer:ColladaObjectNode = null;
+					var jointKey:String;
+					for each(jointKey in jointNames)
+					{
+						if (skinLink[jointKey] != null)
+						{
+							skinContainer = skinLink[jointKey];
+							break;
+						}
+					}
+					if (skinContainer == null)
+					{
+						skinContainer = new ColladaObjectNode();
+						skinContainer.type = ColladaObjectNode.TYPE_SKIN_CONTAINER;
+						skinContainer.matrix = current.matrix.clone();
+						current.matrix.identity();
+						current.parent.addChild(skinContainer);
+						skinContainer.addChild(current);
+						
+						for each(jointKey in jointNames)
+						{
+							var rootJoint:ColladaObjectNode = getObjectBySID(jointKey);
+							if (rootJoint)
+							{
+								skinLink[rootJoint.getRootJoint().sid] = skinContainer;
+							}
+						}
+					}
+					else
+					{
+						skinContainer.addChildFixedly(current);
+					}
 				}
 				if (current.type == ColladaObjectNode.TYPE_JOINT)
 				{
-					var rootJoint:ColladaObjectNode = current.getRootJoint();
-					if (joints.indexOf(rootJoint) == -1)
-					{
-						joints.push(rootJoint);
-					}
+					VectorUtil.attachItemDiff(rootJoints, current.getRootJoint());
 				}
 			}
 			
 			//ルートジョイントを全部移動する
-			for each(var joint:ColladaObjectNode in joints)
+			for each(var joint:ColladaObjectNode in rootJoints)
 			{
+				var skinMeshContainer:ColladaObjectNode = skinLink[joint.sid];
+				if (skinMeshContainer)
+				{
+					var jointContainer:ColladaObjectNode = new ColladaObjectNode();
+					jointContainer.matrix = joint.parent.matrix.clone();
+					jointContainer.addChild(joint);
+					/*
+					var matrix:Matrix3D = jointContainer.getWorldMatrix();
+					var skinMatrix:Matrix3D = skinMeshContainer.getWorldMatrix();
+					skinMatrix.invert();
+					matrix.append(skinMatrix);
+					jointContainer.matrix = matrix;
+					
+					skinMeshContainer.addChild(jointContainer);
+					*/
+					skinMeshContainer.addChildFixedly(jointContainer);
+				}
+				/*
 				for each(var skin:ColladaObjectNode in skins)
 				{
 					var skinMatrix:Matrix3D = skin.getWorldMatrix();
@@ -244,6 +311,7 @@ package net.morocoshi.common.loaders.collada.nodes
 						break;
 					}
 				}
+				*/
 			}
 		}
 		

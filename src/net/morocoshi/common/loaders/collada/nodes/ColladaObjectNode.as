@@ -20,6 +20,7 @@ package net.morocoshi.common.loaders.collada.nodes
 		static public const TYPE_OBJECT:String = "object";
 		static public const TYPE_JOINT:String = "joint";
 		static public const TYPE_SKIN:String = "skin";
+		static public const TYPE_SKIN_CONTAINER:String = "skinContainer";
 		
 		public var type:String;
 		public var instanceLink:String;
@@ -249,6 +250,17 @@ package net.morocoshi.common.loaders.collada.nodes
 				parentNode = parentNode.parent;
 			}
 			return result;
+		}
+		
+		public function addChildFixedly(node:ColladaObjectNode):void
+		{
+			var nodeMatrix:Matrix3D = node.getWorldMatrix();
+			var thisMatrix:Matrix3D = getWorldMatrix();
+			thisMatrix.invert();
+			nodeMatrix.append(thisMatrix);
+			node.matrix = nodeMatrix;
+			
+			addChild(node);
 		}
 		
 		public function addChild(node:ColladaObjectNode):void 

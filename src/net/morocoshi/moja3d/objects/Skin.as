@@ -20,9 +20,6 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Skin extends Mesh 
 	{
-		/**このスキン内にあるボーンオブジェクトのリスト*/
-		public var bones:Vector.<Bone>;
-		
 		moja3d var skinShaderList:Vector.<SkinShader>;
 		/**メッシュ変形前の境界ボックス*/
 		private var rawBounds:BoundingBox;
@@ -37,7 +34,6 @@ package net.morocoshi.moja3d.objects
 			castLightChildren = false;
 			reflectChildren = false;
 			
-			bones = new Vector.<Bone>;
 			skinShaderList = new Vector.<SkinShader>;
 		}
 		
@@ -45,9 +41,7 @@ package net.morocoshi.moja3d.objects
 		{
 			super.finaly();
 			
-			DataUtil.deleteVector(bones);
 			DataUtil.deleteVector(skinShaderList);
-			bones = null;
 			skinShaderList = null;
 			rawBounds = null;
 		}
@@ -61,7 +55,7 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * スキンメッシュの現在の姿勢で境界ボックスを更新する。ボーンの初期姿勢からのずれで計算するため実際のメッシュより大きく設定される傾向にあります。
 		 */
-		public function updateSkinBounds():void
+		moja3d function updateSkinBounds(bones:Vector.<Bone>):void
 		{
 			var rawMin:Vector3D = rawBounds.getMinPoint();
 			var rawMax:Vector3D = rawBounds.getMaxPoint();
@@ -133,8 +127,6 @@ package net.morocoshi.moja3d.objects
 				skin.addChild(current.clone());
 			}
 			
-			skin.collectBones();
-			
 			return skin;
 		}
 		
@@ -151,39 +143,18 @@ package net.morocoshi.moja3d.objects
 				skin.addChild(current.reference());
 			}
 			
-			skin.collectBones();
-			
 			return skin;
 		}
 		
 		/**
-		 * スキン内にあるボーンオブジェクトを収集して必要なシェーダーを生成する
+		 * スキン用シェーダーを生成する
 		 */
-		public function collectBones():void
+		public function createSkinShader(bones:Vector.<Bone>):void
 		{
-			bones.length = 0;
 			skinShaderList.length = 0;
 			
-			var current:Object3D;
-			var bone:Bone;
 			var skinShader:SkinShader;
 			var geom:SkinGeometry;
-			
-			var task:Vector.<Object3D> = new <Object3D>[this];
-			while (task.length)
-			{
-				current = task.pop()._children;
-				while (current)
-				{
-					bone = current as Bone;
-					if (bone && bone.hasWeight)
-					{
-						bones.push(bone);
-					}
-					task.push(current);
-					current = current._next;
-				}
-			}
 			
 			if (_geometry is CombinedGeometry)
 			{
@@ -213,22 +184,15 @@ package net.morocoshi.moja3d.objects
 			
 			combinedGeom = null;
 			skinShader = null;
-			task = null;
-			bone = null;
 			geom = null;
 		}
 		
-		private var invertSkin:Matrix3D = new Matrix3D();
-		override protected function calculate(collector:RenderCollector):void 
+		public function updateBoneConstants(invertMatrix:Matrix3D):void 
 		{
-			//スキン姿勢の逆行列の計算
-			invertSkin.copyFrom(_worldMatrix);
-			invertSkin.invert();
-			
 			var item:SkinShader;
 			for each (item in skinShaderList) 
 			{
-				item.updateBoneConstants(invertSkin);
+				item.updateBoneConstants(invertMatrix);
 			}
 			item = null;
 		}

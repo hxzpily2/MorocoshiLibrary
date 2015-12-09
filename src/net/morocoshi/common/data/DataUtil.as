@@ -22,7 +22,6 @@ package net.morocoshi.common.data
 			{
 				delete data[i];
 			}
-			trace(data);
 		}
 		
 		static public function deleteObject(data:Object):void

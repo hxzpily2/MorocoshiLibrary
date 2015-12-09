@@ -30,6 +30,7 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
+	import net.morocoshi.moja3d.loader.objects.M3DSkinContainer;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Tiling;
 	
@@ -205,6 +206,11 @@ package net.morocoshi.moja3d.loader.exporters
 			if (object.type == ColladaObjectNode.TYPE_OBJECT)
 			{
 				result = new M3DObject();
+			}
+			
+			if (object.type == ColladaObjectNode.TYPE_SKIN_CONTAINER)
+			{
+				result = new M3DSkinContainer();
 			}
 			
 			var geom:ColladaGeometryNode;
