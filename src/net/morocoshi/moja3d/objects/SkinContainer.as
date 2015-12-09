@@ -107,6 +107,7 @@ package net.morocoshi.moja3d.objects
 			DataUtil.deleteVector(skins);
 			bones = null;
 			skins = null;
+			invertSkin = null;
 		}
 		
 		override public function referenceProperties(target:Object3D):void
@@ -129,38 +130,38 @@ package net.morocoshi.moja3d.objects
 		
 		override public function clone():Object3D 
 		{
-			var skin:SkinContainer = new SkinContainer();
+			var result:SkinContainer = new SkinContainer();
 			
-			cloneProperties(skin);
+			cloneProperties(result);
 			
 			//子を再帰的にコピーする
 			var current:Object3D;
 			for (current = _children; current; current = current._next)
 			{
-				skin.addChild(current.clone());
+				result.addChild(current.clone());
 			}
 			
-			skin.collectBones();
+			result.collectBones();
 			
-			return skin;
+			return result;
 		}
 		
 		override public function reference():Object3D 
 		{
-			var skin:SkinContainer = new SkinContainer();
+			var result:SkinContainer = new SkinContainer();
 			
-			referenceProperties(skin);
+			referenceProperties(result);
 			
 			//子を再帰的にコピーする
 			var current:Object3D;
 			for (current = _children; current; current = current._next)
 			{
-				skin.addChild(current.reference());
+				result.addChild(current.reference());
 			}
 			
-			skin.collectBones();
+			result.collectBones();
 			
-			return skin;
+			return result;
 		}
 		
 	}
