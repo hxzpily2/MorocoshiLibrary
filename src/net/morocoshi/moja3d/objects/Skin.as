@@ -23,6 +23,7 @@ package net.morocoshi.moja3d.objects
 		moja3d var skinShaderList:Vector.<SkinShader>;
 		/**メッシュ変形前の境界ボックス*/
 		private var rawBounds:BoundingBox;
+		moja3d var isReady:Boolean;
 		
 		public function Skin() 
 		{
@@ -30,6 +31,7 @@ package net.morocoshi.moja3d.objects
 			
 			updateSeed();
 			
+			isReady = false;
 			castShadowChildren = false;
 			castLightChildren = false;
 			reflectChildren = false;
@@ -185,6 +187,8 @@ package net.morocoshi.moja3d.objects
 			combinedGeom = null;
 			skinShader = null;
 			geom = null;
+			
+			isReady = true;
 		}
 		
 		public function updateBoneConstants(invertMatrix:Matrix3D):void 

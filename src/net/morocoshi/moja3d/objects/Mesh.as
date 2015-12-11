@@ -422,7 +422,7 @@ package net.morocoshi.moja3d.objects
 				var n:int = combined.geometries.length;
 				for (var i:int = 0; i < n; i++) 
 				{
-					skinShader = skin? skin.skinShaderList[i] : null;
+					skinShader = (skin && skin.isReady)? skin.skinShaderList[i] : null;
 					if (!collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader))
 					{
 						combined = null;
@@ -433,7 +433,7 @@ package net.morocoshi.moja3d.objects
 			}
 			else
 			{
-				skinShader = skin? skin.skinShaderList[0] : null;
+				skinShader = (skin && skin.isReady)? skin.skinShaderList[0] : null;
 				if (!collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader))
 				{
 					combined = null;
