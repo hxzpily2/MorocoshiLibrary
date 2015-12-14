@@ -354,7 +354,7 @@ package net.morocoshi.moja3d.view
 			collector.context3D = context3D;
 			
 			//反射オブジェクトや影ライトの有無をチェック
-			collector.collect(rootObject, camera, this, RenderPhase.CHECK);
+			collector.collect(rootObject, camera, view.clipping, this, RenderPhase.CHECK);
 			
 			//シャドウライトを視野台を包むように自動移動
 			if (collector.hasShadowElement || collector.hasLightElement)
@@ -430,7 +430,7 @@ package net.morocoshi.moja3d.view
 				if (collector.hasMaskElement)
 				{
 					fillMaskTextureOrder = true;
-					renderer.renderScene(collector, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
+					renderer.renderScene(collector, view, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
 				}
 				else if (fillMaskTextureOrder == true)
 				{
@@ -447,11 +447,11 @@ package net.morocoshi.moja3d.view
 				for (i = 0; i < n; i++) 
 				{
 					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, this, RenderPhase.LIGHT);
+					collector.collect(rootObject, light._mainShadow, null, this, RenderPhase.LIGHT);
 					renderer.renderLightMap(collector, light._mainShadow);
 					if (light._wideShadow)
 					{
-						collector.collect(rootObject, light._wideShadow, this, RenderPhase.LIGHT);
+						collector.collect(rootObject, light._wideShadow, null, this, RenderPhase.LIGHT);
 						renderer.renderLightMap(collector, light._wideShadow);
 					}
 				}
@@ -464,11 +464,11 @@ package net.morocoshi.moja3d.view
 				for (i = 0; i < n; i++) 
 				{
 					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, this, RenderPhase.DEPTH);
+					collector.collect(rootObject, light._mainShadow, null, this, RenderPhase.DEPTH);
 					renderer.renderShadowMap(collector, light._mainShadow);
 					if (light._wideShadow)
 					{
-						collector.collect(rootObject, light._wideShadow, this, RenderPhase.DEPTH);
+						collector.collect(rootObject, light._wideShadow, null, this, RenderPhase.DEPTH);
 						renderer.renderShadowMap(collector, light._wideShadow);
 					}
 				}
@@ -511,21 +511,21 @@ package net.morocoshi.moja3d.view
 					reflectCamera.calculteWorldMatrix();
 					
 					//反射モデル収集
-					collector.collect(rootObject, reflectCamera, this, RenderPhase.REFLECT);
-					renderer.renderScene(collector, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
+					collector.collect(rootObject, reflectCamera, view.clipping, this, RenderPhase.REFLECT);
+					renderer.renderScene(collector, view, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
 				}
 				reflectionData = null;
 				reflectionResource = null;
 			}
 			
 			//最終結果
-			collector.collect(rootObject, camera, this, RenderPhase.NORMAL);
+			collector.collect(rootObject, camera, view.clipping, this, RenderPhase.NORMAL);
 			if (overlay)
 			{
 				collector.collect2D(overlay, this, RenderPhase.OVERLAY);
 			}
 			var targetTexture:RenderTextureResource = (validFilters.length > 0)? postEffect.renderTexture : texture;
-			renderer.renderScene(collector, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
+			renderer.renderScene(collector, view, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
 			targetTexture = null;
 			
 			//ポストエフェクト
@@ -613,8 +613,8 @@ package net.morocoshi.moja3d.view
 		 */
 		public function mouseClick(mouseX:Number, mouseY:Number):void 
 		{
-			var fov:Number = camera.getVerticalFOV();
-			var asp:Number = camera.getScreenAspect();
+			var fov:Number = camera.getVerticalFOV(view.clipping);
+			var asp:Number = camera.getScreenAspect(view.clipping);
 			var h:Number = Math.tan(fov / 2);
 			var tx:Number = ((mouseX - view.x) / view.width - 0.5) * 2 * h * asp;
 			var ty:Number = ((mouseY - view.y) / view.height - 0.5) * 2 * -h;

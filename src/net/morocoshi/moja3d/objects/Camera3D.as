@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.objects 
 {
 	import flash.geom.Matrix3D;
+	import flash.geom.Rectangle;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
@@ -39,6 +40,8 @@ package net.morocoshi.moja3d.objects
 		
 		moja3d var perspectiveMatrix:PerspectiveMatrix3D;
 		moja3d var viewMatrix:Matrix3D;
+		moja3d var clippingMatrix:Matrix3D;
+		
 		//カリング平面の法線
 		moja3d var cullingNormals:Vector.<Vector3D>;
 		//カリング平面の頂点
@@ -75,6 +78,7 @@ package net.morocoshi.moja3d.objects
 			initializedDebugPoint = false;
 			perspectiveMatrix = new PerspectiveMatrix3D();
 			viewMatrix = new Matrix3D();
+			clippingMatrix = new Matrix3D();
 			cullingNormals = new Vector.<Vector3D>;
 			cullingPoints = new Vector.<Vector3D>;
 			frustumPoints = new Vector.<Vector3D>;
@@ -149,6 +153,34 @@ package net.morocoshi.moja3d.objects
 			}
 		}
 		
+		override public function reference():Object3D 
+		{
+			var result:Camera3D = new Camera3D();
+			referenceProperties(result);
+			//子を再帰的にコピーする
+			for (var current:Object3D = _children; current; current = current._next)
+			{
+				result.addChild(current.reference());
+			}
+			return result;
+		}
+		
+		override public function referenceProperties(target:Object3D):void 
+		{
+			super.referenceProperties(target);
+			var camera:Camera3D = target as Camera3D;
+			camera._aspect = _aspect;
+			camera._fovX = _fovX;
+			camera._fovY = _fovY;
+			camera._fovMode = _fovMode;
+			camera._orthographic = _orthographic;
+			camera._zNear = _zNear;
+			camera._zFar = _zFar;
+			camera.screenWidth = screenWidth;
+			camera.screenHeight = screenHeight;
+			//camera.clipping = clipping.clone();
+		}
+		
 		override public function clone():Object3D 
 		{
 			var object:Camera3D = new Camera3D();
@@ -174,6 +206,7 @@ package net.morocoshi.moja3d.objects
 			camera._zFar = _zFar;
 			camera.screenWidth = screenWidth;
 			camera.screenHeight = screenHeight;
+			//camera.clipping = clipping.clone();
 		}
 		
 		override public function lookAt3D(point:Vector3D, upAxis:Vector3D = null):void 
@@ -321,9 +354,9 @@ package net.morocoshi.moja3d.objects
 			}
 		}
 		
-		public function getVerticalFOV():Number 
+		public function getVerticalFOV(clipping:Rectangle):Number 
 		{
-			var screenAsp:Number = screenWidth / screenHeight;
+			var screenAsp:Number = clipping? clipping.width / clipping.height : screenWidth / screenHeight;
 			var fovAsp:Number = Math.tan(_fovX / 2) / Math.tan(_fovY / 2);
 			var result:Number;
 			switch(_fovMode)
@@ -373,24 +406,50 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * 
 		 */
-		public function checkPerspectiveUpdate():void 
+		public function checkPerspectiveUpdate(clipping:Rectangle):void 
 		{
 			//ここでworldMatrixを最新にしてる
 			calculteWorldMatrix();
 			
 			var fov:Number;
 			
-			_aspect = getScreenAspect();
+			_aspect = getScreenAspect(clipping);
 			if (_orthographic)
 			{
 				perspectiveMatrix.orthoLH(_width, _height, _zNear * _zoom, _zFar);
 			}
 			else
 			{
-				fov = getVerticalFOV();
+				fov = getVerticalFOV(clipping);
 				perspectiveMatrix.perspectiveFieldOfViewLH(fov, _aspect, _zNear * _zoom, _zFar);
 			}
-			perspectiveMatrix.appendScale(-1, 1, 1);
+			
+			//ビューポートをクリッピングする場合
+			if (clipping)
+			{
+				//perspectiveMatrixにクリッピングによる中心点の移動と縦横比の変化を適用する
+				var top:Number = (0 - clipping.top) / clipping.height * 2 - 1;
+				var bottom:Number = (screenHeight - clipping.top) / clipping.height * 2 - 1;
+				//var fixedWidth:Number = clipping.height / screenHeight * screenWidth;
+				//var offset:Number = (fixedWidth - clipping.width) / 2;
+				//var clipLeft:Number = clipping.left - offset;
+				//var clipWidth:Number = clipping.width + offset * 2;
+				var left:Number = (0 - clipping.left) / clipping.width * 2 - 1;
+				var right:Number = (screenWidth - clipping.left) / clipping.width * 2 - 1;
+				
+				clippingMatrix.copyRawDataFrom(Vector.<Number>([
+					-2 / (right - left), 0, 0, 0,
+					0, -2 * 1 / (top - bottom), 0, 0,
+					-1 -2 * left / (right - left), 1 + 2 * top / (bottom - top), 1, 0,
+					0, 0, 0, 1
+				]));
+				perspectiveMatrix.append(clippingMatrix);
+			}
+			else
+			{
+				perspectiveMatrix.appendScale(-1, 1, 1);
+			}
+			
 			viewMatrix.copyFrom(_worldMatrix);
 			viewMatrix.appendRotation(180, getWorldAxisY(true), _worldMatrix.position);
 			viewMatrix.invert();
@@ -403,8 +462,8 @@ package net.morocoshi.moja3d.objects
 			
 			if (_orthographic == false)
 			{
-				w = screenWidth / 2;
-				h = screenHeight / 2;
+				w = clipping? clipping.width / 2 : screenWidth / 2;
+				h = clipping? clipping.height / 2 : screenHeight / 2;
 				//焦点距離
 				var scaledFOV:Number = Math.atan(Math.tan(fov * 0.5) / scaleZ) * 2;
 				var tan:Number = 1 / Math.tan(scaledFOV * 0.5);
@@ -459,9 +518,11 @@ package net.morocoshi.moja3d.objects
 			
 		}
 		
-		public function getScreenAspect():Number 
+		public function getScreenAspect(clipping:Rectangle):Number 
 		{
-			return _orthographic? _width / _height : screenWidth / screenHeight;
+			if (_orthographic) return _width / _height;
+			if (clipping) return clipping.width / clipping.height;
+			return screenWidth / screenHeight;
 		}
 		
 		/**
@@ -473,9 +534,9 @@ package net.morocoshi.moja3d.objects
 		public function getScreenPosition(point:Vector3D, view:Viewport):Vector3D
 		{
 			setScreenSize(view.width, view.height);
-			checkPerspectiveUpdate();
+			checkPerspectiveUpdate(view.clipping);
 			
-			var fov:Number = getVerticalFOV();
+			var fov:Number = getVerticalFOV(view.clipping);
 			var tanY:Number = Math.tan(fov * 0.5);
 			var tanX:Number = tanY * _aspect;
 			point = viewMatrix.transformVector(point);

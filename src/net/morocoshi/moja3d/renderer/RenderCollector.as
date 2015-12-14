@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.renderer
 	import flash.display.BitmapData;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTriangleFace;
+	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALInfo;
@@ -156,7 +157,7 @@ package net.morocoshi.moja3d.renderer
 		 * @param	root
 		 * @param	phase
 		 */
-		public function collect(root:Object3D, camera:Camera3D, scene:Scene3D, phase:String):void 
+		public function collect(root:Object3D, camera:Camera3D, clipping:Rectangle, scene:Scene3D, phase:String):void 
 		{
 			renderPhase = phase;
 			this.camera = camera;
@@ -165,7 +166,7 @@ package net.morocoshi.moja3d.renderer
 			var h:Number = shadow? shadow.height : scene.view.height;
 			shadow = null;
 			camera.setScreenSize(w, h);
-			camera.checkPerspectiveUpdate();
+			camera.checkPerspectiveUpdate(clipping);
 			
 			clear();
 			

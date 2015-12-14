@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.view
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.events.Event;
+	import flash.geom.Rectangle;
 	import net.morocoshi.moja3d.moja3d;
 	
 	/**
@@ -27,6 +28,9 @@ package net.morocoshi.moja3d.view
 		private var _antiAlias:int;
 		
 		private var _updateBackBuffer:Boolean;
+		
+		/**レンダリング範囲をビューポート左上からのクリッピング矩形で指定する*/
+		public var clipping:Rectangle;
 		
 		/**
 		 * コンストラクタ

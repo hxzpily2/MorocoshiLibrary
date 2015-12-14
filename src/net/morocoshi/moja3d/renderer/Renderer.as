@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.renderer
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DCompareMode;
 	import flash.geom.Matrix3D;
+	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.events.Event3D;
@@ -12,6 +13,7 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.view.Scene3D;
+	import net.morocoshi.moja3d.view.Viewport;
 	
 	use namespace moja3d;
 	
@@ -43,34 +45,35 @@ package net.morocoshi.moja3d.renderer
 		
 		public function renderTexture(textures:Array, collector:RenderCollector, target:RenderTextureResource, rgb:uint, alpha:Number, antiAlias:int):void
 		{
-			renderScene(collector, null, target, textures, rgb, alpha, antiAlias, false);
+			renderScene(collector, null, null, target, textures, rgb, alpha, antiAlias, false);
 		}
 		
 		public function renderShadowMap(collector:RenderCollector, shadow:Shadow):void 
 		{
 			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyShadowTexture(collector.context3D);
-			renderScene(collector, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1, false);
+			renderScene(collector, null, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		public function renderLightMap(collector:RenderCollector, shadow:Shadow):void 
 		{
 			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyLightTexture(collector.context3D);
-			renderScene(collector, shadow, shadow.lightTexture, null, 0xffffff, 1, 1, false);
+			renderScene(collector, null, shadow, shadow.lightTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		private var lastTarget:RenderTextureResource = new RenderTextureResource();
 		/**
 		 * 
 		 * @param	collector	事前に収集しておいたメッシュとか
+		 * @param	view	ビューポート
 		 * @param	camera	カメラ
 		 * @param	target	テクスチャに描画したい場合に使う
 		 * @param	drawTexture	主にフィルターに使う素材用テクスチャリスト
 		 * @param	rgb	背景色
 		 * @param	alpha	背景アルファ
 		 */
-		public function renderScene(collector:RenderCollector, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
+		public function renderScene(collector:RenderCollector, view:Viewport, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
 		{
 			var context:Context3D = collector.context3D.context;
 			var cameraMatrix:Matrix3D;
@@ -78,7 +81,7 @@ package net.morocoshi.moja3d.renderer
 			frame++;
 			if (camera)
 			{
-				camera.checkPerspectiveUpdate();
+				camera.checkPerspectiveUpdate(view? view.clipping : null);
 				collector.vertexConstant.clipping.x = camera.zNear;
 				collector.vertexConstant.clipping.y = camera.zFar;
 				collector.vertexConstant.clipping.z = camera.zFar - camera.zNear;
@@ -123,13 +126,21 @@ package net.morocoshi.moja3d.renderer
 				
 			}
 			
-			//context3D.setScissorRectangle(new Rectangle(0, 0, scene.view.width, scene.view.height));
-			
 			//背景色でクリア
 			var r:Number = (rgb >> 16 & 0xff) / 0xff;
 			var g:Number = (rgb >> 8 & 0xff) / 0xff;
 			var b:Number = (rgb & 0xff) / 0xff;
 			context.clear(r, g, b, alpha);
+			
+			//クリッピング
+			if (target == null && view && view.clipping)
+			{
+				context.setScissorRectangle(view.clipping);
+			}
+			else
+			{
+				context.setScissorRectangle(null);
+			}
 			
 			if (target == null && dispatchRenderEvent)
 			{
