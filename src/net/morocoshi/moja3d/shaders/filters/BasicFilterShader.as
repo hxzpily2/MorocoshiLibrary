@@ -1,19 +1,24 @@
 package net.morocoshi.moja3d.shaders.filters 
 {
+	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
+	use namespace moja3d;
+	
 	/**
 	 * ...
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class BasicFilterShader extends MaterialShader 
 	{
+		moja3d var clippingConst:AGALConstant;
 		
 		public function BasicFilterShader() 
 		{
@@ -44,6 +49,8 @@ package net.morocoshi.moja3d.shaders.filters
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
+			vertexCode.addConstantsFromArray("@offsetFilter", [2, -2, -1, 1]);
+			clippingConst = vertexCode.addConstantsFromArray("@clippingFilter", [0, 0, 0, 0]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -51,8 +58,18 @@ package net.morocoshi.moja3d.shaders.filters
 			super.updateShaderCode();
 			
 			vertexConstants.number = true;
+			vertexConstants.viewSize = true;
 			vertexCode.addCode([
-				"op = va0",
+				"var $pos",
+				"$pos = va0",
+				"$pos.xy *= @clippingFilter.zw",
+				"$pos.xy += @clippingFilter.xy",
+				
+				"$pos.xy /= @viewSize.xy",
+				"$pos.xy *= @offsetFilter.xy",
+				"$pos.xy += @offsetFilter.zw",
+				
+				"op = $pos",
 				"#uv = va1"
 			]);
 			

@@ -1,8 +1,6 @@
 package net.morocoshi.moja3d.filters 
 {
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
-	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
-	import net.morocoshi.moja3d.shaders.filters.EndFilterShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
 	/**
@@ -22,9 +20,7 @@ package net.morocoshi.moja3d.filters
 			super();
 			hasMaskElement = true;
 			
-			shaderList = new ShaderList();
-			shaderList.addShader(new BasicFilterShader());
-			shaderList.addShader(new EndFilterShader());
+			shaderList = createShaderList([]);
 		}
 		
 		override public function render(manager:PostEffectManager):void 

@@ -4,6 +4,7 @@ package net.morocoshi.moja3d.agal
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.shaders.core.ViewTransformShader;
+	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteBasicShader;
 	import net.morocoshi.moja3d.shaders.overlay.SpriteEndShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
@@ -22,6 +23,7 @@ package net.morocoshi.moja3d.agal
 		static public var spriteStartShaderList:SpriteBasicShader = new SpriteBasicShader();
 		static public var spriteEndShaderList:SpriteEndShader = new SpriteEndShader();
 		static public var viewShaderList:ViewTransformShader = new ViewTransformShader();
+		static public var basicFilterShader:BasicFilterShader = new BasicFilterShader();
 		
 		static public var shader:Object = { };
 		

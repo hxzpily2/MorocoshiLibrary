@@ -111,7 +111,7 @@ package net.morocoshi.moja3d.shaders.filters
 					fragmentCode.addCode([
 						"$uvp.x = " + xy[ix],
 						"$uvp.y = " + xy[iy],
-						"$uvp.xy /= @viewSize.xy",
+						"$uvp.xy /= @viewSize.zw",
 						"$uvp.xy += #uv.xy",
 						//マスク画像
 						"$image.xyz = tex($uvp.xy, fs1, " + tag + ")",

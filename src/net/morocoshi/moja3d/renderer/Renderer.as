@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.renderer
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
+	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.moja3d;
@@ -43,23 +44,23 @@ package net.morocoshi.moja3d.renderer
 			matrix = new Matrix3D();
 		}
 		
-		public function renderTexture(textures:Array, collector:RenderCollector, target:RenderTextureResource, rgb:uint, alpha:Number, antiAlias:int):void
+		public function renderTexture(textures:Array, collector:RenderCollector, view:Viewport, clipEnabled:Boolean, target:RenderTextureResource, rgb:uint, alpha:Number, antiAlias:int):void
 		{
-			renderScene(collector, null, null, target, textures, rgb, alpha, antiAlias, false);
+			renderScene(collector, view, clipEnabled, null, target, textures, rgb, alpha, antiAlias, false);
 		}
 		
 		public function renderShadowMap(collector:RenderCollector, shadow:Shadow):void 
 		{
 			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyShadowTexture(collector.context3D);
-			renderScene(collector, null, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1, false);
+			renderScene(collector, scene.view, true, shadow, shadow.shadowTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		public function renderLightMap(collector:RenderCollector, shadow:Shadow):void 
 		{
 			//TODO: アンチエイリアスは1固定で大丈夫？
 			shadow.readyLightTexture(collector.context3D);
-			renderScene(collector, null, shadow, shadow.lightTexture, null, 0xffffff, 1, 1, false);
+			renderScene(collector, scene.view, true, shadow, shadow.lightTexture, null, 0xffffff, 1, 1, false);
 		}
 		
 		private var lastTarget:RenderTextureResource = new RenderTextureResource();
@@ -67,13 +68,14 @@ package net.morocoshi.moja3d.renderer
 		 * 
 		 * @param	collector	事前に収集しておいたメッシュとか
 		 * @param	view	ビューポート
+		 * @param	clipEnabled	クリッピングを行うか
 		 * @param	camera	カメラ
 		 * @param	target	テクスチャに描画したい場合に使う
 		 * @param	drawTexture	主にフィルターに使う素材用テクスチャリスト
 		 * @param	rgb	背景色
 		 * @param	alpha	背景アルファ
 		 */
-		public function renderScene(collector:RenderCollector, view:Viewport, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
+		public function renderScene(collector:RenderCollector, view:Viewport, clipEnabled:Boolean, camera:Camera3D, target:RenderTextureResource, drawTextures:Array, rgb:uint, alpha:Number, antiAlias:int, dispatchRenderEvent:Boolean):void
 		{
 			var context:Context3D = collector.context3D.context;
 			var cameraMatrix:Matrix3D;
@@ -81,7 +83,8 @@ package net.morocoshi.moja3d.renderer
 			frame++;
 			if (camera)
 			{
-				camera.checkPerspectiveUpdate(view? view.clipping : null);
+				var clipRect:Rectangle = (target == null || clipEnabled == false) && view? view.clipping : null;
+				camera.checkPerspectiveUpdate(clipRect, clipEnabled);
 				collector.vertexConstant.clipping.x = camera.zNear;
 				collector.vertexConstant.clipping.y = camera.zFar;
 				collector.vertexConstant.clipping.z = camera.zFar - camera.zNear;
@@ -92,8 +95,10 @@ package net.morocoshi.moja3d.renderer
 				//各種行列
 				collector.vertexConstant.viewMatrix.matrix = camera.viewMatrix;
 				collector.vertexConstant.projMatrix.matrix = camera.perspectiveMatrix;
+				collector.vertexConstant.clipMatrix.matrix = camera.clippingMatrix;
 				collector.fragmentConstant.viewMatrix.matrix = camera.viewMatrix;
 				collector.fragmentConstant.projMatrix.matrix = camera.perspectiveMatrix;
+				collector.fragmentConstant.clipMatrix.matrix = camera.clippingMatrix;
 				
 				//カメラのワールド座標
 				cameraMatrix = camera.worldMatrix;
@@ -107,8 +112,12 @@ package net.morocoshi.moja3d.renderer
 			
 			collector.vertexConstant.viewSize.x = scene.view.width;
 			collector.vertexConstant.viewSize.y = scene.view.height;
+			collector.vertexConstant.viewSize.z = scene.view.clipping? scene.view.clipping.width : scene.view.width;
+			collector.vertexConstant.viewSize.w = scene.view.clipping? scene.view.clipping.height : scene.view.height;
 			collector.fragmentConstant.viewSize.x = scene.view.width;
 			collector.fragmentConstant.viewSize.y = scene.view.height;
+			collector.fragmentConstant.viewSize.z = scene.view.clipping? scene.view.clipping.width : scene.view.width;
+			collector.fragmentConstant.viewSize.w = scene.view.clipping? scene.view.clipping.height : scene.view.height;
 			
 			//targetが指定されていればテクスチャにレンダリング
 			if (lastTarget != target)
@@ -133,13 +142,29 @@ package net.morocoshi.moja3d.renderer
 			context.clear(r, g, b, alpha);
 			
 			//クリッピング
-			if (target == null && view && view.clipping)
+			if (target == null && view.clipping && !(camera is Shadow))
 			{
 				context.setScissorRectangle(view.clipping);
+				AGALCache.basicFilterShader.clippingConst.x = view.clipping.x;
+				AGALCache.basicFilterShader.clippingConst.y = view.clipping.y;
+				AGALCache.basicFilterShader.clippingConst.z = view.clipping.width;
+				AGALCache.basicFilterShader.clippingConst.w = view.clipping.height;
+				AGALCache.spriteEndShaderList.clippingConst.x = view.clipping.x;
+				AGALCache.spriteEndShaderList.clippingConst.y = view.clipping.y;
+				AGALCache.spriteEndShaderList.clippingConst.z = view.clipping.width;
+				AGALCache.spriteEndShaderList.clippingConst.w = view.clipping.height;
 			}
 			else
 			{
 				context.setScissorRectangle(null);
+				AGALCache.basicFilterShader.clippingConst.x = 0;
+				AGALCache.basicFilterShader.clippingConst.y = 0;
+				AGALCache.basicFilterShader.clippingConst.z = view.width;
+				AGALCache.basicFilterShader.clippingConst.w = view.height;
+				AGALCache.spriteEndShaderList.clippingConst.x = 0;
+				AGALCache.spriteEndShaderList.clippingConst.y = 0;
+				AGALCache.spriteEndShaderList.clippingConst.z = view.width;
+				AGALCache.spriteEndShaderList.clippingConst.w = view.height;
 			}
 			
 			if (target == null && dispatchRenderEvent)
@@ -179,6 +204,7 @@ package net.morocoshi.moja3d.renderer
 			//2Dオーバーレイのレンダリング
 			if (collector.renderElementList[RenderLayer.OVERLAY])
 			{
+				context.setScissorRectangle(null);
 				setDepthTest(context, false, Context3DCompareMode.ALWAYS);
 				renderLayer(RenderLayer.OVERLAY, collector, camera, drawTextures);
 			}
@@ -325,9 +351,9 @@ package net.morocoshi.moja3d.renderer
 			textureResource = null;
 		}
 		
-		public function renderFilter(collector:RenderCollector, sourceTextures:Array, targetTexture:RenderTextureResource, antiAlias:int):void 
+		public function renderFilter(collector:RenderCollector, view:Viewport, sourceTextures:Array, targetTexture:RenderTextureResource, antiAlias:int):void 
 		{
-			renderTexture(sourceTextures, collector, targetTexture, 0x000000, 1, antiAlias);
+			renderTexture(sourceTextures, collector, view, false, targetTexture, view.backgroundColor, view.backgroundAlpha, antiAlias);
 		}
 		
 	}

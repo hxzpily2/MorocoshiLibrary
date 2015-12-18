@@ -124,13 +124,13 @@ package net.morocoshi.moja3d.shaders.filters
 				"var $blur",
 				"var $size",
 				"$size.y = @gaussianScale.x",
-				"$size.x = @viewSize.y",
-				"$size.x /= @viewSize.x",
+				"$size.x = @viewSize.w",
+				"$size.x /= @viewSize.z",
 				"$size.x *= @gaussianScale.x",
 				
 				"$uvp.xy = #uv.xy",
 				"$output.xyz = @0_0_0"
-			])
+			]);
 			
 			var xy:String = _horizontal? "x" : "y";
 			for (var i:int = -_segments + 1; i <= _segments - 1; i++) 

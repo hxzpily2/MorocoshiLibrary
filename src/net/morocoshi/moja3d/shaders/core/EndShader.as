@@ -55,11 +55,13 @@ package net.morocoshi.moja3d.shaders.core
 			super.updateShaderCode();
 			
 			vertexConstants.projMatrix = true;
+			vertexConstants.clipMatrix = true;
 			
 			vertexCode.addCode([
 				"#vpos = $pos",
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
 				"#spos = $pos",//スクリーン座標
+				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
 				"op = $pos.xyzw"//スクリーン座標
 			]);
 			

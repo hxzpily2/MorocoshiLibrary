@@ -1,10 +1,14 @@
 package net.morocoshi.moja3d.shaders.overlay 
 {
+	import net.morocoshi.moja3d.agal.AGALConstant;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
+	
+	use namespace moja3d;
 	
 	/**
 	 * ...
@@ -14,6 +18,7 @@ package net.morocoshi.moja3d.shaders.overlay
 	public class SpriteEndShader extends MaterialShader 
 	{
 		private var depthShader:DepthEndShader;
+		moja3d var clippingConst:AGALConstant;
 		
 		public function SpriteEndShader() 
 		{
@@ -44,6 +49,8 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
+			vertexCode.addConstantsFromArray("@offsetSprite", [2, -2, -1, 1]);
+			clippingConst = vertexCode.addConstantsFromArray("@clippingSprite", [0, 0, 0, 0]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -51,13 +58,13 @@ package net.morocoshi.moja3d.shaders.overlay
 			super.updateShaderCode();
 			
 			vertexConstants.viewSize = true;
-			vertexCode.addConstantsFromArray("@offset", [2, -2, -1, 1]);
 			vertexCode.addCode([
 				"$pos.xyz = m34($pos, @modelMatrix)",//モデル行列で変換
 				"#spos = $pos",
+				"$pos.xy += @clippingSprite.xy",
 				"$pos.xy /= @viewSize.xy",
-				"$pos.xy *= @offset.xy",
-				"$pos.xy += @offset.zw",
+				"$pos.xy *= @offsetSprite.xy",
+				"$pos.xy += @offsetSprite.zw",
 				"#uv = $uv",
 				"op = $pos"
 			]);

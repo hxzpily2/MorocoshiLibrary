@@ -406,7 +406,7 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * 
 		 */
-		public function checkPerspectiveUpdate(clipping:Rectangle):void 
+		public function checkPerspectiveUpdate(clipping:Rectangle, clipEnabled:Boolean):void 
 		{
 			//ここでworldMatrixを最新にしてる
 			calculteWorldMatrix();
@@ -425,7 +425,7 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			//ビューポートをクリッピングする場合
-			if (clipping)
+			if (clipping && clipEnabled)
 			{
 				//perspectiveMatrixにクリッピングによる中心点の移動と縦横比の変化を適用する
 				var top:Number = (0 - clipping.top) / clipping.height * 2 - 1;
@@ -438,17 +438,18 @@ package net.morocoshi.moja3d.objects
 				var right:Number = (screenWidth - clipping.left) / clipping.width * 2 - 1;
 				
 				clippingMatrix.copyRawDataFrom(Vector.<Number>([
-					-2 / (right - left), 0, 0, 0,
+					2 / (right - left), 0, 0, 0,
 					0, -2 * 1 / (top - bottom), 0, 0,
 					-1 -2 * left / (right - left), 1 + 2 * top / (bottom - top), 1, 0,
 					0, 0, 0, 1
 				]));
-				perspectiveMatrix.append(clippingMatrix);
+				//perspectiveMatrix.append(clippingMatrix);
 			}
 			else
 			{
-				perspectiveMatrix.appendScale(-1, 1, 1);
+				clippingMatrix.identity();
 			}
+			perspectiveMatrix.appendScale(-1, 1, 1);
 			
 			viewMatrix.copyFrom(_worldMatrix);
 			viewMatrix.appendRotation(180, getWorldAxisY(true), _worldMatrix.position);
@@ -534,7 +535,7 @@ package net.morocoshi.moja3d.objects
 		public function getScreenPosition(point:Vector3D, view:Viewport):Vector3D
 		{
 			setScreenSize(view.width, view.height);
-			checkPerspectiveUpdate(view.clipping);
+			checkPerspectiveUpdate(view.clipping, true);
 			
 			var fov:Number = getVerticalFOV(view.clipping);
 			var tanY:Number = Math.tan(fov * 0.5);

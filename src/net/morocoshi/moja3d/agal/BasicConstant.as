@@ -13,6 +13,7 @@ package net.morocoshi.moja3d.agal
 		public var modelMatrix:AGALConstant;
 		public var viewMatrix:AGALConstant;
 		public var projMatrix:AGALConstant;
+		public var clipMatrix:AGALConstant;
 		public var cameraPosition:AGALConstant;
 		public var viewSize:AGALConstant;
 		public var ambient:AGALConstant;
@@ -22,6 +23,7 @@ package net.morocoshi.moja3d.agal
 		static public const MODEL_MATRIX:String = "@modelMatrix";
 		static public const VIEW_MATRIX:String = "@viewMatrix";
 		static public const PROJ_MATRIX:String = "@projMatrix";
+		static public const CLIP_MATRIX:String = "@clipMatrix";
 		static public const CAMERA_POSITION:String = "@cameraPosition";
 		static public const VIEW_SIZE:String = "@viewSize";
 		static public const AMBIENT_COLOR:String = "@ambientColor";
@@ -33,6 +35,7 @@ package net.morocoshi.moja3d.agal
 			modelMatrix = code.addConstantsFromMatrix(MODEL_MATRIX, null, true);
 			viewMatrix = code.addConstantsFromMatrix(VIEW_MATRIX, null, true);
 			projMatrix = code.addConstantsFromMatrix(PROJ_MATRIX, null, true);
+			clipMatrix = code.addConstantsFromMatrix(CLIP_MATRIX, null, true);
 			cameraPosition = code.addConstantsFromVector3D(CAMERA_POSITION, null);
 			clipping = code.addConstantsFromVector3D(CLIPPING, null);
 			viewSize = code.addConstantsFromVector3D(VIEW_SIZE, null);
@@ -46,6 +49,7 @@ package net.morocoshi.moja3d.agal
 			cameraPosition.enabled = using.cameraPosition;
 			modelMatrix.enabled = using.modelMatrix;
 			projMatrix.enabled = using.projMatrix;
+			clipMatrix.enabled = using.clipMatrix;
 			viewMatrix.enabled = using.viewMatrix;
 			viewSize.enabled = using.viewSize;
 			ambient.enabled = using.ambient;
@@ -57,6 +61,7 @@ package net.morocoshi.moja3d.agal
 			modelMatrix.dispose();
 			viewMatrix.dispose();
 			projMatrix.dispose();
+			clipMatrix.dispose();
 			cameraPosition.dispose();
 			clipping.dispose();
 			viewSize.dispose();
@@ -66,6 +71,7 @@ package net.morocoshi.moja3d.agal
 			modelMatrix = null;
 			viewMatrix = null;
 			projMatrix = null;
+			clipMatrix = null;
 			cameraPosition = null;
 			clipping = null;
 			viewSize = null;

@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.shaders.overlay 
 {
+	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
@@ -14,6 +15,7 @@ package net.morocoshi.moja3d.shaders.overlay
 	public class SpriteBasicShader extends MaterialShader 
 	{
 		private var depthShader:DepthBasicShader;
+		private var offsetConst:AGALConstant;
 		public function SpriteBasicShader() 
 		{
 			super();

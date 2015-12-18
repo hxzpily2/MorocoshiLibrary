@@ -310,14 +310,15 @@ package net.morocoshi.moja3d.view
 			}
 			
 			//ポストエフェクトなどに使うテクスチャをビューサイズを元に生成したりリサイズしたりする。
-			if (viewRect.width != view.width || viewRect.height != view.height)
+			var vw:Number = view.clipping? view.clipping.width : view.width;
+			var vh:Number = view.clipping? view.clipping.height : view.height;
+			if (viewRect.width != vw || viewRect.height != vh)
 			{
-				viewRect.width = view.width;
-				viewRect.height = view.height;
-				postEffect.setViewSize(context3D, view.width, view.height);
-				collector.reflectiveWater.setSize(view.width, view.height);
+				viewRect.width = vw;
+				viewRect.height = vh;
+				postEffect.setViewSize(context3D, vw, vh);
+				collector.reflectiveWater.setSize(vw, vh);
 			}
-			
 			
 			//有効なフィルタを抽出
 			validFilters.length = 0;
@@ -354,7 +355,8 @@ package net.morocoshi.moja3d.view
 			collector.context3D = context3D;
 			
 			//反射オブジェクトや影ライトの有無をチェック
-			collector.collect(rootObject, camera, view.clipping, this, RenderPhase.CHECK);
+			var clipEnabled:Boolean = true;
+			collector.collect(rootObject, camera, view.clipping, clipEnabled, this, RenderPhase.CHECK);
 			
 			//シャドウライトを視野台を包むように自動移動
 			if (collector.hasShadowElement || collector.hasLightElement)
@@ -430,7 +432,7 @@ package net.morocoshi.moja3d.view
 				if (collector.hasMaskElement)
 				{
 					fillMaskTextureOrder = true;
-					renderer.renderScene(collector, view, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
+					renderer.renderScene(collector, view, false, camera, postEffect.maskTexture, null, 0x000000, 1, view.antiAlias, false);
 				}
 				else if (fillMaskTextureOrder == true)
 				{
@@ -447,11 +449,11 @@ package net.morocoshi.moja3d.view
 				for (i = 0; i < n; i++) 
 				{
 					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, null, this, RenderPhase.LIGHT);
+					collector.collect(rootObject, light._mainShadow, null, true, this, RenderPhase.LIGHT);
 					renderer.renderLightMap(collector, light._mainShadow);
 					if (light._wideShadow)
 					{
-						collector.collect(rootObject, light._wideShadow, null, this, RenderPhase.LIGHT);
+						collector.collect(rootObject, light._wideShadow, null, true, this, RenderPhase.LIGHT);
 						renderer.renderLightMap(collector, light._wideShadow);
 					}
 				}
@@ -464,11 +466,11 @@ package net.morocoshi.moja3d.view
 				for (i = 0; i < n; i++) 
 				{
 					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, null, this, RenderPhase.DEPTH);
+					collector.collect(rootObject, light._mainShadow, null, true, this, RenderPhase.DEPTH);
 					renderer.renderShadowMap(collector, light._mainShadow);
 					if (light._wideShadow)
 					{
-						collector.collect(rootObject, light._wideShadow, null, this, RenderPhase.DEPTH);
+						collector.collect(rootObject, light._wideShadow, null, true, this, RenderPhase.DEPTH);
 						renderer.renderShadowMap(collector, light._wideShadow);
 					}
 				}
@@ -511,21 +513,21 @@ package net.morocoshi.moja3d.view
 					reflectCamera.calculteWorldMatrix();
 					
 					//反射モデル収集
-					collector.collect(rootObject, reflectCamera, view.clipping, this, RenderPhase.REFLECT);
-					renderer.renderScene(collector, view, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
+					collector.collect(rootObject, reflectCamera, view.clipping, clipEnabled, this, RenderPhase.REFLECT);
+					renderer.renderScene(collector, view, false, reflectCamera, reflectionResource, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, false);
 				}
 				reflectionData = null;
 				reflectionResource = null;
 			}
 			
 			//最終結果
-			collector.collect(rootObject, camera, view.clipping, this, RenderPhase.NORMAL);
-			if (overlay)
+			collector.collect(rootObject, camera, view.clipping, clipEnabled, this, RenderPhase.NORMAL);
+			if (overlay && validFilters.length == 0)
 			{
 				collector.collect2D(overlay, this, RenderPhase.OVERLAY);
 			}
 			var targetTexture:RenderTextureResource = (validFilters.length > 0)? postEffect.renderTexture : texture;
-			renderer.renderScene(collector, view, camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
+			renderer.renderScene(collector, view, !Boolean(targetTexture), camera, targetTexture, null, view.backgroundColor, view.backgroundAlpha, view.antiAlias, dispatchRenderEvent);
 			targetTexture = null;
 			
 			//ポストエフェクト

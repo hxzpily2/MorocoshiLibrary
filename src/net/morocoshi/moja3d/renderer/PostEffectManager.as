@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.renderer
 {
 	import adobe.utils.CustomActions;
 	import flash.display3D.Context3D;
+	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.filters.BasicFilterShader;
@@ -45,7 +46,7 @@ package net.morocoshi.moja3d.renderer
 				processTexture2.push(new RenderTextureResource(1024, 1024, lv, "processTexture2"));
 			}
 			captureShader = new ShaderList();
-			captureShader.addShader(new BasicFilterShader());
+			captureShader.addShader(AGALCache.basicFilterShader);
 			captureShader.addShader(new EndFilterShader());
 		}
 		
@@ -100,7 +101,13 @@ package net.morocoshi.moja3d.renderer
 				if (source[i] == null) source[i] = currentTexture;
 			}
 			var target:RenderTextureResource = isEnd? null : getNextTexture(lowLV);
-			renderer.renderFilter(collector, source, target, antiAlias);
+			
+			if (isEnd && scene.overlay)
+			{
+				collector.collect2D(scene.overlay, scene, RenderPhase.OVERLAY);
+			}
+			
+			renderer.renderFilter(collector, scene.view, source, target, antiAlias);
 		}
 		
 		/**
@@ -120,7 +127,7 @@ package net.morocoshi.moja3d.renderer
 				if (source[i] == null) source[i] = currentTexture;
 			}
 			var target:RenderTextureResource = destination || getNextTexture(lowLV);
-			renderer.renderFilter(collector, source, target, antiAlias);
+			renderer.renderFilter(collector, scene.view, source, target, antiAlias);
 			currentTexture = target;
 			return currentTexture;
 		}

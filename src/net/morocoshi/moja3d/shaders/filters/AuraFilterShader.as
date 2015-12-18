@@ -92,11 +92,11 @@ package net.morocoshi.moja3d.shaders.filters
 				
 				"$uv1.xy = #uv.xy",
 				"$uv1.xy *= @noise.xx",
-				"$uv1.y /= @viewSize.x",
-				"$uv1.y *= @viewSize.y",
+				"$uv1.x /= @viewSize.w",
+				"$uv1.x *= @viewSize.z",
 				"$uv1.xy += @noise.zw",
 				"$noise.xyz = tex($uv1.xy, fs3, " + tag2 + ")",
-				"$noise.xyz -= @0.5_0.5_0.5",
+				"$noise.xyz -= @0.5",
 				"$noise.xy *= @aura.yz",
 				
 				"var $offset",

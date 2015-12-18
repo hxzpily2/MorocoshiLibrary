@@ -97,7 +97,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 				fragmentCode.addCode([
 					"$temp.xyz = dp3($normal.xyz, @viewMatrix)",
-					"$temp.xy /= @viewSize.xy",
+					"$temp.xy /= @viewSize.zw",
 					"$temp.xy *= @blur.ww",
 					"$baseUV.xy += $temp.xy"
 				])
@@ -122,7 +122,7 @@ package net.morocoshi.moja3d.shaders.render
 					//ぼかす距離
 					"var $offset",
 					"$offset.xy = @blur.x",
-					"$offset.xy /= @viewSize.xy",
+					"$offset.xy /= @viewSize.zw",
 					"$offset.zw = $offset.xy * @0.5"
 				]);
 				
