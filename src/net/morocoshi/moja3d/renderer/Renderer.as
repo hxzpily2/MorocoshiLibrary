@@ -141,6 +141,11 @@ package net.morocoshi.moja3d.renderer
 			var b:Number = (rgb & 0xff) / 0xff;
 			context.clear(r, g, b, alpha);
 			
+			if (target == null && dispatchRenderEvent)
+			{
+				scene.dispatchEvent(new Event3D(Event3D.CONTEXT_POST_CLEAR));
+			}
+			
 			//クリッピング
 			if (target == null && view.clipping && !(camera is Shadow))
 			{
@@ -165,11 +170,6 @@ package net.morocoshi.moja3d.renderer
 				AGALCache.spriteEndShaderList.clippingConst.y = 0;
 				AGALCache.spriteEndShaderList.clippingConst.z = view.width;
 				AGALCache.spriteEndShaderList.clippingConst.w = view.height;
-			}
-			
-			if (target == null && dispatchRenderEvent)
-			{
-				scene.dispatchEvent(new Event3D(Event3D.CONTEXT_POST_CLEAR));
 			}
 			
 			//最背面要素のレンダリング
