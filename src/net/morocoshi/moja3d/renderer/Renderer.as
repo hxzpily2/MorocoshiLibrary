@@ -108,6 +108,15 @@ package net.morocoshi.moja3d.renderer
 				collector.fragmentConstant.cameraPosition.x = cameraMatrix.rawData[12];
 				collector.fragmentConstant.cameraPosition.y = cameraMatrix.rawData[13];
 				collector.fragmentConstant.cameraPosition.z = cameraMatrix.rawData[14];
+				//カメラの角度（Z軸ベクトル）
+				collector.vertexConstant.cameraDirection.x = cameraMatrix.rawData[8];
+				collector.vertexConstant.cameraDirection.y = cameraMatrix.rawData[9];
+				collector.vertexConstant.cameraDirection.z = cameraMatrix.rawData[10];
+				collector.vertexConstant.cameraDirection.normalize();
+				collector.fragmentConstant.cameraDirection.x = -cameraMatrix.rawData[8];
+				collector.fragmentConstant.cameraDirection.y = -cameraMatrix.rawData[9];
+				collector.fragmentConstant.cameraDirection.z = -cameraMatrix.rawData[10];
+				collector.fragmentConstant.cameraDirection.normalize();
 			}
 			
 			collector.vertexConstant.viewSize.x = scene.view.width;

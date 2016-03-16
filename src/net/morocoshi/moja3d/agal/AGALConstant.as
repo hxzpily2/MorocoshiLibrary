@@ -133,6 +133,14 @@ package net.morocoshi.moja3d.agal
 			return constant;
 		}
 		
+		public function normalize():void 
+		{
+			var size:Number = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] * vector[2] * vector[2]);
+			vector[0] /= size;
+			vector[1] /= size;
+			vector[2] /= size;
+		}
+		
 	}
 
 }

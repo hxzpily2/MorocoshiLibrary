@@ -12,6 +12,7 @@ package net.morocoshi.moja3d.agal
 		public var projMatrix:Boolean = false;
 		public var clipMatrix:Boolean = false;
 		public var cameraPosition:Boolean = false;
+		public var cameraDirection:Boolean = false;
 		public var viewSize:Boolean = false;
 		public var lights:Boolean = false;
 		public var ambient:Boolean = false;
@@ -30,6 +31,7 @@ package net.morocoshi.moja3d.agal
 			projMatrix = false;
 			clipMatrix = false;
 			cameraPosition = false;
+			cameraDirection = false;
 			viewSize = false;
 			lights = false;
 			ambient = false;
@@ -45,6 +47,7 @@ package net.morocoshi.moja3d.agal
 			projMatrix = projMatrix || constants.projMatrix;
 			clipMatrix = clipMatrix || constants.clipMatrix;
 			cameraPosition = cameraPosition || constants.cameraPosition;
+			cameraDirection = cameraDirection || constants.cameraDirection;
 			viewSize = viewSize || constants.viewSize;
 			lights = lights || constants.lights;
 			ambient = ambient || constants.ambient;
@@ -61,6 +64,7 @@ package net.morocoshi.moja3d.agal
 			result.projMatrix = projMatrix;
 			result.clipMatrix = clipMatrix;
 			result.cameraPosition = cameraPosition;
+			result.cameraDirection = cameraDirection;
 			result.viewSize = viewSize;
 			result.lights = lights;
 			result.ambient = ambient;

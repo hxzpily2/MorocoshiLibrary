@@ -15,6 +15,7 @@ package net.morocoshi.moja3d.agal
 		public var projMatrix:AGALConstant;
 		public var clipMatrix:AGALConstant;
 		public var cameraPosition:AGALConstant;
+		public var cameraDirection:AGALConstant;
 		public var viewSize:AGALConstant;
 		public var ambient:AGALConstant;
 		public var number:AGALConstant;
@@ -25,6 +26,7 @@ package net.morocoshi.moja3d.agal
 		static public const PROJ_MATRIX:String = "@projMatrix";
 		static public const CLIP_MATRIX:String = "@clipMatrix";
 		static public const CAMERA_POSITION:String = "@cameraPosition";
+		static public const CAMERA_DIRECTION:String = "@cameraDirection";
 		static public const VIEW_SIZE:String = "@viewSize";
 		static public const AMBIENT_COLOR:String = "@ambientColor";
 		static public const CLIPPING:String = "@clipping";
@@ -37,6 +39,7 @@ package net.morocoshi.moja3d.agal
 			projMatrix = code.addConstantsFromMatrix(PROJ_MATRIX, null, true);
 			clipMatrix = code.addConstantsFromMatrix(CLIP_MATRIX, null, true);
 			cameraPosition = code.addConstantsFromVector3D(CAMERA_POSITION, null);
+			cameraDirection = code.addConstantsFromVector3D(CAMERA_DIRECTION, null);
 			clipping = code.addConstantsFromVector3D(CLIPPING, null);
 			viewSize = code.addConstantsFromVector3D(VIEW_SIZE, null);
 			ambient = code.addConstantsFromColor(AMBIENT_COLOR, 0x000000, 1);
@@ -47,6 +50,7 @@ package net.morocoshi.moja3d.agal
 		{
 			clipping.enabled = using.clipping;
 			cameraPosition.enabled = using.cameraPosition;
+			cameraDirection.enabled = using.cameraDirection;
 			modelMatrix.enabled = using.modelMatrix;
 			projMatrix.enabled = using.projMatrix;
 			clipMatrix.enabled = using.clipMatrix;
@@ -63,6 +67,7 @@ package net.morocoshi.moja3d.agal
 			projMatrix.dispose();
 			clipMatrix.dispose();
 			cameraPosition.dispose();
+			cameraDirection.dispose();
 			clipping.dispose();
 			viewSize.dispose();
 			ambient.dispose();
@@ -73,6 +78,7 @@ package net.morocoshi.moja3d.agal
 			projMatrix = null;
 			clipMatrix = null;
 			cameraPosition = null;
+			cameraDirection = null;
 			clipping = null;
 			viewSize = null;
 			ambient = null;
