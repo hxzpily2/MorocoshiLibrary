@@ -2,14 +2,13 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import flash.display.BitmapDataChannel;
 	import net.morocoshi.moja3d.agal.AGALTexture;
-	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	
 	/**
 	 * テクスチャ
@@ -21,9 +20,6 @@ package net.morocoshi.moja3d.shaders.render
 		private var _mipmap:String;
 		private var _smoothing:String;
 		private var _tiling:String;
-		private var _diffuse:TextureResource;
-		private var _opacity:TextureResource;
-		
 		private var diffuseTexture:AGALTexture;
 		private var opacityTexture:AGALTexture;
 		private var depthShader:DepthOpacityShader;
@@ -32,15 +28,13 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super();
 			
-			requiredAttribute.push(VertexAttribute.UV);
-			
 			if (diffuse != null && diffuse === opacity)
 			{
 				throw new Error("diffuseとopacityに同じリソースを指定する事はできません。");
 			}
 			
-			this.diffuse = diffuse;
-			this.opacity = opacity;
+			requiredAttribute.push(VertexAttribute.UV);
+			
 			_mipmap = mipmap;
 			_smoothing = smoothing;
 			_tiling = tiling;
@@ -49,11 +43,14 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.diffuse = diffuse;
+			this.opacity = opacity;
 		}
 		
 		override public function getKey():String 
 		{
-			return "TextureShader:" + alphaMode + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(_opacity) + "_" + getSamplingKey(opacityTexture);
+			return "TextureShader:" + alphaMode + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(opacityTexture.texture) + "_" + getSamplingKey(opacityTexture);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -61,15 +58,15 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateAlphaMode();
 			
 			var compressedAlpha:Boolean = diffuseTexture && diffuseTexture.texture && ImageTextureResource(diffuseTexture.texture).hasAlpha;
-			alphaMode = (_opacity || compressedAlpha)? AlphaMode.MIX : AlphaMode.NONE;
+			alphaMode = (opacity || compressedAlpha)? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
 			
-			diffuseTexture = fragmentCode.addTexture("&diffuse", _diffuse, this);
-			opacityTexture = _opacity? fragmentCode.addTexture("&opacity", _opacity, this) : null;
+			diffuseTexture = fragmentCode.addTexture("&diffuse", null, this);
+			opacityTexture = fragmentCode.addTexture("&opacity", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -86,7 +83,7 @@ package net.morocoshi.moja3d.shaders.render
 				"$output.xyzw = tex(#uv, &diffuse " + diffuseTag + ")"
 			]);
 			
-			if (_opacity)
+			if (opacity)
 			{
 				var opacityTag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
 				fragmentConstants.number = true;
@@ -95,47 +92,35 @@ package net.morocoshi.moja3d.shaders.render
 					"$topacity.xyzw = tex(#uv, &opacity " + opacityTag + ")",
 					"$output.w *= $topacity.x"//v0:opacity画像の赤成分をアルファに
 				]);
+				opacityTexture.enabled = true;
+			}
+			else
+			{
+				opacityTexture.enabled = false;
 			}
 		}
 		
 		public function get diffuse():TextureResource 
 		{
-			return _diffuse;
+			return diffuseTexture.texture;
 		}
 		
 		public function set diffuse(value:TextureResource):void 
 		{
-			//関連付けられていたパースイベントを解除しておく
-			if (_diffuse) _diffuse.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			_diffuse = value;//テクスチャリソースの差し替え
-			if (diffuseTexture)　diffuseTexture.texture = _diffuse;
-			//新しいパースイベントを関連付ける
-			if (_diffuse)　_diffuse.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			
-			updateAlphaMode();
+			diffuseTexture.texture = value;
 		}
 		
 		public function get opacity():TextureResource 
 		{
-			return _opacity;
+			return opacityTexture.texture;
 		}
 		
 		public function set opacity(value:TextureResource):void 
 		{
-			//関連付けられていたパースイベントを解除しておく
-			if (_opacity) _opacity.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			_opacity = value;//テクスチャリソースの差し替え
-			if (opacityTexture) opacityTexture.texture = _opacity;
-			if (depthShader) depthShader.opacity = _opacity;
-			//新しいパースイベントを関連付ける
-			if (_opacity) _opacity.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			
+			opacityTexture.texture = value;
+			if (depthShader) depthShader.opacity = value;
 			updateAlphaMode();
-		}
-		
-		private function image_parsedHandler(e:Event3D):void 
-		{
-			updateAlphaMode();
+			updateShaderCode();
 		}
 		
 		public function get mipmap():String 
@@ -179,31 +164,31 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function reference():MaterialShader 
 		{
-			return new TextureShader(_diffuse, _opacity, _mipmap, _smoothing, _tiling);
+			return new TextureShader(diffuse, opacity, _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new TextureShader(cloneTexture(_diffuse), cloneTexture(_opacity), _mipmap, _smoothing, _tiling);
+			return new TextureShader(cloneTexture(diffuse), cloneTexture(opacity), _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
 			if (phase == RenderPhase.MASK)
 			{
-				return _opacity? new OpacityShader(_opacity, _mipmap, _smoothing, _tiling) : null;
+				return opacity? new OpacityShader(opacity, _mipmap, _smoothing, _tiling) : null;
 			}
 			if (phase == RenderPhase.DEPTH)
 			{
 				if (depthShader == null)
 				{
-					if (_opacity)
+					if (opacity)
 					{
-						depthShader = new DepthOpacityShader(_opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
+						depthShader = new DepthOpacityShader(opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
 					}
-					else if (_diffuse)
+					else if (diffuse)
 					{
-						depthShader = new DepthOpacityShader(_diffuse, BitmapDataChannel.ALPHA, _smoothing, _mipmap, _tiling);
+						depthShader = new DepthOpacityShader(diffuse, BitmapDataChannel.ALPHA, _smoothing, _mipmap, _tiling);
 					}
 				}
 				return depthShader;

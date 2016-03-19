@@ -1,28 +1,23 @@
-package net.morocoshi.moja3d.shaders.core 
+package net.morocoshi.moja3d.shaders.outline 
 {
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthBasicShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
-	import net.morocoshi.moja3d.shaders.outline.OutlineBasicShader;
 	
 	use namespace moja3d;
 	
 	/**
-	 * 基本シェーダー
+	 * 深度テクスチャ描画用の基本シェーダー
 	 * 
 	 * @author tencho
 	 */
-	public class BasicShader extends MaterialShader 
+	public class OutlineBasicShader extends MaterialShader 
 	{
-		private var depthShader:DepthBasicShader;
-		private var outlineShader:OutlineBasicShader;
 		private var geometry:Geometry;
 		
-		public function BasicShader(geometry:Geometry) 
+		public function OutlineBasicShader(geometry:Geometry) 
 		{
 			super();
 			this.geometry = geometry;
@@ -35,7 +30,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getKey():String 
 		{
-			return "BasicShader:" + geometry.attributesKey;
+			return "OutlineBasicShader:" + geometry.attributesKey;
 		}
 		
 		override protected function updateAlphaMode():void
@@ -52,6 +47,8 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
+			
+			//fragmentCode.addConstantsFromArray("@N256", [256, 256 * 256, 256 * 256 * 256, 0]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -120,20 +117,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			return new BasicShader(geometry);
-		}
-		
-		override public function getExtraShader(phase:String):MaterialShader 
-		{
-			if (phase == RenderPhase.DEPTH)
-			{
-				return depthShader || (depthShader = new DepthBasicShader(geometry));
-			}
-			if (phase == RenderPhase.OUTLINE)
-			{
-				return outlineShader || (outlineShader = new OutlineBasicShader(geometry));
-			}
-			return null;
+			return new OutlineBasicShader(geometry);
 		}
 		
 	}

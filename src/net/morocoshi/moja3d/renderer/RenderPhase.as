@@ -11,6 +11,7 @@ package net.morocoshi.moja3d.renderer
 		static public const NORMAL:String = "normal";
 		static public const REFLECT:String = "reflect";
 		static public const DEPTH:String = "depth";
+		static public const OUTLINE:String = "outline";
 		static public const LIGHT:String = "light";
 		static public const MASK:String = "mask";
 		static public const OVERLAY:String = "overlay";

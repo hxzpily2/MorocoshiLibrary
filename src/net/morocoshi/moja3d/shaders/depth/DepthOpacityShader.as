@@ -15,7 +15,6 @@ package net.morocoshi.moja3d.shaders.depth
 	public class DepthOpacityShader extends MaterialShader 
 	{
 		public var opacityTexture:AGALTexture;
-		private var _opacity:TextureResource;
 		private var _smoothing:String;
 		private var _mipmap:String;
 		private var _tiling:String;
@@ -25,7 +24,6 @@ package net.morocoshi.moja3d.shaders.depth
 		{
 			super();
 			
-			_opacity = opacity;
 			_colorChannel = colorChannel;
 			_smoothing = smoothing;
 			_mipmap = mipmap;
@@ -35,26 +33,21 @@ package net.morocoshi.moja3d.shaders.depth
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.opacity = opacity;
 		}
 		
 		public function get opacity():TextureResource 
 		{
-			return _opacity;
+			return opacityTexture.texture;
 		}
 		
 		public function set opacity(value:TextureResource):void 
 		{
-			if (_opacity) _opacity.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			_opacity = value;
-			if (opacityTexture) opacityTexture.texture = _opacity;
-			if (_opacity) _opacity.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
+			opacityTexture.texture = value;
 			
 			updateAlphaMode();
-		}
-		
-		private function image_parsedHandler(e:Event):void 
-		{
-			updateAlphaMode();
+			updateShaderCode();
 		}
 		
 		override public function getKey():String 
@@ -65,13 +58,13 @@ package net.morocoshi.moja3d.shaders.depth
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = _opacity? AlphaMode.MIX : AlphaMode.NONE;
+			alphaMode = opacity? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			opacityTexture = fragmentCode.addTexture("&opacityDepth", _opacity, this);
+			opacityTexture = fragmentCode.addTexture("&opacityDepth", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -94,12 +87,12 @@ package net.morocoshi.moja3d.shaders.depth
 		
 		override public function reference():MaterialShader
 		{
-			return new DepthOpacityShader(_opacity, _colorChannel, _smoothing, _mipmap, _tiling);
+			return new DepthOpacityShader(opacity, _colorChannel, _smoothing, _mipmap, _tiling);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new DepthOpacityShader(cloneTexture(_opacity), _colorChannel, _smoothing, _mipmap, _tiling);
+			return new DepthOpacityShader(cloneTexture(opacity), _colorChannel, _smoothing, _mipmap, _tiling);
 		}
 		
 	}

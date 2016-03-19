@@ -16,8 +16,8 @@ package net.morocoshi.moja3d.agal
 	public class AGALTexture 
 	{
 		public var id:String;
-		public var texture:TextureResource;
 		public var enabled:Boolean;
+		private var _texture:TextureResource;
 		
 		private var prevSamplingOption:String;
 		private var linkedShader:MaterialShader;
@@ -26,26 +26,31 @@ package net.morocoshi.moja3d.agal
 		{
 			this.id = id;
 			prevSamplingOption = "";
-			setTexture(texture);
+			this.texture = texture;
 			enabled = true;
 		}
 		
-		public function setTexture(texture:TextureResource):void
+		public function get texture():TextureResource
 		{
-			if (this.texture)
+			return _texture;
+		}
+		
+		public function set texture(value:TextureResource):void
+		{
+			if (_texture)
 			{
-				this.texture.removeEventListener(Event3D.RESOURCE_PARSED, resource_parsedHandler);
+				_texture.removeEventListener(Event3D.RESOURCE_PARSED, resource_parsedHandler);
 			}
-			this.texture = texture;
-			if (texture is ImageTextureResource)
+			_texture = value;
+			if (_texture is ImageTextureResource)
 			{
-				if (ImageTextureResource(texture).isParsed)
+				if (ImageTextureResource(_texture).isParsed)
 				{
-					changeResourceType(texture as ImageTextureResource);
+					changeResourceType(_texture as ImageTextureResource);
 				}
 				else
 				{
-					texture.addEventListener(Event3D.RESOURCE_PARSED, resource_parsedHandler);
+					_texture.addEventListener(Event3D.RESOURCE_PARSED, resource_parsedHandler);
 				}
 			}
 		}

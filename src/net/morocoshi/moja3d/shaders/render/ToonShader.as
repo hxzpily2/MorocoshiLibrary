@@ -8,6 +8,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
+	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -20,23 +21,14 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class ToonShader extends MaterialShader 
 	{
-		private var _resource:ImageTextureResource;
 		private var _useLightMap:Boolean;
-		private var _outlineEnabled:Boolean;
-		private var _outlineAngle:Number;
-		private var _outlineColor:uint;
 		private var toonTexture:AGALTexture;
-		private var outlineConst:AGALConstant;
 		
-		public function ToonShader(resource:ImageTextureResource, outlineEnabled:Boolean = true, outlineAngle:Number = 80, outlineColor:uint = 0x000000, useLightMap:Boolean = false) 
+		public function ToonShader(resource:TextureResource, useLightMap:Boolean = false) 
 		{
 			super();
 			
-			_resource = resource;
 			_useLightMap = useLightMap;
-			_outlineAngle = outlineAngle;
-			_outlineEnabled = outlineEnabled;
-			_outlineColor = outlineColor;
 			
 			requiredAttribute.push(VertexAttribute.NORMAL);
 			
@@ -44,11 +36,13 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
 		{
-			return "ToonShader:" + int(_outlineEnabled);
+			return "ToonShader:";
 		}
 		
 		override protected function updateAlphaMode():void
@@ -61,13 +55,12 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			toonTexture = fragmentCode.addTexture("&toon", _resource, this);
+			toonTexture = fragmentCode.addTexture("&toon", null, this);
 		}
 		
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			outlineConst = fragmentCode.addConstantsFromColor("@toonOutline", _outlineColor, _outlineAngle / 90 - 1);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -152,33 +145,16 @@ package net.morocoshi.moja3d.shaders.render
 			}
 			
 			fragmentCode.addCode(["$output.xyz *= $total.xyz"]);
-			
-			if (_outlineEnabled)
-			{
-				fragmentCode.addCode([
-					"var $eye",
-					//視点からテクセルへのベクトル
-					"$eye.xyz = #wpos.xyz - @cameraPosition.xyz",
-					"$eye.xyz = nrm($eye.xyz)",
-					"$eye.x = dp3($normal.xyz, $eye.xyz)",
-					"$eye.x = sge($eye.x, @toonOutline.w)",
-					"$eye.y = @1 - $eye.x",
-					"$output.xyz *= $eye.yyy",
-					"$temp.xyz = @toonOutline.xyz",
-					"$temp.xyz *= $eye.xxx",
-					"$output.xyz += $temp.xyz"
-				]);
-			}
 		}
 		
 		override public function reference():MaterialShader 
 		{
-			return new ToonShader(_resource, _outlineEnabled, _outlineAngle, _outlineColor,_useLightMap);
+			return new ToonShader(resource, _useLightMap);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new ToonShader(cloneTexture(_resource) as ImageTextureResource, _outlineEnabled, _outlineAngle, _outlineColor, _useLightMap);
+			return new ToonShader(cloneTexture(resource) as ImageTextureResource, _useLightMap);
 		}
 		
 		public function get useLightMap():Boolean 
@@ -192,47 +168,14 @@ package net.morocoshi.moja3d.shaders.render
 			updateShaderCode();
 		}
 		
-		public function get resource():ImageTextureResource 
+		public function get resource():TextureResource 
 		{
-			return _resource;
+			return toonTexture.texture;
 		}
 		
-		public function set resource(value:ImageTextureResource):void 
+		public function set resource(value:TextureResource):void 
 		{
-			toonTexture.setTexture(_resource = value);
-		}
-		
-		public function get outlineEnabled():Boolean 
-		{
-			return _outlineEnabled;
-		}
-		
-		public function set outlineEnabled(value:Boolean):void 
-		{
-			_outlineEnabled = value;
-			updateShaderCode();
-		}
-		
-		public function get outlineAngle():Number 
-		{
-			return _outlineAngle;
-		}
-		
-		public function set outlineAngle(value:Number):void 
-		{
-			_outlineAngle = value;
-			outlineConst.w = _outlineAngle / 90 - 1;
-		}
-		
-		public function get outlineColor():uint 
-		{
-			return _outlineColor;
-		}
-		
-		public function set outlineColor(value:uint):void 
-		{
-			_outlineColor = value;
-			outlineConst.setRGB(_outlineColor);
+			toonTexture.setTexture(value);
 		}
 		
 	}
