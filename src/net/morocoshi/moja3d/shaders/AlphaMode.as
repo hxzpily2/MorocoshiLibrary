@@ -7,7 +7,9 @@ package net.morocoshi.moja3d.shaders
 	 */
 	public class AlphaMode 
 	{
-		/**半透明要素は全くなし*/
+		/**透明要素が不明*/
+		static public const UNKNOWN:uint = 0;
+		/**全てが不透明*/
 		static public const NONE:uint = 1;
 		/**全てが半透明*/
 		static public const ALL:uint = 2;

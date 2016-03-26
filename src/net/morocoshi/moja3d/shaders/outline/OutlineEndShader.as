@@ -1,25 +1,18 @@
-package net.morocoshi.moja3d.shaders.render 
+package net.morocoshi.moja3d.shaders.outline 
 {
-	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 最後に追加するシェーダー
 	 * 
 	 * @author tencho
 	 */
-	public class DecalShader extends MaterialShader 
+	public class OutlineEndShader extends MaterialShader 
 	{
-		private var _offset:Number;
-		private var offsetConst:AGALConstant;
-		
-		public function DecalShader(offset:Number = 0) 
+		public function OutlineEndShader() 
 		{
 			super();
-			
-			_offset = offset;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -29,7 +22,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "DecalShader:";
+			return "OutlineEndShader:";
 		}
 		
 		override protected function updateAlphaMode():void
@@ -46,30 +39,20 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			
-			offsetConst = vertexCode.addConstantsFromArray("@decal", [_offset, 0, 0, 0]);
 		}
 		
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			vertexCode.addCode(["$pos.z += @decal.x"]);
+			
+			fragmentCode.addCode([
+				"oc = $output"
+			]);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new DecalShader(_offset);
-		}
-		
-		public function get offset():Number 
-		{
-			return _offset;
-		}
-		
-		public function set offset(value:Number):void 
-		{
-			_offset = value;
-			offsetConst.x = _offset;
+			return new OutlineEndShader();
 		}
 		
 	}

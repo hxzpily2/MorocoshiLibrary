@@ -5,7 +5,8 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * デカール処理
+	 * 
 	 * @author tencho
 	 */
 	public class ZBiasShader extends MaterialShader 
@@ -32,7 +33,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

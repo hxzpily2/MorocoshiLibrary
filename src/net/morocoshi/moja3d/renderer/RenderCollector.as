@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.renderer
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALInfo;
 	import net.morocoshi.moja3d.agal.BasicConstant;
@@ -13,7 +14,6 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.agal.ShadowConstant;
 	import net.morocoshi.moja3d.agal.UsingConstants;
 	import net.morocoshi.moja3d.config.LightSetting;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.AmbientLight;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.DirectionalLight;
@@ -24,9 +24,10 @@ package net.morocoshi.moja3d.renderer
 	import net.morocoshi.moja3d.overlay.objects.Object2D;
 	import net.morocoshi.moja3d.resources.FilterGeometry;
 	import net.morocoshi.moja3d.resources.Plane2DGeometry;
+	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.shaders.outline.OutlineColorShader;
 	import net.morocoshi.moja3d.shaders.render.FillShader;
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
-	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.shadow.ShadowShader;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	import net.morocoshi.moja3d.view.Scene3D;
@@ -86,6 +87,8 @@ package net.morocoshi.moja3d.renderer
 		public var info:AGALInfo;
 		/**これにBitmapDataが指定されていればここにキャプチャする*/
 		public var captureDestination:BitmapData;
+		public var materialCulling:String;
+		moja3d var outlineShader:OutlineColorShader;
 		/**マスクフィルターが存在するか*/
 		moja3d var existMaskFilter:Boolean;
 		

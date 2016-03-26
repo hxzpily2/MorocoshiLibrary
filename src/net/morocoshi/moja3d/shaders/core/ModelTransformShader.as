@@ -38,7 +38,7 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -80,6 +80,10 @@ package net.morocoshi.moja3d.shaders.core
 			if (phase == RenderPhase.DEPTH)
 			{
 				return depthShader || (depthShader = new DepthMatrixShader(geometry));
+			}
+			if (phase == RenderPhase.OUTLINE)
+			{
+				return new ModelTransformShader(geometry);
 			}
 			return null;
 		}

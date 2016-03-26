@@ -3,10 +3,10 @@ package net.morocoshi.moja3d.materials
 	import flash.display.BlendMode;
 	import flash.display3D.Context3DBlendFactor;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.overlay.objects.Sprite2D;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -15,12 +15,13 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourceUploader;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.MaterialShader;
+	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.core.BasicShader;
 	import net.morocoshi.moja3d.shaders.core.EndShader;
 	import net.morocoshi.moja3d.shaders.core.ModelTransformShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
-	import net.morocoshi.moja3d.shaders.MaterialShader;
-	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
@@ -301,6 +302,42 @@ package net.morocoshi.moja3d.materials
 				}
 			}
 			
+			//
+			var renderKey:String;
+			var renderData:Object;
+			if (phase == RenderPhase.OUTLINE)
+			{
+				var outlineKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/" + collector.outlineShader.getKey() + "/outline";
+				shaderData = AGALCache.shader[outlineKey];
+				if (shaderData == null)
+				{
+					shaderData = { };
+					renderKey = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
+					renderData = AGALCache.shader[renderKey];
+					if (renderData.opaque)
+					{
+						var outlineShader:ShaderList = new ShaderList();
+						outlineShader.attachExtra(renderData.opaque, phase);
+						outlineShader.addShader(collector.outlineShader);
+						outlineShader.addShader(new OutlineEndShader());
+						
+						mode = outlineShader.alphaMode;
+						shaderData.opaque = (mode == AlphaMode.NONE)? outlineShader : (mode == AlphaMode.MIX)? outlineShader.cloneWithOpaque(this) : null;
+						shaderData.alpha = (mode == AlphaMode.ALL)? outlineShader : (mode == AlphaMode.MIX)? outlineShader.cloneWithAlpha(this) : null;
+					}
+					/*
+					if (renderData.alpha)
+					{
+						var outlineAlphaShader:ShaderList = new ShaderList();
+						outlineAlphaShader.attachExtra(renderData.alpha, phase);
+						outlineAlphaShader.addShader(collector.outlineShader);
+						shaderData.alpha = outlineAlphaShader;
+					}
+					*/
+					AGALCache.shader[outlineKey] = shaderData;
+				}
+			}
+			
 			//デプスマップ用
 			if (phase == RenderPhase.DEPTH || phase == RenderPhase.LIGHT)
 			{
@@ -309,8 +346,8 @@ package net.morocoshi.moja3d.materials
 				if (shaderData == null)
 				{
 					shaderData = { };
-					var renderKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
-					var renderData:Object = AGALCache.shader[renderKey];
+					renderKey = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/normal";
+					renderData = AGALCache.shader[renderKey];
 					if (renderData.opaque)
 					{
 						var depthOpaqueShader:ShaderList = new ShaderList();

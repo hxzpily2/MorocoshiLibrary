@@ -15,7 +15,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _y:Number;
 		private var _width:Number;
 		private var _height:Number;
-		private var scaleConst:AGALConstant;
+		private var constant:AGALConstant;
 		
 		public function UVWorldScaleShader(x:Number, y:Number, width:Number, height:Number)
 		{
@@ -40,7 +40,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -52,7 +52,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateConstants();
 			
-			scaleConst = vertexCode.addConstantsFromArray("@worldScale", [_x, _y, _width, _height]);
+			constant = vertexCode.addConstantsFromArray("@worldScale", [_x, _y, _width, _height]);
 			
 		}
 		
@@ -68,49 +68,14 @@ package net.morocoshi.moja3d.shaders.render
 			]);
 		}
 		
-		public function get x():Number 
-		{
-			return _x;
-		}
-		
-		public function set x(value:Number):void 
-		{
-			_x = value;
-			scaleConst.x = _x;
-		}
-		
-		public function get y():Number 
-		{
-			return _y;
-		}
-		
-		public function set y(value:Number):void 
-		{
-			_y = value;
-			scaleConst.y = _y;
-		}
-		
-		public function get width():Number 
-		{
-			return _width;
-		}
-		
-		public function set width(value:Number):void 
-		{
-			_width = value;
-			scaleConst.z = _width;
-		}
-		
-		public function get height():Number 
-		{
-			return _height;
-		}
-		
-		public function set height(value:Number):void 
-		{
-			_height = value;
-			scaleConst.w = _height;
-		}
+		public function get x():Number { return _x; }	
+		public function set x(value:Number):void { constant.x = _x = value; }
+		public function get y():Number { return _y; }
+		public function set y(value:Number):void { constant.y = _y = value; }
+		public function get width():Number { return _width; }
+		public function set width(value:Number):void { constant.z = _width = value; }
+		public function get height():Number { return _height; }
+		public function set height(value:Number):void { constant.w = _height = value; }
 		
 		override public function clone():MaterialShader 
 		{

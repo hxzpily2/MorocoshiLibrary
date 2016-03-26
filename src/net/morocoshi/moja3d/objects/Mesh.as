@@ -1,10 +1,10 @@
 package net.morocoshi.moja3d.objects 
 {
 	import net.morocoshi.common.data.DataUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.TriangleFace;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderElement;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
@@ -13,8 +13,10 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
-	import net.morocoshi.moja3d.shaders.render.ZBiasShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.shaders.outline.OutlineColorShader;
+	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
+	import net.morocoshi.moja3d.shaders.render.ZBiasShader;
 	
 	use namespace moja3d;
 	
@@ -35,6 +37,8 @@ package net.morocoshi.moja3d.objects
 		public var zBiasShader:ZBiasShader;
 		public var afterViewShaderList:ShaderList;
 		public var beforeMatrixShaderList:ShaderList;
+		moja3d var outlineShader:OutlineColorShader;
+		moja3d var _outlineEnabled:Boolean;
 		
 		private var _key:String;
 		private var _zbias:Number;
@@ -384,6 +388,63 @@ package net.morocoshi.moja3d.objects
 			return result;
 		}
 		
+		private function getOutlineShader():OutlineColorShader
+		{
+			return outlineShader || (outlineShader = new OutlineColorShader());
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインを表示するか
+		 */
+		public function set outlineEnabled(value:Boolean):void
+		{
+			_outlineEnabled = value;
+			if (_outlineEnabled)
+			{
+				getOutlineShader();
+			}
+		}
+		public function get outlineEnabled():Boolean
+		{
+			return _outlineEnabled;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの厚さ
+		 */
+		public function set outlineThickness(value:Number):void
+		{
+			getOutlineShader().thickness = value;
+		}
+		public function get outlineThickness():Number
+		{
+			return getOutlineShader().thickness;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの色
+		 */
+		public function set outlineColor(value:uint):void
+		{
+			getOutlineShader().color = value;
+		}
+		public function get outlineColor():uint
+		{
+			return getOutlineShader().color;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの不透明度
+		 */
+		public function set outlineAlpha(value:Number):void
+		{
+			getOutlineShader().alpha = value;
+		}
+		public function get outlineAlpha():Number
+		{
+			return getOutlineShader().alpha;
+		}
+		
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
 		{
 			var success:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
@@ -439,6 +500,17 @@ package net.morocoshi.moja3d.objects
 					combined = null;
 					skinShader = null;
 					return false;
+				}
+				//トゥーンレンダリングのアウトライン
+				if (collector.renderPhase == RenderPhase.NORMAL && _outlineEnabled)
+				{
+					collector.renderPhase = RenderPhase.OUTLINE;
+					collector.materialCulling = TriangleFace.BACK;
+					collector.outlineShader = outlineShader;
+					collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader)
+					collector.renderPhase = RenderPhase.NORMAL;
+					collector.materialCulling = null;
+					collector.outlineShader = null;
 				}
 			}
 			
@@ -535,7 +607,7 @@ package net.morocoshi.moja3d.objects
 					element.vertexBufferFormatList = geom.vertexBufferFormatList;
 					element.vertexBufferList = geom.vertexBufferList;
 					element.indexBuffer = geom.indexBuffer;
-					element.culling = material.culling;
+					element.culling = collector.materialCulling || material.culling;
 					element.sourceFactor = material.sourceFactor;
 					element.destinationFactor = material.destinationFactor;
 					//マイナススケールでフリップしていた場合は表示を反転する

@@ -1,17 +1,17 @@
 package net.morocoshi.moja3d.shaders.skin 
 {
 	import flash.geom.Matrix3D;
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Skin;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthSkinShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
+	import net.morocoshi.moja3d.shaders.depth.DepthSkinShader;
 	
 	use namespace moja3d;
 	
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.shaders.skin
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

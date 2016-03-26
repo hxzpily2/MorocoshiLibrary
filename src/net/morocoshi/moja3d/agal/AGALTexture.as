@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.agal 
 {
-	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -88,6 +88,56 @@ package net.morocoshi.moja3d.agal
 		public function linkShader(shader:MaterialShader):void 
 		{
 			linkedShader = shader;
+		}
+		
+		public function hasAlpha():Boolean 
+		{
+			if (_texture == null) return false;
+			if (_texture is ImageTextureResource)
+			{
+				return ImageTextureResource(_texture).hasAlpha;
+			}
+			return false;
+		}
+		
+		/**
+		 * テクスチャサンプリングコード＜cube～＞の生成
+		 * @param	smoothing
+		 * @param	mipmap
+		 * @param	tiling
+		 * @return
+		 */
+		public function getOptionCube(smoothing:String, mipmap:String, tiling:String):String 
+		{
+			var option:String = getSamplingOption();
+			if (option) option = ", " + option;
+			return "<cube, " + smoothing + ", " + mipmap + ", " + tiling + option + ">";
+		}
+		
+		/**
+		 * テクスチャサンプリングコード＜2d～＞の生成
+		 * @param	smoothing
+		 * @param	mipmap
+		 * @param	tiling
+		 * @return
+		 */
+		public function getOption2D(smoothing:String, mipmap:String, tiling:String):String 
+		{
+			var option:String = getSamplingOption();
+			if (option) option = ", " + option;
+			return "<2d, " + mipmap + ", " + smoothing + ", " + tiling + option + ">";
+		}
+		
+		/**
+		 * テクスチャサンプリングコード＜2d～＞の生成
+		 * @param	smoothing
+		 * @param	mipmap
+		 * @param	tiling
+		 * @return
+		 */
+		static public function getTextureOption2D(smoothing:String, mipmap:String, tiling:String):String 
+		{
+			return "<2d, " + mipmap + ", " + smoothing + ", " + tiling + ">";
 		}
 		
 	}

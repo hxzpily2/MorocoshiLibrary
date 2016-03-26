@@ -1,16 +1,15 @@
 package net.morocoshi.moja3d.shaders.scale9 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * Scale9用
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class Scale9Shader extends MaterialShader 
 	{
@@ -40,7 +39,7 @@ package net.morocoshi.moja3d.shaders.scale9
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

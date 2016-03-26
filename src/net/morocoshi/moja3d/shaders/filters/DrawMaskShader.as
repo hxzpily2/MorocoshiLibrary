@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.shaders.filters
 {
 	import flash.display.BlendMode;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
@@ -110,7 +111,7 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+			var tag:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 			
 			fragmentConstants.number = true;
 			fragmentCode.addCode([

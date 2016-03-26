@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.shaders.core 
 {
+	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -29,7 +30,7 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -57,6 +58,15 @@ package net.morocoshi.moja3d.shaders.core
 		override public function clone():MaterialShader 
 		{
 			return new ViewTransformShader();
+		}
+		
+		override public function getExtraShader(phase:String):MaterialShader 
+		{
+			if (phase == RenderPhase.OUTLINE)
+			{
+				return new ViewTransformShader();
+			}
+			return null;
 		}
 		
 	}

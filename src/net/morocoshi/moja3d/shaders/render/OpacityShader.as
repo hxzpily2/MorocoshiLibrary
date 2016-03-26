@@ -6,8 +6,8 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	
 	/**
 	 * 不透明度テクスチャ
@@ -19,17 +19,14 @@ package net.morocoshi.moja3d.shaders.render
 		private var _mipmap:String;
 		private var _smoothing:String;
 		private var _tiling:String;
-		private var _opacity:TextureResource;
+		private var texture:AGALTexture;
 		
-		private var opacityTexture:AGALTexture;
-		
-		public function OpacityShader(opacity:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap")
+		public function OpacityShader(resource:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap")
 		{
 			super();
 			
 			requiredAttribute.push(VertexAttribute.UV);
 			
-			_opacity = opacity;
 			_mipmap = mipmap;
 			_smoothing = smoothing;
 			_tiling = tiling;
@@ -38,11 +35,13 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
 		{
-			return "OpacityShader:" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(opacityTexture);
+			return "OpacityShader:" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(texture);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -54,7 +53,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			opacityTexture = fragmentCode.addTexture("&opacityMap", _opacity, this);
+			texture = fragmentCode.addTexture("&opacityMap", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -66,7 +65,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
+			var tag:String = texture.getOption2D(_smoothing, _mipmap, _tiling);
 			fragmentCode.addCode([
 				"var $image",
 				"$image = tex(#uv, &opacityMap " + tag + ")",
@@ -74,25 +73,35 @@ package net.morocoshi.moja3d.shaders.render
 			]);
 		}
 		
+		public function get resource():TextureResource 
+		{
+			return texture.texture;
+		}
+		
+		public function set resource(value:TextureResource):void 
+		{
+			texture.texture = value;
+		}
+		
 		override public function reference():MaterialShader 
 		{
-			return new OpacityShader(_opacity, _mipmap, _smoothing, _tiling);
+			return new OpacityShader(resource, _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new OpacityShader(cloneTexture(_opacity), _mipmap, _smoothing, _tiling);
+			return new OpacityShader(cloneTexture(resource), _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
 			if (phase == RenderPhase.MASK)
 			{
-				return new OpacityShader(_opacity, _mipmap, _smoothing, _tiling);
+				return new OpacityShader(resource, _mipmap, _smoothing, _tiling);
 			}
 			if (phase == RenderPhase.DEPTH)
 			{
-				return new DepthOpacityShader(_opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
+				return new DepthOpacityShader(resource, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
 			}
 			return null;
 		}

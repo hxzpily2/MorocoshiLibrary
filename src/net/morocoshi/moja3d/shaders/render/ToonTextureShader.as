@@ -15,7 +15,9 @@ package net.morocoshi.moja3d.shaders.render
 	use namespace moja3d;
 	
 	/**
-	 * トゥーンレンダリング
+	 * 明暗を4段階のテクスチャで表現するトゥーンシェーダー。
+	 * 明暗の決定にはシーン内の平行光源のみが使用されるが、光源の色は反映されない。
+	 * トーンマップをそのまま反映したい場合は、シーン内の平行光源を1つ、強度は1にする。
 	 * 
 	 * @author tencho
 	 */
@@ -28,6 +30,18 @@ package net.morocoshi.moja3d.shaders.render
 		private var opacityTexture:AGALTexture;
 		private var toneTexture:AGALTexture;
 		
+		/**
+		 * 
+		 * @param	diffuse1	テクスチャ画像リソース。トーンマップの赤成分が0xFFの範囲に割り当てられる。
+		 * @param	diffuse2	テクスチャ画像リソース。トーンマップの赤成分が0xAAの範囲に割り当てられる。
+		 * @param	diffuse3	テクスチャ画像リソース。トーンマップの赤成分が0x55の範囲に割り当てられる。
+		 * @param	diffuse4	テクスチャ画像リソース。トーンマップの赤成分が0x00の範囲に割り当てられる。
+		 * @param	opacity		不透明度マップ用画像リソース
+		 * @param	toneMap		白黒のトーンマップ画像リソース。赤成分が0xFF,0xAA,0x55,0x00の階調がdiffuse1～4の画像に割り当てられる
+		 * @param	mipmap
+		 * @param	smoothing
+		 * @param	tiling
+		 */
 		public function ToonTextureShader(diffuse1:TextureResource, diffuse2:TextureResource, diffuse3:TextureResource, diffuse4:TextureResource, opacity:TextureResource, toneMap:TextureResource, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
 		{
 			super();
@@ -54,13 +68,24 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "ToonTextureShader:" + int(opacity);
+			var key:String = "ToonTextureShader:";
+			key += getSamplingKey(opacityTexture) + "_";
+			key += getSamplingKey(diffuseTextures[0]) + "_";
+			key += getSamplingKey(diffuseTextures[1]) + "_";
+			key += getSamplingKey(diffuseTextures[2]) + "_";
+			key += getSamplingKey(diffuseTextures[3]) + "_";
+			key += _mipmap + "_" + _smoothing + "_" + _tiling;
+			return key;
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.MIX;
+			var a0:Boolean = diffuseTextures[0].hasAlpha();
+			var a1:Boolean = diffuseTextures[1].hasAlpha();
+			var a2:Boolean = diffuseTextures[2].hasAlpha();
+			var a3:Boolean = diffuseTextures[3].hasAlpha();
+			alphaMode = (opacity || a0 || a1 || a2 || a3)? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
@@ -72,8 +97,8 @@ package net.morocoshi.moja3d.shaders.render
 			diffuseTextures.push(fragmentCode.addTexture("&toonDiffuse1", null, this));
 			diffuseTextures.push(fragmentCode.addTexture("&toonDiffuse2", null, this));
 			diffuseTextures.push(fragmentCode.addTexture("&toonDiffuse3", null, this));
-			toneTexture = fragmentCode.addTexture("&toneMap", null, this);
 			opacityTexture = fragmentCode.addTexture("&toonOpacity", null, this);
+			toneTexture = fragmentCode.addTexture("&toneMap", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -139,7 +164,8 @@ package net.morocoshi.moja3d.shaders.render
 				"var $temp",
 				"var $rgb",
 				"$temp.x = @1",
-				"$output.xyzw = @0_0_0_0"
+				"$output.xyzw = @0_0_0_0",
+				"$temp.x = @0"
 			]);
 			
 			var tag:String;
@@ -151,15 +177,22 @@ package net.morocoshi.moja3d.shaders.render
 				diffuseTextures[2].enabled = true;
 				diffuseTextures[3].enabled = true;
 				toneTexture.enabled = true;
-				var lightAxis:String = "@lightAxis0";
-				var lightColor:String = "@lightColor0";
+				for (var j:int = 0; j < LightSetting._numDirectionalLights; j++) 
+				{
+					var lightAxis:String = "@lightAxis" + j;
+					var lightColor:String = "@lightColor" + j;
+					fragmentCode.addCode([
+						"$temp.w = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
+						"$temp.w *= @0.5",
+						"$temp.w += @0.5",
+						"$temp.w *= " + lightColor + ".w",
+						"$temp.x = max($temp.x, $temp.w)"
+					]);
+				}
 				tag = getTextureTag(Smoothing.NEAREST, Mipmap.MIPNIAREST, Tiling.CLAMP, toneTexture.getSamplingOption());
 				fragmentCode.addCode([
-					"$temp.x = dp3($normal.xyz, " + lightAxis + ".xyz)",//ライトの向きとのドット積
-					"$temp.x *= @0.5",
-					"$temp.x += @0.5",
-					"$temp.x = sat($temp.x)",//0～1にする
-					"$temp.xyz = tex($temp.xx, &toneMap " + tag + ")",
+					//"$temp.x = sat($temp.x)",//0～1にする
+					"$temp.xyz = tex($temp.xx, &toneMap " + tag + ")"
 				]);
 				
 				for (var i:int = 0; i < 4; i++) 

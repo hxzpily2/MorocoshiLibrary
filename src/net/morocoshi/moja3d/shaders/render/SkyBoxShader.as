@@ -14,43 +14,40 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class SkyBoxShader extends MaterialShader 
 	{
-		private var _resource:TextureResource;
 		private var texture:AGALTexture;
 		
 		/**
 		 * 
 		 * @param	resource
-		 * @param	reflection
-		 * @param	blendMode
 		 */
 		public function SkyBoxShader(resource:TextureResource) 
 		{
 			super();
 			
-			this.resource = resource;
-			
 			updateTexture();
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
 		{
-			return "SkyBoxShader:";
+			return "SkyBoxShader:" + getSamplingKey(texture);
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = texture.hasAlpha()? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
 			
-			texture = fragmentCode.addTexture("&cube", _resource, this);
+			texture = fragmentCode.addTexture("&skycube", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -64,40 +61,36 @@ package net.morocoshi.moja3d.shaders.render
 			
 			fragmentConstants.cameraPosition = true;
 			
-			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resource.getSamplingOption());
+			var tag:String = texture.getOptionCube(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			fragmentCode.addCode([
 				"var $eye",
 				//視点からテクセルへのベクトル
 				"$eye.xyz = #wpos.xzy - @cameraPosition.xzy",
 				"$eye.xyz = nrm($eye.xyz)",
 				
-				"$output.xyzw = tex($eye.xyz, &cube " + tag + ")"
+				"$output.xyzw = tex($eye.xyz, &skycube " + tag + ")"
 			]);
 			
 		}
 		
 		override public function reference():MaterialShader 
 		{
-			return new SkyBoxShader(_resource);
+			return new SkyBoxShader(resource);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new SkyBoxShader(cloneTexture(_resource));
+			return new SkyBoxShader(cloneTexture(resource));
 		}
 		
 		public function get resource():TextureResource 
 		{
-			return _resource;
+			return texture.texture;
 		}
 		
 		public function set resource(value:TextureResource):void 
 		{
-			_resource = value;
-			if (texture)
-			{
-				texture.texture = _resource;
-			}
+			texture.texture = value;
 		}
 		
 	}

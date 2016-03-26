@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.shaders.filters
 {
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALConstant;
+	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
@@ -55,7 +56,7 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+			var tag:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 			
 			fragmentCode.addCode([
 				"var $image1",

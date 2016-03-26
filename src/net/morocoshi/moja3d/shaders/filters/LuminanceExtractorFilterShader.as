@@ -1,5 +1,6 @@
 package net.morocoshi.moja3d.shaders.filters 
 {
+	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
@@ -78,7 +79,7 @@ package net.morocoshi.moja3d.shaders.filters
 					case MaskColor.BLUE	: xyz = "z"; break;
 					default: throw new Error("maskの値が有効ではありません。MaskColor.RED/BLUE/GREENのどれかを指定してください。");
 				}
-				var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+				var tag:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 				fragmentCode.addCode([
 					"var $maskImage",
 					"$maskImage = tex(#uv.xy, fs1, " + tag + ")",

@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.shaders.shadow
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
+	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
@@ -100,7 +101,7 @@ package net.morocoshi.moja3d.shaders.shadow
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -187,7 +188,7 @@ package net.morocoshi.moja3d.shaders.shadow
 							slideCode = "$lightUV.y += @depthBlur." + yw;
 						}
 						
-						var tag:String = getTextureTag(Smoothing.NEAREST, Mipmap.NOMIP, Tiling.CLAMP, "");
+						var tag:String = AGALTexture.getTextureOption2D(Smoothing.NEAREST, Mipmap.NOMIP, Tiling.CLAMP);
 						fragmentCode.addCode([
 							"var $zdepth",
 							//ライト空間でのデプス値

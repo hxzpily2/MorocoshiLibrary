@@ -76,7 +76,7 @@ package net.morocoshi.moja3d.shaders.depth
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
+			var tag:String = opacityTexture.getOption2D(_smoothing, _mipmap, _tiling);
 			var rgba:String = { 1:"x", 2:"y", 4:"z", 8:"w" } [String(_colorChannel)];
 			fragmentCode.addCode([
 				"var $temp",

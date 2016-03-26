@@ -7,7 +7,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 色調変換
 	 * 
 	 * @author tencho
 	 */
@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override protected function updateAlphaMode():void
 		{
-			alphaMode = (_alphaOffset != 0)? AlphaMode.MIX : (_alphaMultiplier < 1)? AlphaMode.ALL : AlphaMode.NONE;
+			alphaMode = (_alphaOffset != 0)? AlphaMode.MIX : (_alphaMultiplier < 1)? AlphaMode.ALL : (_alphaMultiplier > 1)? AlphaMode.MIX : AlphaMode.NONE;
 			super.updateAlphaMode();
 		}
 		

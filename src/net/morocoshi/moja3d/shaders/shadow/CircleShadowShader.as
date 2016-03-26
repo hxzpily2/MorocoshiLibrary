@@ -13,15 +13,14 @@ package net.morocoshi.moja3d.shaders.shadow
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 丸影テクスチャをオブジェクトの真下に落とすシェーダー
 	 * 
 	 * @author tencho
 	 */
 	public class CircleShadowShader extends MaterialShader 
 	{
 		private var shadowUnitList:Vector.<CircleShadowUnit>;
-		private var _texture:TextureResource;
-		private var agalTexture:AGALTexture;
+		private var texture:AGALTexture;
 		private var _width:Number;
 		private var _height:Number;
 		private var sizeConst:AGALConstant;
@@ -29,10 +28,10 @@ package net.morocoshi.moja3d.shaders.shadow
 		private var dataConstLink:Dictionary;
 		private var dataLink:Dictionary;
 		
-		public function CircleShadowShader(texture:TextureResource, width:Number, height:Number) 
+		public function CircleShadowShader(resource:TextureResource, width:Number, height:Number) 
 		{
 			super();
-			_texture = texture;
+			
 			_width = width;
 			_height = height;
 			shadowUnitList = new Vector.<CircleShadowUnit>;
@@ -44,6 +43,8 @@ package net.morocoshi.moja3d.shaders.shadow
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		public function addCastObject(object:Object3D, height:Number, alpha:Number = 1, offset:Number = 0, scale:Number = 1):CircleShadowUnit
@@ -102,13 +103,13 @@ package net.morocoshi.moja3d.shaders.shadow
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			agalTexture = fragmentCode.addTexture("&circleShadow", _texture, this);
+			texture = fragmentCode.addTexture("&circleShadow", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -165,22 +166,22 @@ package net.morocoshi.moja3d.shaders.shadow
 		
 		override public function reference():MaterialShader 
 		{
-			return new CircleShadowShader(_texture, _width, _height);
+			return new CircleShadowShader(resource, _width, _height);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new CircleShadowShader(cloneTexture(_texture), _width, _height);
+			return new CircleShadowShader(cloneTexture(resource), _width, _height);
 		}
 		
-		public function get texture():TextureResource 
+		public function get resource():TextureResource 
 		{
-			return _texture;
+			return texture.texture;
 		}
 		
-		public function set texture(value:TextureResource):void 
+		public function set resource(value:TextureResource):void 
 		{
-			agalTexture.texture = _texture = value;
+			texture.texture = value;
 		}
 		
 		public function get width():Number 

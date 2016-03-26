@@ -1,12 +1,11 @@
 package net.morocoshi.moja3d.shaders 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
 	 * ...
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class TemplateShader extends MaterialShader 
 	{
@@ -29,7 +28,7 @@ package net.morocoshi.moja3d.shaders
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

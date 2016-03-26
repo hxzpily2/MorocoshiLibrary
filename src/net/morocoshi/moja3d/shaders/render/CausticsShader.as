@@ -1,11 +1,11 @@
 package net.morocoshi.moja3d.shaders.render 
 {
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.materials.Mipmap;
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -13,7 +13,7 @@ package net.morocoshi.moja3d.shaders.render
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * テクスチャアニメーション焼き込み
 	 * 
 	 * @author tencho
 	 */
@@ -86,7 +86,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

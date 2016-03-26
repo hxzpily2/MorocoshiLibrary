@@ -7,6 +7,7 @@ package net.morocoshi.moja3d.shaders.core
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
 	
 	/**
 	 * 最後に追加するシェーダー
@@ -37,7 +38,7 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 

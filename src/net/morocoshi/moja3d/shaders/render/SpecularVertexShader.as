@@ -7,7 +7,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * 光沢シェーダー（頂点シェーダー版）
 	 * 
 	 * @author tencho
 	 */
@@ -51,7 +51,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = _protectTransparent? AlphaMode.UNKNOWN : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 

@@ -2,9 +2,6 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
-	import net.morocoshi.moja3d.materials.Mipmap;
-	import net.morocoshi.moja3d.materials.Smoothing;
-	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
@@ -20,7 +17,6 @@ package net.morocoshi.moja3d.shaders.render
 		private var _mipmap:String;
 		private var _smoothing:String;
 		private var _tiling:String;
-		private var _resource:TextureResource;
 		private var _intensity:Number;
 		
 		private var lightMapTexture:AGALTexture;
@@ -33,7 +29,6 @@ package net.morocoshi.moja3d.shaders.render
 			requiredAttribute.push(VertexAttribute.UV);
 			
 			_intensity = intensity;
-			_resource = resource;
 			_mipmap = mipmap;
 			_smoothing = smoothing;
 			_tiling = tiling;
@@ -42,6 +37,8 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
@@ -52,13 +49,13 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			lightMapTexture = fragmentCode.addTexture("&lightMap", _resource, this);
+			lightMapTexture = fragmentCode.addTexture("&lightMap", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -82,12 +79,12 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function reference():MaterialShader 
 		{
-			return new LightMapShader(_resource, _intensity, _mipmap, _smoothing, _tiling);
+			return new LightMapShader(resource, _intensity, _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new LightMapShader(cloneTexture(_resource), _intensity, _mipmap, _smoothing, _tiling);
+			return new LightMapShader(cloneTexture(resource), _intensity, _mipmap, _smoothing, _tiling);
 		}
 		
 		public function get intensity():Number 
@@ -97,8 +94,17 @@ package net.morocoshi.moja3d.shaders.render
 		
 		public function set intensity(value:Number):void 
 		{
-			_intensity = value;
-			intensityConst.x = value;
+			intensityConst.x = _intensity = value;
+		}
+		
+		public function get resource():TextureResource 
+		{
+			return lightMapTexture.texture;
+		}
+		
+		public function set resource(value:TextureResource):void 
+		{
+			lightMapTexture.texture = value;
 		}
 		
 	}

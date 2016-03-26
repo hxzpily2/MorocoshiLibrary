@@ -57,8 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateAlphaMode();
 			
-			var compressedAlpha:Boolean = diffuseTexture && diffuseTexture.texture && ImageTextureResource(diffuseTexture.texture).hasAlpha;
-			alphaMode = (opacity || compressedAlpha)? AlphaMode.MIX : AlphaMode.NONE;
+			alphaMode = (opacity || diffuseTexture.hasAlpha())? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
@@ -78,14 +77,14 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			var diffuseTag:String = getTextureTag(_smoothing, _mipmap, _tiling, diffuseTexture.getSamplingOption());
+			var diffuseTag:String = diffuseTexture.getOption2D(_smoothing, _mipmap, _tiling);
 			fragmentCode.addCode([
 				"$output.xyzw = tex(#uv, &diffuse " + diffuseTag + ")"
 			]);
 			
 			if (opacity)
 			{
-				var opacityTag:String = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
+				var opacityTag:String = opacityTexture.getOption2D(_smoothing, _mipmap, _tiling);
 				fragmentConstants.number = true;
 				fragmentCode.addCode([
 					"var $topacity",

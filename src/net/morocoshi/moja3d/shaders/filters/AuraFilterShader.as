@@ -77,9 +77,9 @@ package net.morocoshi.moja3d.shaders.filters
 		{
 			super.updateShaderCode();
 			
-			var tag1:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
-			var tag2:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.WRAP, "");
-			var noiseTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, noiseTextureAGAL.getSamplingOption());
+			var tag1:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
+			var tag2:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.WRAP);
+			var noiseTag:String = noiseTextureAGAL.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			
 			fragmentConstants.number = true;
 			fragmentConstants.viewSize = true;

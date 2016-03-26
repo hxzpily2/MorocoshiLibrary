@@ -19,7 +19,7 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class EnvironmentShader extends MaterialShader 
 	{
-		private var _resource:TextureResource;
+		//private var _resource:TextureResource;
 		private var _reflection:Number;
 		private var _blendMode:String;
 		private var _fresnel:Boolean;
@@ -39,15 +39,16 @@ package net.morocoshi.moja3d.shaders.render
 			
 			requiredAttribute.push(VertexAttribute.NORMAL);
 			
-			_fresnel = fresnel;
-			this.resource = resource;
-			_blendMode = blendMode;
 			_reflection = reflection;
+			_fresnel = fresnel;
+			_blendMode = blendMode;
 			
 			updateTexture();
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
@@ -58,14 +59,14 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
 			
-			texture = fragmentCode.addTexture("&cube", resource, this);
+			texture = fragmentCode.addTexture("&cube", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -79,7 +80,7 @@ package net.morocoshi.moja3d.shaders.render
 			super.updateShaderCode();
 			fragmentConstants.number = true;
 			fragmentConstants.cameraPosition = true;
-			var tag:String = getCubeTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, _resource.getSamplingOption());
+			var tag:String = texture.getOptionCube(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			fragmentCode.addCode([
 				"var $temp",
 				"var $eye",
@@ -157,16 +158,12 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function reference():MaterialShader 
 		{
-			var shader:EnvironmentShader = new EnvironmentShader(null, _reflection, _fresnel, _blendMode);
-			shader.resource = _resource;
-			return shader;
+			return new EnvironmentShader(resource, _reflection, _fresnel, _blendMode);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:EnvironmentShader = new EnvironmentShader(null, _reflection, _fresnel, _blendMode);
-			shader.resource = cloneTexture(_resource);
-			return shader;
+			return new EnvironmentShader(cloneTexture(resource), _reflection, _fresnel, _blendMode);
 		}
 		
 		/**
@@ -174,11 +171,13 @@ package net.morocoshi.moja3d.shaders.render
 		 */
 		public function get resource():TextureResource 
 		{
-			return _resource;
+			return texture.texture;
 		}
 		
 		public function set resource(value:TextureResource):void 
 		{
+			texture.texture = value;
+			/*
 			//関連付けられていたパースイベントを解除しておく
 			if (_resource) _resource.removeEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
 			
@@ -188,15 +187,15 @@ package net.morocoshi.moja3d.shaders.render
 			
 			//新しいパースイベントを関連付ける
 			if (_resource) _resource.addEventListener(Event3D.RESOURCE_PARSED, image_parsedHandler);
-			
+			*/
 			updateAlphaMode();
 		}
-		
+		/*
 		private function image_parsedHandler(e:Event3D):void 
 		{
 			updateAlphaMode();
 		}
-		
+		*/
 		/**
 		 * 基本反射率
 		 */

@@ -33,7 +33,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.MIX;
+			alphaMode = (_alpha < 1)? AlphaMode.ALL : (_alpha > 1)? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 
@@ -67,6 +67,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			_alpha = value;
 			alphaConst.x = _alpha;
+			updateAlphaMode();
 		}
 		
 	}

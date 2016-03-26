@@ -4,7 +4,7 @@ package net.morocoshi.moja3d.shaders.shadow
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
-	 * ...
+	 * デプスシャドウの影の場所を透明度に反映させるシェーダー
 	 * 
 	 * @author tencho
 	 */
@@ -50,7 +50,7 @@ package net.morocoshi.moja3d.shaders.shadow
 			fragmentCode.addCode([
 				"var $temp",
 				"$temp.x = @1 - $common.x",
-				"$output.a *= $temp.x"
+				"$output.w *= $temp.x"
 			]);
 		}
 		

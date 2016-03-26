@@ -1,8 +1,8 @@
 package net.morocoshi.moja3d.shaders.render 
 {
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.config.LightSetting;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
@@ -59,7 +59,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = _protectTransparent? AlphaMode.UNKNOWN : AlphaMode.MIX;
 		}
 		
 		override protected function updateTexture():void 

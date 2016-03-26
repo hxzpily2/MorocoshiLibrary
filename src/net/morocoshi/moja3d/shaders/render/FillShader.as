@@ -3,8 +3,8 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.shaders.AlphaMode;
-	import net.morocoshi.moja3d.shaders.depth.DepthAlphaShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthAlphaShader;
 	
 	/**
 	 * 単色塗シェーダー
@@ -39,7 +39,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = (_alpha < 1)? AlphaMode.ALL : AlphaMode.NONE;
+			alphaMode = (_alpha < 1)? AlphaMode.ALL : (_alpha > 1)? AlphaMode.MIX : AlphaMode.NONE;
 		}
 		
 		override protected function updateTexture():void 

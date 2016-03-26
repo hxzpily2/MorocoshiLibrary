@@ -103,7 +103,7 @@ package net.morocoshi.moja3d.shaders.render
 				])
 			}
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+			var tag:String = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 			fragmentCode.addCode([
 				"var $result",
 				//基本画像
@@ -142,7 +142,7 @@ package net.morocoshi.moja3d.shaders.render
 				for (var iy:int = start; iy <= end; iy++)
 				{
 					var num:Number = 1;
-					tag = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, "");
+					tag = AGALTexture.getTextureOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 					fragmentCode.addCode([
 						"$uv2.x = $baseUV.x" + ofx[ix],
 						"$uv2.y = $baseUV.y" + ofy[iy],

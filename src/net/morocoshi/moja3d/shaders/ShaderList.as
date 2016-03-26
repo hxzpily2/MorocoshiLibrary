@@ -39,7 +39,7 @@ package net.morocoshi.moja3d.shaders
 		private var _lightShader:LightShader;
 		private var _key:String;
 		
-		private var shaders:Vector.<MaterialShader>;
+		public var shaders:Vector.<MaterialShader>;
 		private var tickShaderList:Vector.<MaterialShader>;
 		public var name:String = "";
 		private var initialized:Boolean;
@@ -509,7 +509,7 @@ package net.morocoshi.moja3d.shaders
 		private function updateAlphaMode():void
 		{
 			updateAlphaModeOrder = false;
-			_alphaMode = AlphaMode.NONE;
+			_alphaMode = AlphaMode.UNKNOWN;
 			
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 

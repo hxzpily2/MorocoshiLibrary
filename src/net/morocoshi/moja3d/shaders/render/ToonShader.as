@@ -1,7 +1,6 @@
 package net.morocoshi.moja3d.shaders.render 
 {
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.materials.Mipmap;
@@ -16,13 +15,14 @@ package net.morocoshi.moja3d.shaders.render
 	use namespace moja3d;
 	
 	/**
+	 * 通常のトゥーンシェーダー
 	 * 
 	 * @author tencho
 	 */
 	public class ToonShader extends MaterialShader 
 	{
 		private var _useLightMap:Boolean;
-		private var toonTexture:AGALTexture;
+		private var texture:AGALTexture;
 		
 		public function ToonShader(resource:TextureResource, useLightMap:Boolean = false) 
 		{
@@ -48,14 +48,14 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
 			
-			toonTexture = fragmentCode.addTexture("&toon", null, this);
+			texture = fragmentCode.addTexture("&toon", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -72,7 +72,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.lights = true;
 			fragmentConstants.cameraPosition = true;
 			
-			var toonTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, toonTexture.getSamplingOption());
+			var toonTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, texture.getSamplingOption());
 			
 			fragmentCode.addCode([
 				"var $total",
@@ -170,12 +170,12 @@ package net.morocoshi.moja3d.shaders.render
 		
 		public function get resource():TextureResource 
 		{
-			return toonTexture.texture;
+			return texture.texture;
 		}
 		
 		public function set resource(value:TextureResource):void 
 		{
-			toonTexture.setTexture(value);
+			texture.texture = value;
 		}
 		
 	}

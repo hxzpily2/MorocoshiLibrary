@@ -230,41 +230,13 @@ package net.morocoshi.moja3d.shaders
 		}
 		
 		/**
-		 * テクスチャサンプリングコード＜2d～＞の生成
-		 * @param	smoothing	スムージング設定。Smoothingクラス参照
-		 * @param	mipmap	ミップマップ設定。Mipmapクラス参照
-		 * @param	tiling	タイリング設定。Tilingクラス参照
-		 * @param	option	ATF用のオプション(dxt1,dxt5など)
-		 * @return
-		 */
-		protected function getTextureTag(smoothing:String, mipmap:String, tiling:String, option:String):String
-		{
-			var samplingOption:String = option? ", " + option : "";
-			return "<2d, " + mipmap + ", " + smoothing + ", " + tiling + samplingOption + ">";
-		}
-		
-		/**
-		 * テクスチャサンプリングコード＜cube～＞の生成
-		 * @param	smoothing
-		 * @param	mipmap
-		 * @param	tiling
-		 * @param	option
-		 * @return
-		 */
-		protected function getCubeTextureTag(smoothing:String, mipmap:String, tiling:String, option:String):String
-		{
-			var samplingOption:String = option? ", " + option : "";
-			return "<cube, " + smoothing + ", " + mipmap + ", " + tiling + samplingOption + ">";
-		}
-		
-		/**
 		 * テクスチャの種類が変化した際にシェーダーを再生成させるためのキャッシュ判別キー
 		 * @param	texture
 		 * @return
 		 */
 		protected function getSamplingKey(texture:AGALTexture):String 
 		{
-			return texture? texture.getSamplingOption() : "";
+			return texture? texture.enabled? texture.getSamplingOption() : "!" : "";
 		}
 		
 		/*

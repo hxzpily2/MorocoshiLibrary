@@ -16,7 +16,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _offsetV:Number;
 		private var _scaleU:Number;
 		private var _scaleV:Number;
-		private var offsetConst:AGALConstant;
+		private var constant:AGALConstant;
 		
 		//　　V
 		//　　↑
@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -68,8 +68,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateConstants();
 			
-			offsetConst = vertexCode.addConstantsFromArray("@offsetUV", [_offsetU, -_offsetV, _scaleU, _scaleV]);
-			
+			constant = vertexCode.addConstantsFromArray("@offsetUV", [_offsetU, -_offsetV, _scaleU, _scaleV]);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -83,49 +82,14 @@ package net.morocoshi.moja3d.shaders.render
 			]);
 		}
 		
-		public function get offsetU():Number 
-		{
-			return _offsetU;
-		}
-		
-		public function set offsetU(value:Number):void 
-		{
-			_offsetU = value;
-			offsetConst.x = _offsetU;
-		}
-		
-		public function get offsetV():Number 
-		{
-			return _offsetV;
-		}
-		
-		public function set offsetV(value:Number):void 
-		{
-			_offsetV = value;
-			offsetConst.y = -_offsetV;
-		}
-		
-		public function get scaleU():Number 
-		{
-			return _scaleU;
-		}
-		
-		public function set scaleU(value:Number):void 
-		{
-			_scaleU = value;
-			offsetConst.z = _scaleU;
-		}
-		
-		public function get scaleV():Number 
-		{
-			return _scaleV;
-		}
-		
-		public function set scaleV(value:Number):void 
-		{
-			_scaleV = value;
-			offsetConst.w = _scaleV;
-		}
+		public function get offsetU():Number { return _offsetU; }
+		public function set offsetU(value:Number):void { constant.x = _offsetU = value; }	
+		public function get offsetV():Number { return _offsetV; }
+		public function set offsetV(value:Number):void { constant.y = -(_offsetV = value); }	
+		public function get scaleU():Number { return _scaleU; }
+		public function set scaleU(value:Number):void { constant.z = _scaleU = value; }
+		public function get scaleV():Number { return _scaleV; }
+		public function set scaleV(value:Number):void { constant.w = _scaleV = value; }
 		
 		override public function clone():MaterialShader 
 		{

@@ -36,7 +36,7 @@ package net.morocoshi.moja3d.shaders.outline
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaMode = AlphaMode.UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
@@ -86,12 +86,13 @@ package net.morocoshi.moja3d.shaders.outline
 					"global $normal",
 					"$normal.xyz = va" + geometry.getAttributeIndex(VertexAttribute.NORMAL) + ".xyz"
 				]);
+				/*
 				//正規化された法線
 				fragmentCode.addCode([
 					"global $normal",
 					"$normal.xyz = nrm(#normal.xyz)",
 					"$normal.w = @1"
-				]);
+				]);*/
 			}
 			
 			//VertexColor

@@ -35,7 +35,7 @@ package net.morocoshi.moja3d.shaders.core
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.MIX;
+			alphaMode = AlphaMode.ALL;
 		}
 		
 		override protected function updateTexture():void 
