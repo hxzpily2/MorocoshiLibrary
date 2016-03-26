@@ -189,7 +189,7 @@ package net.morocoshi.moja3d.shaders.render
 						"$temp.x = max($temp.x, $temp.w)"
 					]);
 				}
-				tag = getTextureTag(Smoothing.NEAREST, Mipmap.MIPNIAREST, Tiling.CLAMP, toneTexture.getSamplingOption());
+				tag = toneTexture.getOption2D(Smoothing.NEAREST, Mipmap.MIPNIAREST, Tiling.CLAMP);
 				fragmentCode.addCode([
 					//"$temp.x = sat($temp.x)",//0～1にする
 					"$temp.xyz = tex($temp.xx, &toneMap " + tag + ")"
@@ -197,7 +197,7 @@ package net.morocoshi.moja3d.shaders.render
 				
 				for (var i:int = 0; i < 4; i++) 
 				{
-					tag = getTextureTag(_smoothing, _mipmap, _tiling, diffuseTextures[i].getSamplingOption());
+					tag = diffuseTextures[i].getOption2D(_smoothing, _mipmap, _tiling);
 					fragmentCode.addCode([
 						"$rgb.xyzw = tex(#uv, &toonDiffuse" + i + " " + tag + ")",
 						"$temp.y = $temp.x - @toneLevel." + ["x", "y", "z", "w"][i],
@@ -217,7 +217,7 @@ package net.morocoshi.moja3d.shaders.render
 				diffuseTextures[2].enabled = false;
 				diffuseTextures[3].enabled = false;
 				toneTexture.enabled = false;
-				tag = getTextureTag(_smoothing, _mipmap, _tiling, diffuseTextures[i].getSamplingOption());
+				tag = diffuseTextures[i].getOption2D(_smoothing, _mipmap, _tiling);
 				fragmentCode.addCode([
 					"$output.xyzw = tex(#uv, &toonDiffuse0 " + tag + ")"
 				]);
@@ -226,7 +226,7 @@ package net.morocoshi.moja3d.shaders.render
 			if (opacity)
 			{
 				opacityTexture.enabled = true;
-				tag = getTextureTag(_smoothing, _mipmap, _tiling, opacityTexture.getSamplingOption());
+				tag = opacityTexture.getOption2D(_smoothing, _mipmap, _tiling);
 				fragmentCode.addCode([
 					"$temp.xyz = tex(#uv, &toonOpacity " + tag + ")",
 					"$output.w *= $temp.x"
