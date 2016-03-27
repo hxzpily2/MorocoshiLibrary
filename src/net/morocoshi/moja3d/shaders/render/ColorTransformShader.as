@@ -3,7 +3,7 @@ package net.morocoshi.moja3d.shaders.render
 	import flash.geom.ColorTransform;
 	import net.morocoshi.common.graphics.Palette;
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -56,8 +56,24 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override protected function updateAlphaMode():void
 		{
-			alphaMode = (_alphaOffset != 0)? AlphaMode.MIX : (_alphaMultiplier < 1)? AlphaMode.ALL : (_alphaMultiplier > 1)? AlphaMode.MIX : AlphaMode.NONE;
 			super.updateAlphaMode();
+			
+			if (_alphaOffset != 0)
+			{
+				alphaTransform = AlphaTransform.SET_UNKNOWN;
+			}
+			else if (_alphaMultiplier < 1)
+			{
+				alphaTransform = AlphaTransform.MUL_TRANSPARENT;
+			}
+			else if (_alphaMultiplier > 1)
+			{
+				alphaTransform = AlphaTransform.SET_UNKNOWN;
+			}
+			else
+			{
+				alphaTransform = AlphaTransform.UNCHANGE;
+			}
 		}
 		
 		override protected function updateTexture():void 

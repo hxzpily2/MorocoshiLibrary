@@ -7,7 +7,7 @@ package net.morocoshi.moja3d.shaders.filters
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.renderer.RenderLayer;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -38,7 +38,7 @@ package net.morocoshi.moja3d.shaders.filters
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

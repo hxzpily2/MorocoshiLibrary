@@ -5,7 +5,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.resources.TextureResource;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -40,7 +40,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = texture.hasAlpha()? AlphaMode.MIX : AlphaMode.NONE;
+			alphaTransform = texture.hasAlpha()? AlphaTransform.SET_MIXTURE : AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 

@@ -3,7 +3,7 @@ package net.morocoshi.moja3d.shaders.depth
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	use namespace moja3d;
@@ -36,7 +36,7 @@ package net.morocoshi.moja3d.shaders.depth
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

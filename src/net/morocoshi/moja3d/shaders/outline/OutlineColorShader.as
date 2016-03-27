@@ -1,9 +1,7 @@
 package net.morocoshi.moja3d.shaders.outline 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.resources.Geometry;
-	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -35,13 +33,13 @@ package net.morocoshi.moja3d.shaders.outline
 		
 		override public function getKey():String 
 		{
-			return "OutlineColorShader:" + alphaMode;
+			return "OutlineColorShader:" + alphaTransform;
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = _alpha < 1? AlphaMode.ALL : AlphaMode.NONE;
+			alphaTransform = (_alpha < 1)? AlphaTransform.SET_TRANSPARENT : AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 
@@ -53,7 +51,7 @@ package net.morocoshi.moja3d.shaders.outline
 		{
 			super.updateConstants();
 			vertexConst =　vertexCode.addConstantsFromArray("@outlineSize", [1, 0, 0, 0]);
-			fragmentConst =fragmentCode.addConstantsFromArray("@outlineColor", [0, 0, 0, 1]);
+			fragmentConst =fragmentCode.addConstantsFromColor("@outlineColor", _color, _alpha);
 		}
 		
 		override protected function updateShaderCode():void 

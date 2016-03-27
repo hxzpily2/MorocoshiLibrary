@@ -1,6 +1,6 @@
 package net.morocoshi.moja3d.shaders.outline 
 {
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -28,7 +28,7 @@ package net.morocoshi.moja3d.shaders.outline
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.UNKNOWN;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

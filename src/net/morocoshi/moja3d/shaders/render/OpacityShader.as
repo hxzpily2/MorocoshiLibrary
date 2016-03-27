@@ -5,7 +5,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	
@@ -47,7 +47,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.MIX;
+			alphaTransform = AlphaTransform.SET_MIXTURE;
 		}
 		
 		override protected function updateTexture():void 

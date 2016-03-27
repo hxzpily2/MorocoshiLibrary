@@ -8,7 +8,7 @@ package net.morocoshi.moja3d.shaders.skin
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.SkinGeometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.depth.DepthSkinShader;
@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.shaders.skin
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.UNKNOWN;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

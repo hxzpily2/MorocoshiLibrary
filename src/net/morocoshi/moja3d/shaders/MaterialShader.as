@@ -27,7 +27,7 @@ package net.morocoshi.moja3d.shaders
 		/**フラグメントシェーダー*/
 		public var fragmentCode:AGALCode;
 		/**透過、不透過の区別*/
-		public var alphaMode:uint;
+		public var alphaTransform:uint;
 		/**このシェーダーに鏡面反射要素があるか*/
 		public var hasReflectElement:Boolean;
 		/**このシェーダーに影投影要素があるか*/
@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.shaders
 			hasReflectElement = false;
 			hasShadowElement = false;
 			hasLightElement = false;
-			alphaMode = AlphaMode.NONE;
+			alphaTransform = AlphaTransform.UNCHANGE;
 			vertexCode = new AGALCode(Context3DProgramType.VERTEX);
 			fragmentCode = new AGALCode(Context3DProgramType.FRAGMENT);
 			vertexConstants = new UsingConstants();

@@ -31,7 +31,7 @@ package net.morocoshi.moja3d.shaders
 	 */
 	public class ShaderList 
 	{
-		private var _alphaMode:uint;
+		private var _alphaState:uint;
 		private var _vertexCode:AGALCode;
 		private var _fragmentCode:AGALCode;
 		private var _reflectShader:ReflectionShader;
@@ -66,7 +66,7 @@ package net.morocoshi.moja3d.shaders
 		
 		public function ShaderList(list:Array = null) 
 		{
-			_alphaMode = AlphaMode.NONE;
+			_alphaState = AlphaState.UNKNOWN;
 			_reflectShader = null;
 			
 			initialized = false;
@@ -104,7 +104,7 @@ package net.morocoshi.moja3d.shaders
 		{
 			removeAllShader();
 			
-			_alphaMode = 0;
+			_alphaState = 0;
 			_vertexCode = null;
 			_fragmentCode = null;
 			_reflectShader = null;
@@ -150,13 +150,13 @@ package net.morocoshi.moja3d.shaders
 			return _fragmentCode;
 		}
 		
-		public function get alphaMode():uint 
+		public function get alphaState():uint 
 		{
 			if (updateAlphaModeOrder)
 			{
-				updateAlphaMode();
+				updateAlphaState();
 			}
-			return _alphaMode;
+			return _alphaState;
 		}
 		
 		public function get lightShader():LightShader
@@ -216,7 +216,7 @@ package net.morocoshi.moja3d.shaders
 				if (shader.enabled == false || shader.valid == false) continue;
 				_key += shader.getKey() + "|";
 			}
-			_key += alphaMode;
+			_key += alphaState;
 		}
 		
 		//--------------------------------------------------------------------------
@@ -506,15 +506,40 @@ package net.morocoshi.moja3d.shaders
 			}
 		}
 		
-		private function updateAlphaMode():void
+		private function updateAlphaState():void
 		{
 			updateAlphaModeOrder = false;
-			_alphaMode = AlphaMode.UNKNOWN;
+			_alphaState = AlphaState.UNKNOWN;
 			
 			var n:int = shaders.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				_alphaMode |= shaders[i].alphaMode;
+				switch(shaders[i].alphaTransform)
+				{
+					case AlphaTransform.SET_OPAQUE:
+						_alphaState = AlphaState.OPAQUE;
+						break;
+					case AlphaTransform.SET_TRANSPARENT:
+						_alphaState = AlphaState.TRANSPARENT;
+						break;
+					case AlphaTransform.SET_MIXTURE:
+						_alphaState = AlphaState.MIXTURE;
+						break;
+					case AlphaTransform.SET_UNKNOWN:
+						_alphaState = AlphaState.UNKNOWN;
+						break;
+					case AlphaTransform.MUL_TRANSPARENT:
+						if (_alphaState != AlphaState.UNKNOWN)
+						{
+							_alphaState = AlphaState.TRANSPARENT;
+						}
+						break;
+				}
+				
+			}
+			if (_alphaState == AlphaState.UNKNOWN)
+			{
+				_alphaState = AlphaState.MIXTURE;
 			}
 		}
 		

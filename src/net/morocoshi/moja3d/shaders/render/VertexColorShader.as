@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import flash.display.BlendMode;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -43,7 +43,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.MIX;
+			alphaTransform = AlphaTransform.SET_MIXTURE;
 		}
 		
 		override protected function updateTexture():void 

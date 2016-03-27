@@ -6,7 +6,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	
@@ -50,14 +50,14 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "TextureShader:" + alphaMode + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(opacityTexture.texture) + "_" + getSamplingKey(opacityTexture);
+			return "TextureShader:" + alphaTransform + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(opacityTexture.texture) + "_" + getSamplingKey(opacityTexture);
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
 			
-			alphaMode = (opacity || diffuseTexture.hasAlpha())? AlphaMode.MIX : AlphaMode.NONE;
+			alphaTransform = (opacity || diffuseTexture.hasAlpha())? AlphaTransform.SET_MIXTURE : AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 

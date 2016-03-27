@@ -14,7 +14,7 @@ package net.morocoshi.moja3d.materials
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourceUploader;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaState;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.core.BasicShader;
@@ -253,7 +253,7 @@ package net.morocoshi.moja3d.materials
 			collector.alphaPassShaderList = null;
 			
 			var shaderData:Object;
-			var mode:uint;
+			var alphaState:uint;
 			
 			var phase:String = collector.renderPhase;
 			var colorKey:String = collector.useObjectColorTransform? "c" : "C";
@@ -294,11 +294,11 @@ package net.morocoshi.moja3d.materials
 					*/
 					AGALCache.shader[normalKey] = shaderData;
 					
-					mode = renderShader.alphaMode;
+					alphaState = renderShader.alphaState;
 					alphaPassConst = null;
 					opaquePassConst = null;
-					shaderData.opaque = (mode == AlphaMode.NONE)? renderShader : (mode == AlphaMode.MIX)? renderShader.cloneWithOpaque(this) : null;
-					shaderData.alpha = (mode == AlphaMode.ALL)? renderShader : (mode == AlphaMode.MIX)? renderShader.cloneWithAlpha(this) : null;
+					shaderData.opaque = (alphaState == AlphaState.OPAQUE)? renderShader : (alphaState == AlphaState.MIXTURE)? renderShader.cloneWithOpaque(this) : null;
+					shaderData.alpha = (alphaState == AlphaState.TRANSPARENT)? renderShader : (alphaState == AlphaState.MIXTURE)? renderShader.cloneWithAlpha(this) : null;
 				}
 			}
 			
@@ -321,9 +321,9 @@ package net.morocoshi.moja3d.materials
 						outlineShader.addShader(collector.outlineShader);
 						outlineShader.addShader(new OutlineEndShader());
 						
-						mode = outlineShader.alphaMode;
-						shaderData.opaque = (mode == AlphaMode.NONE)? outlineShader : (mode == AlphaMode.MIX)? outlineShader.cloneWithOpaque(this) : null;
-						shaderData.alpha = (mode == AlphaMode.ALL)? outlineShader : (mode == AlphaMode.MIX)? outlineShader.cloneWithAlpha(this) : null;
+						alphaState = outlineShader.alphaState;
+						shaderData.opaque = (alphaState == AlphaState.OPAQUE)? outlineShader : (alphaState == AlphaState.MIXTURE)? outlineShader.cloneWithOpaque(this) : null;
+						shaderData.alpha = (alphaState == AlphaState.TRANSPARENT)? outlineShader : (alphaState == AlphaState.MIXTURE)? outlineShader.cloneWithAlpha(this) : null;
 					}
 					/*
 					if (renderData.alpha)
@@ -393,11 +393,11 @@ package net.morocoshi.moja3d.materials
 					
 					AGALCache.shader[reflectKey] = shaderData;
 					
-					mode = reflectShader.alphaMode;
+					alphaState = reflectShader.alphaState;
 					alphaPassConst = null;
 					opaquePassConst = null;
-					shaderData.opaque = (mode == AlphaMode.NONE)? reflectShader : (mode == AlphaMode.MIX)? reflectShader.cloneWithOpaque(this) : null;
-					shaderData.alpha = (mode == AlphaMode.ALL)? reflectShader : (mode == AlphaMode.MIX)? reflectShader.cloneWithAlpha(this) : null;
+					shaderData.opaque = (alphaState == AlphaState.OPAQUE)? reflectShader : (alphaState == AlphaState.MIXTURE)? reflectShader.cloneWithOpaque(this) : null;
+					shaderData.alpha = (alphaState == AlphaState.TRANSPARENT)? reflectShader : (alphaState == AlphaState.MIXTURE)? reflectShader.cloneWithAlpha(this) : null;
 				}
 			}
 			
@@ -435,9 +435,9 @@ package net.morocoshi.moja3d.materials
 				//___ここは？
 				result.updateFromGeometry(geometry);
 				
-				var mode:uint = result.alphaMode;
-				shaderData.opaque = (mode == AlphaMode.NONE)? result : (mode == AlphaMode.MIX)? result.cloneWithOpaque(this) : null;
-				shaderData.alpha = (mode == AlphaMode.ALL)? result : (mode == AlphaMode.MIX)? result.cloneWithAlpha(this) : null;
+				var alphaState:uint = result.alphaState;
+				shaderData.opaque = (alphaState == AlphaState.OPAQUE)? result : (alphaState == AlphaState.MIXTURE)? result.cloneWithOpaque(this) : null;
+				shaderData.alpha = (alphaState == AlphaState.TRANSPARENT)? result : (alphaState == AlphaState.MIXTURE)? result.cloneWithAlpha(this) : null;
 			}
 			//collector.opaquePassShaderList = result.cloneWithOpaque(this);
 			collector.opaquePassShaderList = (_opaquePassEnabled && shaderData)? shaderData.opaque : null;

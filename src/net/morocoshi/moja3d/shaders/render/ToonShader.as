@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	use namespace moja3d;
@@ -48,7 +48,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.UNKNOWN;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 
@@ -72,7 +72,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.lights = true;
 			fragmentConstants.cameraPosition = true;
 			
-			var toonTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, texture.getSamplingOption());
+			var toonTag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			
 			fragmentCode.addCode([
 				"var $total",

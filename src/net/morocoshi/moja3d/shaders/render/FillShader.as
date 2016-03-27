@@ -2,7 +2,7 @@ package net.morocoshi.moja3d.shaders.render
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthAlphaShader;
 	
@@ -39,7 +39,18 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = (_alpha < 1)? AlphaMode.ALL : (_alpha > 1)? AlphaMode.MIX : AlphaMode.NONE;
+			if (_alpha < 1)
+			{
+				alphaTransform = AlphaTransform.SET_TRANSPARENT;
+			}
+			else if (_alpha > 1)
+			{
+				alphaTransform = AlphaTransform.SET_UNKNOWN;
+			}
+			else
+			{
+				alphaTransform = AlphaTransform.SET_OPAQUE;
+			}
 		}
 		
 		override protected function updateTexture():void 

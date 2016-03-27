@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.shaders.depth 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -32,7 +32,7 @@ package net.morocoshi.moja3d.shaders.depth
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = (_alpha < 1)? AlphaMode.ALL : AlphaMode.NONE;
+			alphaTransform = (_alpha < 1)? AlphaTransform.MUL_TRANSPARENT : (_alpha == 1)? AlphaTransform.UNCHANGE : AlphaTransform.SET_UNKNOWN;
 		}
 		
 		override protected function updateTexture():void 
