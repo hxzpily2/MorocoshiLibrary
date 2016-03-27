@@ -5,7 +5,7 @@ package net.morocoshi.moja3d.shaders.overlay
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.resources.TextureResource;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -45,7 +45,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaTransform = AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 
@@ -62,7 +62,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, diffuseMap.getSamplingOption());
+			var tag:String = diffuseMap.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			
 			if (_ignoreTransparency)
 			{

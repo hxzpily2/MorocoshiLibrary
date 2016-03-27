@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	use namespace moja3d;
@@ -85,7 +85,7 @@ package net.morocoshi.moja3d.shaders.render
 			var a1:Boolean = diffuseTextures[1].hasAlpha();
 			var a2:Boolean = diffuseTextures[2].hasAlpha();
 			var a3:Boolean = diffuseTextures[3].hasAlpha();
-			alphaMode = (opacity || a0 || a1 || a2 || a3)? AlphaMode.MIX : AlphaMode.NONE;
+			alphaTransform = (opacity || a0 || a1 || a2 || a3)? AlphaTransform.SET_MIXTURE : AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 
