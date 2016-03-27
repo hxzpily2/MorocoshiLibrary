@@ -1,4 +1,5 @@
-package net.morocoshi.moja3d.shaders.shadow {
+package net.morocoshi.moja3d.shaders.shadow
+{
 	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.objects.Object3D;
@@ -6,7 +7,7 @@ package net.morocoshi.moja3d.shaders.shadow {
 	/**
 	 * ...
 	 * 
-	 * @author ...
+	 * @author tencho
 	 */
 	public class CircleShadowUnit 
 	{

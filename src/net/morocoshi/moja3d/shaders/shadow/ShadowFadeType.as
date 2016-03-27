@@ -2,6 +2,7 @@ package net.morocoshi.moja3d.shaders.shadow
 {
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class ShadowFadeType 

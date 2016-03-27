@@ -9,7 +9,7 @@ package net.morocoshi.moja3d.shaders.shadow
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.resources.TextureResource;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -103,7 +103,7 @@ package net.morocoshi.moja3d.shaders.shadow
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.UNKNOWN;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

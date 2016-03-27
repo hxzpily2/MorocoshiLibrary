@@ -1,7 +1,7 @@
 package net.morocoshi.moja3d.shaders.overlay 
 {
 	import net.morocoshi.moja3d.agal.AGALConstant;
-	import net.morocoshi.moja3d.shaders.AlphaMode;
+	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
@@ -35,7 +35,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaMode.NONE;
+			alphaTransform = AlphaTransform.SET_OPAQUE;
 		}
 		
 		override protected function updateTexture():void 

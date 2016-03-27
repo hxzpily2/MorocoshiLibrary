@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaTransform = AlphaTransform.UNCHANGE;
+			alphaTransform = AlphaTransform.SET_MIXTURE;
 		}
 		
 		override protected function updateTexture():void 
