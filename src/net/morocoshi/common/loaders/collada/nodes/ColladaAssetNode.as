@@ -22,8 +22,8 @@ package net.morocoshi.common.loaders.collada.nodes
 			super.parse(xml, collector);
 			
 			upAxis = XMLUtil.getNodeString(xml.up_axis[0], "");
-			//TODO: スケール問題をなんとかしたい
-			collector.unitScale = 1;//unitScale = XMLUtil.getAttrNumber(xml.unit[0], "meter", 0.01) / 0.01;
+			//TODO: スキンメッシュでのスケールに問題がないかを確認する
+			collector.unitScale = unitScale = XMLUtil.getAttrNumber(xml.unit[0], "meter", 0.01) / 0.01;
 			var contributor:XML = xml.contributor[0];
 			if (contributor)
 			{
