@@ -105,7 +105,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * ___ここをどうするか考える
+		 * TODO: ここをどうするか考える
 		 */
 		public function get key():String 
 		{
@@ -489,6 +489,17 @@ package net.morocoshi.moja3d.objects
 						combined = null;
 						skinShader = null;
 						return false;
+					}
+					//トゥーンレンダリングのアウトライン
+					if (collector.renderPhase == RenderPhase.NORMAL && _outlineEnabled)
+					{
+						collector.renderPhase = RenderPhase.OUTLINE;
+						collector.materialCulling = TriangleFace.BACK;
+						collector.outlineShader = outlineShader;
+						collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader);
+						collector.renderPhase = RenderPhase.NORMAL;
+						collector.materialCulling = null;
+						collector.outlineShader = null;
 					}
 				}
 			}

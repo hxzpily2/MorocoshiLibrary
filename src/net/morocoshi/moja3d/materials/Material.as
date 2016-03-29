@@ -390,6 +390,7 @@ package net.morocoshi.moja3d.materials
 					if (collector.useObjectColorTransform) reflectShader.addShader(mesh.colorTransformShader);
 					if (mesh.zbias != 0) reflectShader.addShader(mesh.zBiasShader);
 					reflectShader.addShader(new EndShader(geometry));
+					reflectShader.updateFromGeometry(geometry);
 					
 					AGALCache.shader[reflectKey] = shaderData;
 					

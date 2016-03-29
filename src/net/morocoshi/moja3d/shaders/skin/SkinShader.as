@@ -27,6 +27,7 @@ package net.morocoshi.moja3d.shaders.skin
 		private var skin:Skin;
 		private var skinConst:AGALConstant;
 		private var depthSkinShader:DepthSkinShader;
+		private var outlineSkinShader:SkinShader;
 		private var reflectSkinShader:SkinShader;
 		private var maskSkinShader:SkinShader;
 		private var geometry:SkinGeometry;
@@ -240,6 +241,16 @@ package net.morocoshi.moja3d.shaders.skin
 					depthSkinShader.initializeBones(boneList, skin);
 				}
 				return depthSkinShader;
+			}
+			if (phase == RenderPhase.OUTLINE)
+			{
+				if (outlineSkinShader == null)
+				{
+					outlineSkinShader = new SkinShader();
+					outlineSkinShader.setSkinGeometry(geometry);
+					outlineSkinShader.initializeBones(boneList, skin, RenderPhase.OUTLINE);
+				}
+				return outlineSkinShader;
 			}
 			if (phase == RenderPhase.REFLECT)
 			{

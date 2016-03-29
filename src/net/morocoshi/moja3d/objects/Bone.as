@@ -25,6 +25,7 @@ package net.morocoshi.moja3d.objects
 		public var index:int;
 		public var renderConstants:Vector.<AGALConstant>;
 		public var shadowConstants:Vector.<AGALConstant>;
+		public var outlineConstants:Vector.<AGALConstant>;
 		public var reflectConstants:Vector.<AGALConstant>;
 		public var maskConstants:Vector.<AGALConstant>;
 		
@@ -38,6 +39,7 @@ package net.morocoshi.moja3d.objects
 			shadowConstants = new Vector.<AGALConstant>;
 			reflectConstants = new Vector.<AGALConstant>;
 			maskConstants = new Vector.<AGALConstant>;
+			outlineConstants = new Vector.<AGALConstant>;
 		}
 		
 		override public function finaly():void 
@@ -52,10 +54,12 @@ package net.morocoshi.moja3d.objects
 			DataUtil.deleteVector(shadowConstants);
 			DataUtil.deleteVector(reflectConstants);
 			DataUtil.deleteVector(maskConstants);
+			DataUtil.deleteVector(outlineConstants);
 			renderConstants = null;
 			shadowConstants = null;
 			reflectConstants = null;
 			maskConstants = null;
+			outlineConstants = null;
 		}
 		
 		override public function reference():Object3D 
@@ -114,6 +118,7 @@ package net.morocoshi.moja3d.objects
 			if (phase == RenderPhase.MASK) maskConstants.push(constant);
 			if (phase == RenderPhase.DEPTH) shadowConstants.push(constant);
 			if (phase == RenderPhase.REFLECT) reflectConstants.push(constant);
+			if (phase == RenderPhase.OUTLINE) outlineConstants.push(constant);
 		}
 		
 		/**
@@ -133,6 +138,7 @@ package net.morocoshi.moja3d.objects
 			for each (constant in shadowConstants) constant.matrix = tempMatrix;
 			for each (constant in maskConstants) constant.matrix = tempMatrix;
 			for each (constant in reflectConstants) constant.matrix = tempMatrix;
+			for each (constant in outlineConstants) constant.matrix = tempMatrix;
 			constant = null;
 		}
 		

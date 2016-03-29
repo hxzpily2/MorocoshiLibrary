@@ -97,7 +97,7 @@ package net.morocoshi.moja3d.shaders.shadow
 		
 		override public function getKey():String 
 		{
-			return "CircleShadowShader:";
+			return "CircleShadowShader:" + getSamplingKey(texture);
 		}
 		
 		override protected function updateAlphaMode():void
