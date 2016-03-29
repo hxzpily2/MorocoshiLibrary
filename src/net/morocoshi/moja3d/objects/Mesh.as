@@ -394,6 +394,21 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
+		 * ポリゴンベースのアウトラインを設定する
+		 * @param	enabled		表示するか
+		 * @param	thickness	厚さ
+		 * @param	color		色
+		 * @param	alpha		不透明度
+		 */
+		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1):void
+		{
+			_outlineEnabled = enabled;
+			var shader:OutlineColorShader = getOutlineShader();
+			shader.thickness = thickness;
+			shader.color = color;
+			shader.alpha = alpha;
+		}
+		/**
 		 * ポリゴンベースのアウトラインを表示するか
 		 */
 		public function set outlineEnabled(value:Boolean):void

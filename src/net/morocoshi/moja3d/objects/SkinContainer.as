@@ -30,6 +30,80 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
+		 * ポリゴンベースのアウトラインを設定する
+		 * @param	enabled		表示するか
+		 * @param	thickness	厚さ
+		 * @param	color		色
+		 * @param	alpha		不透明度
+		 */
+		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1):void
+		{
+			for each(var skin:Skin in skins)
+			{
+				skin.setOutline(enabled, thickness, color, alpha);
+			}
+		}
+		/**
+		 * ポリゴンベースのアウトラインを表示するか
+		 */
+		public function set outlineEnabled(value:Boolean):void
+		{
+			for each(var skin:Skin in skins)
+			{
+				skin.outlineEnabled = value;
+			}
+		}
+		public function get outlineEnabled():Boolean
+		{
+			return (skins.length == 0)? 1 : skins[0].outlineEnabled;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの厚さ
+		 */
+		public function set outlineThickness(value:Number):void
+		{
+			for each(var skin:Skin in skins)
+			{
+				skin.outlineThickness = value;
+			}
+		}
+		public function get outlineThickness():Number
+		{
+			return (skins.length == 0)? 1 : skins[0].outlineThickness;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの色
+		 */
+		public function set outlineColor(value:uint):void
+		{
+			for each(var skin:Skin in skins)
+			{
+				skin.outlineColor = value;
+			}
+		}
+		public function get outlineColor():uint
+		{
+			return (skins.length == 0)? 0x000000 : skins[0].outlineColor;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの不透明度
+		 */
+		public function set outlineAlpha(value:Number):void
+		{
+			for each(var skin:Skin in skins)
+			{
+				skin.outlineAlpha = value;
+			}
+		}
+		public function get outlineAlpha():Number
+		{
+			return (skins.length == 0)? 1 : skins[0].outlineAlpha;
+		}
+		
+		/**
 		 * スキンメッシュの現在の姿勢で境界ボックスを更新する。ボーンの初期姿勢からのずれで計算するため実際のメッシュより大きく設定される傾向にあります。
 		 */
 		public function updateSkinBounds(bones:Vector.<Bone>):void
