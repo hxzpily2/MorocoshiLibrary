@@ -271,7 +271,11 @@ package net.morocoshi.common.loaders.collada.nodes
 						var key:String = sourceLink[JOINT][i];
 						var m:Matrix3D = ColladaUtil.ArrayToMatrix3D(data[i]);
 						m.prepend(skinShapeMatrix);
-						collector.jointMatrixMap[key] = m;
+						var raw:Vector.<Number> = m.rawData;
+						raw[12] *= collector.unitScale;
+						raw[13] *= collector.unitScale;
+						raw[14] *= collector.unitScale;
+						collector.jointMatrixMap[key] = new Matrix3D(raw);
 					}
 					return;
 				}
