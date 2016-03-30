@@ -189,7 +189,7 @@ package net.morocoshi.moja3d.shaders.render
 						"$temp.x = max($temp.x, $temp.w)"
 					]);
 				}
-				tag = toneTexture.getOption2D(Smoothing.NEAREST, Mipmap.MIPNIAREST, Tiling.CLAMP);
+				tag = toneTexture.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 				fragmentCode.addCode([
 					//"$temp.x = sat($temp.x)",//0～1にする
 					"$temp.xyz = tex($temp.xx, &toneMap " + tag + ")"
