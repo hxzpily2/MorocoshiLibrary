@@ -9,11 +9,12 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.common.graphics.Palette;
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.Program3DPreloader;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.collision.CollisionRay;
 	import net.morocoshi.moja3d.config.Global3D;
 	import net.morocoshi.moja3d.config.LightSetting;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -52,11 +53,13 @@ package net.morocoshi.moja3d.objects
 		public var boundingBox:BoundingBox;
 		/**子以下をレンダリング対象に含めるか*/
 		public var renderChildren:Boolean;
-		private var _inCameraView:Boolean;
+		moja3d var _inCameraView:Boolean;
 		private var _showBoundingBox:Boolean;
 		private var boundingCube:Mesh;
 		
 		private var _colorTransform:ColorTransform;
+		private var _containerColorTransform:ColorTransform;
+		moja3d var currentColorTransform:ColorTransform;
 		moja3d var worldColorTransform:ColorTransform;
 		moja3d var colorTransformShader:ColorTransformShader;
 		
@@ -85,7 +88,8 @@ package net.morocoshi.moja3d.objects
 		
 		
 		/**これがtrueだとupdate()時に一度だけ色情報が計算される*/
-		moja3d var calculateColorOrder:Boolean;
+		moja3d var calculateMyColorOrder:Boolean;
+		moja3d var calculateChildColorOrder:Boolean;
 		/**これがtrueだと一度だけcalculate()で頂点座標などが計算される*/
 		moja3d var calculateMatrixOrder:Boolean;
 		/**これがtrueだと一度だけ境界領域が計算される*/
@@ -129,7 +133,8 @@ package net.morocoshi.moja3d.objects
 			renderMask = -1;
 			containerRenderMask = -1;
 			calculateMatrixOrder = true;
-			calculateColorOrder = true;
+			calculateMyColorOrder = true;
+			calculateChildColorOrder = false;
 			calculateBoundsOrder = true;
 			decomposeMatrixOrder = false;
 			recomposeMatrixOrder = false;
@@ -347,7 +352,7 @@ package net.morocoshi.moja3d.objects
 		public function set alpha(value:Number):void 
 		{
 			_alpha = value;
-			calculateColorOrder = true;
+			calculateMyColorOrder = true;
 			if (_colorTransform == null)
 			{
 				_colorTransform = new ColorTransform();
@@ -570,7 +575,8 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
+			target._containerColorTransform = _containerColorTransform? Palette.clone(_containerColorTransform) : null;
+			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
 			target.castLightEnabled = castLightEnabled;
@@ -581,7 +587,8 @@ package net.morocoshi.moja3d.objects
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
-			target.calculateColorOrder = calculateColorOrder;
+			target.calculateMyColorOrder = calculateMyColorOrder;
+			target.calculateChildColorOrder = calculateChildColorOrder;
 			target.calculateMatrixOrder = calculateMatrixOrder;
 			target.calculateBoundsOrder = calculateBoundsOrder;
 			target.decomposeMatrixOrder = decomposeMatrixOrder;
@@ -604,7 +611,8 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
+			target._containerColorTransform = _containerColorTransform? Palette.clone(_containerColorTransform) : null;
+			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
 			target.castLightEnabled = castLightEnabled;
@@ -615,7 +623,8 @@ package net.morocoshi.moja3d.objects
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
-			target.calculateColorOrder = calculateColorOrder;
+			target.calculateMyColorOrder = calculateMyColorOrder;
+			target.calculateChildColorOrder = calculateChildColorOrder;
 			target.calculateMatrixOrder = calculateMatrixOrder;
 			target.calculateBoundsOrder = calculateBoundsOrder;
 			target.decomposeMatrixOrder = decomposeMatrixOrder;
@@ -719,7 +728,9 @@ package net.morocoshi.moja3d.objects
 			boundingBox = null;
 			boundingCube = null;
 			_colorTransform = null;
+			_containerColorTransform = null;
 			worldColorTransform = null;
+			currentColorTransform = null;
 			colorTransformShader = null;
 			_matrix = null;
 			_worldMatrix = null;
@@ -932,7 +943,8 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			var calcMatrix:Boolean = calculateMatrixOrder || forceCalcMatrix;
-			var calcColor:Boolean = calculateColorOrder || forceCalcColor;
+			var calcMyColor:Boolean = calculateMyColorOrder || forceCalcColor;
+			var calcChildColor:Boolean = calculateChildColorOrder || forceCalcColor;
 			var calcBounds:Boolean = calculateBoundsOrder || forceCalcBounds;
 			
 			//マスクが設定されていれば全ての子をマスク扱いにする
@@ -976,36 +988,46 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			//色計算
-			if (calcColor)
+			if (calcMyColor || calcChildColor)
 			{
 				collector._colorCount++;
 				
 				if (colorTransformShader == null) colorTransformShader = new ColorTransformShader();
-				//if (_colorTransform == null) _colorTransform = new ColorTransform();
+				if (currentColorTransform == null) currentColorTransform = new ColorTransform();
 				if (worldColorTransform == null) worldColorTransform = new ColorTransform();
 				
-				if (_parent)
+				if (calcMyColor)
 				{
-					Palette.copyTo(worldColorTransform, _parent.worldColorTransform);
-					if (_colorTransform)
+					if (_parent)
 					{
-						worldColorTransform.concat(_colorTransform);
-					}
-				}
-				else
-				{
-					if (_colorTransform)
-					{
-						Palette.copyTo(worldColorTransform, _colorTransform);
+						Palette.copyTo(currentColorTransform, _parent.worldColorTransform);
+						if (_colorTransform) currentColorTransform.concat(_colorTransform);
 					}
 					else
 					{
-						Palette.identity(worldColorTransform);
+						if (_colorTransform) Palette.copyTo(currentColorTransform, _colorTransform);
+						else Palette.identity(currentColorTransform);
+					}
+					colorTransformShader.applyFrom(currentColorTransform);
+				}
+				
+				if (calcChildColor)
+				{
+					
+					if (_parent)
+					{
+						Palette.copyTo(worldColorTransform, _parent.worldColorTransform);
+						if (_containerColorTransform) worldColorTransform.concat(_containerColorTransform);
+					}
+					else
+					{
+						if (_containerColorTransform) Palette.copyTo(worldColorTransform, _containerColorTransform);
+						else Palette.identity(worldColorTransform);
 					}
 				}
-				colorTransformShader.applyFrom(worldColorTransform);
 				
-				calculateColorOrder = false;
+				calculateMyColorOrder = false;
+				calculateChildColorOrder = false;
 			}
 			
 			//SkyBoxなどで常にカメラ位置に動かしたい場合などに使う
@@ -1032,7 +1054,7 @@ package net.morocoshi.moja3d.objects
 						current.calculateMatrixOrder = (current.calculateMatrixOrder || calcMatrix);
 						continue;
 					}
-					current.collectRenderElements(collector, calcMatrix, calcColor, calcBounds, worldFlip * flip, currentMask);
+					current.collectRenderElements(collector, calcMatrix, calcChildColor, calcBounds, worldFlip * flip, currentMask);
 				}
 			}
 			
@@ -1156,7 +1178,21 @@ package net.morocoshi.moja3d.objects
 		public function set colorTransform(value:ColorTransform):void 
 		{
 			_colorTransform = value;
-			calculateColorOrder = true;
+			calculateMyColorOrder = true;
+		}
+		
+		/**
+		 * 自分の子以下の着色設定をColorTransformで指定
+		 */
+		public function get containerColorTransform():ColorTransform 
+		{
+			return _containerColorTransform;
+		}
+		
+		public function set containerColorTransform(value:ColorTransform):void 
+		{
+			_containerColorTransform = value;
+			calculateChildColorOrder = true;
 		}
 		
 		/**
@@ -1533,8 +1569,16 @@ package net.morocoshi.moja3d.objects
 			return "[" + getQualifiedClassName(this).split("::")[1] + " " + myName + "]";
 		}
 		
-		public function intersectRay(start:Vector3D, end:Vector3D, infinity:Boolean):void 
+		public function intersectRay(ray:CollisionRay):Boolean 
 		{
+			if (_visible == false) return false;
+			
+			for (var current:Object3D = _children; current; current = current._next)
+			{
+				current.intersectRay(ray);
+			}
+			
+			return true;
 		}
 		
 	}

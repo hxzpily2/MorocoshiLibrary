@@ -1,8 +1,11 @@
 package net.morocoshi.moja3d.objects 
 {
+	import flash.geom.Matrix3D;
 	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.collision.CollisionMesh;
+	import net.morocoshi.moja3d.collision.CollisionRay;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.TriangleFace;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -15,7 +18,6 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	import net.morocoshi.moja3d.shaders.outline.OutlineColorShader;
-	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
 	import net.morocoshi.moja3d.shaders.render.ZBiasShader;
 	
 	use namespace moja3d;
@@ -37,6 +39,8 @@ package net.morocoshi.moja3d.objects
 		public var zBiasShader:ZBiasShader;
 		public var afterViewShaderList:ShaderList;
 		public var beforeMatrixShaderList:ShaderList;
+		public var mouseEnabled:Boolean;
+		public var mouseDoubleSided:Boolean;
 		moja3d var outlineShader:OutlineColorShader;
 		moja3d var _outlineEnabled:Boolean;
 		
@@ -59,6 +63,8 @@ package net.morocoshi.moja3d.objects
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;
+			mouseEnabled = true;
+			mouseDoubleSided = false;
 			layer = RenderLayer.OPAQUE;
 			geometry = new Geometry();
 			surfaces = new Vector.<Surface>;
@@ -656,6 +662,32 @@ package net.morocoshi.moja3d.objects
 			checkShader = null;
 			shaderList = null;
 			element = null;
+			
+			return true;
+		}
+		
+		override public function intersectRay(ray:CollisionRay):Boolean 
+		{
+			if (super.intersectRay(ray) == false) return false;
+			if (boundingBox == null || _inCameraView == false || mouseEnabled == false) return false;
+			if (ray.hitToBall(boundingBox) == false) return false;
+			
+			var w:Matrix3D = worldMatrix.clone();
+			w.invert();
+			ray.start2 = w.transformVector(ray.start);
+			ray.normal2 = w.deltaTransformVector(ray.normal);
+			ray.distance2 = ray.normal2.length * ray.distance;
+			ray.normal2.normalize();
+			
+			if (_geometry)
+			{
+				if (_geometry.collision == null)
+				{
+					_geometry.collision = new CollisionMesh();
+					_geometry.collision.parse(_geometry);
+				}
+				_geometry.collision.getHitData(ray, mouseDoubleSided, this);
+			}
 			
 			return true;
 		}

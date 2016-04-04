@@ -1,14 +1,14 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.data.DataUtil;
-	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.bounds.BoundingBox;
+	import net.morocoshi.moja3d.collision.CollisionMesh;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	use namespace moja3d;
@@ -30,6 +30,7 @@ package net.morocoshi.moja3d.resources
 		public var indexBuffer:IndexBuffer3D;
 		public var seed:int;
 		private var attributeIndex:Object;
+		moja3d var collision:CollisionMesh;
 		static private var seedCount:int = 0;
 		
 		public function Geometry() 
@@ -255,6 +256,12 @@ package net.morocoshi.moja3d.resources
 			{
 				vertexBufferFormatList.length = 0;
 			}
+			
+			if (collision)
+			{
+				collision.finaly();
+				collision = null;
+			}
 		}
 		
 		override public function cloneProperties(target:Resource):void 
@@ -278,6 +285,7 @@ package net.morocoshi.moja3d.resources
 			{
 				geometry.verticesList.push(verticesList[i].concat());
 			}
+			geometry.collision = collision.clone();
 			geometry = null;
 		}
 		

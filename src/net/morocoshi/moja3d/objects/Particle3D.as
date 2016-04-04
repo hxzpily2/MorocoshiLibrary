@@ -32,6 +32,7 @@ package net.morocoshi.moja3d.objects
 		{
 			super();
 			
+			mouseEnabled = false;
 			particleList = new ParticleList();
 			particleCache = new ParticleList();
 			geometry = new ParticleGeometry();

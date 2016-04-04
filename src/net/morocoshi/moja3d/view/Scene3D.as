@@ -10,23 +10,29 @@ package net.morocoshi.moja3d.view
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
+	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	import flash.geom.Vector3D;
 	import flash.system.Capabilities;
+	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	import net.morocoshi.common.math.geom.Vector3DUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
 	import net.morocoshi.common.ui.mouse.FPVController;
 	import net.morocoshi.common.ui.mouse.MouseDrag3D;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.billboard.BillboardManager;
+	import net.morocoshi.moja3d.collision.CollisionRay;
+	import net.morocoshi.moja3d.collision.CollisionResult;
 	import net.morocoshi.moja3d.config.Global3D;
 	import net.morocoshi.moja3d.config.LightSetting;
 	import net.morocoshi.moja3d.dialogs.SoftwareDialog;
 	import net.morocoshi.moja3d.events.Event3D;
+	import net.morocoshi.moja3d.events.MouseEvent3D;
 	import net.morocoshi.moja3d.filters.Filter3D;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.Light3D;
 	import net.morocoshi.moja3d.objects.Object3D;
@@ -34,8 +40,8 @@ package net.morocoshi.moja3d.view
 	import net.morocoshi.moja3d.overlay.objects.Object2D;
 	import net.morocoshi.moja3d.renderer.PostEffectManager;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
-	import net.morocoshi.moja3d.renderer.Renderer;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
+	import net.morocoshi.moja3d.renderer.Renderer;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
@@ -70,13 +76,20 @@ package net.morocoshi.moja3d.view
 		public var tpv:MouseDrag3D;
 		public var fpv:FPVController;
 		
+		public var mouseDistance:Number;
+		private var mouseMoveTimer:Timer;
+		private var lastMouseDownObject:Object3D;
+		private var lastMouseMoveObject:Object3D;
+		private var ray:CollisionRay;
+		private var stage:Stage;
+		
 		private var _stats:MojaStats;
 		private var sprite:Sprite;
 		
 		private var reflectCamera:Camera3D;
 		private var filterTexture1:TextureResource;
 		private var filterTexture2:TextureResource;
-		private var stage:Stage;
+		//private var stage:Stage;
 		private var dispatchedComplete:Boolean;
 		private var validFilters:Vector.<Filter3D>;
 		private var viewRect:Rectangle;
@@ -90,8 +103,10 @@ package net.morocoshi.moja3d.view
 		
 		public function Scene3D() 
 		{
+			ray = new CollisionRay();
 			dispatchedComplete = false;
 			fillMaskTextureOrder = true;
+			mouseDistance = 10000000;
 			viewRect = new Rectangle(0, 0, 0, 0);
 			renderer = new Renderer();
 			renderer.scene = this;
@@ -610,34 +625,121 @@ package net.morocoshi.moja3d.view
 			return dialog;
 		}
 		
+		public function startMouseInteraction(stage:Stage, updown:Boolean, move:Boolean, delay:Number = 33):void 
+		{
+			this.stage = stage;
+			if (updown)
+			{
+				stage.addEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDownHandler);
+				stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler);
+			}
+			if (move)
+			{
+				if (mouseMoveTimer)
+				{
+					mouseMoveTimer.removeEventListener(TimerEvent.TIMER, mouse_timerHandler);
+					mouseMoveTimer.stop();
+				}
+				mouseMoveTimer = new Timer(delay, 0);
+				mouseMoveTimer.addEventListener(TimerEvent.TIMER, mouse_timerHandler);
+				mouseMoveTimer.start();
+			}
+		}
+		
+		private function mouse_timerHandler(e:TimerEvent):void 
+		{
+			var results:Vector.<CollisionResult> = getIntersectionData(stage.mouseX, stage.mouseY);
+			var current:Object3D = null;
+			if (results.length > 0)
+			{
+				var result:CollisionResult = results[0];
+				current = result.target;
+				current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
+			}
+			if (lastMouseMoveObject !== current)
+			{
+				if (current) current.dispatchEvent(new MouseEvent3D(MouseEvent3D.ROLL_OVER, null));
+				if (lastMouseMoveObject) lastMouseMoveObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.ROLL_OUT, null));
+			}
+			lastMouseMoveObject = current;
+		}
+		
+		public function stopMouseInteraction():void 
+		{
+			if (mouseMoveTimer)
+			{
+				mouseMoveTimer.removeEventListener(TimerEvent.TIMER, mouse_timerHandler);
+				mouseMoveTimer.stop();
+				mouseMoveTimer = null;
+			}
+			
+			if (stage)
+			{
+				stage.removeEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDownHandler);
+				stage.removeEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler);
+			}
+		}
+		
+		private function stage_mouseUpHandler(e:MouseEvent):void 
+		{
+			var results:Vector.<CollisionResult> = getIntersectionData(e.stageX, e.stageY);
+			if (results.length > 0)
+			{
+				var result:CollisionResult = results[0];
+				result.target.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_UP, result));
+				if (lastMouseDownObject == result.target)
+				{
+					lastMouseDownObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.CLICK, result));
+				}
+			}
+			lastMouseDownObject = null;
+		}
+		
+		private function stage_mouseDownHandler(e:MouseEvent):void 
+		{
+			var results:Vector.<CollisionResult> = getIntersectionData(e.stageX, e.stageY);
+			if (results.length > 0)
+			{
+				var result:CollisionResult = results[0];
+				lastMouseDownObject = result.target;
+				lastMouseDownObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_DOWN, result));
+			}
+		}
+		
 		/**
-		 * マウスクリック時の処理
+		 * スクリーン座標の指定位置にあるものを取得する
 		 */
-		public function mouseClick(mouseX:Number, mouseY:Number):void 
+		public function getIntersectionData(stageX:Number, stageY:Number):Vector.<CollisionResult> 
 		{
 			var fov:Number = camera.getVerticalFOV(view.clipping);
 			var asp:Number = camera.getScreenAspect(view.clipping);
 			var h:Number = Math.tan(fov / 2);
-			var tx:Number = ((mouseX - view.x) / view.width - 0.5) * 2 * h * asp;
-			var ty:Number = ((mouseY - view.y) / view.height - 0.5) * 2 * -h;
+			var vx:Number = view.clipping? view.x + view.clipping.x : view.x;
+			var vy:Number = view.clipping? view.y + view.clipping.y : view.y;
+			var vw:Number = view.clipping? view.clipping.width : view.width;
+			var vh:Number = view.clipping? view.clipping.height : view.height;
+			var tx:Number = ((stageX - vx) / vw - 0.5) * 2 * h * asp;
+			var ty:Number = ((stageY - vy) / vh - 0.5) * 2 * -h;
 			
-			var start:Vector3D = camera.getPosition();
-			var end:Vector3D = start.clone();
+			var start:Vector3D = camera.getWorldPosition();
 			var front:Vector3D = camera.getWorldAxisZ(true);
 			var right:Vector3D = camera.getWorldAxisX(true);
 			var top:Vector3D = camera.getWorldAxisY(true);
 			
-			var distance:Number = 25;
-			front.scaleBy(-distance);
-			right.scaleBy(distance * tx);
-			top.scaleBy(distance * ty);
-			end.incrementBy(front);
-			end.incrementBy(right);
-			end.incrementBy(top);
+			ray.distance = mouseDistance;
+			ray.start.x = start.x;
+			ray.start.y = start.y;
+			ray.start.z = start.z;
+			ray.normal.x = -front.x + right.x * tx + top.x * ty;
+			ray.normal.y = -front.y + right.y * tx + top.y * ty;
+			ray.normal.z = -front.z + right.z * tx + top.z * ty;
+			ray.normal.normalize();
 			
-			root.intersectRay(start, end, true);
-			//root.addChild(new Cube(1, 1, 1, 1, 1, 1, new FillMaterial(0xff0000, 1, false))).setPosition3D(end);
-			//root.upload(context3D, true, true);
+			ray.results.length = 0;
+			root.intersectRay(ray);
+			ray.sortResult();
+			
+			return ray.results;
 		}
 		
 		private function sprite_enterFrameHandler(e:Event):void 
