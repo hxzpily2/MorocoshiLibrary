@@ -285,7 +285,7 @@ package net.morocoshi.moja3d.resources
 			{
 				geometry.verticesList.push(verticesList[i].concat());
 			}
-			geometry.collision = collision.clone();
+			geometry.collision = collision? collision.clone() : null;
 			geometry = null;
 		}
 		

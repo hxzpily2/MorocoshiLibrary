@@ -80,6 +80,7 @@ package net.morocoshi.moja3d.view
 		private var mouseMoveTimer:Timer;
 		private var lastMouseDownObject:Object3D;
 		private var lastMouseMoveObject:Object3D;
+		private var lastMousePoint:Vector3D;
 		private var ray:CollisionRay;
 		private var stage:Stage;
 		
@@ -89,7 +90,6 @@ package net.morocoshi.moja3d.view
 		private var reflectCamera:Camera3D;
 		private var filterTexture1:TextureResource;
 		private var filterTexture2:TextureResource;
-		//private var stage:Stage;
 		private var dispatchedComplete:Boolean;
 		private var validFilters:Vector.<Filter3D>;
 		private var viewRect:Rectangle;
@@ -107,6 +107,7 @@ package net.morocoshi.moja3d.view
 			dispatchedComplete = false;
 			fillMaskTextureOrder = true;
 			mouseDistance = 10000000;
+			lastMousePoint = new Vector3D(NaN, NaN, NaN);
 			viewRect = new Rectangle(0, 0, 0, 0);
 			renderer = new Renderer();
 			renderer.scene = this;
@@ -654,12 +655,16 @@ package net.morocoshi.moja3d.view
 			{
 				var result:CollisionResult = results[0];
 				current = result.target;
-				current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
+				if (lastMouseMoveObject != current || lastMousePoint.equals(result.localPosition) == false)
+				{
+					lastMousePoint.copyFrom(result.localPosition);
+					current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
+				}
 			}
-			if (lastMouseMoveObject !== current)
+			if (lastMouseMoveObject != current)
 			{
-				if (current) current.dispatchEvent(new MouseEvent3D(MouseEvent3D.ROLL_OVER, null));
-				if (lastMouseMoveObject) lastMouseMoveObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.ROLL_OUT, null));
+				if (current) current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OVER, null));
+				if (lastMouseMoveObject) lastMouseMoveObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OUT, null));
 			}
 			lastMouseMoveObject = current;
 		}

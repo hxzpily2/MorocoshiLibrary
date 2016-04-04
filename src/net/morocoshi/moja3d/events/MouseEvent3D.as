@@ -14,8 +14,8 @@ package net.morocoshi.moja3d.events
 		static public const MOUSE_DOWN:String = "mouseDown";
 		static public const MOUSE_UP:String = "mouseUp";
 		static public const MOUSE_MOVE:String = "mouseMove";
-		static public const ROLL_OVER:String = "rollOver";
-		static public const ROLL_OUT:String = "rollOut";
+		static public const MOUSE_OVER:String = "mouseOver";
+		static public const MOUSE_OUT:String = "mouseOut";
 		
 		public var collision:CollisionResult;
 		
