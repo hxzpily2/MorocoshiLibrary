@@ -34,11 +34,28 @@ package net.morocoshi.moja3d.objects
 		/**サーフェイスリスト*/
 		public var surfaces:Vector.<Surface>;
 		moja3d var combinedSurfacesList:Vector.<Vector.<Surface>>;
+		/*
+			[BasicShader]//basicShader
+			Mesh.beforeMatrixShaderList
+			[ModelTransformShader]
+			Mesh.startShaderList
+			[Skin.skinShader]
+			Material.shaderList
+			Mesh.endShaderList
+			[AGALCache.viewShaderList]
+			Mesh.afterViewShaderList
+			Mesh.colorTransformShader
+			Mesh.zBiasShader
+			[EndShader]//lastShader
+		*/
+		public var basicShader:MaterialShader;
+		public var beforeMatrixShaderList:ShaderList;
 		public var startShaderList:ShaderList;
 		public var endShaderList:ShaderList;
-		public var zBiasShader:ZBiasShader;
 		public var afterViewShaderList:ShaderList;
-		public var beforeMatrixShaderList:ShaderList;
+		public var zBiasShader:ZBiasShader;
+		public var lastShader:MaterialShader;
+		
 		public var mouseEnabled:Boolean;
 		public var mouseDoubleSided:Boolean;
 		moja3d var outlineShader:OutlineColorShader;
@@ -66,7 +83,7 @@ package net.morocoshi.moja3d.objects
 			mouseEnabled = true;
 			mouseDoubleSided = false;
 			layer = RenderLayer.OPAQUE;
-			geometry = new Geometry();
+			_geometry = new Geometry();
 			surfaces = new Vector.<Surface>;
 			renderElements = new Vector.<RenderElement>;
 			zBiasShader = new ZBiasShader(_zbias);
@@ -164,16 +181,13 @@ package net.morocoshi.moja3d.objects
 		override public function reference():Object3D 
 		{
 			var mesh:Mesh = new Mesh();
-			
 			referenceProperties(mesh);
-			
 			//子を再帰的にコピーする
 			var current:Object3D;
 			for (current = _children; current; current = current._next)
 			{
 				mesh.addChild(current.reference());
 			}
-			
 			return mesh;
 		}
 		
@@ -250,6 +264,8 @@ package net.morocoshi.moja3d.objects
 				beforeMatrixShaderList = null;
 			}
 			
+			basicShader = null;
+			lastShader = null;
 			zBiasShader = null;
 			_geometry = null;
 			_key = null;

@@ -319,7 +319,6 @@ package net.morocoshi.moja3d.resources
 			var i:int;
 			var n:int = items.length;
 			
-			
 			var minX:Number = Number.MAX_VALUE;
 			var minY:Number = Number.MAX_VALUE;
 			var minZ:Number = Number.MAX_VALUE;

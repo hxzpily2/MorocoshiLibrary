@@ -60,14 +60,14 @@ package net.morocoshi.moja3d.shaders.outline
 			
 			vertexConstants.projMatrix = true;
 			vertexConstants.clipMatrix = true;
-			vertexConstants.viewSize = true;
+			vertexConstants.cameraPosition = true;
 			
 			vertexCode.addCode([
 				"var $normal2",
 				"$normal.xyz = nrm($normal.xyz)",
 				"$normal2.xyz = $normal.xyz",
 				"$normal2.xyz = m33($normal2, @viewMatrix)",//ビュー行列で変換
-				"$normal2.xyz = m44($normal2, @projMatrix)",//プロジェクション行列?で変換
+				"$normal2.xyz = m33($normal2, @projMatrix)",//プロジェクション行列?で変換
 				//"$normal2.xyz = nrm($normal2.xyz)",
 				//"$normal2.xy /= @viewSize.xy",
 				
@@ -75,13 +75,12 @@ package net.morocoshi.moja3d.shaders.outline
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
 				
 				"$normal2.xy *= $pos.zz",
-				"$normal2.xy /= @viewSize.xy",
+				"$normal2.xy /= @cameraPosition.ww",
 				"$normal2.xy *= @outlineSize.xx",
 				"$pos.xy += $normal2.xy",
 				
 				"#spos = $pos",//スクリーン座標
 				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
-				//スクリーン座標
 				"op = $pos.xyzw",
 				
 				//ワールド法線

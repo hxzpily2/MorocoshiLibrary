@@ -1231,6 +1231,8 @@ package net.morocoshi.moja3d.objects
 			if (boundingCube == null)
 			{
 				boundingCube = Global3D.boundingCube.reference() as Mesh;
+				boundingCube.mouseEnabled = false;
+				boundingCube.zbias = 0.001;
 			}
 			
 			if (boundingCube.parent == null)

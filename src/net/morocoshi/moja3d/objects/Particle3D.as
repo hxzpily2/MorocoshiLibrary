@@ -57,8 +57,8 @@ package net.morocoshi.moja3d.objects
 		{
 			if (context3D == null) return;
 			
-			surface.numTriangles = particleList.length * 2;
 			ParticleGeometry(_geometry).update(particleList, context3D);
+			surface.numTriangles = particleList.length * 2;
 		}
 		
 		public function get material():Material 

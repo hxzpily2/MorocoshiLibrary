@@ -14,8 +14,11 @@ package net.morocoshi.moja3d.agal
 		public var viewMatrix:AGALConstant;
 		public var projMatrix:AGALConstant;
 		public var clipMatrix:AGALConstant;
+		/**XYZがカメラのワールド座標。Wはビューサイズに関係なく一定のサイズにできるようにする係数*/
 		public var cameraPosition:AGALConstant;
+		/**カメラのワールド空間における正面ベクトル*/
 		public var cameraDirection:AGALConstant;
+		/**XYがクリッピングを無視したビューポートサイズ。ZWがクリッピングを考慮したビューポートサイズ*/
 		public var viewSize:AGALConstant;
 		public var ambient:AGALConstant;
 		public var number:AGALConstant;

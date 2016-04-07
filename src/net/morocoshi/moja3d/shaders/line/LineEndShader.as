@@ -1,25 +1,22 @@
-package net.morocoshi.moja3d.shaders.core 
+package net.morocoshi.moja3d.shaders.line 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
-	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
-	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
-	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	
 	/**
 	 * 最後に追加するシェーダー
 	 * 
 	 * @author tencho
 	 */
-	public class EndShader extends MaterialShader 
+	public class LineEndShader extends MaterialShader 
 	{
 		private var depthShader:DepthEndShader;
 		private var geometry:Geometry;
 		
-		public function EndShader(geometry:Geometry) 
+		public function LineEndShader(geometry:Geometry) 
 		{
 			super();
 			this.geometry = geometry;
@@ -32,7 +29,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getKey():String 
 		{
-			return "EndShader:";
+			return "LineEndShader:";
 		}
 		
 		override protected function updateAlphaMode():void
@@ -55,12 +52,22 @@ package net.morocoshi.moja3d.shaders.core
 		{
 			super.updateShaderCode();
 			
+			var va:String = "va" + geometry.getAttributeIndex(VertexAttribute.LINE_VECTOR);
+			
 			vertexConstants.projMatrix = true;
 			vertexConstants.clipMatrix = true;
+			vertexConstants.cameraPosition = true;
 			
 			vertexCode.addCode([
 				"#vpos = $pos",
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
+				
+				"$thick.xy *= $pos.zz",
+				"$thick.xy /= @cameraPosition.ww",
+				"$thick.xy *= " + va + ".ww",
+				"$pos.xy += $thick.xy",
+				
+				
 				"#spos = $pos",//スクリーン座標
 				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
 				"op = $pos.xyzw"
@@ -82,7 +89,7 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function clone():MaterialShader 
 		{
-			return new EndShader(geometry);
+			return new LineEndShader(geometry);
 		}
 		
 	}

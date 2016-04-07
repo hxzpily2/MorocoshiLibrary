@@ -102,12 +102,16 @@ package net.morocoshi.moja3d.renderer
 				
 				//カメラのワールド座標
 				cameraMatrix = camera.worldMatrix;
+				//ビューサイズに関係なく一定のサイズにできるようにする係数
+				var viewScale:Number = scene.view.height / Math.tan(camera.getVerticalFOV(scene.view.clipping) * 0.5) * 0.5;
 				collector.vertexConstant.cameraPosition.x = cameraMatrix.rawData[12];
 				collector.vertexConstant.cameraPosition.y = cameraMatrix.rawData[13];
 				collector.vertexConstant.cameraPosition.z = cameraMatrix.rawData[14];
+				collector.vertexConstant.cameraPosition.w = viewScale;
 				collector.fragmentConstant.cameraPosition.x = cameraMatrix.rawData[12];
 				collector.fragmentConstant.cameraPosition.y = cameraMatrix.rawData[13];
 				collector.fragmentConstant.cameraPosition.z = cameraMatrix.rawData[14];
+				collector.fragmentConstant.cameraPosition.w = viewScale;
 				//カメラの角度（Z軸ベクトル）
 				collector.vertexConstant.cameraDirection.x = cameraMatrix.rawData[8];
 				collector.vertexConstant.cameraDirection.y = cameraMatrix.rawData[9];

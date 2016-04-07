@@ -8,11 +8,13 @@ package net.morocoshi.moja3d.resources
 	 */
 	public class LineSegment 
 	{
-		public var pointList:Vector.<Vector3D>;
+		public var thickness:Number;
+		public var pointList:Vector.<LinePoint>;
 		
 		public function LineSegment() 
 		{
-			pointList = new Vector.<Vector3D>;
+			thickness = 1;
+			pointList = new Vector.<LinePoint>;
 		}
 		
 	}

@@ -18,6 +18,7 @@ package net.morocoshi.moja3d.resources
 		static public const BONEWEIGHT2:int = 8;
 		static public const SIZE:int = 9;
 		static public const SCALE9:int = 10;
+		static public const LINE_VECTOR:int = 11;
 		
 		public function VertexAttribute() 
 		{

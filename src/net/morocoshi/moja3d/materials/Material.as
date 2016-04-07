@@ -269,7 +269,7 @@ package net.morocoshi.moja3d.materials
 					shaderData = { };
 					var renderShader:ShaderList = new ShaderList();
 					renderShader.name = mesh.name;
-					renderShader.addShader(new BasicShader(geometry));
+					renderShader.addShader(mesh.basicShader || new BasicShader(geometry));
 					if (mesh.beforeMatrixShaderList) renderShader.attach(mesh.beforeMatrixShaderList);
 					renderShader.addShader(new ModelTransformShader(geometry));
 					if (mesh.startShaderList) renderShader.attach(mesh.startShaderList);
@@ -280,7 +280,7 @@ package net.morocoshi.moja3d.materials
 					if (mesh.afterViewShaderList) renderShader.attach(mesh.afterViewShaderList);
 					if (collector.useObjectColorTransform) renderShader.addShader(mesh.colorTransformShader);
 					if (mesh.zbias != 0) renderShader.addShader(mesh.zBiasShader);
-					renderShader.addShader(new EndShader(geometry));
+					renderShader.addShader(mesh.lastShader || new EndShader(geometry));
 					
 					renderShader.updateFromGeometry(geometry);
 					/*
@@ -377,7 +377,7 @@ package net.morocoshi.moja3d.materials
 					shaderData = { };
 					
 					var reflectShader:ShaderList = new ShaderList();
-					reflectShader.addShader(new BasicShader(geometry));
+					reflectShader.addShader(mesh.basicShader || new BasicShader(geometry));
 					if (mesh.beforeMatrixShaderList) reflectShader.attach(mesh.beforeMatrixShaderList);
 					reflectShader.addShader(new ModelTransformShader(geometry));
 					reflectShader.addShader(collector.reflectiveWater.killShader);
@@ -389,7 +389,7 @@ package net.morocoshi.moja3d.materials
 					if (mesh.afterViewShaderList) reflectShader.attach(mesh.afterViewShaderList);
 					if (collector.useObjectColorTransform) reflectShader.addShader(mesh.colorTransformShader);
 					if (mesh.zbias != 0) reflectShader.addShader(mesh.zBiasShader);
-					reflectShader.addShader(new EndShader(geometry));
+					reflectShader.addShader(mesh.lastShader || new EndShader(geometry));
 					reflectShader.updateFromGeometry(geometry);
 					
 					AGALCache.shader[reflectKey] = shaderData;
@@ -422,7 +422,7 @@ package net.morocoshi.moja3d.materials
 				shaderData = { };
 				AGALCache.shader[maskKey] = shaderData;
 				var result:ShaderList = new ShaderList();
-				result.addShader(new BasicShader(geometry));
+				result.addShader(mesh.basicShader || new BasicShader(geometry));
 				if (mesh.beforeMatrixShaderList) result.attach(mesh.beforeMatrixShaderList);
 				result.addShader(new ModelTransformShader(geometry));
 				if (mesh.startShaderList) result.attachExtra(mesh.startShaderList, RenderPhase.MASK);
@@ -432,7 +432,7 @@ package net.morocoshi.moja3d.materials
 				if (mesh.endShaderList) result.attachExtra(mesh.endShaderList, RenderPhase.MASK);
 				result.addShader(AGALCache.viewShaderList);
 				if (mesh.afterViewShaderList) result.attach(mesh.afterViewShaderList);
-				result.addShader(new EndShader(geometry));
+				result.addShader(mesh.lastShader || new EndShader(geometry));
 				//___ここは？
 				result.updateFromGeometry(geometry);
 				

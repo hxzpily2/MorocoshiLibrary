@@ -67,6 +67,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.LineGeometry;
+	import net.morocoshi.moja3d.resources.LinePoint;
 	import net.morocoshi.moja3d.resources.LineSegment;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourcePack;
@@ -855,9 +856,14 @@ package net.morocoshi.moja3d.loader
 				{
 					var m3dSegment:M3DLineSegment = m3dLineGeom.segmentList[i];
 					var segment:LineSegment = new LineSegment();
-					segment.pointList = m3dSegment.pointList.concat();
+					var m:int = m3dSegment.pointList.length;
+					for (var j:int = 0; j < m; j++) 
+					{
+						var v:Vector3D = m3dSegment.pointList[j];
+						segment.pointList.push(new LinePoint(v.x, v.y, v.z));
+					}
 					lineGeom.segmentList.push(segment);
-				} 
+				}
 				return lineGeom;
 			}
 			
