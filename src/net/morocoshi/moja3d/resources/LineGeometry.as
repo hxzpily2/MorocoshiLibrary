@@ -7,6 +7,8 @@ package net.morocoshi.moja3d.resources
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
+	use namespace moja3d;
+	
 	/**
 	 * ...
 	 * 
@@ -14,8 +16,8 @@ package net.morocoshi.moja3d.resources
 	 */
 	public class LineGeometry extends Geometry 
 	{
-		public var segmentList:Vector.<LineSegment>;
-		public var alphaTransform:uint;
+		public var segments:Vector.<LineSegment>;
+		moja3d var alphaTransform:uint;
 		private var vertices:Vector.<Number>;
 		private var vectors:Vector.<Number>;
 		private var uvs:Vector.<Number>;
@@ -26,7 +28,7 @@ package net.morocoshi.moja3d.resources
 		{
 			super();
 			alphaTransform = AlphaTransform.UNCHANGE;
-			segmentList = new Vector.<LineSegment>;
+			segments = new Vector.<LineSegment>;
 			
 			vertices = new Vector.<Number>;
 			vectors = new Vector.<Number>;
@@ -49,14 +51,14 @@ package net.morocoshi.moja3d.resources
 			var maxY:Number = -Number.MAX_VALUE;
 			var maxZ:Number = -Number.MAX_VALUE;
 			
-			var n:int = segmentList.length;
+			var n:int = segments.length;
 			for (var i:int = 0; i < n; i++)
 			{
-				var segment:LineSegment = segmentList[i];
-				var m:int = segment.pointList.length;
+				var seg:LineSegment = segments[i];
+				var m:int = seg.points.length;
 				for (var j:int = 0; j < m; j++)
 				{
-					var p:LinePoint = segment.pointList[j];
+					var p:LinePoint = seg.points[j];
 					if (minX > p.x) minX = p.x;
 					if (minY > p.y) minY = p.y;
 					if (minZ > p.z) minZ = p.z;
@@ -95,24 +97,24 @@ package net.morocoshi.moja3d.resources
 			
 			var alphaElement:uint = 0;
 			var offset:int = 0;
-			var n:int = segmentList.length;
+			var n:int = segments.length;
 			for (var i:int = 0; i < n; i++)
 			{
-				var segment:LineSegment = segmentList[i];
-				var thick:Number = segment.thickness * 0.5;
+				var seg:LineSegment = segments[i];
+				var thick:Number = seg.thickness * 0.5;
 				var j:int;
-				var m:int = segment.pointList.length;
+				var m:int = seg.points.length;
 				for (j = 0; j < m; j++)
 				{
-					var a:Number = segment.pointList[j].alpha;
+					var a:Number = seg.points[j].alpha;
 					if (a < 1) alphaElement |= 0xf00;
 					if (a == 1) alphaElement |= 0x0f0;
 					if (a > 1) alphaElement |= 0x00f;
 				}
 				for (j = 0; j < m - 1; j++)
 				{
-					var p1:LinePoint = segment.pointList[j];
-					var p2:LinePoint = segment.pointList[j + 1];
+					var p1:LinePoint = seg.points[j];
+					var p2:LinePoint = seg.points[j + 1];
 					vertices.push(p1.x, p1.y, p1.z);
 					vertices.push(p1.x, p1.y, p1.z);
 					vertices.push(p2.x, p2.y, p2.z);
@@ -143,6 +145,13 @@ package net.morocoshi.moja3d.resources
 			
 			dispose();
 			upload(context3D, false);
+		}
+		
+		public function addSegment(thickness:Number = 1):LineSegment 
+		{
+			var segment:LineSegment = new LineSegment(thickness);
+			segments.push(segment);
+			return segment;
 		}
 		
 	}

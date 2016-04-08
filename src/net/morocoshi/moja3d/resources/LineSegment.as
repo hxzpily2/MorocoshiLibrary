@@ -9,12 +9,25 @@ package net.morocoshi.moja3d.resources
 	public class LineSegment 
 	{
 		public var thickness:Number;
-		public var pointList:Vector.<LinePoint>;
+		public var points:Vector.<LinePoint>;
 		
-		public function LineSegment() 
+		public function LineSegment(thickness:Number = 1) 
 		{
-			thickness = 1;
-			pointList = new Vector.<LinePoint>;
+			this.thickness = thickness;
+			points = new Vector.<LinePoint>;
+		}
+		
+		public function addPoint(x:Number, y:Number, z:Number, color:uint = 0xffffff, alpha:Number = 1):LinePoint 
+		{
+			var p:LinePoint = new LinePoint(x, y, z, color, alpha);
+			points.push(p);
+			return p;
+		}
+		
+		public function close():void 
+		{
+			if (points.length == 0) return;
+			points.push(points[0]);
 		}
 		
 	}

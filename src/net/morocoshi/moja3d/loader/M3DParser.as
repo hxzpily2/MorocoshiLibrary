@@ -855,14 +855,13 @@ package net.morocoshi.moja3d.loader
 				for (var i:int = 0; i < n; i++) 
 				{
 					var m3dSegment:M3DLineSegment = m3dLineGeom.segmentList[i];
-					var segment:LineSegment = new LineSegment();
+					var segment:LineSegment = lineGeom.addSegment();
 					var m:int = m3dSegment.pointList.length;
 					for (var j:int = 0; j < m; j++) 
 					{
 						var v:Vector3D = m3dSegment.pointList[j];
-						segment.pointList.push(new LinePoint(v.x, v.y, v.z));
+						segment.addPoint(v.x, v.y, v.z);
 					}
-					lineGeom.segmentList.push(segment);
 				}
 				return lineGeom;
 			}

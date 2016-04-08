@@ -26,7 +26,7 @@ package net.morocoshi.moja3d.resources
 		 * @param	color
 		 * @param	alpha
 		 */
-		public function LinePoint(x:Number = 0, y:Number = 0, z:Number = 0, color:uint = 0xffffff, alpha:Number = 1) 
+		public function LinePoint(x:Number, y:Number, z:Number, color:uint = 0xffffff, alpha:Number = 1) 
 		{
 			this.x = x;
 			this.y = y;
@@ -34,12 +34,7 @@ package net.morocoshi.moja3d.resources
 			this.color = color;
 			this.alpha = alpha;
 		}
-		/*
-		public function toVector():Vector3D 
-		{
-			return new Vector3D(x, y, z);
-		}
-		*/
+		
 		public function get color():uint 
 		{
 			return _color;
