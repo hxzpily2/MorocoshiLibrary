@@ -55,7 +55,7 @@ package net.morocoshi.moja3d.objects
 		public var renderChildren:Boolean;
 		moja3d var _inCameraView:Boolean;
 		private var _showBoundingBox:Boolean;
-		private var boundingCube:Mesh;
+		private var boundingCube:Line3D;
 		
 		private var _colorTransform:ColorTransform;
 		private var _containerColorTransform:ColorTransform;
@@ -1230,7 +1230,7 @@ package net.morocoshi.moja3d.objects
 			
 			if (boundingCube == null)
 			{
-				boundingCube = Global3D.boundingCube.reference() as Mesh;
+				boundingCube = Global3D.boundingCube.reference() as Line3D;
 				boundingCube.mouseEnabled = false;
 				boundingCube.zbias = 0.001;
 			}

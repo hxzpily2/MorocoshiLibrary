@@ -35,8 +35,6 @@ package net.morocoshi.moja3d.objects
 			startShaderList = new ShaderList();
 			startShaderList.addShader(lineShader);
 			lastShader = new LineEndShader(_geometry);
-			//afterViewShaderList = new ShaderList();
-			//afterViewShaderList.addShader(new LineEndShader(_geometry));
 		}
 		
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 

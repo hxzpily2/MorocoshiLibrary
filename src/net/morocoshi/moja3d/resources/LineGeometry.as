@@ -1,9 +1,7 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
-	import net.morocoshi.moja3d.shaders.AlphaState;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
@@ -78,16 +76,7 @@ package net.morocoshi.moja3d.resources
 		
 		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
 		{
-			if (vertexIndices.length == 0)
-			{
-				dispose();
-				return false;
-			}
-			return super.upload(context3D, async, complete);
-		}
-		
-		public function update(context3D:ContextProxy):void 
-		{
+			//メッシュを再生性
 			vertices.length = 0;
 			vectors.length = 0;
 			uvs.length = 0;
@@ -137,14 +126,18 @@ package net.morocoshi.moja3d.resources
 				}
 			}
 			
+			//全頂点の透過状態から適切なアルファ設定を決める
 			if (alphaElement & 0x00f) alphaTransform = AlphaTransform.SET_UNKNOWN;
 			else if ((alphaElement & 0xff0) == 0xff0) alphaTransform = AlphaTransform.SET_MIXTURE;
 			else if (alphaElement & 0x0f0) alphaTransform = AlphaTransform.SET_OPAQUE;
 			else if (alphaElement & 0xf00) alphaTransform = AlphaTransform.SET_TRANSPARENT;
 			else alphaTransform = AlphaTransform.UNCHANGE;
 			
+			
 			dispose();
-			upload(context3D, false);
+			if (vertexIndices.length == 0) return false;
+			
+			return super.upload(context3D, async, complete);
 		}
 		
 		public function addSegment(thickness:Number = 1):LineSegment 

@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.objects 
 {
 	import net.morocoshi.moja3d.materials.Material;
+	
 	/**
 	 * UnionMeshのメッシュ統合処理で使う一時データ
 	 * 

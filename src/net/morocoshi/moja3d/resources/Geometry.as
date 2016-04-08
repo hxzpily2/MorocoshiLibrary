@@ -154,6 +154,7 @@ package net.morocoshi.moja3d.resources
 			
 			if (vertexIndices.length > 524287)
 			{
+				throw new Error("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
 				dispose();
 				return false;
 			}
