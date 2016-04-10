@@ -631,6 +631,13 @@ package net.morocoshi.moja3d.view
 			return dialog;
 		}
 		
+		/**
+		 * シーン内のオブジェクトのマウスイベントを有効にする
+		 * @param	stage	マウスイベントに使うStageオブジェクト
+		 * @param	click	メッシュオブジェクト上でのマウスダウンとマウスアップ時のイベントを拾えるようにする。クリック時にのみ負荷が発生する。
+		 * @param	move	マウスを動かしたり、マウス位置のオブジェクトが動いたりした時のイベントを拾えるようにする。継続的に負荷が発生する。
+		 * @param	delay	move=true時に、delayミリ秒の感覚でマウス位置のオブジェクトを判定する。
+		 */
 		public function startMouseInteraction(stage:Stage, click:Boolean, move:Boolean, delay:Number = 33):void 
 		{
 			this.stage = stage;
@@ -652,6 +659,9 @@ package net.morocoshi.moja3d.view
 			}
 		}
 		
+		/**
+		 * シーン内のオブジェクトのマウスイベントを停止する
+		 */
 		public function stopMouseInteraction():void 
 		{
 			if (mouseMoveTimer)
