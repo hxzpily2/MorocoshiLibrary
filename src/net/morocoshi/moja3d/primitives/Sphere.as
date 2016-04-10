@@ -6,7 +6,8 @@ package net.morocoshi.moja3d.primitives
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	
 	/**
-	 * ...
+	 * 球体
+	 * 
 	 * @author tencho
 	 */
 	public class Sphere extends Mesh 

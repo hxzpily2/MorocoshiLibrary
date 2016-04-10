@@ -4,17 +4,17 @@ package net.morocoshi.moja3d.shaders
 	import flash.display3D.Program3D;
 	import flash.utils.ByteArray;
 	import net.morocoshi.common.data.DataUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALInfo;
 	import net.morocoshi.moja3d.agal.UsingConstants;
 	import net.morocoshi.moja3d.materials.Material;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.Geometry;
+	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.core.AlphaPassShader;
 	import net.morocoshi.moja3d.shaders.core.OpaquePassShader;
-	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.render.KillShader;
 	import net.morocoshi.moja3d.shaders.render.LightShader;
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
@@ -237,6 +237,20 @@ package net.morocoshi.moja3d.shaders
 				}
 			}
 			return null;
+		}
+		
+		public function removeShaderAs(classType:Class):Boolean 
+		{
+			var n:int = shaders.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				var shader:MaterialShader = shaders[i];
+				if (shader is classType)
+				{
+					return removeShader(shader);
+				}
+			}
+			return false;
 		}
 		
 		/**

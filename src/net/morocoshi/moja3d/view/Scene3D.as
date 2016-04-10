@@ -76,7 +76,12 @@ package net.morocoshi.moja3d.view
 		public var tpv:MouseDrag3D;
 		public var fpv:FPVController;
 		
+		/**
+		 * マウスイベントを有効にした際に使うマウス判定の処理で、カメラ位置からの有効な距離。
+		 * この距離を短くするほどクリックなどの判定がカメラに近い位置でしかされなくなるが、その分処理が軽くなる。
+		 */
 		public var mouseDistance:Number;
+		
 		private var mouseMoveTimer:Timer;
 		private var lastMouseDownObject:Object3D;
 		private var lastMouseMoveObject:Object3D;
@@ -106,7 +111,7 @@ package net.morocoshi.moja3d.view
 			ray = new CollisionRay();
 			dispatchedComplete = false;
 			fillMaskTextureOrder = true;
-			mouseDistance = 10000000;
+			mouseDistance = Infinity;
 			lastMousePoint = new Vector3D(NaN, NaN, NaN);
 			viewRect = new Rectangle(0, 0, 0, 0);
 			renderer = new Renderer();
@@ -626,10 +631,10 @@ package net.morocoshi.moja3d.view
 			return dialog;
 		}
 		
-		public function startMouseInteraction(stage:Stage, updown:Boolean, move:Boolean, delay:Number = 33):void 
+		public function startMouseInteraction(stage:Stage, click:Boolean, move:Boolean, delay:Number = 33):void 
 		{
 			this.stage = stage;
-			if (updown)
+			if (click)
 			{
 				stage.addEventListener(MouseEvent.MOUSE_DOWN, stage_mouseDownHandler);
 				stage.addEventListener(MouseEvent.MOUSE_UP, stage_mouseUpHandler);
@@ -645,28 +650,6 @@ package net.morocoshi.moja3d.view
 				mouseMoveTimer.addEventListener(TimerEvent.TIMER, mouse_timerHandler);
 				mouseMoveTimer.start();
 			}
-		}
-		
-		private function mouse_timerHandler(e:TimerEvent):void 
-		{
-			var results:Vector.<CollisionResult> = getIntersectionData(stage.mouseX, stage.mouseY);
-			var current:Object3D = null;
-			if (results.length > 0)
-			{
-				var result:CollisionResult = results[0];
-				current = result.target;
-				if (lastMouseMoveObject != current || lastMousePoint.equals(result.localPosition) == false)
-				{
-					lastMousePoint.copyFrom(result.localPosition);
-					current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
-				}
-			}
-			if (lastMouseMoveObject != current)
-			{
-				if (current) current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OVER, null));
-				if (lastMouseMoveObject) lastMouseMoveObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OUT, null));
-			}
-			lastMouseMoveObject = current;
 		}
 		
 		public function stopMouseInteraction():void 
@@ -685,30 +668,64 @@ package net.morocoshi.moja3d.view
 			}
 		}
 		
-		private function stage_mouseUpHandler(e:MouseEvent):void 
+		private function mouse_timerHandler(e:TimerEvent):void 
 		{
-			var results:Vector.<CollisionResult> = getIntersectionData(e.stageX, e.stageY);
+			var results:Vector.<CollisionResult> = getIntersectionData(stage.mouseX, stage.mouseY);
+			var current:Object3D = null;
 			if (results.length > 0)
 			{
 				var result:CollisionResult = results[0];
+				current = result.target;
+				if (lastMouseMoveObject != current || lastMousePoint.equals(result.localPosition) == false)
+				{
+					lastMousePoint.copyFrom(result.localPosition);
+					current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
+				}
+				dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, result));
+			}
+			else if (lastMouseMoveObject != current)
+			{
+				//オブジェクトからマウスアウトしたら一度だけ呼び出す
+				dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_MOVE, null));
+			}
+			
+			//マウスオーバーした対象が変化した場合
+			if (lastMouseMoveObject != current)
+			{
+				if (current) current.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OVER, null));
+				if (lastMouseMoveObject) lastMouseMoveObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_OUT, null));
+			}
+			lastMouseMoveObject = current;
+		}
+		
+		private function stage_mouseUpHandler(e:MouseEvent):void 
+		{
+			var results:Vector.<CollisionResult> = getIntersectionData(e.stageX, e.stageY);
+			var result:CollisionResult = null;
+			if (results.length > 0)
+			{
+				result = results[0];
 				result.target.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_UP, result));
 				if (lastMouseDownObject == result.target)
 				{
 					lastMouseDownObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.CLICK, result));
 				}
 			}
+			dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_UP, result));
 			lastMouseDownObject = null;
 		}
 		
 		private function stage_mouseDownHandler(e:MouseEvent):void 
 		{
 			var results:Vector.<CollisionResult> = getIntersectionData(e.stageX, e.stageY);
+			var result:CollisionResult = null;
 			if (results.length > 0)
 			{
-				var result:CollisionResult = results[0];
+				result = results[0];
 				lastMouseDownObject = result.target;
 				lastMouseDownObject.dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_DOWN, result));
 			}
+			dispatchEvent(new MouseEvent3D(MouseEvent3D.MOUSE_DOWN, result));
 		}
 		
 		/**

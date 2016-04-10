@@ -3,7 +3,7 @@ package net.morocoshi.moja3d.resources
 	import flash.geom.Vector3D;
 	
 	/**
-	 * ...
+	 * ラインの頂点
 	 * 
 	 * @author tencho
 	 */
@@ -19,7 +19,6 @@ package net.morocoshi.moja3d.resources
 		public var alpha:Number;
 		
 		/**
-		 * 
 		 * @param	x
 		 * @param	y
 		 * @param	z
@@ -33,6 +32,18 @@ package net.morocoshi.moja3d.resources
 			this.z = z;
 			this.color = color;
 			this.alpha = alpha;
+		}
+		
+		public function getVector3D():Vector3D 
+		{
+			return new Vector3D(x, y, z);
+		}
+		
+		public function setVector3D(v:Vector3D):void 
+		{
+			x = v.x;
+			y = v.y;
+			z = v.z;
 		}
 		
 		public function get color():uint 

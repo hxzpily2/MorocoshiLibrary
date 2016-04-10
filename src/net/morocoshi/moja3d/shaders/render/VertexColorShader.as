@@ -37,13 +37,13 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "VertexColorShader:" + colorBlend + "_" + alphaBlend;
+			return "VertexColorShader:" + _colorBlend + "_" + _alphaBlend;
 		}
 		
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaTransform = AlphaTransform.SET_MIXTURE;
+			alphaTransform = (_alphaBlend == "")? AlphaTransform.UNCHANGE : AlphaTransform.SET_MIXTURE;
 		}
 		
 		override protected function updateTexture():void 
@@ -64,6 +64,7 @@ package net.morocoshi.moja3d.shaders.render
 			{
 				switch(_colorBlend)
 				{
+					case "": break;
 					case BlendMode.ADD:			fragmentCode.addCode(["$output.xyzw += #vcolor.xyzw"]); break;
 					case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.xyzw -= #vcolor.xyzw"]); break;
 					case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.xyzw *= #vcolor.xyzw"]); break;
@@ -75,6 +76,7 @@ package net.morocoshi.moja3d.shaders.render
 			
 			switch(_colorBlend)
 			{
+				case "": break;
 				case BlendMode.ADD:			fragmentCode.addCode(["$output.xyz += #vcolor.xyz"]); break;
 				case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.xyz -= #vcolor.xyz"]); break;
 				case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.xyz *= #vcolor.xyz"]); break;
@@ -83,6 +85,7 @@ package net.morocoshi.moja3d.shaders.render
 			}
 			switch(_alphaBlend)
 			{
+				case "": break;
 				case BlendMode.ADD:			fragmentCode.addCode(["$output.w += #vcolor.w"]); break;
 				case BlendMode.SUBTRACT:	fragmentCode.addCode(["$output.w -= #vcolor.w"]); break;
 				case BlendMode.MULTIPLY:	fragmentCode.addCode(["$output.w *= #vcolor.w"]); break;
@@ -105,6 +108,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			_colorBlend = value;
 			updateShaderCode();
+			updateAlphaMode();
 		}
 		
 		public function get alphaBlend():String 
@@ -116,6 +120,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			_alphaBlend = value;
 			updateShaderCode();
+			updateAlphaMode();
 		}
 		
 	}

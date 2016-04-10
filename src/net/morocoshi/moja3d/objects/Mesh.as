@@ -56,7 +56,6 @@ package net.morocoshi.moja3d.objects
 		public var zBiasShader:ZBiasShader;
 		public var lastShader:MaterialShader;
 		
-		public var mouseEnabled:Boolean;
 		public var mouseDoubleSided:Boolean;
 		moja3d var outlineShader:OutlineColorShader;
 		moja3d var _outlineEnabled:Boolean;
@@ -80,7 +79,6 @@ package net.morocoshi.moja3d.objects
 			updateSeed();
 			_zbias = 0;
 			_renderable = true;
-			mouseEnabled = true;
 			mouseDoubleSided = false;
 			layer = RenderLayer.OPAQUE;
 			_geometry = new Geometry();

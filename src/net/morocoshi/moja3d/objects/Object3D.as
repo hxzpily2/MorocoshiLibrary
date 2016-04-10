@@ -53,6 +53,11 @@ package net.morocoshi.moja3d.objects
 		public var boundingBox:BoundingBox;
 		/**子以下をレンダリング対象に含めるか*/
 		public var renderChildren:Boolean;
+		
+		/***/
+		public var mouseEnabled:Boolean;
+		public var mouseChildren:Boolean;
+		
 		moja3d var _inCameraView:Boolean;
 		private var _showBoundingBox:Boolean;
 		private var boundingCube:Line3D;
@@ -129,6 +134,8 @@ package net.morocoshi.moja3d.objects
 			castShadowChildren = true;
 			castLightChildren = true;
 			reflectChildren = true;
+			mouseEnabled = true;
+			mouseChildren = true;
 			
 			renderMask = -1;
 			containerRenderMask = -1;
@@ -1573,7 +1580,7 @@ package net.morocoshi.moja3d.objects
 		
 		public function intersectRay(ray:CollisionRay):Boolean 
 		{
-			if (_visible == false) return false;
+			if (_visible == false || (mouseEnabled == false && mouseChildren == false)) return false;
 			
 			for (var current:Object3D = _children; current; current = current._next)
 			{
