@@ -16,7 +16,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _color:uint;
 		private var _alpha:Number;
 		private var colorConstant:AGALConstant;
-		private var depthShader:DepthAlphaShader;
+		private var shadowShader:DepthAlphaShader;
 		
 		public function FillShader(rgb:uint, alpha:Number) 
 		{
@@ -92,9 +92,9 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			_alpha = value;
 			colorConstant.vector[3] = _alpha;
-			if (depthShader)
+			if (shadowShader)
 			{
-				depthShader.alpha = _alpha;
+				shadowShader.alpha = _alpha;
 			}
 			updateAlphaMode();
 		}
@@ -106,13 +106,9 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
-				if (depthShader == null)
-				{
-					depthShader = new DepthAlphaShader(_alpha);
-				}
-				return depthShader;
+				return shadowShader || (shadowShader = new DepthAlphaShader(_alpha));
 			}
 			return null;
 		}

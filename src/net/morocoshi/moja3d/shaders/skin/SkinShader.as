@@ -26,7 +26,7 @@ package net.morocoshi.moja3d.shaders.skin
 		private var boneList:Vector.<Bone>;
 		private var skin:Skin;
 		private var skinConst:AGALConstant;
-		private var depthSkinShader:DepthSkinShader;
+		private var shadowSkinShader:DepthSkinShader;
 		private var outlineSkinShader:SkinShader;
 		private var reflectSkinShader:SkinShader;
 		private var maskSkinShader:SkinShader;
@@ -232,15 +232,15 @@ package net.morocoshi.moja3d.shaders.skin
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
-				if (depthSkinShader == null)
+				if (shadowSkinShader == null)
 				{
-					depthSkinShader = new DepthSkinShader();
-					depthSkinShader.setSkinGeometry(geometry);
-					depthSkinShader.initializeBones(boneList, skin);
+					shadowSkinShader = new DepthSkinShader();
+					shadowSkinShader.setSkinGeometry(geometry);
+					shadowSkinShader.initializeBones(boneList, skin);
 				}
-				return depthSkinShader;
+				return shadowSkinShader;
 			}
 			if (phase == RenderPhase.OUTLINE)
 			{

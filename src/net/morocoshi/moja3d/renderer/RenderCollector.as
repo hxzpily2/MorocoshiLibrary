@@ -306,7 +306,7 @@ package net.morocoshi.moja3d.renderer
 				reflectiveWater.clear();
 			}
 			//デプスレンダリング時はライト数が変化するとまずいので
-			if (renderPhase != RenderPhase.DEPTH)
+			if (renderPhase != RenderPhase.SHADOW)
 			{
 				sunShadowList.length = 0;
 				shadowShaderLink = new Dictionary();
@@ -497,8 +497,8 @@ package net.morocoshi.moja3d.renderer
 			for (i = 0; i < n; i++) 
 			{
 				shadow = shadowConstantList[i];
-				shadow.setVertexEnabled(vertex.shadow && renderPhase != RenderPhase.DEPTH);
-				shadow.setFragmentEnabled(fragment.shadow && renderPhase != RenderPhase.DEPTH);
+				shadow.setVertexEnabled(vertex.shadow && renderPhase != RenderPhase.SHADOW);
+				shadow.setFragmentEnabled(fragment.shadow && renderPhase != RenderPhase.SHADOW);
 			}
 			
 			n = sunLightConstantList.length;

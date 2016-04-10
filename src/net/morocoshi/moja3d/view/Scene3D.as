@@ -487,11 +487,11 @@ package net.morocoshi.moja3d.view
 				for (i = 0; i < n; i++) 
 				{
 					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, null, true, this, RenderPhase.DEPTH);
+					collector.collect(rootObject, light._mainShadow, null, true, this, RenderPhase.SHADOW);
 					renderer.renderShadowMap(collector, light._mainShadow);
 					if (light._wideShadow)
 					{
-						collector.collect(rootObject, light._wideShadow, null, true, this, RenderPhase.DEPTH);
+						collector.collect(rootObject, light._wideShadow, null, true, this, RenderPhase.SHADOW);
 						renderer.renderShadowMap(collector, light._wideShadow);
 					}
 				}

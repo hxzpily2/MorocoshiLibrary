@@ -54,7 +54,7 @@ package net.morocoshi.moja3d.objects
 			{
 				//ライト収集（デプス時以外）
 				var phase:String = collector.renderPhase;
-				if (phase != RenderPhase.DEPTH && phase != RenderPhase.LIGHT)
+				if (phase != RenderPhase.SHADOW && phase != RenderPhase.LIGHT)
 				{
 					collector.addLight3D(this);
 				}

@@ -14,7 +14,7 @@ package net.morocoshi.moja3d.shaders.core
 	 */
 	public class ModelTransformShader extends MaterialShader 
 	{
-		private var depthShader:DepthMatrixShader;
+		private var shadowShader:DepthMatrixShader;
 		private var geometry:Geometry;
 		
 		public function ModelTransformShader(geometry:Geometry) 
@@ -77,9 +77,9 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
-				return depthShader || (depthShader = new DepthMatrixShader(geometry));
+				return shadowShader || (shadowShader = new DepthMatrixShader(geometry));
 			}
 			if (phase == RenderPhase.OUTLINE)
 			{

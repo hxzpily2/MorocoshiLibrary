@@ -339,7 +339,7 @@ package net.morocoshi.moja3d.materials
 			}
 			
 			//デプスマップ用
-			if (phase == RenderPhase.DEPTH || phase == RenderPhase.LIGHT)
+			if (phase == RenderPhase.SHADOW || phase == RenderPhase.LIGHT)
 			{
 				var depthKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/depth";
 				shaderData = AGALCache.shader[depthKey];

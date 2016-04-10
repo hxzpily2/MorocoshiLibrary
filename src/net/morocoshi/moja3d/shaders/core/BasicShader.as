@@ -18,7 +18,7 @@ package net.morocoshi.moja3d.shaders.core
 	 */
 	public class BasicShader extends MaterialShader 
 	{
-		private var depthShader:DepthBasicShader;
+		private var shadowShader:DepthBasicShader;
 		private var outlineShader:OutlineBasicShader;
 		private var geometry:Geometry;
 		
@@ -125,9 +125,9 @@ package net.morocoshi.moja3d.shaders.core
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
-				return depthShader || (depthShader = new DepthBasicShader(geometry));
+				return shadowShader || (shadowShader = new DepthBasicShader(geometry));
 			}
 			if (phase == RenderPhase.OUTLINE)
 			{

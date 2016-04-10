@@ -99,7 +99,7 @@ package net.morocoshi.moja3d.shaders.render
 			{
 				return new OpacityShader(resource, _mipmap, _smoothing, _tiling);
 			}
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
 				return new DepthOpacityShader(resource, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
 			}

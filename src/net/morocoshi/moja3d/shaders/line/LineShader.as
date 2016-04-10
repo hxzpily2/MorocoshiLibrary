@@ -1,14 +1,13 @@
 package net.morocoshi.moja3d.shaders.line 
 {
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
-	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class LineShader extends MaterialShader 
@@ -83,7 +82,7 @@ package net.morocoshi.moja3d.shaders.line
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
 				return new LineShader(geometry);
 			}

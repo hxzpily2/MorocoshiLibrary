@@ -937,18 +937,6 @@ package net.morocoshi.moja3d.objects
 		{
 			var phase:String = collector.renderPhase;
 			
-			//Z深度レンダリング時に除外する場合
-			if (phase == RenderPhase.LIGHT && castLightEnabled == false)
-			{
-				return false;
-			}
-			
-			//反射レンダリング時に除外する場合
-			if (phase == RenderPhase.REFLECT && reflectEnabled == false)
-			{
-				return false;
-			}
-			
 			var calcMatrix:Boolean = calculateMatrixOrder || forceCalcMatrix;
 			var calcMyColor:Boolean = calculateMyColorOrder || forceCalcColor;
 			var calcChildColor:Boolean = calculateChildColorOrder || forceCalcColor;
@@ -1045,7 +1033,7 @@ package net.morocoshi.moja3d.objects
 			
 			//デプスシャドウレンダリング時に除外する場合
 			var skipChildren:Boolean = (renderChildren == false)
-			||	(phase == RenderPhase.DEPTH && castShadowChildren == false)
+			||	(phase == RenderPhase.SHADOW && castShadowChildren == false)
 			||	(phase == RenderPhase.LIGHT && castLightChildren == false)
 			||	(phase == RenderPhase.REFLECT && reflectChildren == false);
 			
@@ -1065,9 +1053,12 @@ package net.morocoshi.moja3d.objects
 				}
 			}
 			
-			
+			//Z深度レンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.LIGHT && castLightEnabled == false) return false;
+			//反射レンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.REFLECT && reflectEnabled == false) return false;
 			//デプスシャドウレンダリング時に除外する場合（子はチェックする）
-			if (phase == RenderPhase.DEPTH && castShadowEnabled == false) return false;
+			if (phase == RenderPhase.SHADOW && castShadowEnabled == false) return false;
 			
 			//境界球で除外
 			_inCameraView = !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);

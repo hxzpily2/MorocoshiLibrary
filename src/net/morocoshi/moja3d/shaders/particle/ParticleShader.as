@@ -67,7 +67,7 @@ package net.morocoshi.moja3d.shaders.particle
 		
 		override public function getExtraShader(phase:String):MaterialShader 
 		{
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
 				return new ParticleShader(geometry);
 			}

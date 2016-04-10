@@ -116,7 +116,7 @@ package net.morocoshi.moja3d.objects
 		{
 			if (phase == RenderPhase.NORMAL) renderConstants.push(constant);
 			if (phase == RenderPhase.MASK) maskConstants.push(constant);
-			if (phase == RenderPhase.DEPTH) shadowConstants.push(constant);
+			if (phase == RenderPhase.SHADOW) shadowConstants.push(constant);
 			if (phase == RenderPhase.REFLECT) reflectConstants.push(constant);
 			if (phase == RenderPhase.OUTLINE) outlineConstants.push(constant);
 		}

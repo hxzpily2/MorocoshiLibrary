@@ -3,7 +3,6 @@ package net.morocoshi.moja3d.shaders.render
 	import flash.display.BitmapDataChannel;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
-	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
@@ -22,7 +21,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _tiling:String;
 		private var diffuseTexture:AGALTexture;
 		private var opacityTexture:AGALTexture;
-		private var depthShader:DepthOpacityShader;
+		private var shadowShader:DepthOpacityShader;
 		
 		public function TextureShader(diffuse:TextureResource, opacity:TextureResource = null, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
 		{
@@ -117,7 +116,7 @@ package net.morocoshi.moja3d.shaders.render
 		public function set opacity(value:TextureResource):void 
 		{
 			opacityTexture.texture = value;
-			if (depthShader) depthShader.opacity = value;
+			if (shadowShader) shadowShader.opacity = value;
 			updateAlphaMode();
 			updateShaderCode();
 		}
@@ -177,20 +176,20 @@ package net.morocoshi.moja3d.shaders.render
 			{
 				return opacity? new OpacityShader(opacity, _mipmap, _smoothing, _tiling) : null;
 			}
-			if (phase == RenderPhase.DEPTH)
+			if (phase == RenderPhase.SHADOW)
 			{
-				if (depthShader == null)
+				if (shadowShader == null)
 				{
 					if (opacity)
 					{
-						depthShader = new DepthOpacityShader(opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
+						shadowShader = new DepthOpacityShader(opacity, BitmapDataChannel.RED, _smoothing, _mipmap, _tiling);
 					}
 					else if (diffuse)
 					{
-						depthShader = new DepthOpacityShader(diffuse, BitmapDataChannel.ALPHA, _smoothing, _mipmap, _tiling);
+						shadowShader = new DepthOpacityShader(diffuse, BitmapDataChannel.ALPHA, _smoothing, _mipmap, _tiling);
 					}
 				}
-				return depthShader;
+				return shadowShader;
 			}
 			return null;
 		}

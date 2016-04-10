@@ -36,7 +36,7 @@ package net.morocoshi.moja3d.agal
 			//影要素
 			if (collector.hasShadowElement && collector.sunShadowList.length)
 			{
-				collector.renderPhase = RenderPhase.DEPTH;
+				collector.renderPhase = RenderPhase.SHADOW;
 				collector.clear();
 				collector.setBasicContext();
 				object.collectRenderElements(collector, false, false, false, 1, object.containerRenderMask);

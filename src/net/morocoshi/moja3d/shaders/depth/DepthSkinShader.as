@@ -62,7 +62,7 @@ package net.morocoshi.moja3d.shaders.depth
 			for (var i:int = 0; i < numBones; i++) 
 			{
 				var bone:Bone = bones[i];
-				bone.addConstant(vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true), RenderPhase.DEPTH);
+				bone.addConstant(vertexCode.addConstantListFromMatrix("@boneMatrix" + i + ":", new Matrix3D(), true), RenderPhase.SHADOW);
 				boneList.push(bone);
 			}
 			//[0]スキンMatrix定数の開始インデックス
