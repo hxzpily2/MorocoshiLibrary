@@ -154,7 +154,8 @@ package net.morocoshi.moja3d.resources
 			
 			if (vertexIndices.length > 524287)
 			{
-				throw new Error("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
+				trace("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
+				//throw new Error("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
 				dispose();
 				return false;
 			}
@@ -178,8 +179,10 @@ package net.morocoshi.moja3d.resources
 				var numVertices:int = verticesList[i].length / numAttribute;
 				if (numVertices > 65535)
 				{
+					trace("頂点数の上限は65535です(" + numVertices + ")");
 					dispose();
 					vertexBuffer = null;
+					//throw new Error("頂点数の上限は65535です(" + numVertices + ")");
 					return false;
 				}
 				vertexBuffer = context3D.context.createVertexBuffer(numVertices, numAttribute);
