@@ -49,6 +49,8 @@ package net.morocoshi.moja3d.objects
 			var unionMap:Dictionary = new Dictionary();
 			for each(var mesh:Mesh in getChildren(false, true, Mesh))
 			{
+				if (mesh is Line3D) continue;
+				
 				var geom:Geometry = mesh.geometry;
 				var matrix:Matrix3D = mesh.worldMatrix.clone();
 				matrix.append(containerMatrix);

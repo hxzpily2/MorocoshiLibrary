@@ -13,6 +13,22 @@ package net.morocoshi.common.data
 			
 		}
 		
+		/**
+		 * digitの桁に合うように数値の前に0をつける
+		 * @param	num
+		 * @param	digit
+		 */
+		static public function hex(num:int, digit:int):String
+		{
+			var result:String = String(num);
+			var n:int = digit - result.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				result = "0" + result;
+			}
+			return result;
+		}
+		
 		static public function deleteArray(data:Array):void
 		{
 			if (data == null) return;

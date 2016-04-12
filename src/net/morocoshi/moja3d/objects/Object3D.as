@@ -60,7 +60,7 @@ package net.morocoshi.moja3d.objects
 		
 		moja3d var _inCameraView:Boolean;
 		private var _showBoundingBox:Boolean;
-		private var boundingCube:Line3D;
+		moja3d var boundingCube:Line3D;
 		
 		private var _colorTransform:ColorTransform;
 		private var _containerColorTransform:ColorTransform;
@@ -91,7 +91,8 @@ package net.morocoshi.moja3d.objects
 		private var rawData:Vector.<Number> = new Vector.<Number>(16, true);
 		private var decomposedData:Vector.<Vector3D>;
 		
-		
+		/**これがtrueだと一度だけバウンディング情報に姿勢情報が適用される*/
+		moja3d var calculateBoundingOrder:Boolean;
 		/**これがtrueだとupdate()時に一度だけ色情報が計算される*/
 		moja3d var calculateMyColorOrder:Boolean;
 		moja3d var calculateChildColorOrder:Boolean;
@@ -145,6 +146,7 @@ package net.morocoshi.moja3d.objects
 			calculateBoundsOrder = true;
 			decomposeMatrixOrder = false;
 			recomposeMatrixOrder = false;
+			calculateBoundingOrder = false;
 			transformList = new Vector.<Vector3D>;
 			transformList[0] = new Vector3D(0, 0, 0);//移動
 			transformList[1] = new Vector3D(0, 0, 0);//回転
@@ -594,6 +596,7 @@ package net.morocoshi.moja3d.objects
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
+			target.calculateBoundingOrder = calculateBoundingOrder;
 			target.calculateMyColorOrder = calculateMyColorOrder;
 			target.calculateChildColorOrder = calculateChildColorOrder;
 			target.calculateMatrixOrder = calculateMatrixOrder;
@@ -630,6 +633,7 @@ package net.morocoshi.moja3d.objects
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
+			target.calculateBoundingOrder = calculateBoundingOrder;
 			target.calculateMyColorOrder = calculateMyColorOrder;
 			target.calculateChildColorOrder = calculateChildColorOrder;
 			target.calculateMatrixOrder = calculateMatrixOrder;
@@ -966,13 +970,9 @@ package net.morocoshi.moja3d.objects
 					_worldMatrix.copyFrom(matrix);
 				}
 				
-				if (boundingBox)
-				{
-					boundingBox.transformByMatrix(_worldMatrix, calcBounds);
-				}
 				calculate(collector);
 				calculateMatrixOrder = false;
-				
+				calculateBoundingOrder = true;
 				//XYZスケールがマイナスかどうかチェックし、最終スケールがマイナスなら表示を反転する
 				/*
 				var rx:int = (scaleX >= 0)? 1 : -1;
@@ -981,6 +981,12 @@ package net.morocoshi.moja3d.objects
 				flip = (rx * ry * rz);
 				*/
 			}
+			
+			if (calculateBoundingOrder && boundingBox)
+			{
+				boundingBox.transformByMatrix(_worldMatrix, calcBounds);
+			}
+			calculateBoundingOrder = false;
 			
 			//色計算
 			if (calcMyColor || calcChildColor)
@@ -1230,7 +1236,7 @@ package net.morocoshi.moja3d.objects
 			{
 				boundingCube = Global3D.boundingCube.reference() as Line3D;
 				boundingCube.mouseEnabled = false;
-				boundingCube.zbias = 0.001;
+				boundingCube.zbias = 0.01;
 			}
 			
 			if (boundingCube.parent == null)

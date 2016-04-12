@@ -157,9 +157,9 @@ package net.morocoshi.moja3d.objects
 			{
 				boundingBox = new BoundingBox();
 			}
-			
 			geometry.calculateBounds(boundingBox);
 			boundingBox.updateCenterPoint();
+			calculateBoundingOrder = true;
 		}
 		
 		/**
