@@ -2,16 +2,17 @@ package net.morocoshi.moja3d.loader.optimize
 {
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
-	public class M3DFace 
+	public class M3DFace
 	{
 		public var jointIndices:Vector.<int>;
 		public var vertices:Vector.<M3DVertex>;
 		public var material:int;
 		public var minIndex:int;
 		
-		public function M3DFace() 
+		public function M3DFace()
 		{
 			vertices = new Vector.<M3DVertex>;
 			jointIndices = new Vector.<int>;
@@ -31,7 +32,7 @@ package net.morocoshi.moja3d.loader.optimize
 			vertices.push(v);
 			
 			var index:int;
-			for each (index in v.boneIndex1) 
+			for each (index in v.boneIndex1)
 			{
 				if (jointIndices.indexOf(index) == -1)
 				{

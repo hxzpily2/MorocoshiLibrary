@@ -47,7 +47,7 @@ package net.morocoshi.moja3d.overlay.objects
 		
 		public function set texture(value:TextureResource):void 
 		{
-			imageShader.texture = _texture = value;
+			imageShader.resource = _texture = value;
 		}
 		
 	}

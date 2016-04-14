@@ -7,6 +7,7 @@ package net.morocoshi.moja3d.resources
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.agal.AGALInfo;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.collision.CollisionMesh;
 	import net.morocoshi.moja3d.view.ContextProxy;
@@ -152,10 +153,9 @@ package net.morocoshi.moja3d.resources
 		{
 			if (super.upload(context3D, async, complete) == false) return false;
 			
-			if (vertexIndices.length > 524287)
+			if (vertexIndices.length > AGALInfo.VERTEXINDEX_LIMIT)
 			{
-				trace("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
-				//throw new Error("頂点インデックス数の上限は524287です(" + vertexIndices.length + ")");
+				trace("頂点インデックス数の上限は" + AGALInfo.VERTEXINDEX_LIMIT + "です(" + vertexIndices.length + ")");
 				dispose();
 				return false;
 			}
@@ -177,12 +177,11 @@ package net.morocoshi.moja3d.resources
 					return false;
 				}
 				var numVertices:int = verticesList[i].length / numAttribute;
-				if (numVertices > 65535)
+				if (numVertices > AGALInfo.VERTEXDATA_LIMIT)
 				{
-					trace("頂点数の上限は65535です(" + numVertices + ")");
+					trace("頂点数の上限は" + AGALInfo.VERTEXDATA_LIMIT + "です(" + numVertices + ")");
 					dispose();
 					vertexBuffer = null;
-					//throw new Error("頂点数の上限は65535です(" + numVertices + ")");
 					return false;
 				}
 				vertexBuffer = context3D.context.createVertexBuffer(numVertices, numAttribute);

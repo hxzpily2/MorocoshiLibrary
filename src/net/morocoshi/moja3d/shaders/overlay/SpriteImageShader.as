@@ -15,8 +15,7 @@ package net.morocoshi.moja3d.shaders.overlay
 	 */
 	public class SpriteImageShader extends MaterialShader 
 	{
-		private var _texture:TextureResource;
-		private var diffuseMap:AGALTexture;
+		private var texture:AGALTexture;
 		private var _ignoreTransparency:Boolean;
 		
 		/**
@@ -24,17 +23,18 @@ package net.morocoshi.moja3d.shaders.overlay
 		 * @param	texture
 		 * @param	ignoreTransparency
 		 */
-		public function SpriteImageShader(texture:TextureResource, ignoreTransparency:Boolean) 
+		public function SpriteImageShader(resource:TextureResource, ignoreTransparency:Boolean) 
 		{
 			super();
 			
-			_texture = texture;
 			_ignoreTransparency = ignoreTransparency;
 			
 			updateTexture();
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
@@ -51,7 +51,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			diffuseMap = fragmentCode.addTexture("&diffuse", _texture, this);
+			texture = fragmentCode.addTexture("&diffuse", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -62,7 +62,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
-			var tag:String = diffuseMap.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
+			var tag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			
 			if (_ignoreTransparency)
 			{
@@ -82,21 +82,26 @@ package net.morocoshi.moja3d.shaders.overlay
 			
 		}
 		
-		override public function clone():MaterialShader 
+		override public function reference():MaterialShader 
 		{
-			var shader:SpriteImageShader = new SpriteImageShader(_texture, _ignoreTransparency);
+			var shader:SpriteImageShader = new SpriteImageShader(resource, _ignoreTransparency);
 			return shader;
 		}
 		
-		public function get texture():TextureResource 
+		override public function clone():MaterialShader 
 		{
-			return _texture;
+			var shader:SpriteImageShader = new SpriteImageShader(cloneTexture(resource), _ignoreTransparency);
+			return shader;
 		}
 		
-		public function set texture(value:TextureResource):void 
+		public function get resource():TextureResource 
 		{
-			_texture = value;
-			diffuseMap.texture = _texture;
+			return texture.texture;
+		}
+		
+		public function set resource(value:TextureResource):void 
+		{
+			texture.texture = value;
 		}
 		
 		public function get ignoreTransparency():Boolean 

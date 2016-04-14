@@ -1,22 +1,93 @@
 package net.morocoshi.moja3d.loader.optimize 
 {
-	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
-	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
-	import net.morocoshi.moja3d.loader.objects.M3DObject;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
-	public class SkinSplitter 
+	public class GeometrySplitter 
 	{
-		public function SkinSplitter() 
+		public function GeometrySplitter() 
 		{
 		}
 		
-		public function getSplittedGeometries(geom:M3DSkinGeometry, mesh:M3DMesh, boneLimit:int):Vector.<M3DFaseSet> 
+		public function getSplittedMeshGeometries(geom:M3DMeshGeometry, mesh:M3DMesh):Vector.<M3DFaseSet>
+		{
+			var surfaces:Vector.<M3DSurface> = mesh.surfaceList;
+			
+			var i:int;
+			var j:int;
+			var n:int;
+			var m:int;
+			
+			//ポリゴンリスト
+			var faces:Vector.<M3DFace> = new Vector.<M3DFace>;
+			n = geom.vertexIndices.length / 3;
+			for (i = 0; i < n; i++)
+			{
+				faces.push(new M3DFace());
+			}
+			
+			//ポリゴンに頂点情報を渡す
+			n = geom.vertexIndices.length;
+			for (i = 0; i < n; i++)
+			{
+				var index:int = geom.vertexIndices[i];
+				var v:M3DVertex = new M3DVertex();
+				if (geom.uvs)			v.uv		 	= [geom.uvs			[index * 2], geom.uvs			[index * 2 + 1]];
+				if (geom.vertices)		v.vertex	 	= [geom.vertices	[index * 3], geom.vertices		[index * 3 + 1], geom.vertices		[index * 3 + 2]];
+				if (geom.normals)		v.normal	 	= [geom.normals		[index * 3], geom.normals		[index * 3 + 1], geom.normals		[index * 3 + 2]];
+				if (geom.colors)		v.color		 	= [geom.colors		[index * 4], geom.colors		[index * 4 + 1], geom.colors		[index * 4 + 2], geom.colors		[index * 4 + 3]];
+				if (geom.tangents)		v.tangent4		= [geom.tangents	[index * 4], geom.tangents		[index * 4 + 1], geom.tangents		[index * 4 + 2], geom.tangents		[index * 4 + 3]];
+				
+				faces[int(i / 3)].addVertex(v);
+			}
+			
+			//サーフェイス情報から各ポリゴンにマテリアルIDを渡す
+			n = surfaces.length;
+			var count:int = -1;
+			for (i = 0; i < n; i++)
+			{
+				m = surfaces[i].numTriangle;
+				for (j = 0; j < m; j++)
+				{
+					count++;
+					faces[count].material = surfaces[i].material;
+				}
+			}
+			
+			//ポリゴンが消えるまでメッシュに統合していく
+			var faseSetList:Vector.<M3DFaseSet> = new Vector.<M3DFaseSet>;
+			while (faces.length)
+			{
+				var faseSet:M3DFaseSet = new M3DFaseSet(false);
+				faseSetList.push(faseSet);
+				n = faces.length;
+				for (i = 0; i < n; i++)
+				{
+					if (faseSet.addMeshFace(faces[i]))
+					{
+						faces.splice(i, 1);
+						i--;
+						n--;
+					}
+				}
+			}
+			
+			for each (var item:M3DFaseSet in faseSetList) 
+			{
+				item.fix();
+			}
+			
+			return faseSetList;
+		}
+		
+		public function getSplittedSkinGeometries(geom:M3DSkinGeometry, mesh:M3DMesh, boneLimit:int):Vector.<M3DFaseSet> 
 		{
 			var surfaces:Vector.<M3DSurface> = mesh.surfaceList;
 			
@@ -73,12 +144,12 @@ package net.morocoshi.moja3d.loader.optimize
 			var faseSetList:Vector.<M3DFaseSet> = new Vector.<M3DFaseSet>;
 			while (faces.length)
 			{
-				var faseSet:M3DFaseSet = new M3DFaseSet();
+				var faseSet:M3DFaseSet = new M3DFaseSet(true);
 				faseSetList.push(faseSet);
 				n = faces.length;
 				for (i = 0; i < n; i++)
 				{
-					if (faseSet.add(faces[i], boneLimit))
+					if (faseSet.addSkinFace(faces[i], boneLimit))
 					{
 						faces.splice(i, 1);
 						i--;

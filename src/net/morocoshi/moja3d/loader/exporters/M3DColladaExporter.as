@@ -12,6 +12,8 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.common.loaders.collada.nodes.ColladaObjectNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaScene;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaSurface;
+	import net.morocoshi.moja3d.loader.M3DParser;
+	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.loader.animation.M3DCurveTrack;
 	import net.morocoshi.moja3d.loader.animation.M3DKeyframe;
@@ -22,8 +24,6 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
-	import net.morocoshi.moja3d.loader.M3DParser;
-	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DBone;
@@ -177,7 +177,7 @@ package net.morocoshi.moja3d.loader.exporters
 			for each(track in tracks) track.endTime = endTime;
 			for each(matrix in matrixes) matrix.endTime = endTime;
 			
-			scene.splitAllSkin(option.boneLimit);
+			scene.splitSkinGeometry(option.boneLimit);
 			scene.prepare();
 			
 			return scene;

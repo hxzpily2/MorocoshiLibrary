@@ -2,9 +2,11 @@ package net.morocoshi.moja3d.loader
 {
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.agal.AGALInfo;
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.objects.M3DBone;
@@ -15,8 +17,8 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
+	import net.morocoshi.moja3d.loader.optimize.GeometrySplitter;
 	import net.morocoshi.moja3d.loader.optimize.M3DFaseSet;
-	import net.morocoshi.moja3d.loader.optimize.SkinSplitter;
 	import net.morocoshi.moja3d.loader.optimize.SurfaceOptimizer;
 	
 	/**
@@ -290,10 +292,49 @@ package net.morocoshi.moja3d.loader
 		}
 		
 		/**
+		 * 頂点数が限界突破しているジオメトリを分割する
+		 */
+		public function splitMeshGeometry():void 
+		{
+			for each(var obj:M3DObject in objectList)
+			{
+				if (obj is M3DSkin) continue;
+				var mesh:M3DMesh = obj as M3DMesh;
+				if (mesh == null) continue;
+				
+				var rawGeometry:M3DMeshGeometry = getGeometryLink()[mesh.geometryID];
+				trace("----", rawGeometry.vertices.length / 3);
+				if (rawGeometry.vertices.length / 3 <= AGALInfo.VERTEXDATA_LIMIT) continue;
+				
+				//メッシュの分割
+				var splitted:Vector.<M3DFaseSet> = new GeometrySplitter().getSplittedMeshGeometries(rawGeometry, mesh);
+				//分割数1なら分割する必要なし
+				if (splitted.length == 1)
+				{
+					//continue;
+				}
+				
+				var combined:M3DCombinedGeometry = new M3DCombinedGeometry();
+				var n:int = splitted.length;
+				mesh.surfacesList = [];
+				for (var i:int = 0; i < n; i++) 
+				{
+					var faseSet:M3DFaseSet = splitted[i];
+					var geometryID:int = addGeometry(faseSet.geometry);
+					combined.geometryIDList.push(geometryID);
+					mesh.surfacesList.push(faseSet.surfaces);
+				}
+				
+				removeGeometry(rawGeometry);
+				mesh.geometryID = addGeometry(combined);
+			}
+		}
+		
+		/**
 		 * 全てのスキンジオメトリをボーン数限界に収まるように分割する
 		 * @param	boneLimit　1ジオメトリが持てるボーンの数
 		 */
-		public function splitAllSkin(boneLimit:int):void 
+		public function splitSkinGeometry(boneLimit:int):void 
 		{
 			for each(var obj:M3DObject in objectList)
 			{
@@ -302,7 +343,7 @@ package net.morocoshi.moja3d.loader
 				var rawGeometry:M3DSkinGeometry = getGeometryLink()[skin.geometryID];
 				
 				//スキンメッシュの分割
-				var splitted:Vector.<M3DFaseSet> = new SkinSplitter().getSplittedGeometries(rawGeometry, skin, boneLimit);
+				var splitted:Vector.<M3DFaseSet> = new GeometrySplitter().getSplittedSkinGeometries(rawGeometry, skin, boneLimit);
 				//分割数1なら分割する必要なし
 				if (splitted.length == 1)
 				{

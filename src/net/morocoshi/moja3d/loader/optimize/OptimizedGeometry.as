@@ -9,6 +9,7 @@ package net.morocoshi.moja3d.loader.optimize
 
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class OptimizedGeometry 
