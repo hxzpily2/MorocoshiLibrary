@@ -200,7 +200,6 @@ package net.morocoshi.moja3d.loader.optimize
 					geometry.vertexIndices.push(cacheVertex[key]);
 				}
 			}
-			trace("@@@@", geometry.vertices.length / 3);
 		}
 		
 	}

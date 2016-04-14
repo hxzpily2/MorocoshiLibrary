@@ -303,16 +303,10 @@ package net.morocoshi.moja3d.loader
 				if (mesh == null) continue;
 				
 				var rawGeometry:M3DMeshGeometry = getGeometryLink()[mesh.geometryID];
-				trace("----", rawGeometry.vertices.length / 3);
 				if (rawGeometry.vertices.length / 3 <= AGALInfo.VERTEXDATA_LIMIT) continue;
 				
 				//メッシュの分割
 				var splitted:Vector.<M3DFaseSet> = new GeometrySplitter().getSplittedMeshGeometries(rawGeometry, mesh);
-				//分割数1なら分割する必要なし
-				if (splitted.length == 1)
-				{
-					//continue;
-				}
 				
 				var combined:M3DCombinedGeometry = new M3DCombinedGeometry();
 				var n:int = splitted.length;
