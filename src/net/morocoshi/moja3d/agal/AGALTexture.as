@@ -62,6 +62,10 @@ package net.morocoshi.moja3d.agal
 		
 		private function changeResourceType(resource:ImageTextureResource):void 
 		{
+			if (linkedShader)
+			{
+				linkedShader.updateTextureAlphaMode();;
+			}
 			var current:String = resource.getSamplingOption();
 			if (prevSamplingOption != current)
 			{

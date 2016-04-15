@@ -6,6 +6,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DLineGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
@@ -183,9 +184,23 @@ package net.morocoshi.moja3d.loader
 		/**
 		 * 同じマテリアルのサーフェイスを統合して最適化する
 		 */
-		public function optimize():void 
+		public function optimizeSurface():void 
 		{
-			new SurfaceOptimizer().optimize(this);
+			new SurfaceOptimizer().optimizeScene(this);
+		}
+		
+		/**
+		 * 同じマテリアルのサーフェイスを統合して最適化する
+		 */
+		public function optimizeMeshGeometry():void 
+		{
+			var optimizer:SurfaceOptimizer = new SurfaceOptimizer();
+			for each (var item:M3DGeometry in geometryList) 
+			{
+				var geom:M3DMeshGeometry = item as M3DMeshGeometry;
+				if (geom == null || geom is M3DSkinGeometry || geom is M3DLineGeometry) continue;
+				optimizer.optimizeRawGeometry(geom);
+			}
 		}
 		
 		public function getGeometryLastID():int
@@ -338,9 +353,11 @@ package net.morocoshi.moja3d.loader
 				
 				//スキンメッシュの分割
 				var splitted:Vector.<M3DFaseSet> = new GeometrySplitter().getSplittedSkinGeometries(rawGeometry, skin, boneLimit);
-				//分割数1なら分割する必要なし
+				//分割数1の場合
 				if (splitted.length == 1)
 				{
+					removeGeometry(rawGeometry);
+					skin.geometryID = addGeometry(splitted[0].geometry);
 					continue;
 				}
 				

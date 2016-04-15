@@ -2,7 +2,6 @@ package net.morocoshi.moja3d.resources
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
 	import flash.display3D.textures.CubeTexture;
 	import flash.display3D.textures.Texture;
@@ -110,10 +109,10 @@ package net.morocoshi.moja3d.resources
 			
 			//透過ピクセルが含まれているかチェックする
 			_hasAlpha = _bitmapData && _bitmapData.transparent;
-			if (_bitmapData && _bitmapData.transparent && parseAlpha)
+			if (_bitmapData && _bitmapData.transparent)
 			{
 				//アルファが0xffでない領域の有無で判断。画像が大きくなるほど重くなる・・・
-				_hasAlpha = _bitmapData.getColorBoundsRect(0xff000000, 0xff000000, false).width > 0;
+				_hasAlpha = parseAlpha? _bitmapData.getColorBoundsRect(0xff000000, 0xff000000, false).width > 0 : true;
 			}
 			resourceType = BITMAP;
 			_hasResource = Boolean(_bitmapData);

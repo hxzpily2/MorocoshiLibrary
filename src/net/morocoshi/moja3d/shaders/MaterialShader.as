@@ -1,16 +1,16 @@
 package net.morocoshi.moja3d.shaders 
 {
 	import flash.display3D.Context3DProgramType;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.agal.UsingConstants;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * シェーダーの基本クラス
 	 * 
 	 * @author tencho
 	 */
@@ -197,13 +197,17 @@ package net.morocoshi.moja3d.shaders
 		{
 		}
 		
+		moja3d function updateTextureAlphaMode():void
+		{
+			updateAlphaMode();
+		}
+		
 		/**
 		 * テクスチャ（ATF）の種類が更新された時などに呼び出す
 		 */
 		moja3d function updateTextureShaderCode():void 
 		{
 			updateShaderCode();
-			updateAlphaMode();
 		}
 		
 		/**

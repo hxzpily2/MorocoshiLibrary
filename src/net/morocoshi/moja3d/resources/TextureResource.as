@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import flash.display3D.textures.TextureBase;
 	import flash.geom.Point;
 	import net.morocoshi.moja3d.view.ContextProxy;

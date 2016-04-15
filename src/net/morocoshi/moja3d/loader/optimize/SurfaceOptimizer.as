@@ -4,10 +4,12 @@ package net.morocoshi.moja3d.loader.optimize
 	import flash.geom.Vector3D;
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.geometries.M3DCombinedGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DGeometry;
+	import net.morocoshi.moja3d.loader.geometries.M3DLineGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
-	import net.morocoshi.moja3d.loader.M3DScene;
+	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DLine;
@@ -16,7 +18,7 @@ package net.morocoshi.moja3d.loader.optimize
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
 	
 	/**
-	 * 同一マテリアルのサーフェイスを統合する
+	 * 最適化関連
 	 * 
 	 * @author tencho
 	 */
@@ -28,7 +30,11 @@ package net.morocoshi.moja3d.loader.optimize
 			
 		}
 		
-		public function optimize(scene:M3DScene):void 
+		/**
+		 * 同一マテリアルのサーフェイスを統合する
+		 * @param	scene
+		 */
+		public function optimizeScene(scene:M3DScene):void 
 		{
 			var i:int;
 			var n:int;
@@ -115,6 +121,14 @@ package net.morocoshi.moja3d.loader.optimize
 				}
 			}
 			
+			//メッシュジオメトリの無駄な頂点を最適化する
+			for each(var rawGeom:M3DGeometry in usedGeomList)
+			{
+				if (!(rawGeom is M3DMeshGeometry) || rawGeom is M3DLineGeometry || rawGeom is M3DSkinGeometry) continue;
+				
+				optimizeRawGeometry(rawGeom as M3DMeshGeometry);
+			}
+			
 			for each(var item:OptimizedGeometry in optimizedGeometryLink) 
 			{
 				geomCount++;
@@ -149,6 +163,59 @@ package net.morocoshi.moja3d.loader.optimize
 			//geometryListを使ったものだけにする
 			scene.geometryList.length = 0;
 			VectorUtil.attachList(scene.geometryList, usedGeomList);
+		}
+		
+		/**
+		 * ジオメトリの重複頂点を最適化する
+		 * @param	geom
+		 */
+		public function optimizeRawGeometry(geom:M3DMeshGeometry):void 
+		{
+			if (geom.vertexIndices == null) return;
+			
+			var optIndex:Vector.<uint> = new Vector.<uint>;
+			var optPoint:Vector.<Number> = new Vector.<Number>;
+			var optNormal:Vector.<Number> = new Vector.<Number>;
+			var optTangent:Vector.<Number> = new Vector.<Number>;
+			var optColor:Vector.<Number> = new Vector.<Number>;
+			var optUV:Vector.<Number> = new Vector.<Number>;
+			
+			var cache:Object = { };
+			var lastIndex:int = -1;
+			var n:int = geom.vertexIndices.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				var index:int = geom.vertexIndices[i];
+				var point:Array = [geom.vertices[index * 3], geom.vertices[index * 3 + 1], geom.vertices[index * 3 + 2]];
+				var normal:Array = geom.normals? [geom.normals[index * 3], geom.normals[index * 3 + 1], geom.normals[index * 3 + 2]] : null;
+				var tangent:Array = geom.tangents? [geom.tangents[index * 4], geom.tangents[index * 4 + 1], geom.tangents[index * 4 + 2], geom.tangents[index * 4 + 3]] : null;
+				var color:Array = geom.colors? [geom.colors[index * 4], geom.colors[index * 4 + 1], geom.colors[index * 4 + 2], geom.colors[index * 4 + 3]] : null;
+				var uv:Array = geom.uvs? [geom.uvs[index * 2], geom.uvs[index * 2 + 1]] : null;
+				
+				var key:String = "1:" + point.join(",") + "_";
+				if (geom.normals) key += "2:" + normal.join(",") + "_";
+				if (geom.tangents) key += "3:" + tangent.join(",") + "_";
+				if (geom.colors) key += "4:" + color.join(",") + "_";
+				if (geom.uvs) key += "5:" + uv.join(",") + "_";
+				
+				if (cache.hasOwnProperty(key) == false)
+				{
+					cache[key] = ++lastIndex;
+					optPoint.push.apply(null, point);
+					if (geom.normals) optNormal.push.apply(null, normal);
+					if (geom.tangents) optTangent.push.apply(null, tangent);
+					if (geom.colors) optColor.push.apply(null, color);
+					if (geom.uvs) optUV.push.apply(null, uv);
+				}
+				optIndex.push(cache[key]);
+			}
+			
+			geom.vertexIndices = optIndex;
+			geom.vertices = optPoint;
+			if (geom.normals) geom.normals = optNormal;
+			if (geom.tangents) geom.tangents = optTangent;
+			if (geom.colors) geom.colors = optColor;
+			if (geom.uvs) geom.uvs = optUV;
 		}
 		
 		/**
