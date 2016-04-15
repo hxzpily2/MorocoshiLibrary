@@ -145,18 +145,6 @@ package net.morocoshi.common.math.list
 			return -1;
 		}
 		
-		/**
-		 * 配列内のアイテムをランダムに1つ選ぶ
-		 * @param	list
-		 * @return
-		 */
-		static public function pick(list:*):* 
-		{
-			if (list.length == 0) return null;
-			var n:int = list.length * Math.random();
-			return list[n];
-		}
-		
 	}
 
 }
