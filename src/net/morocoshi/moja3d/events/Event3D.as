@@ -15,8 +15,6 @@ package net.morocoshi.moja3d.events
 		static public const POST_RENDER:String = "postRender";
 		/**リソースの種類が確定した時（ATFの種類など）*/
 		static public const RESOURCE_PARSED:String = "resourceParsed";
-		/**リソースの一括アップロードの成功時*/
-		static public const RESOURCE_UPLOADED:String = "resourceUploaded";
 		
 		/**レンダリング中のContext3D.clear()直後に呼ばれる。主にStarlingを最背面に描画したい時に使う。*/
 		static public const CONTEXT_POST_CLEAR:String = "contextPostClear";

@@ -535,11 +535,10 @@ package net.morocoshi.moja3d.materials
 		 * 必要素材をContext3Dに転送する
 		 * @param	context3D	upload先
 		 * @param	async	非同期でuploadするか
-		 * @param	complete	非同期uploadする場合の完了イベント
 		 */
-		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, async:Boolean = false):void 
 		{
-			new ResourceUploader().upload(context3D, getResources(), async, complete);
+			new ResourceUploader().upload(context3D, getResources(), async);
 		}
 		
 	}

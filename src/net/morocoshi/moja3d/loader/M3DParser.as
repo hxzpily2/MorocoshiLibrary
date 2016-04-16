@@ -1,7 +1,5 @@
 package net.morocoshi.moja3d.loader 
 {
-	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.events.ErrorEvent;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -11,10 +9,11 @@ package net.morocoshi.moja3d.loader
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.data.ByteArrayUtil;
 	import net.morocoshi.common.loaders.ClassAliasUtil;
-	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.common.loaders.tfp.TFPHolder;
 	import net.morocoshi.common.loaders.tfp.TFPLoader;
+	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.animation.AnimationCurveNode;
 	import net.morocoshi.moja3d.animation.AnimationCurveTrack;
 	import net.morocoshi.moja3d.animation.AnimationMaterialNode;
@@ -23,6 +22,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.animation.CurveKey;
 	import net.morocoshi.moja3d.animation.KeyframeAnimation;
 	import net.morocoshi.moja3d.animation.MotionData;
+	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.animation.M3DAnimation;
 	import net.morocoshi.moja3d.loader.animation.M3DCurveTrack;
 	import net.morocoshi.moja3d.loader.animation.M3DKeyframe;
@@ -35,7 +35,6 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.geometries.M3DLineSegment;
 	import net.morocoshi.moja3d.loader.geometries.M3DMeshGeometry;
 	import net.morocoshi.moja3d.loader.geometries.M3DSkinGeometry;
-	import net.morocoshi.moja3d.loader.M3DScene;
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DBillboard;
@@ -49,7 +48,6 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.loader.objects.M3DSkinContainer;
 	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.materials.ParserMaterial;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.AmbientLight;
 	import net.morocoshi.moja3d.objects.Bone;
 	import net.morocoshi.moja3d.objects.Camera3D;
@@ -65,9 +63,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.ExternalTextureResource;
 	import net.morocoshi.moja3d.resources.Geometry;
-	import net.morocoshi.moja3d.resources.ImageTextureResource;
 	import net.morocoshi.moja3d.resources.LineGeometry;
-	import net.morocoshi.moja3d.resources.LinePoint;
 	import net.morocoshi.moja3d.resources.LineSegment;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourcePack;
@@ -1017,13 +1013,22 @@ package net.morocoshi.moja3d.loader
 		
 		public function upload(context3D:ContextProxy, async:Boolean):void 
 		{
-			var i:int;
-			var n:int;
-			n = objects.length;
-			for (i = 0; i < n; i++) 
+			var n:int = objects.length;
+			for (var i:int = 0; i < n; i++) 
 			{
 				objects[i].upload(context3D, false, async);
 			}
+		}
+		
+		public function getResources():Vector.<Resource> 
+		{
+			var result:Vector.<Resource> = new Vector.<Resource>;
+			var n:int = objects.length;
+			for (var i:int = 0; i < n; i++) 
+			{
+				VectorUtil.attachListDiff(result, objects[i].getResources(false));
+			}
+			return result;
 		}
 		
 		/**

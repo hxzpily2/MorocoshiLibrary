@@ -686,11 +686,10 @@ package net.morocoshi.moja3d.objects
 		 * @param	context3D	upload先
 		 * @param	hierarchy	子以下もuploadするか
 		 * @param	async	非同期でuploadするか
-		 * @param	complete	非同期uploadする場合の完了イベント
 		 */
-		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean = false, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean = false):void 
 		{
-			new ResourceUploader().upload(context3D, getResources(hierarchy), async, complete);
+			new ResourceUploader().upload(context3D, getResources(hierarchy), async);
 		}
 		
 		/**
@@ -788,6 +787,22 @@ package net.morocoshi.moja3d.objects
 				resource.autoDispose = autoDispose;
 			}
 			resource = null;
+		}
+		
+		public function removeChild(object:Object3D):Boolean
+		{
+			var child:Object3D = _children;
+			while (child)
+			{
+				var next:Object3D = child._next;
+				if (child == object)
+				{
+					child.remove();
+					return true;
+				}
+				child = next;
+			}
+			return false;
 		}
 		
 		public function removeChildren():void
@@ -1042,6 +1057,11 @@ package net.morocoshi.moja3d.objects
 			||	(phase == RenderPhase.SHADOW && castShadowChildren == false)
 			||	(phase == RenderPhase.LIGHT && castLightChildren == false)
 			||	(phase == RenderPhase.REFLECT && reflectChildren == false);
+			
+			if (phase == RenderPhase.CHECK && this is LOD && collector.camera)
+			{
+				LOD(this).checkDistance(collector.camera);
+			}
 			
 			//子を再帰的に収集する
 			if (skipChildren == false)
