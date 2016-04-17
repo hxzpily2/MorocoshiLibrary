@@ -63,7 +63,7 @@ package net.morocoshi.moja3d.objects
 		moja3d var boundingCube:Line3D;
 		
 		private var _colorTransform:ColorTransform;
-		private var _containerColorTransform:ColorTransform;
+		private var _colorTransformChildren:ColorTransform;
 		moja3d var currentColorTransform:ColorTransform;
 		moja3d var worldColorTransform:ColorTransform;
 		moja3d var colorTransformShader:ColorTransformShader;
@@ -584,7 +584,7 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target._containerColorTransform = _containerColorTransform? Palette.clone(_containerColorTransform) : null;
+			target._colorTransformChildren = _colorTransformChildren? Palette.clone(_colorTransformChildren) : null;
 			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
@@ -621,7 +621,7 @@ package net.morocoshi.moja3d.objects
 			target.animationID = animationID;
 			target._visible = _visible;
 			target._colorTransform = _colorTransform? Palette.clone(_colorTransform) : null;
-			target._containerColorTransform = _containerColorTransform? Palette.clone(_containerColorTransform) : null;
+			target._colorTransformChildren = _colorTransformChildren? Palette.clone(_colorTransformChildren) : null;
 			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
@@ -738,7 +738,7 @@ package net.morocoshi.moja3d.objects
 			boundingBox = null;
 			boundingCube = null;
 			_colorTransform = null;
-			_containerColorTransform = null;
+			_colorTransformChildren = null;
 			worldColorTransform = null;
 			currentColorTransform = null;
 			colorTransformShader = null;
@@ -1033,11 +1033,11 @@ package net.morocoshi.moja3d.objects
 					if (_parent)
 					{
 						Palette.copyTo(worldColorTransform, _parent.worldColorTransform);
-						if (_containerColorTransform) worldColorTransform.concat(_containerColorTransform);
+						if (_colorTransformChildren) worldColorTransform.concat(_colorTransformChildren);
 					}
 					else
 					{
-						if (_containerColorTransform) Palette.copyTo(worldColorTransform, _containerColorTransform);
+						if (_colorTransformChildren) Palette.copyTo(worldColorTransform, _colorTransformChildren);
 						else Palette.identity(worldColorTransform);
 					}
 				}
@@ -1192,7 +1192,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * 着色設定をColorTransformで指定
+		 * 自分のみに影響する着色設定をColorTransformで指定。子以下の着色はcolorTransformChildrenで設定。
 		 */
 		public function get colorTransform():ColorTransform 
 		{
@@ -1208,14 +1208,14 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * 自分の子以下の着色設定をColorTransformで指定
 		 */
-		public function get containerColorTransform():ColorTransform 
+		public function get colorTransformChildren():ColorTransform 
 		{
-			return _containerColorTransform;
+			return _colorTransformChildren;
 		}
 		
-		public function set containerColorTransform(value:ColorTransform):void 
+		public function set colorTransformChildren(value:ColorTransform):void 
 		{
-			_containerColorTransform = value;
+			_colorTransformChildren = value;
 			calculateChildColorOrder = true;
 		}
 		

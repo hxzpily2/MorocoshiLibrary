@@ -7,13 +7,17 @@ package net.morocoshi.moja3d.loader
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	import net.morocoshi.common.math.list.VectorUtil;
+	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.materials.ParserMaterial;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.resources.ResourceUploader;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
+	use namespace moja3d;
+	
 	/**
-	 * ...
+	 * 複数のM3Dデータをまとめてパースします
 	 * 
 	 * @author tencho
 	 */
@@ -38,9 +42,16 @@ package net.morocoshi.moja3d.loader
 			parsers = { };
 		}
 		
-		public function register(id:String, data:ByteArray, container:Object3D = null):M3DLoadItem
+		/**
+		 * パース予定のM3Dデータを登録する
+		 * @param	id			あとでM3Dデータにアクセスする為の識別ID
+		 * @param	data		M3Dバイトデータ
+		 * @param	includeTo	必要ならパース時にこのコンテナ内にオブジェクトを配置する
+		 * @return
+		 */
+		public function register(id:String, data:ByteArray, includeTo:Object3D = null):M3DLoadItem
 		{
-			parsers[id] = new M3DLoadItem(id, data, container);
+			parsers[id] = new M3DLoadItem(id, data, includeTo);
 			return parsers[id];
 		}
 		
@@ -54,6 +65,10 @@ package net.morocoshi.moja3d.loader
 			return parsers[id].parser;
 		}
 		
+		/**
+		 * 登録したM3Dモデルを一括でパースする
+		 * @param	context	ContextProxyを設定すると、パース直後にリソースがuploadされる
+		 */
 		public function parse(context:ContextProxy):void
 		{
 			this.context = context;
@@ -74,6 +89,21 @@ package net.morocoshi.moja3d.loader
 			tick(null);
 		}
 		
+		/**
+		 * 複数IDに一致するモデルのParserMaterialをまとめて取得する
+		 * @param	ids
+		 * @return
+		 */
+		public function getMaterials(ids:Array):Vector.<ParserMaterial> 
+		{
+			var result:Vector.<ParserMaterial> = new Vector.<ParserMaterial>;
+			for each(var id:String in ids)
+			{
+				result = result.concat(getParser(id).materials);
+			}
+			return result;
+		}
+		
 		private function tick(e:Event):void 
 		{
 			var time:int = getTimer();
@@ -87,7 +117,9 @@ package net.morocoshi.moja3d.loader
 				
 				var item:M3DLoadItem = queue.pop();
 				item.parser.addEventListener(Event.COMPLETE, completeHandler);
-				item.parser.parse(item.data, item.container);
+				item.parser.parse(item.data, item.includeTo);
+				item.data.clear();
+				item.data = null;
 			}
 			while (getTimer() - time <= 33);
 			
