@@ -26,6 +26,18 @@ package net.morocoshi.moja3d.loader
 			parser = new M3DParser();
 		}
 		
+		/**
+		 * パースするのに使ったByteArrayを削除する
+		 */
+		public function clearBytes():void 
+		{
+			if (data)
+			{
+				data.clear();
+				data = null;
+			}
+		}
+		
 	}
 
 }

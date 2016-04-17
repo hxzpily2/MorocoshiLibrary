@@ -104,6 +104,17 @@ package net.morocoshi.moja3d.loader
 			return result;
 		}
 		
+		/**
+		 * 登録した全てのM3DのByteArrayを削除する
+		 */
+		public function clearAllBytes():void
+		{
+			for (var key:String in parsers) 
+			{
+				getLoadItem(key).clearBytes();
+			}
+		}
+		
 		private function tick(e:Event):void 
 		{
 			var time:int = getTimer();
@@ -118,8 +129,6 @@ package net.morocoshi.moja3d.loader
 				var item:M3DLoadItem = queue.pop();
 				item.parser.addEventListener(Event.COMPLETE, completeHandler);
 				item.parser.parse(item.data, item.includeTo);
-				item.data.clear();
-				item.data = null;
 			}
 			while (getTimer() - time <= 33);
 			
