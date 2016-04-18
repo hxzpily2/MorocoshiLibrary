@@ -232,7 +232,7 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * モーション位置を秒で指定
+		 * モーション位置を秒で指定。play()してupdate()で更新する場合はこれは必要ない。
 		 * @param	time
 		 */
 		public function setTime(time:Number):void
@@ -253,7 +253,7 @@ package net.morocoshi.moja3d.animation
 		}
 		
 		/**
-		 * 現在再生中のモーションを描画に反映する
+		 * 現在再生中のモーションを描画に反映する。これで更新する場合はsetTime()を呼び出す必要はない。
 		 */
 		public function update():void 
 		{
