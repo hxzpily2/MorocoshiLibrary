@@ -10,7 +10,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
 	
 	/**
-	 * テクスチャ
+	 * テクスチャを表示する
 	 * 
 	 * @author tencho
 	 */

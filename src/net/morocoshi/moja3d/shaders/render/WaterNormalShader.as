@@ -72,7 +72,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.WRAP, texture.getSamplingOption());			
+			var tag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.WRAP);			
 			fragmentConstants.number = true;
 			fragmentCode.addCode([
 				"var $tangent4",

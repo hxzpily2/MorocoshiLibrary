@@ -687,9 +687,9 @@ package net.morocoshi.moja3d.objects
 		 * @param	hierarchy	子以下もuploadするか
 		 * @param	async	非同期でuploadするか
 		 */
-		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean = false):void 
+		public function upload(context3D:ContextProxy, hierarchy:Boolean):void 
 		{
-			new ResourceUploader().upload(context3D, getResources(hierarchy), async);
+			new ResourceUploader().upload(context3D, getResources(hierarchy), false);
 		}
 		
 		/**

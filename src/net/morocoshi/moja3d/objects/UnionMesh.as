@@ -3,8 +3,8 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
 	import net.morocoshi.common.data.DataUtil;
-	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -156,7 +156,7 @@ package net.morocoshi.moja3d.objects
 			
 			if (context3D)
 			{
-				upload(context3D, false, false);
+				upload(context3D, false);
 			}
 		}
 		

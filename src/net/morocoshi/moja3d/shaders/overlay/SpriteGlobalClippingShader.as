@@ -53,7 +53,7 @@ package net.morocoshi.moja3d.shaders.overlay
 		override protected function updateAlphaMode():void
 		{
 			super.updateAlphaMode();
-			alphaMode = AlphaTransform.UNCHANGE;
+			alphaTransform = AlphaTransform.UNCHANGE;
 		}
 		
 		override protected function updateTexture():void 

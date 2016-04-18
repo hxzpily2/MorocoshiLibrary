@@ -19,7 +19,7 @@ package net.morocoshi.moja3d.shaders.render
 		private var _tiling:String;
 		private var _intensity:Number;
 		
-		private var lightMapTexture:AGALTexture;
+		private var texture:AGALTexture;
 		private var intensityConst:AGALConstant;
 		
 		public function LightMapShader(resource:TextureResource, intensity:Number = 1, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap")
@@ -43,7 +43,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "LightMapShader:" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(lightMapTexture);
+			return "LightMapShader:" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(texture);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -55,7 +55,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			lightMapTexture = fragmentCode.addTexture("&lightMap", null, this);
+			texture = fragmentCode.addTexture("&lightMap", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -68,7 +68,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(_smoothing, _mipmap, _tiling, lightMapTexture.getSamplingOption());
+			var tag:String = texture.getOption2D(_smoothing, _mipmap, _tiling);
 			fragmentCode.addCode([
 				"var $image",
 				"$image = tex(#uv, &lightMap " + tag + ")",
@@ -99,12 +99,12 @@ package net.morocoshi.moja3d.shaders.render
 		
 		public function get resource():TextureResource 
 		{
-			return lightMapTexture.texture;
+			return texture.texture;
 		}
 		
 		public function set resource(value:TextureResource):void 
 		{
-			lightMapTexture.texture = value;
+			texture.texture = value;
 		}
 		
 	}

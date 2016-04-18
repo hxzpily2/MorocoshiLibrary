@@ -135,7 +135,7 @@ package net.morocoshi.moja3d.shaders.shadow
 				"var $temp",
 				"var $size"
 			]);
-			var shadowTag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP, texture.getSamplingOption());
+			var tag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			var n:int = shadowUnitList.length;
 			for (var i:int = 0; i < n; i++) 
 			{
@@ -156,7 +156,7 @@ package net.morocoshi.moja3d.shaders.shadow
 					"$temp.w *= " + va2 + ".z",
 					"$temp.w *= $temp.z",
 					
-					"$temp.x = tex($temp.xy, &circleShadow " + shadowTag + ")",
+					"$temp.x = tex($temp.xy, &circleShadow " + tag + ")",
 					"$temp.x *= $temp.w",
 					"$temp.x = @1 - $temp.x",
 					"$output.xyz *= $temp.xxx"

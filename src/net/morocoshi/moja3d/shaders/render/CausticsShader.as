@@ -19,7 +19,6 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class CausticsShader extends MaterialShader 
 	{
-		private var _texture:TextureResource;
 		private var animationConst:AGALConstant;
 		private var _segmentW:int;
 		private var _segmentH:int;
@@ -31,9 +30,9 @@ package net.morocoshi.moja3d.shaders.render
 		private var _topGradation:Number;
 		private var _bottom:Number;
 		private var _bottomGradation:Number;
-		private var patternTexture:AGALTexture;
+		private var texture:AGALTexture;
 		
-		public function CausticsShader(texture:TextureResource, alpha:Number, width:Number, height:Number, segmentW:int, segmentH:int, numImages:int) 
+		public function CausticsShader(resource:TextureResource, alpha:Number, width:Number, height:Number, segmentW:int, segmentH:int, numImages:int) 
 		{
 			super();
 			
@@ -44,7 +43,7 @@ package net.morocoshi.moja3d.shaders.render
 			_segmentW = segmentW;
 			_segmentH = segmentH;
 			_numImages = numImages;
-			_texture = texture;
+			
 			_top = 0;
 			_topGradation = 10;
 			_bottom = -100;
@@ -54,6 +53,8 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		public function setExtentRange(top:Number, topGradation:Number, bottom:Number, bottomGradation:Number):void
@@ -80,7 +81,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "CausticsShader:" + getSamplingKey(patternTexture);
+			return "CausticsShader:" + getSamplingKey(texture);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -92,7 +93,7 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateTexture():void 
 		{
 			super.updateTexture();
-			patternTexture = fragmentCode.addTexture("&causticsMap", _texture, this);
+			texture = fragmentCode.addTexture("&causticsMap", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -108,7 +109,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateShaderCode();
 			
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.WRAP, patternTexture.getSamplingOption());
+			var tag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.WRAP);
 			fragmentConstants.number = true;
 			fragmentCode.addCode([
 				"var $image",
@@ -135,12 +136,22 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function reference():MaterialShader 
 		{
-			return new CausticsShader(_texture, _alpha, _width, _height, _segmentW, _segmentH, _numImages);
+			return new CausticsShader(resource, _alpha, _width, _height, _segmentW, _segmentH, _numImages);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new CausticsShader(cloneTexture(_texture), _alpha, _width, _height, _segmentW, _segmentH, _numImages);
+			return new CausticsShader(cloneTexture(resource), _alpha, _width, _height, _segmentW, _segmentH, _numImages);
+		}
+		
+		public function get resource():TextureResource 
+		{
+			return texture.texture;
+		}
+		
+		public function set resource(value:TextureResource):void 
+		{
+			texture.texture = value;
 		}
 		
 	}

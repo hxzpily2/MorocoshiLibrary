@@ -18,18 +18,16 @@ package net.morocoshi.moja3d.shaders.render
 	public class SphereMapShader extends MaterialShader 
 	{
 		private var _alpha:Number;
-		private var _sphereMap:TextureResource;
 		private var _blendMode:String;
 		private var _strict:Boolean;
-		private var blendConst:AGALConstant;
 		private var _applyNormal:Boolean;
-		private var environmentTexture:AGALTexture;
+		private var blendConst:AGALConstant;
+		private var texture:AGALTexture;
 		
-		public function SphereMapShader(sphereMap:TextureResource, alpha:Number, blendMode:String, strict:Boolean, applyNormal:Boolean) 
+		public function SphereMapShader(resource:TextureResource, alpha:Number, blendMode:String, strict:Boolean, applyNormal:Boolean) 
 		{
 			super();
 			
-			_sphereMap = sphereMap;
 			_alpha = alpha;
 			_strict = strict;
 			_blendMode = blendMode;
@@ -39,6 +37,8 @@ package net.morocoshi.moja3d.shaders.render
 			updateAlphaMode();
 			updateConstants();
 			updateShaderCode();
+			
+			this.resource = resource;
 		}
 		
 		override public function getKey():String 
@@ -56,7 +56,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateTexture();
 			
-			environmentTexture = fragmentCode.addTexture("&sphere", _sphereMap, this);
+			texture = fragmentCode.addTexture("&sphere", null, this);
 		}
 		
 		override protected function updateConstants():void 
@@ -110,7 +110,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentCode.addCode(["var $cameraNormal"]);
 			
 			var code:String = _applyNormal? "m33($normal.xyz, @viewMatrix)" : "#cameraNormal.xyz";
-			var tag:String = getTextureTag(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP, environmentTexture.getSamplingOption());
+			var tag:String = texture.getOption2D(Smoothing.LINEAR, Mipmap.NOMIP, Tiling.CLAMP);
 			fragmentCode.addCode([
 				"$cameraNormal.xyz = " + code,
 				"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
@@ -233,19 +233,6 @@ package net.morocoshi.moja3d.shaders.render
 			updateBlendAlpha();
 		}
 		
-		public function get sphereMap():TextureResource 
-		{
-			return _sphereMap;
-		}
-		
-		public function set sphereMap(value:TextureResource):void 
-		{
-			if (_sphereMap == value) return;
-			
-			_sphereMap = value;
-			updateTexture();
-		}
-		
 		public function get blendMode():String 
 		{
 			return _blendMode;
@@ -283,14 +270,24 @@ package net.morocoshi.moja3d.shaders.render
 			updateShaderCode();
 		}
 		
+		public function get resource():TextureResource 
+		{
+			return texture.texture;
+		}
+		
+		public function set resource(value:TextureResource):void 
+		{
+			texture.texture = value;
+		}
+		
 		override public function reference():MaterialShader 
 		{
-			return new SphereMapShader(_sphereMap, _alpha, _blendMode, _strict, _applyNormal);
+			return new SphereMapShader(resource, _alpha, _blendMode, _strict, _applyNormal);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			return new SphereMapShader(cloneTexture(_sphereMap), _alpha, _blendMode, _strict, _applyNormal);
+			return new SphereMapShader(cloneTexture(resource), _alpha, _blendMode, _strict, _applyNormal);
 		}
 		
 	}

@@ -253,7 +253,7 @@ package net.morocoshi.moja3d.view
 			renderer.dummyTexture = new ImageTextureResource(dummyPattern);
 			renderer.dummyTexture.upload(context3D, false);
 			
-			Global3D.boundingCube.upload(context3D, false, false);
+			Global3D.boundingCube.upload(context3D, false);
 			collector.filterGeometry.upload(context3D, false);
 			collector.planeGeometry.upload(context3D, false);
 			collector.reflectiveWater.setContext3D(context3D);

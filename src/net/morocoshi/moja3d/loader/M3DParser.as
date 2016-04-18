@@ -620,16 +620,24 @@ package net.morocoshi.moja3d.loader
 		 * このパーサーが持つ全キーフレームアニメーションをMotionData化する
 		 * @return
 		 */
-		public function createMotionDataFromKeyframeAnimations():MotionData
+		public function createMotionDataFromKeyframeAnimations(trimHead:Boolean = false):MotionData
 		{
 			var result:MotionData = new MotionData();
+			var start:Number = Infinity;
+			var end:Number = 0;
 			for each(var animation:KeyframeAnimation in keyAnimations)
 			{
 				//TODO: マテリアルアニメーションの場合はどうする？
 				if (animation.targetList.length == 0) continue;
 				var key:String = animation.targetList[0].animationID || animation.targetList[0].name;
 				result.animation[key] = animation;
+				var times:Array = animation.getStartEndTime();
+				if (end < times[1]) end = times[1];
+				if (start > times[0]) start = times[0];
 			}
+			if (trimHead == false || start == Infinity) start = 0;
+			result.setStartTime(start);
+			result.setEndTime(end);
 			return result.clone();
 		}
 		
@@ -1011,12 +1019,12 @@ package net.morocoshi.moja3d.loader
 			ClassAliasUtil.register(Vector.<Vector3D>);
 		}
 		
-		public function upload(context3D:ContextProxy, async:Boolean):void 
+		public function upload(context3D:ContextProxy):void 
 		{
 			var n:int = objects.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				objects[i].upload(context3D, false, async);
+				objects[i].upload(context3D, false);
 			}
 		}
 		
