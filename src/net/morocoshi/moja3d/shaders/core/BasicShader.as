@@ -68,6 +68,7 @@ package net.morocoshi.moja3d.shaders.core
 			fragmentCode.addCode([
 				
 				"global $output",
+				"$output.xyzw = @1_0_0_1",
 				"global $common",
 				"$common.xyzw = @1"
 			]);
