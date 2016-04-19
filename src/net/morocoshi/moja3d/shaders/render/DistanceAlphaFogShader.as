@@ -53,7 +53,7 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.updateConstants();
 			
-			distanceConst = fragmentCode.addConstantsFromArray("@dFogData", [0, 0, 0, 0]);
+			distanceConst = fragmentCode.addConstantsFromArray("@alphaFog", [0, 0, 0, 0]);
 			calcFogConst();
 		}
 		
@@ -74,12 +74,12 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentCode.addCode([
 				"var $temp",
 				
-				"$temp.x = #spos.w - @dFogData.x",
-				"$temp.x /= @dFogData.y",
+				"$temp.x = #spos.w - @alphaFog.x",
+				"$temp.x /= @alphaFog.y",
 				"$temp.x = sat($temp.x)",//r=0～1
 				
-				"$temp.x *= @dFogData.w",
-				"$temp.x += @dFogData.z",//r=近濃～遠濃
+				"$temp.x *= @alphaFog.w",
+				"$temp.x += @alphaFog.z",//r=近濃～遠濃
 				
 				"$output.w *= $temp.x"
 			]);

@@ -3,8 +3,8 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.data.DataUtil;
-	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.CombinedGeometry;
@@ -199,6 +199,16 @@ package net.morocoshi.moja3d.objects
 				item.updateBoneConstants(invertMatrix);
 			}
 			item = null;
+		}
+		
+		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
+		{
+			var result:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
+			if (parent is SkinContainer)
+			{
+				SkinContainer(parent).applySkinVisible(result); 
+			}
+			return result;
 		}
 		
 	}

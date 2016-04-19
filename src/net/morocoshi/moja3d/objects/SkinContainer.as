@@ -1,29 +1,39 @@
 package net.morocoshi.moja3d.objects 
 {
 	import flash.geom.Matrix3D;
+	import flash.utils.Dictionary;
 	import net.morocoshi.common.data.DataUtil;
+	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 複数のSkinオブジェクトとBoneを格納したスキンメッシュオブジェクト
 	 * 
 	 * @author tencho
 	 */
 	public class SkinContainer extends Object3D 
 	{
-		
 		/**このスキン内にあるボーンオブジェクトのリスト*/
 		public var bones:Vector.<Bone>;
+		/**このスキン内にあるSkinオブジェクトのリスト*/
 		public var skins:Vector.<Skin>;
+		
 		private var invertSkin:Matrix3D;
+		
+		private var boneContainers:Vector.<Object3D>;
+		private var skinCount:int;
+		private var showCount:int;
+		private var skinVisible:Boolean;
 		
 		public function SkinContainer() 
 		{
 			super();
 			
+			skinVisible = true;
+			boneContainers = new Vector.<Object3D>;
 			invertSkin = new Matrix3D();
 			bones = new Vector.<Bone>;
 			skins = new Vector.<Skin>;
@@ -141,6 +151,15 @@ package net.morocoshi.moja3d.objects
 			var current:Object3D;
 			var bone:Bone;
 			
+			//Boneが入っている可能性のあるコンテナを調べる
+			var containerDic:Dictionary = new Dictionary();
+			boneContainers.length = 0;
+			for (current = _children; current; current = current._next)
+			{
+				if (current is Skin) continue;
+				containerDic[current] = true;
+			}
+			
 			var task:Vector.<Object3D> = new <Object3D>[this];
 			while (task.length)
 			{
@@ -155,6 +174,10 @@ package net.morocoshi.moja3d.objects
 					if (bone && bone.hasWeight)
 					{
 						bones.push(bone);
+						for (var p:Object3D = bone._parent; p; p = p._parent)
+						{
+							if (containerDic[p]) VectorUtil.attachItemDiff(boneContainers, p);
+						}
 					}
 					task.push(current);
 					current = current._next;
@@ -189,7 +212,7 @@ package net.morocoshi.moja3d.objects
 			super.referenceProperties(target);
 			
 			var skin:SkinContainer = target as SkinContainer;
-			//skin.rawBounds = rawBounds? rawBounds.clone() : null;
+			skin.skinVisible = skinVisible;
 			skin = null;
 		}
 		
@@ -198,7 +221,7 @@ package net.morocoshi.moja3d.objects
 			super.cloneProperties(target);
 			
 			var skin:SkinContainer = target as SkinContainer;
-			//skin.rawBounds = rawBounds? rawBounds.clone() : null;
+			skin.skinVisible = skinVisible;
 			skin = null;
 		}
 		
@@ -236,6 +259,38 @@ package net.morocoshi.moja3d.objects
 			result.collectBones();
 			
 			return result;
+		}
+		
+		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
+		{
+			skinCount = showCount = skins.length;
+			var result:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
+			
+			return result;
+		}
+		
+		/**
+		 * 子のSkinの描画判定が確定した時に呼ばれる
+		 */
+		moja3d function applySkinVisible(show:Boolean):void 
+		{
+			skinCount--;
+			showCount -= int(!show);
+			//全てのスキンの描画判定が確定した場合
+			if (skinCount == 0)
+			{
+				//どれか1つでもスキンが表示されているか？
+				var v:Boolean = showCount != 0;
+				if (skinVisible != v)
+				{
+					skinVisible = v;
+					//スキンが描画されないなら、ボーンコンテナを非表示にして負荷を下げる
+					for each(var container:Object3D in boneContainers)
+					{
+						container.visible = skinVisible;
+					}
+				}
+			}
 		}
 		
 	}

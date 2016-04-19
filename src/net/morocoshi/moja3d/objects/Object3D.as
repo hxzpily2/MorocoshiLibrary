@@ -1063,8 +1063,19 @@ package net.morocoshi.moja3d.objects
 				LOD(this).checkDistance(collector.camera);
 			}
 			
+			var skipDraw:Boolean = false;
+			//Z深度レンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.LIGHT && castLightEnabled == false) skipDraw = true;
+			//反射レンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.REFLECT && reflectEnabled == false) skipDraw = true;
+			//デプスシャドウレンダリング時に除外する場合（子はチェックする）
+			if (phase == RenderPhase.SHADOW && castShadowEnabled == false) skipDraw = true;
+			
+			//境界球で除外
+			_inCameraView = (skipDraw == false) && !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);
+			
 			//子を再帰的に収集する
-			if (skipChildren == false)
+			if (skipChildren == false && _inCameraView)
 			{
 				var current:Object3D;
 				for (current = _children; current; current = current._next)
@@ -1079,15 +1090,6 @@ package net.morocoshi.moja3d.objects
 				}
 			}
 			
-			//Z深度レンダリング時に除外する場合（子はチェックする）
-			if (phase == RenderPhase.LIGHT && castLightEnabled == false) return false;
-			//反射レンダリング時に除外する場合（子はチェックする）
-			if (phase == RenderPhase.REFLECT && reflectEnabled == false) return false;
-			//デプスシャドウレンダリング時に除外する場合（子はチェックする）
-			if (phase == RenderPhase.SHADOW && castShadowEnabled == false) return false;
-			
-			//境界球で除外
-			_inCameraView = !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);
 			return _inCameraView;
 		}
 		
