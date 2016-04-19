@@ -19,7 +19,7 @@ package net.morocoshi.moja3d.objects
 			items = new Dictionary();
 		}
 		
-		public function registerObject(object:Object3D, min:Number = 0, max:Number = Infinity):Object3D
+		public function registerObject(object:Object3D, min:Number, max:Number):Object3D
 		{
 			addChild(object);
 			items[object] = new LODItem(object, min, max);
