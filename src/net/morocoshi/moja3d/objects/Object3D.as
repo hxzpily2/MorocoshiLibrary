@@ -1075,7 +1075,7 @@ package net.morocoshi.moja3d.objects
 			_inCameraView = (skipDraw == false) && !(boundingBox && collector.camera && collector.camera.contains(boundingBox) == false);
 			
 			//子を再帰的に収集する
-			if (skipChildren == false && _inCameraView)
+			if (skipChildren == false)
 			{
 				var current:Object3D;
 				for (current = _children; current; current = current._next)
