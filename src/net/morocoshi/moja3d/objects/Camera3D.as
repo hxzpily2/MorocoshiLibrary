@@ -275,6 +275,7 @@ package net.morocoshi.moja3d.objects
 		 */
 		public function updateFrustumPoints(near:Number, far:Number):void
 		{
+			/*
 			return;
 			
 			if (_orthographic == false)
@@ -352,6 +353,7 @@ package net.morocoshi.moja3d.objects
 					dp.z = fp.z;
 				}
 			}
+			*/
 		}
 		
 		public function getVerticalFOV(clipping:Rectangle):Number 
