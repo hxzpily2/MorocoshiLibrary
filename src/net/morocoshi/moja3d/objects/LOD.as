@@ -57,6 +57,21 @@ package net.morocoshi.moja3d.objects
 			return result;
 		}
 		
+		override public function clone():Object3D 
+		{
+			var result:LOD = new LOD();
+			cloneProperties(result);
+			//子を再帰的にコピーする
+			for (var current:Object3D = _children; current; current = current._next)
+			{
+				var child:Object3D = current.clone();
+				var item:LODItem = items[current];
+				if (item) result.items[child] = new LODItem(child, item.min, item.max);
+				result.addChild(child);
+			}
+			return result;
+		}
+		
 	}
 
 }
