@@ -66,8 +66,8 @@ package net.morocoshi.moja3d.shaders.outline
 				"var $normal2",
 				"$normal.xyz = nrm($normal.xyz)",
 				"$normal2.xyz = $normal.xyz",
-				"$normal2.xyz = m33($normal2, @viewMatrix)",//ビュー行列で変換
-				"$normal2.xyz = m33($normal2, @projMatrix)",//プロジェクション行列?で変換
+				"$normal2.xyz = m33($normal2.xyz, @viewMatrix)",//ビュー行列で変換
+				"$normal2.xyz = m33($normal2.xyz, @projMatrix)",//プロジェクション行列?で変換
 				//"$normal2.xyz = nrm($normal2.xyz)",
 				//"$normal2.xy /= @viewSize.xy",
 				
