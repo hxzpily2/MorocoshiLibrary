@@ -23,7 +23,7 @@ package net.morocoshi.moja3d.shaders.skin
 	public class SkinShader extends MaterialShader 
 	{
 		private var numBones:int;
-		private var boneList:Vector.<Bone>;
+		moja3d var boneList:Vector.<Bone>;
 		private var skin:Skin;
 		private var skinConst:AGALConstant;
 		private var shadowSkinShader:DepthSkinShader;

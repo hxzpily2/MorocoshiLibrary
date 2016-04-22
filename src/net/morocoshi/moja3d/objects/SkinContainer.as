@@ -116,12 +116,12 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * スキンメッシュの現在の姿勢で境界ボックスを更新する。ボーンの初期姿勢からのずれで計算するため実際のメッシュより大きく設定される傾向にあります。
 		 */
-		public function updateSkinBounds(bones:Vector.<Bone>):void
+		public function updateSkinBounds():void
 		{
 			var skin:Skin;
 			for each (skin in skins) 
 			{
-				skin.updateSkinBounds(bones);
+				skin.updateSkinBounds();
 			}
 			skin = null;
 		}

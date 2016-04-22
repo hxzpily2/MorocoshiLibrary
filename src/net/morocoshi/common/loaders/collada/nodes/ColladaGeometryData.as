@@ -254,6 +254,53 @@ package net.morocoshi.common.loaders.collada.nodes
 					weightList2.push(data.weightList1[index].concat().splice(4, 4));
 				}
 			}
+			
+			//TODO: ジョイントインデックスを0から始まるようにつめて修正
+			/*
+			fixjointList(jointList1);
+			if (jointList2)
+			{
+				fixjointList(jointList2);
+			}
+			*/
+		}
+		
+		private function fixjointList(data:Array):void 
+		{
+			var i:int;
+			var j:int;
+			var n:int;
+			
+			var jointTable:Array = [];
+			var jointMap:Object = { };
+			
+			n = data.length;
+			for (i = 0; i < n; i++)
+			for (j = 0; j < 4; j++)
+			{
+				var index:int = data[i][j];
+				if (jointTable.indexOf(index) == -1)
+				{
+					jointTable.push(index);
+				}
+			}
+			jointTable.sort(Array.NUMERIC);
+			
+			n = jointTable.length;
+			var count:int = 0;
+			for (i = 0; i < n; i++)
+			{
+				jointMap[jointTable[i]] = count++;
+			}
+			trace(data.length, JSON.stringify(jointMap));
+			
+			n = data.length;
+			for (i = 0; i < n; i++)
+			for (j = 0; j < 4; j++)
+			{
+				data[i][j] = jointMap[data[i][j]];
+			}
+			//trace(jointList1);
 		}
 		
 		public function parseJointMatrix(xml:XML, collector:ColladaCollector, skinShapeMatrix:Matrix3D):void 

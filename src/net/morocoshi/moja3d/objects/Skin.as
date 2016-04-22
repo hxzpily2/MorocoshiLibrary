@@ -3,6 +3,7 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.data.DataUtil;
+	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
@@ -23,6 +24,8 @@ package net.morocoshi.moja3d.objects
 		moja3d var skinShaderList:Vector.<SkinShader>;
 		/**メッシュ変形前の境界ボックス*/
 		private var rawBounds:BoundingBox;
+		/**このスキンに関連しているすべてのボーンオブジェクト。スキンシェーダー生成時に自動収集される*/
+		private var usedBones:Vector.<Bone>;
 		moja3d var isReady:Boolean;
 		
 		public function Skin() 
@@ -36,6 +39,7 @@ package net.morocoshi.moja3d.objects
 			castLightChildren = false;
 			reflectChildren = false;
 			
+			usedBones = new Vector.<Bone>;
 			skinShaderList = new Vector.<SkinShader>;
 		}
 		
@@ -57,7 +61,7 @@ package net.morocoshi.moja3d.objects
 		/**
 		 * スキンメッシュの現在の姿勢で境界ボックスを更新する。ボーンの初期姿勢からのずれで計算するため実際のメッシュより大きく設定される傾向にあります。
 		 */
-		moja3d function updateSkinBounds(bones:Vector.<Bone>):void
+		moja3d function updateSkinBounds():void
 		{
 			var rawMin:Vector3D = rawBounds.getMinPoint();
 			var rawMax:Vector3D = rawBounds.getMaxPoint();
@@ -69,7 +73,7 @@ package net.morocoshi.moja3d.objects
 			var maxZ:Number = -Number.MAX_VALUE;
 			var skinMatrix:Matrix3D = worldMatrix.clone();
 			skinMatrix.invert();
-			for each(var bone:Bone in bones)
+			for each(var bone:Bone in usedBones)
 			{
 				var m:Matrix3D = bone.worldMatrix.clone();
 				m.append(skinMatrix);
@@ -154,6 +158,7 @@ package net.morocoshi.moja3d.objects
 		public function createSkinShader(bones:Vector.<Bone>):void
 		{
 			skinShaderList.length = 0;
+			usedBones.length = 0;
 			
 			var skinShader:SkinShader;
 			var geom:SkinGeometry;
@@ -165,6 +170,7 @@ package net.morocoshi.moja3d.objects
 					skinShader = new SkinShader();
 					skinShader.setSkinGeometry(geom);
 					skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+					VectorUtil.attachListDiff(usedBones, skinShader.boneList);
 					skinShaderList.push(skinShader);
 				}
 			}
@@ -173,6 +179,7 @@ package net.morocoshi.moja3d.objects
 				skinShader = new SkinShader();
 				skinShader.setSkinGeometry(_geometry as SkinGeometry);
 				skinShader.initializeBones(bones, this, RenderPhase.NORMAL);
+				VectorUtil.attachListDiff(usedBones, skinShader.boneList);
 				skinShaderList.push(skinShader);
 			}
 			var combinedGeom:CombinedGeometry = geometry as CombinedGeometry;
