@@ -315,7 +315,7 @@ package net.morocoshi.moja3d.renderer
 						continue;
 					}
 					
-					textureResource = agalTex.texture;
+					textureResource = agalTex.getRenderTextureResource();
 					//テクスチャがnullならダミーテクスチャを使う
 					textureResource = (textureResource && textureResource.isUploaded && textureResource.isReady)? textureResource : dummyTexture;
 					context.setTextureAt(textureCount, textureResource.texture);

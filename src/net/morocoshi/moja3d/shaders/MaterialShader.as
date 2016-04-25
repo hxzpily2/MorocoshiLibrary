@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.shaders
 	import net.morocoshi.moja3d.agal.AGALCode;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.agal.UsingConstants;
+	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	
 	use namespace moja3d;
@@ -240,7 +241,7 @@ package net.morocoshi.moja3d.shaders
 		 */
 		protected function getSamplingKey(texture:AGALTexture):String 
 		{
-			return texture? texture.enabled? texture.getSamplingOption() : "!" : "";
+			return texture? texture.enabled? texture.getSamplingOption() + "-" + int(texture.texture is TextureAtlasResource) : "!" : "";
 		}
 		
 		/*

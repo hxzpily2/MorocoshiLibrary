@@ -66,6 +66,14 @@ package net.morocoshi.moja3d.shaders.core
 				"op = $pos.xyzw"
 			]);
 			
+			//UV
+			if (geometry.hasAttribute(VertexAttribute.UV))
+			{
+				vertexCode.addCode([
+					"#uv = $uv.xyzw"
+				]);
+			}
+			
 			//ワールド法線
 			if (geometry.hasAttribute(VertexAttribute.NORMAL))
 			{

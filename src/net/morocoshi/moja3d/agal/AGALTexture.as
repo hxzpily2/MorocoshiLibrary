@@ -3,8 +3,10 @@ package net.morocoshi.moja3d.agal
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.events.Event3D;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
+	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
+	
 	
 	use namespace moja3d;
 	
@@ -17,6 +19,7 @@ package net.morocoshi.moja3d.agal
 	{
 		public var id:String;
 		public var enabled:Boolean;
+		public var frame:int;
 		private var _texture:TextureResource;
 		
 		private var prevSamplingOption:String;
@@ -25,6 +28,7 @@ package net.morocoshi.moja3d.agal
 		public function AGALTexture(id:String, texture:TextureResource) 
 		{
 			this.id = id;
+			frame = 0;
 			prevSamplingOption = "";
 			this.texture = texture;
 			enabled = true;
@@ -79,14 +83,19 @@ package net.morocoshi.moja3d.agal
 		
 		public function clone():AGALTexture 
 		{
-			var cloned:AGALTexture = new AGALTexture(id, texture);
+			var cloned:AGALTexture = new AGALTexture(id, _texture);
 			cloned.enabled = enabled;
 			return cloned;
 		}
 		
 		public function getSamplingOption():String 
 		{
-			return texture ? texture.getSamplingOption() : "";
+			if (_texture == null) return "";
+			if (_texture is TextureAtlasResource)
+			{
+				return TextureAtlasResource(_texture).getSamplingOptionAt(frame);
+			}
+			return _texture.getSamplingOption();
 		}
 		
 		public function linkShader(shader:MaterialShader):void 
@@ -97,9 +106,15 @@ package net.morocoshi.moja3d.agal
 		public function hasAlpha():Boolean 
 		{
 			if (_texture == null) return false;
+			
 			if (_texture is ImageTextureResource)
 			{
 				return ImageTextureResource(_texture).hasAlpha;
+			}
+			if (_texture is TextureAtlasResource)
+			{
+				var tr:ImageTextureResource = TextureAtlasResource(_texture).getTextureResourceAt(frame) as ImageTextureResource;
+				if (tr) return tr.hasAlpha;
 			}
 			return false;
 		}
@@ -142,6 +157,15 @@ package net.morocoshi.moja3d.agal
 		static public function getTextureOption2D(smoothing:String, mipmap:String, tiling:String):String 
 		{
 			return "<2d, " + mipmap + ", " + smoothing + ", " + tiling + ">";
+		}
+		
+		public function getRenderTextureResource():TextureResource 
+		{
+			if (_texture is TextureAtlasResource)
+			{
+				return TextureAtlasResource(_texture).getTextureResourceAt(frame);
+			}
+			return _texture;
 		}
 		
 	}

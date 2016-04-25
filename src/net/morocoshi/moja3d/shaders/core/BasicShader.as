@@ -78,8 +78,7 @@ package net.morocoshi.moja3d.shaders.core
 			{
 				vertexCode.addCode([
 					"global $uv",
-					"$uv = va" + geometry.getAttributeIndex(VertexAttribute.UV),
-					"#uv = $uv"
+					"$uv.xyzw = va" + geometry.getAttributeIndex(VertexAttribute.UV) + ".xyxy",
 				]);
 			}
 			

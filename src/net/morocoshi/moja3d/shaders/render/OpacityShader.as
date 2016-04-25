@@ -68,7 +68,7 @@ package net.morocoshi.moja3d.shaders.render
 			var tag:String = texture.getOption2D(_smoothing, _mipmap, _tiling);
 			fragmentCode.addCode([
 				"var $image",
-				"$image = tex(#uv, &opacityMap " + tag + ")",
+				"$image = tex(#uv.zw, &opacityMap " + tag + ")",
 				"$output.w *= $image.x"
 			]);
 		}
