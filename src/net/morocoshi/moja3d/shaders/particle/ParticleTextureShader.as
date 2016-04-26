@@ -1,8 +1,7 @@
-package net.morocoshi.moja3d.shaders.render 
+package net.morocoshi.moja3d.shaders.particle 
 {
 	import flash.display.BitmapDataChannel;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
@@ -13,6 +12,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.depth.DepthOpacityShader;
+	import net.morocoshi.moja3d.shaders.render.OpacityShader;
 	
 	use namespace moja3d;
 	
@@ -21,19 +21,17 @@ package net.morocoshi.moja3d.shaders.render
 	 * 
 	 * @author tencho
 	 */
-	public class TextureShader extends MaterialShader 
+	public class ParticleTextureShader extends MaterialShader 
 	{
-		public var fps:Number = 30;
 		private var _mipmap:String;
 		private var _smoothing:String;
 		private var _tiling:String;
 		private var diffuseTexture:AGALTexture;
 		private var opacityTexture:AGALTexture;
-		private var shadowShader:DepthOpacityShader;
-		private var atlasDiffuseConstant:AGALConstant;
-		private var atlasOpacityConstant:AGALConstant;
 		
-		public function TextureShader(diffuse:TextureResource, opacity:TextureResource = null, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
+		private var shadowShader:DepthOpacityShader;
+		
+		public function ParticleTextureShader(diffuse:TextureResource, opacity:TextureResource = null, mipmap:String = "miplinear", smoothing:String = "linear", tiling:String = "wrap") 
 		{
 			super();
 			
@@ -59,7 +57,7 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function getKey():String 
 		{
-			return "TextureShader:" + alphaTransform + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(opacityTexture.texture) + "_" + getSamplingKey(opacityTexture);
+			return "ParticleTextureShader:" + alphaTransform + "_" + _smoothing + "_" + _mipmap + "_" + _tiling + "_" + getSamplingKey(diffuseTexture) + "_" + Boolean(opacityTexture.texture) + "_" + getSamplingKey(opacityTexture);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -79,51 +77,12 @@ package net.morocoshi.moja3d.shaders.render
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			
-			var atlas:TextureAtlasResource;
-			var item:TextureAtlasItem;
-			
-			atlas = diffuseTexture.texture as TextureAtlasResource;
-			if (atlas)
-			{
-				atlasDiffuseConstant = vertexCode.addConstantsFromArray("@atlasDiffuse", [0, 0, 1, 1]);
-				item = atlas.numFrames == 0? null : atlas.items[diffuseTexture.frame % atlas.numFrames];
-				if (item)
-				{
-					atlasDiffuseConstant.x = item.x / ImageTextureResource(item.resource).width;
-					atlasDiffuseConstant.y = item.y / ImageTextureResource(item.resource).height;
-					atlasDiffuseConstant.z = item.width / ImageTextureResource(item.resource).width;
-					atlasDiffuseConstant.w = item.height / ImageTextureResource(item.resource).height;
-				}
-			}
-			
-			atlas = opacityTexture.texture as TextureAtlasResource;
-			if (atlas)
-			{
-				atlasOpacityConstant = vertexCode.addConstantsFromArray("@atlasOpacity", [0, 0, 1, 1]);
-				
-				item = atlas.numFrames == 0? null : atlas.items[diffuseTexture.frame % atlas.numFrames];
-				if (item)
-				{
-					atlasOpacityConstant.x = item.x / ImageTextureResource(item.resource).width;
-					atlasOpacityConstant.y = item.y / ImageTextureResource(item.resource).height;
-					atlasOpacityConstant.z = item.width / ImageTextureResource(item.resource).width;
-					atlasOpacityConstant.w = item.height / ImageTextureResource(item.resource).height;
-				}
-			}
 		}
 		
 		override protected function updateShaderCode():void 
 		{
 			super.updateShaderCode();
 			
-			if (diffuseTexture.texture is TextureAtlasResource)
-			{
-				vertexCode.addCode([
-					"$uv.xy *= @atlasDiffuse.zw",
-					"$uv.xy += @atlasDiffuse.xy"
-				]);
-			}
 			var diffuseTag:String = diffuseTexture.getOption2D(_smoothing, _mipmap, _tiling);
 			fragmentCode.addCode([
 				"$output.xyzw = tex(#uv.xy, &diffuse " + diffuseTag + ")"
@@ -131,15 +90,6 @@ package net.morocoshi.moja3d.shaders.render
 			
 			if (opacity)
 			{
-				if (opacityTexture.texture is TextureAtlasResource)
-				{
-					vertexCode.addCode([
-						"$uv.z *= @atlasOpacity.z",
-						"$uv.w *= @atlasOpacity.w",
-						"$uv.z += @atlasOpacity.x",
-						"$uv.w += @atlasOpacity.y"
-					]);
-				}
 				var opacityTag:String = opacityTexture.getOption2D(_smoothing, _mipmap, _tiling);
 				fragmentCode.addCode([
 					"var $topacity",
@@ -154,48 +104,6 @@ package net.morocoshi.moja3d.shaders.render
 			}
 		}
 		
-		override public function tick(time:int):void 
-		{
-			super.tick(time);
-			
-			var atlas:TextureAtlasResource;
-			var item:TextureAtlasItem;
-			var w:Number;
-			var h:Number;
-			
-			diffuseTexture.frame = opacityTexture.frame = time / 1000 * fps;
-			
-			atlas = diffuseTexture.texture as TextureAtlasResource;
-			if (atlas)
-			{
-				item = atlas.items[diffuseTexture.frame % atlas.numFrames];
-				w = ImageTextureResource(item.resource).width;
-				h = ImageTextureResource(item.resource).height;
-				if (atlasDiffuseConstant)
-				{
-					atlasDiffuseConstant.x = item.x / w;
-					atlasDiffuseConstant.y = item.y / h;
-					atlasDiffuseConstant.z = item.width / w;
-					atlasDiffuseConstant.w = item.height / h;
-				}
-			}
-			
-			atlas = opacityTexture.texture as TextureAtlasResource;
-			if (atlas)
-			{
-				item = atlas.items[opacityTexture.frame % atlas.numFrames];
-				w = ImageTextureResource(item.resource).width;
-				h = ImageTextureResource(item.resource).height;
-				if (atlasOpacityConstant)
-				{
-					atlasOpacityConstant.x = item.x / w;
-					atlasOpacityConstant.y = item.y / h;
-					atlasOpacityConstant.z = item.width / w;
-					atlasOpacityConstant.w = item.height / h;
-				}
-			}
-		}
-		
 		public function get diffuse():TextureResource 
 		{
 			return diffuseTexture.texture;
@@ -204,17 +112,8 @@ package net.morocoshi.moja3d.shaders.render
 		public function set diffuse(value:TextureResource):void 
 		{
 			diffuseTexture.texture = value;
-			updateTickEnabled();
 			
-			updateConstants();
 			updateShaderCode();
-		}
-		
-		private function updateTickEnabled():void 
-		{
-			var t1:TextureAtlasResource = diffuseTexture.texture as TextureAtlasResource;
-			var t2:TextureAtlasResource = opacityTexture.texture as TextureAtlasResource;
-			tickEnabled = (t1 && t1.numFrames > 1) || (t2 && t2.numFrames > 1);
 		}
 		
 		public function get opacity():TextureResource 
@@ -226,10 +125,8 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			opacityTexture.texture = value;
 			if (shadowShader) shadowShader.opacity = value;
-			updateTickEnabled();
 			
 			updateAlphaMode();
-			updateConstants();
 			updateShaderCode();
 		}
 		
@@ -274,14 +171,12 @@ package net.morocoshi.moja3d.shaders.render
 		
 		override public function reference():MaterialShader 
 		{
-			var shader:TextureShader = new TextureShader(diffuse, opacity, _mipmap, _smoothing, _tiling);
-			return shader;
+			return new ParticleTextureShader(diffuse, opacity, _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function clone():MaterialShader 
 		{
-			var shader:TextureShader = new TextureShader(cloneTexture(diffuse), cloneTexture(opacity), _mipmap, _smoothing, _tiling);
-			return shader;
+			return new ParticleTextureShader(cloneTexture(diffuse), cloneTexture(opacity), _mipmap, _smoothing, _tiling);
 		}
 		
 		override public function getExtraShader(phase:String):MaterialShader 

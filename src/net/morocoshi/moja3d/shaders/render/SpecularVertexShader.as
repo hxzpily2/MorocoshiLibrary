@@ -79,7 +79,7 @@ package net.morocoshi.moja3d.shaders.render
 			vertexConstants.lights = true;
 			
 			vertexCode.addCode([
-				//テクセルから視線へのベクトル（正規化）
+				//ピクセルから視線へのベクトル（正規化）
 				"var $specular",
 				"var $light",
 				"var $eye",
@@ -97,7 +97,7 @@ package net.morocoshi.moja3d.shaders.render
 				lightAxis = "@lightAxis" + i;
 				lightColor = "@lightColor" + i;
 				vertexCode.addCode([
-					//テクセルからライトへのベクトル（正規化）
+					//ピクセルからライトへのベクトル（正規化）
 					"$light.xyz = " + lightAxis + ".xyz",
 					"$light.xyz = nrm($light.xyz)",
 					

@@ -48,7 +48,7 @@ package net.morocoshi.moja3d.objects
 		 * パーティクル用ジオメトリをuploadするContextProxyを設定する
 		 * @param	context3D
 		 */
-		public function setContetx3D(context3D:ContextProxy):void
+		public function setContext3D(context3D:ContextProxy):void
 		{
 			this.context3D = context3D;
 		}

@@ -5,6 +5,9 @@ package net.morocoshi.moja3d.particle.animators
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	import net.morocoshi.moja3d.resources.ImageTextureResource;
+	import net.morocoshi.moja3d.resources.TextureAtlasItem;
+	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	
 	use namespace moja3d;
 	
@@ -83,7 +86,7 @@ package net.morocoshi.moja3d.particle.animators
 		 * パーティクル位置の更新
 		 * @param	particle
 		 */
-		moja3d function updateParticle(particle:ParticleCell):void 
+		moja3d function updateParticle(particle:ParticleCell, atlas:TextureAtlasResource):void 
 		{
 			var t1:Number = particle.time;
 			var t2:Number = particle.prevTime;
@@ -93,6 +96,29 @@ package net.morocoshi.moja3d.particle.animators
 			particle.x += (particle.vx * tt1 + gravity.x * tt2) * f;
 			particle.y += (particle.vy * tt1 + gravity.y * tt2) * f;
 			particle.z += (particle.vz * tt1 + gravity.z * tt2) * f;
+			if (atlas && atlas.numFrames > 0)
+			{
+				if (particle.frame != particle.lastFrame)
+				{
+					particle.lastFrame = particle.frame;
+					var item:TextureAtlasItem = atlas.items[particle.frame % atlas.numFrames];
+					var img:ImageTextureResource = item.resource as ImageTextureResource;
+					if (img)
+					{
+						var w:int = img.width;
+						var h:int = img.height;
+						particle.u1 = item.x / w;
+						particle.v1 = item.y / h;
+						particle.u0 = (item.x + item.width) / w;
+						particle.v0 = (item.y + item.height) / h;
+					}
+				}
+			}
+			else
+			{
+				particle.u0 = particle.v0 = 1;
+				particle.u1 = particle.v1 = 0;
+			}
 			var scale:Number = (particle.initialScale + (particle.time) * particle.scaleSpeed) * 0.5;
 			if (scale < 0) scale = 0;
 			particle.width = particle.initialWidth * scale;

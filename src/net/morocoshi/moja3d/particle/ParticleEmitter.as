@@ -24,6 +24,8 @@ package net.morocoshi.moja3d.particle
 		/**パーティクルのデフォルトの高さ*/
 		public var particleHeight:Number = 1;
 		
+		public var atlas:ParticleTextureAtlas;
+		
 		moja3d var prevPosition:Vector3D;
 		moja3d var position:Vector3D = new Vector3D();
 		moja3d var xAxis:Vector3D = new Vector3D(1, 0, 0);
@@ -42,6 +44,7 @@ package net.morocoshi.moja3d.particle
 		public function ParticleEmitter() 
 		{
 			super();
+			atlas = new ParticleTextureAtlas();
 		}
 		
 		override public function clone():Object3D 
@@ -63,6 +66,7 @@ package net.morocoshi.moja3d.particle
 			super.cloneProperties(target);
 			var emitter:ParticleEmitter = target as ParticleEmitter;
 			emitter.animator = animator;
+			emitter.atlas = atlas;
 			emitter.range = range;
 			emitter.wind = wind;
 			emitter.particleWidth = particleWidth;
@@ -76,6 +80,7 @@ package net.morocoshi.moja3d.particle
 			super.cloneProperties(target);
 			var emitter:ParticleEmitter = target as ParticleEmitter;
 			emitter.animator = animator.clone();
+			emitter.atlas = atlas.clone();
 			emitter.range = range.clone();
 			emitter.wind = wind? wind.clone() : null;
 			emitter.particleWidth = particleWidth;

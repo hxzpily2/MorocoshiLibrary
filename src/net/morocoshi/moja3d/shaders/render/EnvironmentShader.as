@@ -84,7 +84,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentCode.addCode([
 				"var $temp",
 				"var $eye",
-				//視点からテクセルへのベクトル
+				//視点からピクセルへのベクトル
 				"$eye.xyz = #wpos.xyz - @cameraPosition.xyz",
 				"$temp.xyz = $normal.xyz",
 				"$temp.w = dp3($eye.xyz, $normal.xyz)",

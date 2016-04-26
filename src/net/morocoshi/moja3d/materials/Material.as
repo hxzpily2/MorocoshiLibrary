@@ -62,6 +62,9 @@ package net.morocoshi.moja3d.materials
 		//
 		//--------------------------------------------------------------------------
 		
+		/**
+		 * @param	shaders	shaderListにaddShader()したいMaterialShaderの配列
+		 */
 		public function Material(shaders:Array = null) 
 		{
 			name = "";

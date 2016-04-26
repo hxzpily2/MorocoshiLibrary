@@ -4,12 +4,14 @@ package net.morocoshi.moja3d.particle
 	import flash.events.Event;
 	import net.morocoshi.common.math.list.VectorUtil;
 	import net.morocoshi.common.timers.Stopwatch;
-	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.materials.Material;
 	import net.morocoshi.moja3d.objects.Particle3D;
 	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.particle.cells.ParticleData;
 	import net.morocoshi.moja3d.particle.wind.ParticleWind;
+	import net.morocoshi.moja3d.resources.TextureAtlasResource;
+	import net.morocoshi.moja3d.shaders.particle.ParticleTextureShader;
 	
 	use namespace moja3d;
 	
@@ -31,6 +33,7 @@ package net.morocoshi.moja3d.particle
 		private var _enabled:Boolean;
 		private var prevTime:Number;
 		private var _autoUpdate:Boolean;
+		private var atlas:TextureAtlasResource;
 		
 		/**
 		 * 
@@ -39,6 +42,8 @@ package net.morocoshi.moja3d.particle
 		public function ParticleSystem(material:Material = null) 
 		{
 			super(material);
+			checkTextureAtlas(material);
+			
 			sprite = new Sprite();
 			emitters = new Vector.<ParticleEmitter>;
 			_autoUpdate = false;
@@ -46,6 +51,16 @@ package net.morocoshi.moja3d.particle
 			prevTime = -1;
 			timer = new Stopwatch();
 			_enabled = true;
+		}
+		
+		private function checkTextureAtlas(material:Material):void 
+		{
+			atlas = null;
+			
+			var shader:ParticleTextureShader = material.shaderList.getShaderAs(ParticleTextureShader) as ParticleTextureShader;
+			if (shader == null) return;
+			
+			atlas = shader.diffuse as TextureAtlasResource;
 		}
 		
 		/**
@@ -156,6 +171,20 @@ package net.morocoshi.moja3d.particle
 					{
 						var per:Number = (j + 1) / length;
 						particle = emit(time * per + prevTime * (1 - per));
+						if (atlas)
+						{
+							var pta:ParticleTextureAtlas = emitter.atlas;
+							particle.atlasType = pta.type;
+							switch(pta.type)
+							{
+								case ParticleTextureAtlas.FRAME: particle.frame = pta.frame; break;
+								case ParticleTextureAtlas.RANDOM_ALL: particle.frame = Math.random() * atlas.numFrames; break;
+								case ParticleTextureAtlas.RANDOM_FRAMES: particle.frame = pta.frames[int(Math.random() * pta.frames.length)]; break;
+								case ParticleTextureAtlas.ANIMATE_FRAMES: particle.frames = pta.frames; break;								
+							}
+						}
+						
+						particle.lastFrame = -1;
 						if (particle == null) continue;
 						
 						particle.initialWidth = emitter.particleWidth;
@@ -170,10 +199,25 @@ package net.morocoshi.moja3d.particle
 			}
 			
 			particle = particleList.root as ParticleCell;
+			var useAtlas:Boolean = atlas && atlas.numFrames > 0;
 			while (particle) 
 			{
 				particle.time = time - particle.initTime;
-				particle.animator.updateParticle(particle);
+				
+				if (useAtlas)
+				{
+					var progress:Number = particle.time / particle.life;
+					if (progress > 0.99999) progress = 0.99999;
+					switch(particle.atlasType)
+					{
+						case ParticleTextureAtlas.ANIMATE_FRAMES:
+							particle.frame = particle.frames[int(particle.frames.length * progress)]; break;
+						case ParticleTextureAtlas.ANIMATE_ALL:
+							particle.frame = atlas.numFrames * progress; break;
+					}
+				}
+				
+				particle.animator.updateParticle(particle, atlas);
 				if (particle.wind) particle.wind.updateParticle(particle);
 				
 				if (particle.time >= particle.life)

@@ -85,7 +85,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.lights = true;
 			
 			fragmentCode.addCode([
-				//テクセルから視線へのベクトル（正規化）
+				//ピクセルから視線へのベクトル（正規化）
 				"var $eye",
 				"var $light",
 				"var $half",
@@ -112,7 +112,7 @@ package net.morocoshi.moja3d.shaders.render
 					"$light.w /= " + omniData + ".y",
 					"$light.w = sat($light.w)",
 					
-					//テクセルからライトへのベクトル（正規化）
+					//ピクセルからライトへのベクトル（正規化）
 					"$light.xyz = " + omniPosition + ".xyz",
 					"$light.xyz -= #wpos.xyz",
 					"$light.xyz = nrm($light.xyz)",
@@ -163,7 +163,7 @@ package net.morocoshi.moja3d.shaders.render
 				var lightAxis:String = "@lightAxis" + i;
 				var lightColor:String = "@lightColor" + i;
 				fragmentCode.addCode([
-					//テクセルからライトへのベクトル（正規化）
+					//ピクセルからライトへのベクトル（正規化）
 					"$light.xyz = " + lightAxis + ".xyz",
 					"$light.xyz = nrm($light.xyz)",
 					

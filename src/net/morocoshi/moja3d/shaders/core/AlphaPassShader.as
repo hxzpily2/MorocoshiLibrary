@@ -55,10 +55,10 @@ package net.morocoshi.moja3d.shaders.core
 			fragmentConstants.number = true;
 			fragmentCode.addCode([
 				"var $temp",
-				//透過がほぼ0のテクセルを消す
+				//透過がほぼ0のピクセルを消す
 				"$temp.x = $output.w - @threshold.y",
 				"kil $temp.x",
-				//透過がthreshold以上のテクセルを消す
+				//透過がthreshold以上のピクセルを消す
 				"$temp.x = @threshold.x - $output.w",
 				"kil $temp.x"
 			]);

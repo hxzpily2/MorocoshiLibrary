@@ -64,7 +64,7 @@ package net.morocoshi.moja3d.shaders.render
 			var tag:String = texture.getOptionCube(Smoothing.LINEAR, Mipmap.MIPLINEAR, Tiling.CLAMP);
 			fragmentCode.addCode([
 				"var $eye",
-				//視点からテクセルへのベクトル
+				//視点からピクセルへのベクトル
 				"$eye.xyz = #wpos.xzy - @cameraPosition.xzy",
 				"$eye.xyz = nrm($eye.xyz)",
 				

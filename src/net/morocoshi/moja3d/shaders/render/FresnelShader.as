@@ -74,7 +74,7 @@ package net.morocoshi.moja3d.shaders.render
 			fragmentConstants.cameraPosition = true;
 			fragmentConstants.number = true;
 			fragmentCode.addCode([
-				//テクセルから視線へのベクトル（正規化）
+				//ピクセルから視線へのベクトル（正規化）
 				"var $eye",
 				"$eye.xyz = @cameraPosition.xyz - #wpos.xyz",
 				"$eye.xyz = nrm($eye.xyz)",

@@ -10,6 +10,12 @@ package net.morocoshi.moja3d.particle.cells
 		public var x:Number = 0;
 		public var y:Number = 0;
 		public var z:Number = 0;
+		
+		public var frame:int = 0;
+		public var frames:Array;
+		public var atlasType:int;
+		public var lastFrame:int = -1;
+		
 		public var width:Number = 5;
 		public var height:Number = 5;
 		public var u0:Number = 0;
