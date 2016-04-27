@@ -4,9 +4,6 @@ package net.morocoshi.moja3d.shaders.particle
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
-	import net.morocoshi.moja3d.resources.ImageTextureResource;
-	import net.morocoshi.moja3d.resources.TextureAtlasItem;
-	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;

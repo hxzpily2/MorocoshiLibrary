@@ -3,10 +3,10 @@ package net.morocoshi.moja3d.particle.animators
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.text.XMLUtil;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.particle.cells.ParticleCell;
+	import net.morocoshi.moja3d.atlas.TextureAtlasItem;
 	import net.morocoshi.moja3d.particle.ParticleEmitter;
+	import net.morocoshi.moja3d.particle.cells.ParticleCell;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
-	import net.morocoshi.moja3d.resources.TextureAtlasItem;
 	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	
 	use namespace moja3d;

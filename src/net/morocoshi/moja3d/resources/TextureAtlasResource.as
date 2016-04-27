@@ -1,6 +1,7 @@
 package net.morocoshi.moja3d.resources 
 {
 	import flash.utils.Dictionary;
+	import net.morocoshi.moja3d.atlas.TextureAtlasItem;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**

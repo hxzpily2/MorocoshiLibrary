@@ -4,9 +4,9 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALConstant;
 	import net.morocoshi.moja3d.agal.AGALTexture;
+	import net.morocoshi.moja3d.atlas.TextureAtlasItem;
 	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.ImageTextureResource;
-	import net.morocoshi.moja3d.resources.TextureAtlasItem;
 	import net.morocoshi.moja3d.resources.TextureAtlasResource;
 	import net.morocoshi.moja3d.resources.TextureResource;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
@@ -23,7 +23,7 @@ package net.morocoshi.moja3d.shaders.render
 	 */
 	public class TextureShader extends MaterialShader 
 	{
-		public var fps:Number = 30;
+		//public var atlas:ParticleTextureAtlas;
 		private var _mipmap:String;
 		private var _smoothing:String;
 		private var _tiling:String;
@@ -158,17 +158,17 @@ package net.morocoshi.moja3d.shaders.render
 		{
 			super.tick(time);
 			
-			var atlas:TextureAtlasResource;
+			var atlasResource:TextureAtlasResource;
 			var item:TextureAtlasItem;
 			var w:Number;
 			var h:Number;
 			
-			diffuseTexture.frame = opacityTexture.frame = time / 1000 * fps;
+			diffuseTexture.frame = opacityTexture.frame = time / 1000 * 30;
 			
-			atlas = diffuseTexture.texture as TextureAtlasResource;
-			if (atlas)
+			atlasResource = diffuseTexture.texture as TextureAtlasResource;
+			if (atlasResource)
 			{
-				item = atlas.items[diffuseTexture.frame % atlas.numFrames];
+				item = atlasResource.items[diffuseTexture.frame % atlasResource.numFrames];
 				w = ImageTextureResource(item.resource).width;
 				h = ImageTextureResource(item.resource).height;
 				if (atlasDiffuseConstant)
@@ -180,10 +180,10 @@ package net.morocoshi.moja3d.shaders.render
 				}
 			}
 			
-			atlas = opacityTexture.texture as TextureAtlasResource;
-			if (atlas)
+			atlasResource = opacityTexture.texture as TextureAtlasResource;
+			if (atlasResource)
 			{
-				item = atlas.items[opacityTexture.frame % atlas.numFrames];
+				item = atlasResource.items[opacityTexture.frame % atlasResource.numFrames];
 				w = ImageTextureResource(item.resource).width;
 				h = ImageTextureResource(item.resource).height;
 				if (atlasOpacityConstant)

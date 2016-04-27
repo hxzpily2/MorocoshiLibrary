@@ -1,6 +1,8 @@
-package net.morocoshi.moja3d.resources 
+package net.morocoshi.moja3d.atlas 
 {
 	import net.morocoshi.common.text.XMLUtil;
+	import net.morocoshi.moja3d.resources.TextureAtlasResource;
+	import net.morocoshi.moja3d.resources.TextureResource;
 	
 	/**
 	 * ...

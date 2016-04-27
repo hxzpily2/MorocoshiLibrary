@@ -1,5 +1,7 @@
-package net.morocoshi.moja3d.resources 
+package net.morocoshi.moja3d.atlas 
 {
+	import net.morocoshi.moja3d.resources.TextureResource;
+	
 	/**
 	 * ...
 	 * 
