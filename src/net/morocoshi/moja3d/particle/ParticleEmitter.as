@@ -3,8 +3,11 @@ package net.morocoshi.moja3d.particle
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.config.Global3D;
+	import net.morocoshi.moja3d.objects.Line3D;
 	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.particle.animators.ParticleAnimator;
+	import net.morocoshi.moja3d.particle.range.CubeRange;
 	import net.morocoshi.moja3d.particle.range.ParticleRange;
 	import net.morocoshi.moja3d.particle.wind.ParticleWind;
 	
@@ -45,6 +48,53 @@ package net.morocoshi.moja3d.particle
 		{
 			super();
 			atlas = new ParticleTextureAtlas();
+		}
+		
+		override public function get showBoundingBox():Boolean 
+		{
+			return super.showBoundingBox;
+		}
+		
+		override public function set showBoundingBox(value:Boolean):void 
+		{
+			if (_showBoundingBox == value) return;
+			
+			_showBoundingBox = value;
+			
+			if (_range == null) return;
+			
+			if (_showBoundingBox == false)
+			{
+				if (boundingCube)
+				{
+					boundingCube.remove();
+				}
+				return;
+			}
+			
+			if (boundingCube == null)
+			{
+				boundingCube = Global3D.boundingCube.reference() as Line3D;
+				boundingCube.mouseEnabled = false;
+				boundingCube.zbias = 0.01;
+			}
+			
+			if (boundingCube.parent == null)
+			{
+				addChild(boundingCube);
+			}
+			
+			boundingCube.x = 0;
+			boundingCube.y = 0;
+			boundingCube.z = 0;
+			
+			if (_range is CubeRange)
+			{
+				boundingCube.scaleX = CubeRange(_range).sizeX;
+				boundingCube.scaleY = CubeRange(_range).sizeY;
+				boundingCube.scaleZ = CubeRange(_range).sizeZ;
+			}
+			
 		}
 		
 		override public function clone():Object3D 

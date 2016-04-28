@@ -56,14 +56,15 @@ package net.morocoshi.moja3d.objects
 		
 		/***/
 		public var mouseEnabled:Boolean;
+		/***/
 		public var mouseChildren:Boolean;
 		
 		moja3d var _inCameraView:Boolean;
-		private var _showBoundingBox:Boolean;
+		moja3d var _showBoundingBox:Boolean;
 		moja3d var boundingCube:Line3D;
 		
-		private var _colorTransform:ColorTransform;
-		private var _colorTransformChildren:ColorTransform;
+		moja3d var _colorTransform:ColorTransform;
+		moja3d var _colorTransformChildren:ColorTransform;
 		moja3d var currentColorTransform:ColorTransform;
 		moja3d var worldColorTransform:ColorTransform;
 		moja3d var colorTransformShader:ColorTransformShader;
@@ -85,11 +86,11 @@ package net.morocoshi.moja3d.objects
 		moja3d var _worldMatrix:Matrix3D;
 		moja3d var _alpha:Number;
 		/**worldMatrix計算用に使う一時変数*/
-		private var notifyChild:Object3D;
+		moja3d var notifyChild:Object3D;
 		
-		private var transformList:Vector.<Vector3D>;
-		private var rawData:Vector.<Number> = new Vector.<Number>(16, true);
-		private var decomposedData:Vector.<Vector3D>;
+		moja3d var transformList:Vector.<Vector3D>;
+		moja3d var rawData:Vector.<Number> = new Vector.<Number>(16, true);
+		moja3d var decomposedData:Vector.<Vector3D>;
 		
 		/**これがtrueだと一度だけバウンディング情報に姿勢情報が適用される*/
 		moja3d var calculateBoundingOrder:Boolean;
