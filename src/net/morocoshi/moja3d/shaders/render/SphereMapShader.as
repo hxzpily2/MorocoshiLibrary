@@ -7,6 +7,7 @@ package net.morocoshi.moja3d.shaders.render
 	import net.morocoshi.moja3d.materials.Smoothing;
 	import net.morocoshi.moja3d.materials.Tiling;
 	import net.morocoshi.moja3d.resources.TextureResource;
+	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	
@@ -27,6 +28,8 @@ package net.morocoshi.moja3d.shaders.render
 		public function SphereMapShader(resource:TextureResource, alpha:Number, blendMode:String, strict:Boolean, applyNormal:Boolean) 
 		{
 			super();
+			
+			requiredAttribute.push(VertexAttribute.NORMAL);
 			
 			_alpha = alpha;
 			_strict = strict;
