@@ -92,11 +92,13 @@ package net.morocoshi.moja3d.shaders.render
 			if (_applyNormal == false)
 			{
 				vertexConstants.viewMatrix = true;
+				vertexConstants.number = true;
 				vertexCode.addCode([
 					"var $cameraNormal",
 					"$cameraNormal.xyz = m33($normal.xyz, @viewMatrix)",//カメラ行列でワールド法線を変換
 					"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
-					"#cameraNormal = $cameraNormal"//視線空間での法線
+					"$cameraNormal.w = @0",
+					"#cameraNormal = $cameraNormal.xyz"//視線空間での法線
 				]);
 			}
 			
@@ -155,10 +157,12 @@ package net.morocoshi.moja3d.shaders.render
 			//V = r.y / M + 0.5
 			
 			//頂点シェーダー
+			vertexConstants.number = true;
 			vertexCode.addCode([
 				"var $cameraNormal",
 				"$cameraNormal.xyz = m33($normal.xyz, @viewMatrix)",//カメラ行列でワールド法線を変換
 				"$cameraNormal.xyz = nrm($cameraNormal.xyz)",
+				"$cameraNormal.w = @0",
 				"#cameraNormal = $cameraNormal"//カメラ空間での法線
 			]);
 			
