@@ -115,6 +115,26 @@ package net.morocoshi.moja3d.loader
 			}
 		}
 		
+		public function getObjectsAs(ids:Array, classObject:Class):Vector.<Object3D> 
+		{
+			var result:Vector.<Object3D> = new Vector.<Object3D>;
+			for each(var id:String in ids)
+			{
+				result = result.concat(getParser(id).getObjectsAs(classObject));
+			}
+			return result;
+		}
+		
+		public function getResources(ids:Array):Vector.<Resource> 
+		{
+			var result:Vector.<Resource> = new Vector.<Resource>;
+			for each(var id:String in ids)
+			{
+				result = result.concat(getParser(id).getResources());
+			}
+			return result;
+		}
+		
 		private function tick(e:Event):void 
 		{
 			var time:int = getTimer();
