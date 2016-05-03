@@ -42,6 +42,10 @@ package net.morocoshi.moja3d.objects
 			requiredAttribute = null;
 		}
 		
+		/**
+		 * UnionMesh内のオブジェクトをマテリアルごとに結合します。
+		 * @param	context3D	ContextProxyを渡すとuploadします。nullでupload無し。
+		 */
 		public function updateSurface(context3D:ContextProxy = null):void
 		{
 			var containerMatrix:Matrix3D = worldMatrix.clone();
