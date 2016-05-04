@@ -1039,13 +1039,13 @@ package net.morocoshi.moja3d.loader
 			return result;
 		}
 		
-		public function getObjectsAs(classObject:Class):Vector.<Object3D> 
+		public function getObjectsAs(filter:Class):Vector.<Object3D> 
 		{
 			var result:Vector.<Object3D> = new Vector.<Object3D>;
 			var n:int = objects.length;
 			for (var i:int = 0; i < n; i++) 
 			{
-				if (objects[i] is classObject)
+				if (objects[i] is filter)
 				{
 					result.push(objects[i]);
 				}

@@ -115,12 +115,12 @@ package net.morocoshi.moja3d.loader
 			}
 		}
 		
-		public function getObjectsAs(ids:Array, classObject:Class):Vector.<Object3D> 
+		public function getObjectsAs(ids:Array, filter:Class):Vector.<Object3D> 
 		{
 			var result:Vector.<Object3D> = new Vector.<Object3D>;
 			for each(var id:String in ids)
 			{
-				result = result.concat(getParser(id).getObjectsAs(classObject));
+				result = result.concat(getParser(id).getObjectsAs(filter));
 			}
 			return result;
 		}

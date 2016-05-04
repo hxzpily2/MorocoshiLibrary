@@ -32,6 +32,32 @@ package net.morocoshi.moja3d.resources
 			isUploaded = true;
 		}
 		
+		/**
+		 * 制限サイズ、2の累乗などの条件を全て無視してテクスチャを生成する
+		 * @param	context3D
+		 * @param	width	なるべく2の累乗(FP11.8以降ならRectangleTextureが使える)
+		 * @param	height	なるべく2の累乗(FP11.8以降ならRectangleTextureが使える)
+		 */
+		public function createTextureForce(context3D:ContextProxy, width:int, height:int):void 
+		{
+			if (uploadEnabled == false) return;
+			if (prevSize.x == width && prevSize.y == height) return;
+			
+			prevSize.x = width;
+			prevSize.y = height;
+			
+			if (texture) texture.dispose();
+			
+			if (TextureUtil.checkPow2(width, height))
+			{
+				texture = context3D.context.createTexture(width, height, Context3DTextureFormat.BGRA, true);
+			}
+			else
+			{
+				texture = context3D.context["createRectangleTexture"](width, height, Context3DTextureFormat.BGRA, true);
+			}
+		}
+		
 		//レンダリング用テクスチャの場合
 		override public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
@@ -53,18 +79,12 @@ package net.morocoshi.moja3d.resources
 			height = height >> _lowLV;
 			
 			//前回と同じならスキップ
-			if (prevSize.x == width && prevSize.y == height)
-			{
-				return;
-			}
+			if (prevSize.x == width && prevSize.y == height) return;
 			
 			prevSize.x = width;
 			prevSize.y = height;
 			
-			if (texture)
-			{
-				texture.dispose();
-			}
+			if (texture) texture.dispose();
 			
 			texture = context3D.context.createTexture(width, height, Context3DTextureFormat.BGRA, true);
 			//RectangleTextureを使った場合
