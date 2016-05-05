@@ -11,19 +11,21 @@ package net.morocoshi.moja3d.shaders.outline
 	 */
 	public class OutlineColorShader extends MaterialShader 
 	{
+		private var _fixed:Boolean;
 		private var vertexConst:AGALConstant;
 		private var fragmentConst:AGALConstant;
 		private var _thickness:Number;
 		private var _color:uint;
 		private var _alpha:Number;
 		
-		public function OutlineColorShader(thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1) 
+		public function OutlineColorShader(thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1, fixed:Boolean = true) 
 		{
 			super();
 			
 			_thickness = thickness;
 			_color = color;
 			_alpha = alpha;
+			_fixed = fixed;
 			
 			updateTexture();
 			updateAlphaMode();
@@ -33,7 +35,7 @@ package net.morocoshi.moja3d.shaders.outline
 		
 		override public function getKey():String 
 		{
-			return "OutlineColorShader:" + alphaTransform;
+			return "OutlineColorShader:" + alphaTransform + "_" + int(_fixed);
 		}
 		
 		override protected function updateAlphaMode():void
@@ -51,7 +53,7 @@ package net.morocoshi.moja3d.shaders.outline
 		{
 			super.updateConstants();
 			vertexConst =　vertexCode.addConstantsFromArray("@outlineSize", [1, 0, 0, 0]);
-			fragmentConst =fragmentCode.addConstantsFromColor("@outlineColor", _color, _alpha);
+			fragmentConst = fragmentCode.addConstantsFromColor("@outlineColor", _color, _alpha);
 		}
 		
 		override protected function updateShaderCode():void 
@@ -63,22 +65,42 @@ package net.morocoshi.moja3d.shaders.outline
 			vertexConstants.cameraPosition = true;
 			
 			vertexCode.addCode([
-				"var $normal2",
 				"$normal.xyz = nrm($normal.xyz)",
+				"var $normal2",
 				"$normal2.xyz = $normal.xyz",
 				"$normal2.xyz = m33($normal2.xyz, @viewMatrix)",//ビュー行列で変換
-				"$normal2.xyz = m33($normal2.xyz, @projMatrix)",//プロジェクション行列?で変換
-				//"$normal2.xyz = nrm($normal2.xyz)",
-				//"$normal2.xy /= @viewSize.xy",
-				
+			]);
+			
+			if (_fixed)
+			{
+				vertexCode.addCode([
+					"$normal2.xyz = m33($normal2.xyz, @projMatrix)"//プロジェクション行列?で変換
+				]);
+			}
+			else
+			{
+				vertexCode.addCode([
+					"$normal2.xyz *= @outlineSize.xxx",
+					"$pos.xyz += $normal2.xyz"
+				]);
+			}
+			
+			vertexCode.addCode([
 				"#vpos = $pos",
-				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
-				
-				"$normal2.xy *= $pos.zz",
-				"$normal2.xy /= @cameraPosition.ww",
-				"$normal2.xy *= @outlineSize.xx",
-				"$pos.xy += $normal2.xy",
-				
+				"$pos = m44($pos, @projMatrix)"//プロジェクション行列?で変換
+			]);
+			
+			if (_fixed)
+			{
+				vertexCode.addCode([
+					"$normal2.xy *= $pos.zz",
+					"$normal2.xy /= @cameraPosition.ww",
+					"$normal2.xy *= @outlineSize.xx",
+					"$pos.xy += $normal2.xy"
+				]);
+			}
+			
+			vertexCode.addCode([
 				"#spos = $pos",//スクリーン座標
 				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
 				"op = $pos.xyzw",
@@ -94,7 +116,7 @@ package net.morocoshi.moja3d.shaders.outline
 		
 		override public function clone():MaterialShader 
 		{
-			return new OutlineColorShader(_thickness, _color, _alpha);
+			return new OutlineColorShader(_thickness, _color, _alpha, _fixed);
 		}
 		
 		public function get thickness():Number 
@@ -126,6 +148,17 @@ package net.morocoshi.moja3d.shaders.outline
 		{
 			fragmentConst.w = (_alpha = value);
 			updateAlphaMode();
+		}
+		
+		public function get fixed():Boolean 
+		{
+			return _fixed;
+		}
+		
+		public function set fixed(value:Boolean):void 
+		{
+			_fixed = value;
+			updateShaderCode();
 		}
 		
 	}

@@ -419,14 +419,16 @@ package net.morocoshi.moja3d.objects
 		 * @param	thickness	厚さ
 		 * @param	color		色
 		 * @param	alpha		不透明度
+		 * @param	fixed		厚さがカメラ距離に関係なく一定
 		 */
-		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1):void
+		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1, fixed:Boolean = true):void
 		{
 			_outlineEnabled = enabled;
 			var shader:OutlineColorShader = getOutlineShader();
 			shader.thickness = thickness;
 			shader.color = color;
 			shader.alpha = alpha;
+			shader.fixed = fixed;
 		}
 		/**
 		 * ポリゴンベースのアウトラインを表示するか
@@ -454,6 +456,18 @@ package net.morocoshi.moja3d.objects
 		public function get outlineThickness():Number
 		{
 			return getOutlineShader().thickness;
+		}
+		
+		/**
+		 * ポリゴンベースのアウトラインの厚さがカメラ距離に関係なく一定になるか
+		 */
+		public function set outlineFixed(value:Boolean):void
+		{
+			getOutlineShader().fixed = value;
+		}
+		public function get outlineFixed():Boolean
+		{
+			return getOutlineShader().fixed;
 		}
 		
 		/**
