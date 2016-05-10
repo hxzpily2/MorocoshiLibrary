@@ -29,7 +29,7 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Mesh extends Object3D
 	{
-		/***/
+		/**描画するレイヤー。RenderLayer参照*/
 		public var layer:uint;
 		/**サーフェイスリスト*/
 		public var surfaces:Vector.<Surface>;

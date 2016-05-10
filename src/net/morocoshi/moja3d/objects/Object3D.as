@@ -172,16 +172,6 @@ package net.morocoshi.moja3d.objects
 		//
 		//--------------------------------------------------------------------------
 		
-		public function set matrix(value:Matrix3D):void
-		{
-			_matrix.copyFrom(value);
-			calculateMatrixOrder = true;
-			calculateBoundsOrder = true;
-			recomposeMatrixOrder = false;
-			decomposeMatrixOrder = true;
-			//decomposeMatrix();
-		}
-		
 		/**
 		 * 内部変数をそのまま返すので弄るときはcloneしてから！
 		 */
@@ -202,6 +192,16 @@ package net.morocoshi.moja3d.objects
 				recomposeMatrixOrder = false;
 			}
 			return _matrix;
+		}
+		
+		public function set matrix(value:Matrix3D):void
+		{
+			_matrix.copyFrom(value);
+			calculateMatrixOrder = true;
+			calculateBoundsOrder = true;
+			recomposeMatrixOrder = false;
+			decomposeMatrixOrder = true;
+			//decomposeMatrix();
 		}
 		
 		public function get rotationX():Number 
@@ -1153,12 +1153,20 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * 最新のワールド姿勢を取得する。必要なら再計算がされる。このMatrix3Dを直接弄ると内部に影響するので注意。
+		 * 最新のワールド姿勢。getしたMatrix3Dを直接弄ると内部に影響するので注意。setで渡したMatrix3Dに変更は加わらない。
 		 */
 		public function get worldMatrix():Matrix3D 
 		{
 			calculteWorldMatrix();
 			return _worldMatrix;
+		}
+		
+		public function set worldMatrix(value:Matrix3D):void 
+		{
+			var m:Matrix3D = _parent? _parent.worldMatrix.clone() : new Matrix3D();
+			m.invert();
+			m.append(value);
+			matrix = m;
 		}
 		
 		/**
