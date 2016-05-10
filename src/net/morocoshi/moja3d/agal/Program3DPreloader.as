@@ -30,7 +30,7 @@ package net.morocoshi.moja3d.agal
 			collector.renderPhase = RenderPhase.CHECK;
 			collector.clear();
 			collector.setBasicContext();
-			object.collectRenderElements(collector, false, false, false, 1, object.containerRenderMask);
+			object.collectRenderElements(collector, false, false, false, 1, object.renderMaskChildren);
 			collector.complete();
 			
 			//影要素
@@ -39,7 +39,7 @@ package net.morocoshi.moja3d.agal
 				collector.renderPhase = RenderPhase.SHADOW;
 				collector.clear();
 				collector.setBasicContext();
-				object.collectRenderElements(collector, false, false, false, 1, object.containerRenderMask);
+				object.collectRenderElements(collector, false, false, false, 1, object.renderMaskChildren);
 				collector.complete();
 			}
 			
@@ -49,7 +49,7 @@ package net.morocoshi.moja3d.agal
 				collector.renderPhase = RenderPhase.REFLECT;
 				collector.clear();
 				collector.setBasicContext();
-				object.collectRenderElements(collector, false, false, false, 1, object.containerRenderMask);
+				object.collectRenderElements(collector, false, false, false, 1, object.renderMaskChildren);
 				collector.complete();
 			}
 			
@@ -57,7 +57,7 @@ package net.morocoshi.moja3d.agal
 			collector.renderPhase = RenderPhase.NORMAL;
 			collector.clear();
 			collector.setBasicContext();
-			object.collectRenderElements(collector, false, false, false, 1, object.containerRenderMask);
+			object.collectRenderElements(collector, false, false, false, 1, object.renderMaskChildren);
 			collector.complete();
 		}
 		

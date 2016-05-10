@@ -174,7 +174,7 @@ package net.morocoshi.moja3d.renderer
 			clear();
 			
 			setBasicContext();
-			root.collectRenderElements(this, false, false, false, 1, root.containerRenderMask);
+			root.collectRenderElements(this, false, false, false, 1, root.renderMaskChildren);
 			
 			complete();
 		}

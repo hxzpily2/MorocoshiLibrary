@@ -46,7 +46,7 @@ package net.morocoshi.moja3d.objects
 		/**これが-1以外だと自分をマスクレンダリングの対象にします。MaskColorクラス参照。*/
 		public var renderMask:int;
 		/**これが-1以外だと自分の子全てをマスクレンダリングの対象にします。自分は含みません。MaskColorクラス参照。*/
-		public var containerRenderMask:int;
+		public var renderMaskChildren:int;
 		/**負の値ほど後ろにまわる*/
 		public var sortPriority:Number;
 		//public var boundingSphere:BoundingSphere;
@@ -140,7 +140,7 @@ package net.morocoshi.moja3d.objects
 			mouseChildren = true;
 			
 			renderMask = -1;
-			containerRenderMask = -1;
+			renderMaskChildren = -1;
 			calculateMatrixOrder = true;
 			calculateMyColorOrder = true;
 			calculateChildColorOrder = false;
@@ -592,8 +592,8 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.renderMaskChildren = renderMaskChildren;
 			target.renderChildren = renderChildren;
-			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
@@ -629,8 +629,8 @@ package net.morocoshi.moja3d.objects
 			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
+			target.renderMaskChildren = renderMaskChildren;
 			target.renderChildren = renderChildren;
-			target.containerRenderMask = containerRenderMask;
 			target.userData = userData;//@@@ここちゃんとコピーしたい
 			target.matrix = matrix;
 			target._worldMatrix.copyFrom(_worldMatrix);
@@ -963,9 +963,9 @@ package net.morocoshi.moja3d.objects
 			var calcBounds:Boolean = calculateBoundsOrder || forceCalcBounds;
 			
 			//マスクが設定されていれば全ての子をマスク扱いにする
-			if (containerRenderMask != -1)
+			if (renderMaskChildren != -1)
 			{
-				currentMask = (mask == -1)? containerRenderMask : mask | containerRenderMask;
+				currentMask = (mask == -1)? renderMaskChildren : mask | renderMaskChildren;
 			}
 			else
 			{
