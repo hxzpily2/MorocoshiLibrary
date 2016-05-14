@@ -27,6 +27,7 @@ package net.morocoshi.common.loaders.tfp
 		private var totalFileNum:int;
 		private var memory:Dictionary = new Dictionary();
 		private var errorEvent:TFPErrorEvent;
+		private var clearByteArray:Boolean;
 				
 		public function InstanceLoader() 
 		{
@@ -35,10 +36,12 @@ package net.morocoshi.common.loaders.tfp
 		/**
 		 * TFPLibraryオブジェクト内の全TFPFileのByteArrayをインスタンスに変換する。TFPFileが持つ不用なByteArrayはここで破棄される
 		 * @param	library	TFPLibraryオブジェクト
+		 * @param	clearByteArray	インスタンス変換後にTFPFile.byteArrayをclearする
 		 */
-		public function load(library:TFPLibrary):void
+		public function load(library:TFPLibrary, clearByteArray:Boolean):void
 		{
 			completeCount = 0;
+			this.clearByteArray = clearByteArray;
 			
 			var text:String = "[TFP]アセットのインスタンス化に失敗しました。";
 			errorEvent = new TFPErrorEvent(TFPErrorEvent.INSTANTIATION_ERROR, false, false, text, 0);
@@ -80,7 +83,10 @@ package net.morocoshi.common.loaders.tfp
 				case TFPAssetType.SOUND:
 					var sound:Sound = new Sound();
 					sound.loadCompressedDataFromByteArray(f.byteArray, f.byteArray.length);
-					f.byteArray.clear();
+					if (clearByteArray)
+					{
+						f.byteArray.clear();
+					}
 					f.asset = sound;
 					/*
 					 * サウンドのエラーチェック（重そうなので無効にしてる）
@@ -98,12 +104,18 @@ package net.morocoshi.common.loaders.tfp
 					break;
 				case TFPAssetType.TEXT:
 					f.asset = f.byteArray.readUTFBytes(f.byteArray.length);
-					f.byteArray.clear();
+					if (clearByteArray)
+					{
+						f.byteArray.clear();
+					}
 					completeFile(f);
 					break;
 				case TFPAssetType.XML:
 					f.asset = new XML(f.byteArray.readUTFBytes(f.byteArray.length));
-					f.byteArray.clear();
+					if (clearByteArray)
+					{
+						f.byteArray.clear();
+					}
 					completeFile(f);
 					break;
 				//FLV変換は未検証
@@ -141,7 +153,10 @@ package net.morocoshi.common.loaders.tfp
 			
 			var f:TFPFile = memory[e.currentTarget];
 			//画像のByteArray破棄
-			f.byteArray.clear();
+			if (clearByteArray)
+			{
+				f.byteArray.clear();
+			}
 			try
 			{
 				f.asset = Bitmap(LoaderInfo(e.currentTarget).content).bitmapData;
@@ -167,7 +182,10 @@ package net.morocoshi.common.loaders.tfp
 		
 		private function completeFile(f:TFPFile):void
 		{
-			f.byteArray = null;
+			if (clearByteArray)
+			{
+				f.byteArray = null;
+			}
 			f.error = false;
 			countUp();
 		}

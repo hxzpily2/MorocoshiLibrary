@@ -50,6 +50,8 @@ package net.morocoshi.common.loaders.tfp
 		public var cacheEnabled:Boolean = true;
 		/**コンストラクタで渡したTFPHolder。ロードされた各種アセットはここに格納されます。*/
 		public var holder:TFPHolder;
+		/**インスタンス変換後にByteArrayをclearする*/
+		public var clearByteArray:Boolean = true;
 		
 		/**キャッシュ対策用にパスに追加する文字列（？は除く）*/
 		private var _cacheHash:String = "";
@@ -68,6 +70,7 @@ package net.morocoshi.common.loaders.tfp
 		
 		/**ファイルロード時に使うURLRequest*/
 		public var urlRequest:URLRequest;
+		
 		private var URLLoaderClass:Class;
 		private var _isLoading:Boolean;
 		
@@ -733,7 +736,7 @@ package net.morocoshi.common.loaders.tfp
 			var loader:InstanceLoader = new InstanceLoader();
 			loader.addEventListener(TFPErrorEvent.INSTANTIATION_ERROR, instance_errorHandler);
 			loader.addEventListener(Event.COMPLETE, instance_completeHandler);
-			loader.load(library);
+			loader.load(library, clearByteArray);
 		}
 		
 		/**

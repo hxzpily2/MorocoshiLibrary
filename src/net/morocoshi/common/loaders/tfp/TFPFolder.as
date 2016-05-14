@@ -34,6 +34,22 @@ package net.morocoshi.common.loaders.tfp
 			}
 			return null;
 		}
+		
+		public function getAllFiles():Vector.<TFPFile> 
+		{
+			var result:Vector.<TFPFile> = new Vector.<TFPFile>;
+			
+			var queue:Vector.<TFPFolder> = new Vector.<TFPFolder>;
+			queue.push(this);
+			while(queue.length)
+			{
+				var tfp:TFPFolder = queue.pop();
+				result = result.concat(tfp.files);
+				queue = queue.concat(tfp.folders);
+			}
+			
+			return result;
+		}
 	}
 
 }

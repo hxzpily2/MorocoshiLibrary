@@ -99,7 +99,7 @@ package net.morocoshi.common.loaders.tfp
 		 * TFPデータ（ByteArray）をパースする
 		 * @param	byteArray	TFPデータ
 		 */
-		public function parse(byteArray:ByteArray, convertInstance:Boolean = true):void 
+		public function parse(byteArray:ByteArray, convertInstance:Boolean = true, clearByteArray:Boolean = true):void 
 		{
 			library = new TFPConverter().parse(byteArray);
 			if (!library)
@@ -119,7 +119,7 @@ package net.morocoshi.common.loaders.tfp
 				var loader:InstanceLoader = new InstanceLoader();
 				loader.addEventListener(TFPErrorEvent.INSTANTIATION_ERROR, instance_errorHandler);
 				loader.addEventListener(Event.COMPLETE, instance_completeHandler);
-				loader.load(library);
+				loader.load(library, clearByteArray);
 			}
 			else
 			{
