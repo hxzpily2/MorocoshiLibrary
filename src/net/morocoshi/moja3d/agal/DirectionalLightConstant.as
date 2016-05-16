@@ -58,9 +58,9 @@ package net.morocoshi.moja3d.agal
 			var axis:Vector3D = new Vector3D(rawData[8], rawData[9], rawData[10]);
 			axis.normalize();
 			
-			fragmentAxis.vector[0] = vertexAxis.vector[0] = -axis.x;
-			fragmentAxis.vector[1] = vertexAxis.vector[1] = -axis.y;
-			fragmentAxis.vector[2] = vertexAxis.vector[2] = -axis.z;
+			fragmentAxis.vector[0] = vertexAxis.vector[0] = axis.x;
+			fragmentAxis.vector[1] = vertexAxis.vector[1] = axis.y;
+			fragmentAxis.vector[2] = vertexAxis.vector[2] = axis.z;
 			fragmentAxis.vector[3] = vertexAxis.vector[3] = light.specularPower;
 			fragmentColor.vector[0] = vertexColor.vector[0] = light.r;
 			fragmentColor.vector[1] = vertexColor.vector[1] = light.g;

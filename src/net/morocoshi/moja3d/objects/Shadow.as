@@ -1,9 +1,8 @@
 package net.morocoshi.moja3d.objects 
 {
-	import flash.display3D.Context3D;
-	import net.morocoshi.moja3d.materials.preset.FillMaterial;
-	import net.morocoshi.moja3d.materials.TriangleFace;
 	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.materials.TriangleFace;
+	import net.morocoshi.moja3d.materials.preset.FillMaterial;
 	import net.morocoshi.moja3d.primitives.Cube;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
 	import net.morocoshi.moja3d.view.ContextProxy;
@@ -44,7 +43,6 @@ package net.morocoshi.moja3d.objects
 			radiusNear = 100;
 			radiusFar = 150;
 			setShadowArea(149, 150);
-			rotationY = Math.PI;
 			updateFrustum();
 			
 			blur = 0.002;

@@ -20,6 +20,7 @@ package net.morocoshi.moja3d.loader.objects
 		public var intensity:Number;
 		public var innerAngle:Number;
 		public var outerAngle:Number;
+		public var fadeEnabled:Boolean;
 		
 		public function M3DLight() 
 		{

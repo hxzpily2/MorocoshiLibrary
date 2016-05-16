@@ -210,6 +210,16 @@ package net.morocoshi.common.loaders.collada.nodes
 			return null;
 		}
 		
+		public function getLightByID(id:String):ColladaLightNode
+		{
+			var key:String = (id.charAt(0) == "#")? id.substr(1) : id;
+			for each(var light:ColladaLightNode in lights)
+			{
+				if (light.id == key) return light;
+			}
+			return null;
+		}
+		
 		/**
 		 * ジョイントを階層構造を保ったままスキンの中にまるごと移動する。
 		 */

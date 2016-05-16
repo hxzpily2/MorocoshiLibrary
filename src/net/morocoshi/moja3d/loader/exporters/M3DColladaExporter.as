@@ -8,6 +8,7 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.common.loaders.collada.nodes.ColladaEffectNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaGeometryData;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaGeometryNode;
+	import net.morocoshi.common.loaders.collada.nodes.ColladaLightNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaMaterialNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaObjectNode;
 	import net.morocoshi.common.loaders.collada.nodes.ColladaScene;
@@ -27,6 +28,7 @@ package net.morocoshi.moja3d.loader.exporters
 	import net.morocoshi.moja3d.loader.materials.M3DMaterial;
 	import net.morocoshi.moja3d.loader.materials.M3DSurface;
 	import net.morocoshi.moja3d.loader.objects.M3DBone;
+	import net.morocoshi.moja3d.loader.objects.M3DLight;
 	import net.morocoshi.moja3d.loader.objects.M3DMesh;
 	import net.morocoshi.moja3d.loader.objects.M3DObject;
 	import net.morocoshi.moja3d.loader.objects.M3DSkin;
@@ -200,7 +202,20 @@ package net.morocoshi.moja3d.loader.exporters
 			
 			if (object.type == ColladaObjectNode.TYPE_LIGHT)
 			{
-				result = new M3DObject();
+				var instance:ColladaLightNode = collada.getLightByID(object.instanceLink);
+				var light:M3DLight = new M3DLight();
+				light.color = instance.color;
+				light.intensity = instance.intensity;
+				light.fadeEnabled = instance.fadeEnabled;
+				light.fadeStart = instance.fadeStart;
+				light.fadeEnd = instance.fadeEnd;
+				switch(instance.type)
+				{
+					case ColladaLightNode.TYPE_AMBIENT: light.type = M3DLight.AMBIENT; break;
+					case ColladaLightNode.TYPE_DIRECTIONAL: light.type = M3DLight.DIRECTIONAL; break;
+					case ColladaLightNode.TYPE_OMNI: light.type = M3DLight.OMNI; break;
+				}
+				result = light;
 			}
 			
 			if (object.type == ColladaObjectNode.TYPE_OBJECT)

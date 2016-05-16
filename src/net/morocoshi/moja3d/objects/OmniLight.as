@@ -11,20 +11,22 @@ package net.morocoshi.moja3d.objects
 	{
 		private var _fadeStart:Number;
 		private var _fadeEnd:Number;
+		private var _fadeEnabled:Boolean;
 		
 		/**
 		 * 
 		 * @param	rgb	ライトの色
 		 * @param	intensity	ライトの強さ
+		 * @param	specularPower	光沢の強度
 		 * @param	fadeStart	フェードアウトし始める距離
 		 * @param	fadeEnd	フェードアウトし終わる距離
-		 * @param	specularPower	光沢の強度
 		 */
-		public function OmniLight(rgb:uint, intensity:Number, fadeStart:Number, fadeEnd:Number, specularPower:Number = 1)
+		public function OmniLight(rgb:uint, intensity:Number, specularPower:Number = 1, fadeEnabled:Boolean = false, fadeStart:Number = 0, fadeEnd:Number = 0)
 		{
 			super(rgb, intensity, specularPower);
 			_fadeStart = fadeStart;
 			_fadeEnd = fadeEnd;
+			_fadeEnabled = fadeEnabled;
 			boundingBox = new BoundingBox();
 			updateLightBounds();
 		}
@@ -44,14 +46,14 @@ package net.morocoshi.moja3d.objects
 		
 		override public function reference():Object3D 
 		{
-			var result:OmniLight = new OmniLight(getColor(), intensity, _fadeStart, _fadeEnd);
+			var result:OmniLight = new OmniLight(getColor(), intensity, specularPower, _fadeEnabled, _fadeStart, _fadeEnd);
 			super.referenceProperties(result);
 			return result;
 		}
 		
 		override public function clone():Object3D 
 		{
-			var result:OmniLight = new OmniLight(getColor(), intensity, _fadeStart, _fadeEnd);
+			var result:OmniLight = new OmniLight(getColor(), intensity, specularPower, _fadeEnabled, _fadeStart, _fadeEnd);
 			super.cloneProperties(result);
 			return result;
 		}

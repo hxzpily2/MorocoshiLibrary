@@ -64,13 +64,13 @@ package net.morocoshi.moja3d.objects
 		
 		override public function lookAt3D(point:Vector3D, upAxis:Vector3D = null):void 
 		{
-			TransformUtil.lookAt3D(matrix, point, "+z", "+y", upAxis, true);
+			TransformUtil.lookAt3D(matrix, point, "-z", "+y", upAxis, true);
 			matrix = _matrix;
 		}
 		
 		override public function lookAtXYZ(x:Number, y:Number, z:Number, upAxis:Vector3D = null):void 
 		{
-			TransformUtil.lookAtXYZ(matrix, x, y, z, "+z", "+y", upAxis, false);
+			TransformUtil.lookAtXYZ(matrix, x, y, z, "-z", "+y", upAxis, false);
 			matrix = _matrix;
 		}
 		

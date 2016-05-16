@@ -56,6 +56,7 @@ package net.morocoshi.moja3d.loader
 	import net.morocoshi.moja3d.objects.Line3D;
 	import net.morocoshi.moja3d.objects.Mesh;
 	import net.morocoshi.moja3d.objects.Object3D;
+	import net.morocoshi.moja3d.objects.OmniLight;
 	import net.morocoshi.moja3d.objects.Skin;
 	import net.morocoshi.moja3d.objects.SkinContainer;
 	import net.morocoshi.moja3d.objects.Surface;
@@ -815,15 +816,10 @@ package net.morocoshi.moja3d.loader
 			var light:Light3D;
 			switch(m3d.type)
 			{
-				case M3DLight.AMBIENT: light = new AmbientLight(m3d.color, 1); break;
-				case M3DLight.DIRECTIONAL: light = new DirectionalLight(m3d.color, 1); break;
-				//case M3DLight.OMNI: light = new OmniLight(m3d.color, m3d.fadeStart, m3d.fadeEnd); break;
-				//case M3DLight.SPOT: light = new SpotLight(m3d.color, m3d.fadeStart, m3d.fadeEnd, m3d.innerAngle, m3d.outerAngle); break;
-			}
-			if (light)
-			{
-				light.setColor(m3d.color);
-				light.intensity = isNaN(m3d.intensity)? 1 : m3d.intensity;
+				case M3DLight.AMBIENT: light = new AmbientLight(m3d.color, m3d.intensity); break;
+				case M3DLight.DIRECTIONAL: light = new DirectionalLight(m3d.color, m3d.intensity); break;
+				case M3DLight.OMNI: light = new OmniLight(m3d.color, m3d.intensity, 1, m3d.fadeEnabled,　m3d.fadeStart, m3d.fadeEnd); break;
+				//case M3DLight.SPOT: light = new SpotLight(m3d.color, m3d.intensity, m3d.fadeStart, m3d.fadeEnd, m3d.innerAngle, m3d.outerAngle); break;
 			}
 			
 			return light;
