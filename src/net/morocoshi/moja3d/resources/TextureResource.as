@@ -11,9 +11,8 @@ package net.morocoshi.moja3d.resources
 	 */
 	public class TextureResource extends Resource
 	{
-		/***/
 		protected var prevSize:Point;
-		/***/
+		
 		public var texture:TextureBase;
 		
 		public function TextureResource() 
@@ -31,13 +30,10 @@ package net.morocoshi.moja3d.resources
 		/**
 		 * Context3Dにアップロード
 		 * @param	context3D
-		 * @param	async
-		 * @param	complete
 		 */
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
-			return super.upload(context3D, async, complete);
-			//throw new Error("継承してください！");
+			return super.upload(context3D);
 		}
 		
 		/**

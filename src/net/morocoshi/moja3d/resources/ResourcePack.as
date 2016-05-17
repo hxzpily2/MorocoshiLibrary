@@ -133,10 +133,8 @@ package net.morocoshi.moja3d.resources
 		 * @param	resources	Resourceの配列もしくはResource単体
 		 * @param	upload	アップロードしたい場合はtrue。falseにした場合以降の引数は省略可能。
 		 * @param	context3D
-		 * @param	async
-		 * @param	complete
 		 */
-		public function attachTo(resources:*, upload:Boolean, context3D:ContextProxy = null, async:Boolean = false, complete:Function = null):void 
+		public function attachTo(resources:*, upload:Boolean, context3D:ContextProxy = null):void 
 		{
 			if (resources is Resource) resources = [resources];
 			var n:int = resources.length;
@@ -159,7 +157,7 @@ package net.morocoshi.moja3d.resources
 				}
 				if (upload)
 				{
-					externalTexture.upload(context3D, async, complete);
+					externalTexture.upload(context3D);
 				}
 			}
 		}

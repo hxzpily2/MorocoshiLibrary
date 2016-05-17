@@ -205,9 +205,6 @@ package net.morocoshi.moja3d.view
 		/**
 		 * Stage3Dを初期化します。うまくいくとEvent.COMPLETEが発行されます。
 		 * @param	stage3D
-		 * @param	width
-		 * @param	height
-		 * @param	antiAlias
 		 * @param	renderMode	Context3DRenderMode.AUTO
 		 * @param	profile		Context3DProfile.BASELINE
 		 */
@@ -251,11 +248,11 @@ package net.morocoshi.moja3d.view
 			dummyPattern.fillRect(new Rectangle(0, 0, 32, 32), 0x808080);
 			dummyPattern.fillRect(new Rectangle(32, 32, 32, 32), 0x808080);
 			renderer.dummyTexture = new ImageTextureResource(dummyPattern);
-			renderer.dummyTexture.upload(context3D, false);
+			renderer.dummyTexture.upload(context3D);
 			
 			Global3D.boundingCube.upload(context3D, false);
-			collector.filterGeometry.upload(context3D, false);
-			collector.planeGeometry.upload(context3D, false);
+			collector.filterGeometry.upload(context3D);
+			collector.planeGeometry.upload(context3D);
 			collector.reflectiveWater.setContext3D(context3D);
 			
 			if (dispatchedComplete == false)

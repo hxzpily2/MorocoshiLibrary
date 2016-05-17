@@ -74,7 +74,7 @@ package net.morocoshi.moja3d.resources
 			boundingBox.maxZ = maxZ;
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
 			//メッシュを再生性
 			vertices.length = 0;
@@ -137,7 +137,7 @@ package net.morocoshi.moja3d.resources
 			dispose();
 			if (vertexIndices.length == 0) return false;
 			
-			return super.upload(context3D, async, complete);
+			return super.upload(context3D);
 		}
 		
 		public function addSegment(thickness:Number = 1):LineSegment 

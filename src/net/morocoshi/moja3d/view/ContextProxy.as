@@ -5,6 +5,7 @@ package net.morocoshi.moja3d.view
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.utils.Dictionary;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.resources.Resource;
 	
 	/**
@@ -33,12 +34,12 @@ package net.morocoshi.moja3d.view
 			}
 		}
 		
-		public function addUploadItem(resource:Resource):void 
+		moja3d function addUploadItem(resource:Resource):void 
 		{
 			uploadItem[resource] = resource;
 		}
 		
-		public function removeUploadItem(resource:Resource):void
+		moja3d function removeUploadItem(resource:Resource):void
 		{
 			delete uploadItem[resource];
 		}

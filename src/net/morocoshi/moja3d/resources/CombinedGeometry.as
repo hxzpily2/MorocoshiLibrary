@@ -1,26 +1,22 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
-	import net.morocoshi.moja3d.objects.Surface;
 	import net.morocoshi.moja3d.view.ContextProxy;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class CombinedGeometry extends Geometry 
 	{
 		public var geometries:Vector.<Geometry>;
-		//public var surfacesList:Vector.<Vector.<Surface>>;
 		
 		public function CombinedGeometry() 
 		{
 			super();
 			
 			geometries = new Vector.<Geometry>;
-			//surfacesList = new Vector.<Vector.<Surface>>;
-			//___ここなんとかする
-			//isUploaded = true;
 		}
 		
 		override public function calculateBounds(boundingBox:BoundingBox):void 
@@ -47,11 +43,11 @@ package net.morocoshi.moja3d.resources
 			return result;
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
 			for each (var item:Geometry in geometries) 
 			{
-				item.upload(context3D, async, complete);
+				item.upload(context3D);
 			}
 			return true;
 		}

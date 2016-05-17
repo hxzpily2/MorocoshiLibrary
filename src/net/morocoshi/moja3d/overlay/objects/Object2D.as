@@ -1,17 +1,13 @@
 package net.morocoshi.moja3d.overlay.objects 
 {
-	import flash.display3D.Context3D;
 	import flash.events.EventDispatcher;
-	import flash.events.TouchEvent;
 	import flash.geom.ColorTransform;
-	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
 	import flash.geom.Point;
 	import flash.geom.Vector3D;
 	import flash.utils.getQualifiedClassName;
 	import net.morocoshi.common.graphics.Palette;
 	import net.morocoshi.moja3d.moja3d;
-	import net.morocoshi.moja3d.objects.Object3D;
 	import net.morocoshi.moja3d.overlay.mouse.OverlayTouchManager;
 	import net.morocoshi.moja3d.renderer.RenderCollector;
 	import net.morocoshi.moja3d.resources.Resource;
@@ -447,14 +443,14 @@ package net.morocoshi.moja3d.overlay.objects
 		 * 必要素材をContext3Dに転送する
 		 * @param	context3D
 		 */
-		public function upload(context3D:ContextProxy, hierarchy:Boolean, async:Boolean, complete:Function = null):void 
+		public function upload(context3D:ContextProxy, hierarchy:Boolean):void 
 		{
 			var list:Vector.<Resource> = getResources(hierarchy);
 			var n:int = list.length;
 			for (var i:int = 0; i < n; i++)
 			{
 				var resource:Resource = list[i];
-				resource.upload(context3D, async, complete);
+				resource.upload(context3D);
 			}
 		}
 		

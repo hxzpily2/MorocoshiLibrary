@@ -1,6 +1,5 @@
 package net.morocoshi.moja3d.resources 
 {
-	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
@@ -91,10 +90,9 @@ package net.morocoshi.moja3d.resources
 			//texture = context3D.createRectangleTexture(width, height, format, renderToTexture);
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
 			return true;
-			//return super.upload(context3D, async, complete);
 		}
 		
 		override public function clone():Resource 

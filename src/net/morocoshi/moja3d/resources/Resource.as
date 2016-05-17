@@ -2,7 +2,10 @@ package net.morocoshi.moja3d.resources
 {
 	import flash.events.EventDispatcher;
 	import flash.utils.getQualifiedClassName;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.view.ContextProxy;
+	
+	use namespace moja3d;
 	
 	/**
 	 * Context3Dにuploadするリソース
@@ -40,14 +43,14 @@ package net.morocoshi.moja3d.resources
 			return resource;
 		}
 		
-		public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean
+		/**
+		 * 
+		 * @param	context3D
+		 * @return
+		 */
+		public function upload(context3D:ContextProxy):Boolean
 		{
 			if (uploadEnabled == false || isUploaded == true) return false;
-			
-			if (async == true)
-			{
-				throw new Error("非同期アップロードは現在調査中のため使えません！");
-			}
 			
 			dispose();
 			isUploaded = true;

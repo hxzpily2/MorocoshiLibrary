@@ -135,7 +135,7 @@ package net.morocoshi.moja3d.resources
 		
 		/**
 		 * 
-		 * @param	index
+		 * @param	kind
 		 * @return
 		 */
 		public function getVertices(kind:int):Vector.<Number>
@@ -146,12 +146,10 @@ package net.morocoshi.moja3d.resources
 		/**
 		 * Context3Dに頂点バッファなどを転送
 		 * @param	context3D
-		 * @param	async
-		 * @param	complete
 		 */
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean
+		override public function upload(context3D:ContextProxy):Boolean
 		{
-			if (super.upload(context3D, async, complete) == false) return false;
+			if (super.upload(context3D) == false) return false;
 			
 			if (vertexIndices.length > AGALInfo.VERTEXINDEX_LIMIT)
 			{
@@ -199,11 +197,6 @@ package net.morocoshi.moja3d.resources
 			{
 				dispose();
 				return false;
-			}
-			
-			if (complete != null)
-			{
-				complete(this);
 			}
 			
 			return true;

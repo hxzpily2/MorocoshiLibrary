@@ -23,7 +23,7 @@ package net.morocoshi.moja3d.resources
 			super();
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
 			var cache:Dictionary = new Dictionary();
 			for each(var item:TextureAtlasItem in items)
@@ -31,7 +31,7 @@ package net.morocoshi.moja3d.resources
 				if (item.resource && !cache[item.resource])
 				{
 					cache[item.resource] = true;
-					item.resource.upload(context3D, async, complete);
+					item.resource.upload(context3D);
 				}
 			}
 			cache = null;

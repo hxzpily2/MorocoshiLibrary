@@ -5,7 +5,6 @@ package net.morocoshi.moja3d.resources
 	import flash.display3D.Context3DTextureFormat;
 	import flash.display3D.textures.CubeTexture;
 	import flash.display3D.textures.Texture;
-	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.utils.ByteArray;
 	import net.morocoshi.moja3d.events.Event3D;
@@ -32,7 +31,6 @@ package net.morocoshi.moja3d.resources
 		protected var _width:int;
 		protected var _height:int;
 		
-		private var completeCallback:Function;
 		private var _mipmap:Boolean;
 		
 		/**
@@ -136,22 +134,13 @@ package net.morocoshi.moja3d.resources
 			_isParsed = false;
 		}
 		
-		override public function upload(context3D:ContextProxy, async:Boolean = false, complete:Function = null):Boolean 
+		override public function upload(context3D:ContextProxy):Boolean 
 		{
-			if (super.upload(context3D, async, complete) == false) return false;
-			
-			if (_hasResource == false)
-			{
-				if (complete != null)
-				{
-					complete(this);
-				}
-				return false;
-			}
+			if (super.upload(context3D) == false) return false;
+			if (_hasResource == false) return false;
 			
 			isUploaded = true;
 			isReady = false;
-			completeCallback = complete;
 			
 			//ATF
 			if (resourceType == ATF)
@@ -162,30 +151,20 @@ package net.morocoshi.moja3d.resources
 				}
 				else
 				{
-					if (texture)
-					{
-						texture.dispose();
-					}
+					if (texture) texture.dispose();
 					texture = context3D.context.createCubeTexture(_atf.width, _atf.format, false, 0);
 				}
 				
-				if (async)
-				{
-					texture.addEventListener(Event.TEXTURE_READY, texture_textureReadyHandler);
-				}
 				if (isCubeMap == false)
 				{
-					Texture(texture).uploadCompressedTextureFromByteArray(_atf.data, 0, async);
+					Texture(texture).uploadCompressedTextureFromByteArray(_atf.data, 0, false);
 				}
 				else
 				{
-					CubeTexture(texture).uploadCompressedTextureFromByteArray(_atf.data, 0, async);
+					CubeTexture(texture).uploadCompressedTextureFromByteArray(_atf.data, 0, false);
 				}
 				
-				if (async == false)
-				{
-					notifyComplete();
-				}
+				isReady = true;
 			}
 			
 			//BitmapData
@@ -202,13 +181,13 @@ package net.morocoshi.moja3d.resources
 					{
 						Texture(texture).uploadFromBitmapData(_bitmapData, 0);
 					}
-					notifyComplete();
+					isReady = true;
 				}
 				else
 				{
 					createTexture(context3D, _bitmapData.width, _bitmapData.height);
 					uploadCubeTextureWithMipMaps(texture as CubeTexture, _bitmapData.width);
-					notifyComplete();
+					isReady = true;
 				}
 			}
 			
@@ -222,21 +201,6 @@ package net.morocoshi.moja3d.resources
 		protected function notifyParsed():void
 		{
 			dispatchEvent(new Event3D(Event3D.RESOURCE_PARSED));
-		}
-		
-		protected function notifyComplete():void 
-		{
-			isReady = true;
-			if (completeCallback != null)
-			{
-				completeCallback(this);
-			}
-		}
-		
-		private function texture_textureReadyHandler(e:Event):void 
-		{
-			texture.removeEventListener(Event.TEXTURE_READY, texture_textureReadyHandler);
-			notifyComplete();
 		}
 		
 		/**
