@@ -39,7 +39,7 @@ package net.morocoshi.moja3d.shaders
 		private var _lightShader:LightShader;
 		private var _key:String;
 		
-		public var shaders:Vector.<MaterialShader>;
+		moja3d var shaders:Vector.<MaterialShader>;
 		private var tickShaderList:Vector.<MaterialShader>;
 		public var name:String = "";
 		private var initialized:Boolean;
