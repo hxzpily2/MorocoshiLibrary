@@ -26,12 +26,19 @@ package net.morocoshi.moja3d.view
 		
 		public function reupload():void
 		{
+			var resources:Array = [];
 			for (var key:* in uploadItem) 
 			{
-				var item:Resource = uploadItem[key];
+				resources.push(uploadItem[key]);
+			}
+			var item:Resource;
+			for each(item in resources)
+			{
 				item.dispose();
 				item.upload(this);
 			}
+			item = null;
+			resources = null;
 		}
 		
 		moja3d function addUploadItem(resource:Resource):void 
