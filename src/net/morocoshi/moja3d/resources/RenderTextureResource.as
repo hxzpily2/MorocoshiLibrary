@@ -1,8 +1,10 @@
 package net.morocoshi.moja3d.resources 
 {
 	import flash.display3D.Context3DTextureFormat;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
+	use namespace moja3d;
 	/**
 	 * ...
 	 * 
@@ -86,8 +88,15 @@ package net.morocoshi.moja3d.resources
 			if (texture) texture.dispose();
 			
 			texture = context3D.context.createTexture(width, height, Context3DTextureFormat.BGRA, true);
+			context3D.addUploadItem(this);
+			
 			//RectangleTextureを使った場合
 			//texture = context3D.createRectangleTexture(width, height, format, renderToTexture);
+		}
+		
+		override public function dispose():void 
+		{
+			prevSize.setTo( -1, -1);
 		}
 		
 		override public function upload(context3D:ContextProxy):Boolean 
