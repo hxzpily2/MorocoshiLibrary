@@ -41,60 +41,58 @@ package net.morocoshi.moja3d.renderer
 	 */
 	public class RenderCollector 
 	{
-		public var context3D:ContextProxy;
-		public var renderer:Renderer;
-		public var renderElementList:Object;
-		public var camera:Camera3D;
+		/**Object3Dのカラー設定の有効設定。有効にすると自動的にカラーシェーダーが追加される。*/
+		public var useObjectColorTransform:Boolean = true;
 		
-		public var vertexCode:AGALCode;
-		public var fragmentCode:AGALCode;
-		public var vertexConstant:BasicConstant;
-		public var fragmentConstant:BasicConstant;
-		public var sunLightConstantList:Vector.<DirectionalLightConstant>;
-		public var omniLightConstantList:Vector.<OmniLightConstant>;
-		public var shadowConstantList:Vector.<ShadowConstant>;
+		moja3d var context3D:ContextProxy;
+		moja3d var renderer:Renderer;
+		moja3d var renderElementList:Object;
+		moja3d var camera:Camera3D;
+		moja3d var renderPhase:String;
 		
-		public var renderPhase:String;
-		public var sunLightList:Vector.<DirectionalLight>;
-		public var omniLightList:Vector.<OmniLight>;
-		public var sunShadowList:Vector.<DirectionalLight>;
+		moja3d var vertexCode:AGALCode;
+		moja3d var fragmentCode:AGALCode;
+		moja3d var vertexConstant:BasicConstant;
+		moja3d var fragmentConstant:BasicConstant;
+		moja3d var sunLightConstantList:Vector.<DirectionalLightConstant>;
+		moja3d var omniLightConstantList:Vector.<OmniLightConstant>;
+		moja3d var shadowConstantList:Vector.<ShadowConstant>;
+		moja3d var sunLightList:Vector.<DirectionalLight>;
+		moja3d var omniLightList:Vector.<OmniLight>;
+		moja3d var sunShadowList:Vector.<DirectionalLight>;
 		
-		public var filterGeometry:FilterGeometry;
-		public var planeGeometry:Plane2DGeometry;
+		moja3d var filterGeometry:FilterGeometry;
+		moja3d var planeGeometry:Plane2DGeometry;
 		
-		private var _drawCount:int = 0;
-		private var _polygonCount:int = 0;
-		private var _alphaCount:int = 0;
-		private var shadowShaderLink:Dictionary;
+		moja3d var _drawCount:int = 0;
+		moja3d var _polygonCount:int = 0;
+		moja3d var _alphaCount:int = 0;
+		moja3d var shadowShaderLink:Dictionary;
 		moja3d var _moveCount:int = 0;
 		moja3d var _colorCount:int = 0;
 		
 		/**水面反射関連*/
-		public var reflectiveWater:ReflectiveWater;
-		
+		moja3d var reflectiveWater:ReflectiveWater;
 		/**影要素があったか*/
-		public var hasShadowElement:Boolean;
-		/**光要素があったか*/
-		public var hasLightElement:Boolean;
+		moja3d var hasShadowElement:Boolean;
 		/**マスク要素があったか*/
-		public var hasMaskElement:Boolean;
-		public var maskShaderLink:Object;
+		moja3d var hasMaskElement:Boolean;
+		moja3d var maskShaderLink:Object;
 		
-		public var opaquePassShaderList:ShaderList;
-		public var alphaPassShaderList:ShaderList;
-		/**Object3Dのカラー設定の有効設定。有効にすると自動的にカラーシェーダーが追加される。*/
-		public var useObjectColorTransform:Boolean = true;
-		public var info:AGALInfo;
+		moja3d var opaquePassShaderList:ShaderList;
+		moja3d var alphaPassShaderList:ShaderList;
+		
+		moja3d var info:AGALInfo;
 		/**これにBitmapDataが指定されていればここにキャプチャする*/
-		public var captureDestination:BitmapData;
-		public var materialCulling:String;
+		moja3d var captureDestination:BitmapData;
+		moja3d var materialCulling:String;
+		
 		moja3d var outlineShader:OutlineColorShader;
 		/**マスクフィルターが存在するか*/
 		moja3d var existMaskFilter:Boolean;
 		
-		/**
-		 * レンダリング時にシーン内のものを色々と収集する
-		 */
+		private var element:RenderElement;
+		
 		public function RenderCollector() 
 		{
 			shadowShaderLink = new Dictionary();
@@ -297,7 +295,6 @@ package net.morocoshi.moja3d.renderer
 		moja3d function clear():void
 		{
 			hasShadowElement = false;
-			hasLightElement = false;
 			hasMaskElement = false;
 			
 			//反射要素チェックフェーズのみリセットしておく
@@ -453,7 +450,6 @@ package net.morocoshi.moja3d.renderer
 			list = null;
 		}
 		
-		private var element:RenderElement;
 		public function collectFilter(shaderList:ShaderList):void 
 		{
 			clear();

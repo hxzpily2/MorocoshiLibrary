@@ -31,15 +31,15 @@ package net.morocoshi.moja3d.objects
 	 */
 	public class Object3D extends EventDispatcher
 	{
+		/***/
 		public var name:String;
+		/***/
 		public var animationID:String;
+		/***/
 		public var userData:Object;
 		/**このオブジェクトが影を落とすか*/
 		public var castShadowEnabled:Boolean;
 		public var castShadowChildren:Boolean;
-		/**このオブジェクトが光筋を伸ばすか*/
-		public var castLightEnabled:Boolean;
-		public var castLightChildren:Boolean;
 		/**このオブジェクトが反射で映り込むか*/
 		public var reflectEnabled:Boolean;
 		public var reflectChildren:Boolean;
@@ -49,7 +49,7 @@ package net.morocoshi.moja3d.objects
 		public var renderMaskChildren:int;
 		/**負の値ほど後ろにまわる*/
 		public var sortPriority:Number;
-		//public var boundingSphere:BoundingSphere;
+		/***/
 		public var boundingBox:BoundingBox;
 		/**子以下をレンダリング対象に含めるか*/
 		public var renderChildren:Boolean;
@@ -131,10 +131,8 @@ package net.morocoshi.moja3d.objects
 			flip = 1;
 			
 			castShadowEnabled = LightSetting._defaultCastShadow;
-			castLightEnabled = LightSetting._defaultCastLight;
 			reflectEnabled = LightSetting._defaultReflect;
 			castShadowChildren = true;
-			castLightChildren = true;
 			reflectChildren = true;
 			mouseEnabled = true;
 			mouseChildren = true;
@@ -589,7 +587,6 @@ package net.morocoshi.moja3d.objects
 			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
-			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
 			target.renderMaskChildren = renderMaskChildren;
@@ -626,7 +623,6 @@ package net.morocoshi.moja3d.objects
 			//target.worldColorTransform = worldColorTransform? Palette.clone(worldColorTransform) : null;
 			target.castShadowEnabled = castShadowEnabled;
 			target.castShadowChildren = castShadowChildren;
-			target.castLightEnabled = castLightEnabled;
 			target.reflectEnabled = reflectEnabled;
 			target.renderMask = renderMask;
 			target.renderMaskChildren = renderMaskChildren;
@@ -683,10 +679,9 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * 必要素材をContext3Dに転送する
-		 * @param	context3D	upload先
-		 * @param	hierarchy	子以下もuploadするか
-		 * @param	async	非同期でuploadするか
+		 * このオブジェクトが使用している全てのリソースをContext3Dに転送する
+		 * @param	context3D	upload先のContextProxy
+		 * @param	hierarchy	子以下も再帰的にuploadする
 		 */
 		public function upload(context3D:ContextProxy, hierarchy:Boolean):void 
 		{
@@ -703,7 +698,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。関連する画像データなどは破棄しない。
+		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeします。リソースの再uploadに必要な画像データなどは破棄しません。それも破棄したい場合はclear()を利用してください。
 		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
 		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
 		 */
@@ -721,7 +716,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * メモリ解放
+		 * 全ての変数をnull化してメモリを解放します。リソースはdisposeしません。
 		 */
 		public function finaly():void
 		{
@@ -749,7 +744,7 @@ package net.morocoshi.moja3d.objects
 		}
 		
 		/**
-		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄する。画像リソースは二度とuploadできなくなるので注意。
+		 * このオブジェクトが使用している全てのリソースにおいて、Context3Dにuploadしたものをdisposeしつつ、関連する画像データなども破棄します。画像リソースは二度とuploadできなくなるので注意。
 		 * @param	hierarchy	子以下のオブジェクトのリソースも再帰的に破棄するか
 		 * @param	force	Resource.autoDispose=falseのリソースも強制的に破棄する
 		 */
@@ -790,6 +785,11 @@ package net.morocoshi.moja3d.objects
 			resource = null;
 		}
 		
+		/**
+		 * 子を表示リストから外す。成功すればtrueが返る。
+		 * @param	object	削除するオブジェクト
+		 * @return
+		 */
 		public function removeChild(object:Object3D):Boolean
 		{
 			var child:Object3D = _children;
@@ -806,6 +806,9 @@ package net.morocoshi.moja3d.objects
 			return false;
 		}
 		
+		/**
+		 * 全ての子を表示リストから外す
+		 */
 		public function removeChildren():void
 		{
 			var child:Object3D = _children;
@@ -816,17 +819,6 @@ package net.morocoshi.moja3d.objects
 				child = next;
 			}
 		}
-		
-		public function disposeChildren():void
-		{
-			var child:Object3D = _children;
-			while (child)
-			{
-				child.dispose(true);
-				child = child._next;
-			}
-		}
-		
 		
 		//--------------------------------------------------------------------------
 		//
@@ -1056,7 +1048,6 @@ package net.morocoshi.moja3d.objects
 			//デプスシャドウレンダリング時に除外する場合
 			var skipChildren:Boolean = (renderChildren == false)
 			||	(phase == RenderPhase.SHADOW && castShadowChildren == false)
-			||	(phase == RenderPhase.LIGHT && castLightChildren == false)
 			||	(phase == RenderPhase.REFLECT && reflectChildren == false);
 			
 			if (phase == RenderPhase.CHECK && this is LOD && collector.camera)
@@ -1065,8 +1056,6 @@ package net.morocoshi.moja3d.objects
 			}
 			
 			var skipDraw:Boolean = false;
-			//Z深度レンダリング時に除外する場合（子はチェックする）
-			if (phase == RenderPhase.LIGHT && castLightEnabled == false) skipDraw = true;
 			//反射レンダリング時に除外する場合（子はチェックする）
 			if (phase == RenderPhase.REFLECT && reflectEnabled == false) skipDraw = true;
 			//デプスシャドウレンダリング時に除外する場合（子はチェックする）
@@ -1100,7 +1089,6 @@ package net.morocoshi.moja3d.objects
 		 */
 		protected function collecting(collector:RenderCollector):void 
 		{
-			
 		}
 		
 		/**
@@ -1109,7 +1097,6 @@ package net.morocoshi.moja3d.objects
 		 */
 		protected function calculate(collector:RenderCollector):void 
 		{
-			
 		}
 		
 		//--------------------------------------------------------------------------

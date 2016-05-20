@@ -6,7 +6,8 @@ package net.morocoshi.moja3d.objects
 	use namespace moja3d;
 	
 	/**
-	 * ...
+	 * 距離で表示を変化させるオブジェクト
+	 * 
 	 * @author tencho
 	 */
 	public class LOD extends Object3D
@@ -19,6 +20,13 @@ package net.morocoshi.moja3d.objects
 			items = new Dictionary();
 		}
 		
+		/**
+		 * 表示するオブジェクトを登録する。登録されたオブジェクトはLODオブジェクトの子に追加される。
+		 * @param	object	登録するオブジェクト
+		 * @param	min	カメラからの距離がこの値「以上」から表示しはじめる
+		 * @param	max	カメラからの距離がこの値「未満」まで表示する
+		 * @return
+		 */
 		public function registerObject(object:Object3D, min:Number, max:Number):Object3D
 		{
 			addChild(object);
@@ -26,13 +34,17 @@ package net.morocoshi.moja3d.objects
 			return object;
 		}
 		
-		public function unregisterObject(object:Object3D):void
+		/**
+		 * 登録したオブジェクトを削除する。削除に成功すればtrueが返る。
+		 * @param	object
+		 */
+		public function unregisterObject(object:Object3D):Boolean
 		{
-			removeChild(object);
 			delete items[object];
+			return removeChild(object);
 		}
 		
-		public function checkDistance(camera:Camera3D):void 
+		moja3d function checkDistance(camera:Camera3D):void 
 		{
 			var m:Vector.<Number> = _worldMatrix.rawData;
 			var d:Number = camera.getDistanceXYZ(m[12], m[13], m[14]);

@@ -36,7 +36,6 @@ package net.morocoshi.moja3d.objects
 			
 			isReady = false;
 			castShadowChildren = false;
-			castLightChildren = false;
 			reflectChildren = false;
 			
 			usedBones = new Vector.<Bone>;

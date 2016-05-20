@@ -15,23 +15,10 @@ package net.morocoshi.moja3d.config
 		static moja3d var _numOmniLights:int = 0;
 		static moja3d var _numDirectionalShadow:int = 1;
 		static moja3d var _defaultCastShadow:Boolean = true;
-		static moja3d var _defaultCastLight:Boolean = false;
 		static moja3d var _defaultReflect:Boolean = true;
 		
 		/**Scene3Dがレンダリングされたかどうか*/
 		static moja3d var renderInitialized:Boolean = false;
-		
-		/**
-		 * デフォルトでオブジェクトが光筋を伸ばすかどうか
-		 */
-		static public function get defaultCastLight():Boolean 
-		{
-			return _defaultCastLight;
-		}
-		static public function set defaultCastLight(value:Boolean):void 
-		{
-			_defaultCastLight = value;
-		}
 		
 		/**
 		 * デフォルトでオブジェクトが影を落とすかどうか

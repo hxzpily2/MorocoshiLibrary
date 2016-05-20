@@ -57,24 +57,23 @@ package net.morocoshi.moja3d.view
 	public class Scene3D extends EventDispatcher
 	{
 		public var root:Object3D;
-		
 		public var view:Viewport;
-		public var renderer:Renderer;
 		public var stage3D:Stage3D;
 		public var context3D:ContextProxy;
 		public var camera:Camera3D;
-		
-		public var driverInfo:DriverInfo;
-		public var collector:RenderCollector;
-		
 		public var filters:Vector.<Filter3D>;
-		public var postEffect:PostEffectManager;
 		public var overlay:Object2D;
 		public var billboard:BillboardManager;
 		public var billboardUpAxis:Vector3D;
 		
 		public var tpv:MouseDrag3D;
 		public var fpv:FPVController;
+		
+		public var driverInfo:DriverInfo;
+		public var collector:RenderCollector;
+		
+		moja3d var renderer:Renderer;
+		moja3d var postEffect:PostEffectManager;
 		
 		/**
 		 * マウスイベントを有効にした際に使うマウス判定の処理で、カメラ位置からの有効な距離。
@@ -377,7 +376,7 @@ package net.morocoshi.moja3d.view
 			collector.collect(rootObject, camera, view.clipping, clipEnabled, this, RenderPhase.CHECK);
 			
 			//シャドウライトを視野台を包むように自動移動
-			if (collector.hasShadowElement || collector.hasLightElement)
+			if (collector.hasShadowElement)
 			{
 				var shadowLight:Light3D;
 				var point:Vector3D;
@@ -456,24 +455,6 @@ package net.morocoshi.moja3d.view
 				{
 					fillMaskTextureOrder = false;
 					postEffect.maskTexture.fillColor(context3D, 0x0);
-				}
-			}
-			
-			
-			//光の投影
-			if (collector.hasLightElement)
-			{
-				n = collector.sunShadowList.length;
-				for (i = 0; i < n; i++) 
-				{
-					light = collector.sunShadowList[i];
-					collector.collect(rootObject, light._mainShadow, null, true, this, RenderPhase.LIGHT);
-					renderer.renderLightMap(collector, light._mainShadow);
-					if (light._wideShadow)
-					{
-						collector.collect(rootObject, light._wideShadow, null, true, this, RenderPhase.LIGHT);
-						renderer.renderLightMap(collector, light._wideShadow);
-					}
 				}
 			}
 			

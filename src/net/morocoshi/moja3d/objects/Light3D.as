@@ -24,7 +24,12 @@ package net.morocoshi.moja3d.objects
 		moja3d var _mainShadow:Shadow;
 		moja3d var _wideShadow:Shadow;
 		
-		public function Light3D(rgb:uint, intensity:Number, specularPower:Number = 1) 
+		/**
+		 * @param	rgb	光源色
+		 * @param	intensity	光源強度
+		 * @param	specularPower	光沢強度
+		 */
+		public function Light3D(rgb:uint, intensity:Number = 1, specularPower:Number = 1) 
 		{
 			super();
 			
@@ -54,7 +59,7 @@ package net.morocoshi.moja3d.objects
 			{
 				//ライト収集（デプス時以外）
 				var phase:String = collector.renderPhase;
-				if (phase != RenderPhase.SHADOW && phase != RenderPhase.LIGHT)
+				if (phase != RenderPhase.SHADOW)
 				{
 					collector.addLight3D(this);
 				}

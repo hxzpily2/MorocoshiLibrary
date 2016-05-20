@@ -41,13 +41,14 @@ package net.morocoshi.moja3d.materials
 		/**反射レンダリング時のシェーダー*/
 		public var reflectShaderList:ShaderList;
 		
-		public var sourceFactor:String;
-		public var destinationFactor:String;
+		moja3d var sourceFactor:String;
+		moja3d var destinationFactor:String;
 		
 		private var _alphaPassEnabled:Boolean;
 		private var _opaquePassEnabled:Boolean;
 		private var _alphaThreshold:Number;
 		private var _shadowThreshold:Number;
+		
 		private var depthEndShader:DepthEndShader;
 		
 		moja3d var opaquePassConst:AGALConstant;
@@ -94,6 +95,9 @@ package net.morocoshi.moja3d.materials
 		//
 		//--------------------------------------------------------------------------
 		
+		/**
+		 * 
+		 */
 		public function get blendMode():String
 		{
 			if (sourceFactor == Context3DBlendFactor.SOURCE_ALPHA && destinationFactor == Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA) return BlendMode.NORMAL;
@@ -342,7 +346,7 @@ package net.morocoshi.moja3d.materials
 			}
 			
 			//デプスマップ用
-			if (phase == RenderPhase.SHADOW || phase == RenderPhase.LIGHT)
+			if (phase == RenderPhase.SHADOW)
 			{
 				var depthKey:String = seed + "/" + skinKey + "/" + shaderList.key + "/" + colorKey + mesh.key + "/depth";
 				shaderData = AGALCache.shader[depthKey];

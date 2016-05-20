@@ -14,10 +14,10 @@ package net.morocoshi.moja3d.objects
 		private var _fadeEnabled:Boolean;
 		
 		/**
-		 * 
 		 * @param	rgb	ライトの色
 		 * @param	intensity	ライトの強さ
 		 * @param	specularPower	光沢の強度
+		 * @param	fadeEnabled	フェードアウトするか
 		 * @param	fadeStart	フェードアウトし始める距離
 		 * @param	fadeEnd	フェードアウトし終わる距離
 		 */

@@ -13,6 +13,7 @@ package net.morocoshi.moja3d.agal
 		static public const VERTEXDATA_LIMIT:int = 65535;
 		/**1ジオメトリが持てる最大頂点インデックス数*/
 		static public const VERTEXINDEX_LIMIT:int = 524287;
+		
 		public var version:uint;
 		public var profile:String;
 		public var constantsLimit:Object;

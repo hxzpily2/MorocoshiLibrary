@@ -33,6 +33,9 @@ package net.morocoshi.moja3d.objects
 		public var layer:uint;
 		/**サーフェイスリスト*/
 		public var surfaces:Vector.<Surface>;
+		/***/
+		public var mouseDoubleSided:Boolean;
+		
 		moja3d var combinedSurfacesList:Vector.<Vector.<Surface>>;
 		/*
 			[BasicShader]//basicShader
@@ -48,15 +51,13 @@ package net.morocoshi.moja3d.objects
 			Mesh.zBiasShader
 			[EndShader]//lastShader
 		*/
-		public var basicShader:MaterialShader;
-		public var beforeMatrixShaderList:ShaderList;
+		moja3d var basicShader:MaterialShader;
+		moja3d var beforeMatrixShaderList:ShaderList;
 		public var startShaderList:ShaderList;
 		public var endShaderList:ShaderList;
-		public var afterViewShaderList:ShaderList;
-		public var zBiasShader:ZBiasShader;
-		public var lastShader:MaterialShader;
-		
-		public var mouseDoubleSided:Boolean;
+		moja3d var afterViewShaderList:ShaderList;
+		moja3d var zBiasShader:ZBiasShader;
+		moja3d var lastShader:MaterialShader;
 		moja3d var outlineShader:OutlineColorShader;
 		moja3d var _outlineEnabled:Boolean;
 		
@@ -87,11 +88,6 @@ package net.morocoshi.moja3d.objects
 			zBiasShader = new ZBiasShader(_zbias);
 			startShaderList = null;
 			endShaderList = null;
-		}
-		
-		public function updateSeed():void
-		{
-			seed = String(++globalSeed);
 		}
 		
 		public function get geometry():Geometry 
@@ -131,6 +127,11 @@ package net.morocoshi.moja3d.objects
 		public function get key():String 
 		{
 			return seed + "_" + (colorTransformShader? colorTransformShader.alphaTransform : "A") + "_";
+		}
+		
+		moja3d function updateSeed():void
+		{
+			seed = String(++globalSeed);
 		}
 		
 		override public function clone():Object3D 
@@ -497,11 +498,7 @@ package net.morocoshi.moja3d.objects
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
 		{
 			var success:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
-			
-			if (success == false)
-			{
-				return false;
-			}
+			if (success == false) return false;
 			
 			var combined:CombinedGeometry = _geometry as CombinedGeometry;
 			
@@ -629,10 +626,6 @@ package net.morocoshi.moja3d.objects
 					if (hasShadow1 || hasShadow2 || hasShadow3)
 					{
 						collector.hasShadowElement = true;
-					}
-					if (material.shaderList.lightShader)
-					{
-						collector.hasLightElement = true;
 					}
 					//マスクがあれば追加する
 					if (collector.existMaskFilter && (mask != -1 || renderMask != -1))

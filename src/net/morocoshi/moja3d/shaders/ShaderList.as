@@ -16,7 +16,6 @@ package net.morocoshi.moja3d.shaders
 	import net.morocoshi.moja3d.shaders.core.AlphaPassShader;
 	import net.morocoshi.moja3d.shaders.core.OpaquePassShader;
 	import net.morocoshi.moja3d.shaders.render.KillShader;
-	import net.morocoshi.moja3d.shaders.render.LightShader;
 	import net.morocoshi.moja3d.shaders.render.ReflectionShader;
 	import net.morocoshi.moja3d.shaders.shadow.ShadowShader;
 	import net.morocoshi.moja3d.utils.AssemblerUtil;
@@ -36,7 +35,6 @@ package net.morocoshi.moja3d.shaders
 		private var _fragmentCode:AGALCode;
 		private var _reflectShader:ReflectionShader;
 		private var _shadowShader:ShadowShader;
-		private var _lightShader:LightShader;
 		private var _key:String;
 		
 		moja3d var shaders:Vector.<MaterialShader>;
@@ -56,7 +54,6 @@ package net.morocoshi.moja3d.shaders
 		moja3d var updatedReflectElement:Boolean;
 		/**影のキャスト状況に変更があったらtrueにする*/
 		moja3d var updatedShadowElement:Boolean;
-		moja3d var updatedLightElement:Boolean;
 		
 		//--------------------------------------------------------------------------
 		//
@@ -77,7 +74,6 @@ package net.morocoshi.moja3d.shaders
 			updateConstantOrder = true;
 			updatedReflectElement = true;
 			updatedShadowElement = true;
-			updatedLightElement = true;
 			
 			tickShaderList = new Vector.<MaterialShader>;
 			shaders = new Vector.<MaterialShader>;
@@ -109,7 +105,6 @@ package net.morocoshi.moja3d.shaders
 			_fragmentCode = null;
 			_reflectShader = null;
 			_shadowShader = null;
-			_lightShader = null;
 			_key = null;
 			name = null;
 			vertexUsingConstants = null;
@@ -157,16 +152,6 @@ package net.morocoshi.moja3d.shaders
 				updateAlphaState();
 			}
 			return _alphaState;
-		}
-		
-		public function get lightShader():LightShader
-		{
-			if (updatedLightElement)
-			{
-				updatedLightElement = false;
-				updateLightElement();
-			}
-			return _lightShader;
 		}
 		
 		public function get shadowShader():ShadowShader 
@@ -466,24 +451,6 @@ package net.morocoshi.moja3d.shaders
 		//  内部処理
 		//
 		//--------------------------------------------------------------------------
-		
-		/**
-		 * 光シェーダーが含まれているかチェックする
-		 */
-		private function updateLightElement():void
-		{
-			var n:int = shaders.length;
-			for (var i:int = 0; i < n; i++) 
-			{
-				var shader:MaterialShader = shaders[i];
-				if (shader.enabled && shader.valid && shader.hasLightElement)
-				{
-					_lightShader = shader as LightShader;
-					return;
-				}
-			}
-			_lightShader = null;
-		}
 		
 		/**
 		 * 影シェーダーが含まれているかチェックする
