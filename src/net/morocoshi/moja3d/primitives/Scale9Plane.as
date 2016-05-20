@@ -11,6 +11,8 @@ package net.morocoshi.moja3d.primitives
 	import net.morocoshi.moja3d.shaders.scale9.Scale9Shader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
 	
+	use namespace moja3d;
+	
 	/**
 	 * ...
 	 * @author tencho
