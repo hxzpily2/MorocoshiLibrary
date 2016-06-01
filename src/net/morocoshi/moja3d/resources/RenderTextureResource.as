@@ -80,7 +80,7 @@ package net.morocoshi.moja3d.resources
 			height = height >> _lowLV;
 			
 			//前回と同じならスキップ
-			if (prevSize.x == width && prevSize.y == height) return;
+			if (width == 0 || height == 0 || prevSize.x == width && prevSize.y == height) return;
 			
 			prevSize.x = width;
 			prevSize.y = height;

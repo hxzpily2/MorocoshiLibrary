@@ -27,7 +27,7 @@ package net.morocoshi.moja3d.resources
 			resourceList = new Vector.<Resource>;
 		}
 		
-		public function upload(basePath:String, context3D:ContextProxy, resources:Vector.<Resource>, cacheEnabled:Boolean):void
+		public function upload(resources:Vector.<Resource>, basePath:String, context3D:ContextProxy, cacheEnabled:Boolean):void
 		{
 			basePath = basePath.split("\\").join("/");
 			if (basePath != "" && basePath.charAt(basePath.length - 1) != "/")

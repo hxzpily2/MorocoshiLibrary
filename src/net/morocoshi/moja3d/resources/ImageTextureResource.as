@@ -241,7 +241,7 @@ package net.morocoshi.moja3d.resources
 		override public function createTexture(context3D:ContextProxy, width:int, height:int):void 
 		{
 			//前回と同じならスキップ
-			if (prevSize.x == width && prevSize.y == height)
+			if (width == 0 || height == 0 || (prevSize.x == width && prevSize.y == height))
 			{
 				return;
 			}
