@@ -69,7 +69,7 @@ package net.morocoshi.moja3d.shaders.line
 				"$thick.xyz = nrm($thick.xyz)",
 				
 				"$thick.xyz = m33($thick.xyz, @viewMatrix)",//行列で変換
-				"$thick.xyz = m33($thick.xyz, @projMatrix)"//行列で変換
+				//"$thick.xyz = m33($thick.xyz, @projMatrix)"//行列で変換
 				
 				//"$thick.xyz *= " + va2 + ".x",
 				//"$pos.xyz += $thick.xyz"

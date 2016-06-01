@@ -1,18 +1,18 @@
 package net.morocoshi.moja3d.resources 
 {
 	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.utils.ByteArray;
-	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.common.loaders.tfp.TFPHolder;
 	import net.morocoshi.common.loaders.tfp.TFPLoader;
+	import net.morocoshi.common.loaders.tfp.events.TFPErrorEvent;
 	import net.morocoshi.moja3d.view.ContextProxy;
+	
 	/**
 	 * ...
+	 * 
 	 * @author tencho
 	 */
 	public class TextureResourceLoader extends EventDispatcher
@@ -30,7 +30,7 @@ package net.morocoshi.moja3d.resources
 		public function upload(basePath:String, context3D:ContextProxy, resources:Vector.<Resource>, cacheEnabled:Boolean):void
 		{
 			basePath = basePath.split("\\").join("/");
-			if (basePath.charAt(basePath.length - 1) != "/")
+			if (basePath != "" && basePath.charAt(basePath.length - 1) != "/")
 			{
 				basePath += "/";
 			}
@@ -89,7 +89,7 @@ package net.morocoshi.moja3d.resources
 					
 					item.setBitmapResource(TextureUtil.correctSize(image), true);
 				}
-				item.upload(context3D, false);
+				item.upload(context3D);
 			}
 			dispatchEvent(new Event(Event.COMPLETE));
 		}

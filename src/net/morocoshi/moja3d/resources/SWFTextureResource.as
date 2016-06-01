@@ -13,7 +13,7 @@ package net.morocoshi.moja3d.resources
 	import net.morocoshi.moja3d.view.ContextProxy;
 	
 	/**
-	 * ...
+	 * MovieClipリソース
 	 * 
 	 * @author tencho
 	 */
@@ -108,7 +108,7 @@ package net.morocoshi.moja3d.resources
 			setBitmapResource(_bitmapData, false);
 			if (context3D)
 			{
-				upload(context3D, false);
+				upload(context3D);
 			}
 		}
 		

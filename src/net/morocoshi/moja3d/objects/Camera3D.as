@@ -5,11 +5,11 @@ package net.morocoshi.moja3d.objects
 	import flash.geom.Vector3D;
 	import net.morocoshi.common.data.DataUtil;
 	import net.morocoshi.common.math.transform.TransformUtil;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.adobe.PerspectiveMatrix3D;
 	import net.morocoshi.moja3d.bounds.BoundingBox;
-	import net.morocoshi.moja3d.materials.preset.FillMaterial;
 	import net.morocoshi.moja3d.materials.TriangleFace;
-	import net.morocoshi.moja3d.moja3d;
+	import net.morocoshi.moja3d.materials.preset.FillMaterial;
 	import net.morocoshi.moja3d.primitives.Sphere;
 	import net.morocoshi.moja3d.view.FOVMode;
 	import net.morocoshi.moja3d.view.Viewport;
@@ -429,7 +429,7 @@ package net.morocoshi.moja3d.objects
 			//ビューポートをクリッピングする場合
 			if (clipping && clipEnabled)
 			{
-				//perspectiveMatrixにクリッピングによる中心点の移動と縦横比の変化を適用する
+				//クリッピングによる中心点の移動と縦横比の変化
 				var top:Number = (0 - clipping.top) / clipping.height * 2 - 1;
 				var bottom:Number = (screenHeight - clipping.top) / clipping.height * 2 - 1;
 				//var fixedWidth:Number = clipping.height / screenHeight * screenWidth;
@@ -438,14 +438,15 @@ package net.morocoshi.moja3d.objects
 				//var clipWidth:Number = clipping.width + offset * 2;
 				var left:Number = (0 - clipping.left) / clipping.width * 2 - 1;
 				var right:Number = (screenWidth - clipping.left) / clipping.width * 2 - 1;
+				var ty:Number = Math.tan(fov / 2);
+				var tx:Number = ty * _aspect;
 				
 				clippingMatrix.copyRawDataFrom(Vector.<Number>([
 					2 / (right - left), 0, 0, 0,
 					0, -2 * 1 / (top - bottom), 0, 0,
-					-1 -2 * left / (right - left), 1 + 2 * top / (bottom - top), 1, 0,
+					(1 + 2 * left / (right - left)) * tx, (1 + 2 * top / (bottom - top)) * ty, 1, 0,
 					0, 0, 0, 1
 				]));
-				//perspectiveMatrix.append(clippingMatrix);
 			}
 			else
 			{

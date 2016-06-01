@@ -5,10 +5,10 @@ package net.morocoshi.moja3d.renderer
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	import flash.utils.getTimer;
+	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.agal.AGALCache;
 	import net.morocoshi.moja3d.agal.AGALTexture;
 	import net.morocoshi.moja3d.events.Event3D;
-	import net.morocoshi.moja3d.moja3d;
 	import net.morocoshi.moja3d.objects.Camera3D;
 	import net.morocoshi.moja3d.objects.Shadow;
 	import net.morocoshi.moja3d.resources.RenderTextureResource;
@@ -103,7 +103,8 @@ package net.morocoshi.moja3d.renderer
 				//カメラのワールド座標
 				cameraMatrix = camera.worldMatrix;
 				//ビューサイズに関係なく一定のサイズにできるようにする係数
-				var viewScale:Number = scene.view.height / Math.tan(camera.getVerticalFOV(scene.view.clipping) * 0.5) * 0.5;
+				var h:Number = scene.view.clipping? scene.view.clipping.height : scene.view.height;
+				var viewScale:Number = h / Math.tan(camera.getVerticalFOV(scene.view.clipping) * 0.5) * 0.5;
 				collector.vertexConstant.cameraPosition.x = cameraMatrix.rawData[12];
 				collector.vertexConstant.cameraPosition.y = cameraMatrix.rawData[13];
 				collector.vertexConstant.cameraPosition.z = cameraMatrix.rawData[14];

@@ -1,13 +1,10 @@
 package net.morocoshi.moja3d.shaders.core 
 {
-	import net.morocoshi.moja3d.renderer.RenderLayer;
-	import net.morocoshi.moja3d.renderer.RenderPhase;
 	import net.morocoshi.moja3d.resources.Geometry;
 	import net.morocoshi.moja3d.resources.VertexAttribute;
 	import net.morocoshi.moja3d.shaders.AlphaTransform;
-	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
-	import net.morocoshi.moja3d.shaders.outline.OutlineEndShader;
+	import net.morocoshi.moja3d.shaders.depth.DepthEndShader;
 	
 	/**
 	 * 最後に追加するシェーダー
@@ -60,9 +57,14 @@ package net.morocoshi.moja3d.shaders.core
 			
 			vertexCode.addCode([
 				"#vpos = $pos",
+				
+				"var $spos",
+				"$spos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
+				"#spos = $spos.xyzw",//スクリーン座標
+				
+				"$pos.xyz = m33($pos.xyz, @clipMatrix)",//クリッピング行列で変換
 				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
-				"#spos = $pos",//スクリーン座標
-				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
+				
 				"op = $pos.xyzw"
 			]);
 			

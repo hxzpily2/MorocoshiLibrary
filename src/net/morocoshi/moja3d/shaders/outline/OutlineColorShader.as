@@ -74,7 +74,10 @@ package net.morocoshi.moja3d.shaders.outline
 			if (_fixed)
 			{
 				vertexCode.addCode([
-					"$normal2.xyz = m33($normal2.xyz, @projMatrix)"//プロジェクション行列?で変換
+					"$normal2.xy *= $pos.zz",
+					"$normal2.xy /= @cameraPosition.ww",
+					"$normal2.xy *= @outlineSize.xx",
+					"$pos.xy += $normal2.xy"
 				]);
 			}
 			else
@@ -87,22 +90,13 @@ package net.morocoshi.moja3d.shaders.outline
 			
 			vertexCode.addCode([
 				"#vpos = $pos",
-				"$pos = m44($pos, @projMatrix)"//プロジェクション行列?で変換
-			]);
-			
-			if (_fixed)
-			{
-				vertexCode.addCode([
-					"$normal2.xy *= $pos.zz",
-					"$normal2.xy /= @cameraPosition.ww",
-					"$normal2.xy *= @outlineSize.xx",
-					"$pos.xy += $normal2.xy"
-				]);
-			}
-			
-			vertexCode.addCode([
-				"#spos = $pos",//スクリーン座標
-				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
+				
+				"var $spos",
+				"$spos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
+				"#spos = $spos.xyzw",//スクリーン座標
+				
+				"$pos.xyz = m33($pos.xyz, @clipMatrix)",//クリッピング行列?で変換
+				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
 				"op = $pos.xyzw",
 				
 				//ワールド法線

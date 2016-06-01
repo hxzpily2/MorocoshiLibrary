@@ -60,16 +60,26 @@ package net.morocoshi.moja3d.shaders.line
 			
 			vertexCode.addCode([
 				"#vpos = $pos",
-				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
+				
 				
 				"$thick.xy *= $pos.zz",
 				"$thick.xy /= @cameraPosition.ww",
 				"$thick.xy *= " + va + ".ww",
 				"$pos.xy += $thick.xy",
 				
+				"var $spos",
+				"$spos = m44($pos, @projMatrix)",
+				"#spos = $spos",//スクリーン座標
 				
-				"#spos = $pos",//スクリーン座標
 				"$pos = m44($pos, @clipMatrix)",//クリッピング行列?で変換
+				"$pos = m44($pos, @projMatrix)",//プロジェクション行列?で変換
+				/*
+				"$thick.xy *= $pos.zz",
+				"$thick.xy /= @cameraPosition.ww",
+				"$thick.xy *= " + va + ".ww",
+				"$pos.xy += $thick.xy",
+				*/
+				
 				"op = $pos.xyzw"
 			]);
 			

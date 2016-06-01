@@ -22,7 +22,6 @@ package net.morocoshi.moja3d.agal
 		public var viewSize:AGALConstant;
 		public var ambient:AGALConstant;
 		public var number:AGALConstant;
-		//public var reflectionMap:AGALTexture;
 		
 		static public const MODEL_MATRIX:String = "@modelMatrix";
 		static public const VIEW_MATRIX:String = "@viewMatrix";
