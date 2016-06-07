@@ -11,19 +11,19 @@ package net.morocoshi.common.animation.ease
 		public var current:Number = 0;
 		/**目的値*/
 		public var destination:Number = 0;
-		/**イージング関数に使う累乗の数。1以上。1で等速運動になる。*/
+		/**イージング関数に使う累乗の数。1以上。1で等速運動になる。大きいほど重くなるので注意。*/
 		public var easing:Number;
 		/**1秒の間に変化する距離*/
-		public var unitDistance:Number;
+		public var speed:Number;
 		
 		/**
-		 * @param	easing	イージング関数に使う累乗の数。1以上。1で等速運動になる。
-		 * @param	unitDistance	1秒の間に変化する距離
+		 * @param	easing	イージング関数に使う累乗の数。1以上。1で等速運動になる。大きいほど重くなるので注意。
+		 * @param	speed	1秒の間に変化する距離
 		 */
-		public function Tracker(easing:Number, unitDistance:Number) 
+		public function Tracker(easing:Number, speed:Number) 
 		{
 			this.easing = easing;
-			this.unitDistance = unitDistance;
+			this.speed = speed;
 		}
 		
 		/**
@@ -32,13 +32,13 @@ package net.morocoshi.common.animation.ease
 		 */
 		public function update(sec:Number):void
 		{
-			if (current == destination || unitDistance == 0)
+			if (current == destination || speed == 0)
 			{
 				current = destination;
 				return;
 			}
 			
-			var t:Number = ((current >= destination)? current - destination : destination - current) / unitDistance;
+			var t:Number = ((current >= destination)? current - destination : destination - current) / speed;
 			var g:Number = Math.pow(t, 1 / easing) - sec;
 			
 			if (g <= 0)

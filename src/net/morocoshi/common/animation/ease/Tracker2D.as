@@ -9,17 +9,19 @@ package net.morocoshi.common.animation.ease
 	{
 		private var tx:Tracker;
 		private var ty:Tracker;
-		public var unitDistance:Number;
+		
+		/**1秒の間に変化する距離*/
+		public var speed:Number;
 		
 		/**
-		 * @param	easing	イージング関数に使う累乗の数。1以上。1で等速運動になる。
-		 * @param	unitDistance	1秒の間に変化する距離
+		 * @param	easing	イージング関数に使う累乗の数。1以上。1で等速運動になる。大きいほど重くなるので注意。
+		 * @param	speed	1秒の間に変化する距離
 		 */
-		public function Tracker2D(easing:Number, unitDistance:Number) 
+		public function Tracker2D(easing:Number, speed:Number) 
 		{
-			this.unitDistance = unitDistance;
-			tx = new Tracker(easing, unitDistance);
-			ty = new Tracker(easing, unitDistance);
+			this.speed = speed;
+			tx = new Tracker(easing, speed);
+			ty = new Tracker(easing, speed);
 		}
 		
 		/**
@@ -28,15 +30,15 @@ package net.morocoshi.common.animation.ease
 		 */
 		public function update(sec:Number):void
 		{
-			tx.unitDistance = unitDistance;
-			ty.unitDistance = unitDistance;
+			tx.speed = speed;
+			ty.speed = speed;
 			var dx:Number = (tx.destination >= tx.current)? tx.destination - tx.current : tx.current - tx.destination;
 			var dy:Number = (ty.destination >= ty.current)? ty.destination - ty.current : ty.current - ty.destination;
 			var d:Number = 1 / Math.sqrt(dx * dx + dy * dy);
 			if (d)
 			{
-				tx.unitDistance *= dx * d;
-				ty.unitDistance *= dy * d;
+				tx.speed *= dx * d;
+				ty.speed *= dy * d;
 			}
 			tx.update(sec);
 			ty.update(sec);
@@ -47,7 +49,7 @@ package net.morocoshi.common.animation.ease
 		 * @param	x
 		 * @param	y
 		 */
-		public function setPosition(x:Number, y:Number):void 
+		public function setCurrent(x:Number, y:Number):void 
 		{
 			tx.current = x;
 			tx.current = y;
@@ -72,6 +74,9 @@ package net.morocoshi.common.animation.ease
 			return tx.stopping && ty.stopping;
 		}
 		
+		/**
+		 * イージング関数に使う累乗の数。1以上。1で等速運動になる。大きいほど重くなるので注意。
+		 */
 		public function get easing():Number
 		{
 			return tx.easing;
