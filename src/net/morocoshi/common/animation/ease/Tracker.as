@@ -32,11 +32,7 @@ package net.morocoshi.common.animation.ease
 		 */
 		public function update(sec:Number):void
 		{
-			if (current == destination || speed == 0)
-			{
-				current = destination;
-				return;
-			}
+			if (current == destination || speed == 0) return;
 			
 			var t:Number = ((current >= destination)? current - destination : destination - current) / speed;
 			var g:Number = Math.pow(t, 1 / easing) - sec;
