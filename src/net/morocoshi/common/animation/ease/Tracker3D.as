@@ -97,6 +97,7 @@ package net.morocoshi.common.animation.ease
 			tx.easing = ty.easing = tz.easing = value;
 		}
 		
+		/**現在X値*/
 		public function get x():Number
 		{
 			return tx.current;
@@ -107,6 +108,7 @@ package net.morocoshi.common.animation.ease
 			tx.current = value;
 		}
 		
+		/**現在Y値*/
 		public function get y():Number
 		{
 			return ty.current;
@@ -117,6 +119,7 @@ package net.morocoshi.common.animation.ease
 			ty.current = value;
 		}
 		
+		/**現在Z値*/
 		public function get z():Number
 		{
 			return tz.current;
@@ -127,6 +130,7 @@ package net.morocoshi.common.animation.ease
 			tz.current = value;
 		}
 		
+		/**目的X値*/
 		public function get dx():Number
 		{
 			return tx.destination;
@@ -137,6 +141,7 @@ package net.morocoshi.common.animation.ease
 			tx.destination = value;
 		}
 		
+		/**目的Y値*/
 		public function get dy():Number
 		{
 			return ty.destination;
@@ -147,6 +152,7 @@ package net.morocoshi.common.animation.ease
 			ty.destination = value;
 		}
 		
+		/**目的Z値*/
 		public function get dz():Number
 		{
 			return tz.destination;
