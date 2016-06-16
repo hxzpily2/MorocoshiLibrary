@@ -17,7 +17,6 @@ package net.morocoshi.moja3d.objects
 	import net.morocoshi.moja3d.resources.Resource;
 	import net.morocoshi.moja3d.shaders.MaterialShader;
 	import net.morocoshi.moja3d.shaders.ShaderList;
-	import net.morocoshi.moja3d.shaders.outline.OutlineColorShader;
 	import net.morocoshi.moja3d.shaders.render.ZBiasShader;
 	
 	use namespace moja3d;
@@ -58,8 +57,7 @@ package net.morocoshi.moja3d.objects
 		moja3d var afterViewShaderList:ShaderList;
 		moja3d var zBiasShader:ZBiasShader;
 		moja3d var lastShader:MaterialShader;
-		moja3d var outlineShader:OutlineColorShader;
-		moja3d var _outlineEnabled:Boolean;
+		public var outline:Outline;
 		
 		private var _key:String;
 		private var _zbias:Number;
@@ -338,6 +336,7 @@ package net.morocoshi.moja3d.objects
 			var mesh:Mesh = target as Mesh;
 			mesh.zbias = _zbias;
 			mesh.geometry = geometry;
+			mesh.outline = outline.clone();
 			
 			referenceSurfaces(mesh);
 		}
@@ -349,6 +348,7 @@ package net.morocoshi.moja3d.objects
 			var mesh:Mesh = target as Mesh;
 			mesh.zbias = _zbias;
 			mesh.geometry = geometry.clone() as Geometry;
+			mesh.outline = outline.clone();
 			
 			referenceSurfaces(mesh);
 		}
@@ -409,92 +409,6 @@ package net.morocoshi.moja3d.objects
 			return result;
 		}
 		
-		private function getOutlineShader():OutlineColorShader
-		{
-			return outlineShader || (outlineShader = new OutlineColorShader());
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインを設定する
-		 * @param	enabled		表示するか
-		 * @param	thickness	厚さ
-		 * @param	color		色
-		 * @param	alpha		不透明度
-		 * @param	fixed		厚さがカメラ距離に関係なく一定
-		 */
-		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1, fixed:Boolean = true):void
-		{
-			_outlineEnabled = enabled;
-			var shader:OutlineColorShader = getOutlineShader();
-			shader.thickness = thickness;
-			shader.color = color;
-			shader.alpha = alpha;
-			shader.fixed = fixed;
-		}
-		/**
-		 * ポリゴンベースのアウトラインを表示するか
-		 */
-		public function set outlineEnabled(value:Boolean):void
-		{
-			_outlineEnabled = value;
-			if (_outlineEnabled)
-			{
-				getOutlineShader();
-			}
-		}
-		public function get outlineEnabled():Boolean
-		{
-			return _outlineEnabled;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの厚さ
-		 */
-		public function set outlineThickness(value:Number):void
-		{
-			getOutlineShader().thickness = value;
-		}
-		public function get outlineThickness():Number
-		{
-			return getOutlineShader().thickness;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの厚さがカメラ距離に関係なく一定になるか
-		 */
-		public function set outlineFixed(value:Boolean):void
-		{
-			getOutlineShader().fixed = value;
-		}
-		public function get outlineFixed():Boolean
-		{
-			return getOutlineShader().fixed;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの色
-		 */
-		public function set outlineColor(value:uint):void
-		{
-			getOutlineShader().color = value;
-		}
-		public function get outlineColor():uint
-		{
-			return getOutlineShader().color;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの不透明度
-		 */
-		public function set outlineAlpha(value:Number):void
-		{
-			getOutlineShader().alpha = value;
-		}
-		public function get outlineAlpha():Number
-		{
-			return getOutlineShader().alpha;
-		}
-		
 		override moja3d function collectRenderElements(collector:RenderCollector, forceCalcMatrix:Boolean, forceCalcColor:Boolean, forceCalcBounds:Boolean, worldFlip:int, mask:int):Boolean 
 		{
 			var success:Boolean = super.collectRenderElements(collector, forceCalcMatrix, forceCalcColor, forceCalcBounds, worldFlip, mask);
@@ -537,11 +451,11 @@ package net.morocoshi.moja3d.objects
 						return false;
 					}
 					//トゥーンレンダリングのアウトライン
-					if (collector.renderPhase == RenderPhase.NORMAL && _outlineEnabled)
+					if (collector.renderPhase == RenderPhase.NORMAL && outline && outline.enabled)
 					{
 						collector.renderPhase = RenderPhase.OUTLINE;
 						collector.materialCulling = TriangleFace.BACK;
-						collector.outlineShader = outlineShader;
+						collector.outlineShader = outline.shader;
 						collectSurfaces(collector, combinedSurfacesList[i], combined.geometries[i], mask, worldFlip, skinShader);
 						collector.renderPhase = RenderPhase.NORMAL;
 						collector.materialCulling = null;
@@ -559,11 +473,11 @@ package net.morocoshi.moja3d.objects
 					return false;
 				}
 				//トゥーンレンダリングのアウトライン
-				if (collector.renderPhase == RenderPhase.NORMAL && _outlineEnabled)
+				if (collector.renderPhase == RenderPhase.NORMAL && outline && outline.enabled)
 				{
 					collector.renderPhase = RenderPhase.OUTLINE;
 					collector.materialCulling = TriangleFace.BACK;
-					collector.outlineShader = outlineShader;
+					collector.outlineShader = outline.shader;
 					collectSurfaces(collector, surfaces, _geometry, mask, worldFlip, skinShader)
 					collector.renderPhase = RenderPhase.NORMAL;
 					collector.materialCulling = null;

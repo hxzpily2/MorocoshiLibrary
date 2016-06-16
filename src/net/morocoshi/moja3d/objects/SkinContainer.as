@@ -41,76 +41,17 @@ package net.morocoshi.moja3d.objects
 		
 		/**
 		 * ポリゴンベースのアウトラインを設定する
-		 * @param	enabled		表示するか
 		 * @param	thickness	厚さ
 		 * @param	color		色
 		 * @param	alpha		不透明度
+		 * @param	fixed		厚さがカメラ距離に関係なく一定
 		 */
-		public function setOutline(enabled:Boolean, thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1):void
+		public function setOutline(thickness:Number = 1, color:uint = 0x000000, alpha:Number = 1, fixed:Boolean = true):void
 		{
 			for each(var skin:Skin in skins)
 			{
-				skin.setOutline(enabled, thickness, color, alpha);
+				skin.outline = new Outline(thickness, color, alpha, fixed);
 			}
-		}
-		/**
-		 * ポリゴンベースのアウトラインを表示するか
-		 */
-		public function set outlineEnabled(value:Boolean):void
-		{
-			for each(var skin:Skin in skins)
-			{
-				skin.outlineEnabled = value;
-			}
-		}
-		public function get outlineEnabled():Boolean
-		{
-			return (skins.length == 0)? 1 : skins[0].outlineEnabled;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの厚さ
-		 */
-		public function set outlineThickness(value:Number):void
-		{
-			for each(var skin:Skin in skins)
-			{
-				skin.outlineThickness = value;
-			}
-		}
-		public function get outlineThickness():Number
-		{
-			return (skins.length == 0)? 1 : skins[0].outlineThickness;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの色
-		 */
-		public function set outlineColor(value:uint):void
-		{
-			for each(var skin:Skin in skins)
-			{
-				skin.outlineColor = value;
-			}
-		}
-		public function get outlineColor():uint
-		{
-			return (skins.length == 0)? 0x000000 : skins[0].outlineColor;
-		}
-		
-		/**
-		 * ポリゴンベースのアウトラインの不透明度
-		 */
-		public function set outlineAlpha(value:Number):void
-		{
-			for each(var skin:Skin in skins)
-			{
-				skin.outlineAlpha = value;
-			}
-		}
-		public function get outlineAlpha():Number
-		{
-			return (skins.length == 0)? 1 : skins[0].outlineAlpha;
 		}
 		
 		/**

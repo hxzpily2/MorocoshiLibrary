@@ -52,7 +52,7 @@ package net.morocoshi.moja3d.shaders.outline
 		override protected function updateConstants():void 
 		{
 			super.updateConstants();
-			vertexConst =　vertexCode.addConstantsFromArray("@outlineSize", [1, 0, 0, 0]);
+			vertexConst =　vertexCode.addConstantsFromArray("@outlineSize", [_thickness, 0, 0, 0]);
 			fragmentConst = fragmentCode.addConstantsFromColor("@outlineColor", _color, _alpha);
 		}
 		
